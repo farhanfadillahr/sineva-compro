@@ -1,5 +1,7 @@
 # CPR-7 — Catatan implementasi dan verifikasi
 
+> **HISTORIS — FONDASI PAYLOAD DIGANTIKAN.** Pada 14 Oktober 2026, Founder memilih admin custom Next.js tanpa headless CMS. Semua hasil di bawah hanya berlaku untuk kode lama pada commit `a7f00fb`, bukan evidence arsitektur baru. Pemeriksaan UI Payload yang belum selesai tidak dilanjutkan sebagai acceptance Rev. 2. Acuan aktif: [PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md) dan [rencana penggantian CPR-7](../superpowers/plans/2026-10-14-cpr-7-foundation.md). Source pengganti belum diimplementasikan; PR #1 tetap draft.
+
 Tanggal: 14 Oktober 2026. Branch:
 `farhanfadillahrafi/cpr-7-infra-inisialisasi-kerangka-nextjs-payload-v3`.
 

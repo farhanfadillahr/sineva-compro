@@ -1,3 +1,7 @@
+## Arah produk aktif
+
+Ikuti PRD Rev. 2 dan `docs/architecture/decisions/2026-10-14-custom-admin.md`: website publik dan admin custom terintegrasi dalam Next.js, tanpa headless CMS. Integrasi Payload pada branch fondasi adalah implementasi lama yang direncanakan untuk diganti. Jangan melanjutkan setup/fitur Payload atau memakai hasil test historis sebagai bukti fondasi baru. Perubahan dokumentasi ini belum menjalankan penggantian source/database.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

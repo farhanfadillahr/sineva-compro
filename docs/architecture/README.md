@@ -1,216 +1,162 @@
-# Arsitektur Sineva Compro
+# Arsitektur Sineva Compro — admin custom
 
-**Tanggal:** 14 Oktober 2026.
+**Tanggal:** 14 Oktober 2026. **Status:** arah produk disetujui Founder; rancangan pengganti belum diimplementasikan.
 
-**Status:** rancangan untuk direview; implementasi aplikasi belum dimulai.
+**Acuan:** [PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [keputusan arsitektur](decisions/2026-10-14-custom-admin.md), dan [rencana CPR-7](../superpowers/plans/2026-10-14-cpr-7-foundation.md).
 
-**Acuan:** [PRD](../prd/2026-10-14-company-profile-prd.md) dan [rencana CPR-7](../superpowers/plans/2026-10-14-cpr-7-foundation.md).
+Fondasi pada commit `a7f00fb` dan draft PR #1 masih menggunakan Payload. [Hasil verifikasi lama](foundation-validation.md) hanya berlaku untuk fondasi tersebut. Penggantian source, dependency, schema, dan test belum dilakukan dalam revisi dokumentasi ini.
 
 ## 1. Arsitektur sistem
 
-Pola aplikasi adalah **modular monolith**: website dan CMS berjalan dalam satu
-aplikasi Next.js, dengan batas modul dan hak akses yang eksplisit. Produk chatbot
-tetap memiliki repo, lifecycle deployment, dan data yang terpisah. Compro hanya
-menampilkan informasi produk dan menerima waitlist.
+Compro memakai **modular monolith**: website publik dan admin custom berada dalam satu aplikasi Next.js, satu repo, dan satu deployment. Aplikasi memiliki model data, form, query dan aturan publikasi sendiri di PostgreSQL. Tidak menggunakan headless CMS. Chatbot tetap mempunyai repo, database dan deployment terpisah; Compro hanya menerima waitlist dan menampilkan informasi produk.
 
 ```mermaid
 flowchart LR
   Visitor[Pengunjung] --> Cloudflare[Cloudflare DNS dan proxy]
-  Cloudflare --> App[Next.js dan Payload di Coolify]
-  App --> DB[(PostgreSQL)]
-  App --> Media[Cloudflare R2 untuk media]
+  Staff[Admin dan Editor] --> Cloudflare
+  Cloudflare --> Public[Website publik Next.js]
+  Cloudflare --> Admin[Admin custom Next.js]
+  Public --> Features[Modul fitur server]
+  Admin --> Session[Session dan otorisasi server]
+  Session --> Features
+  Features --> DB[(PostgreSQL melalui Drizzle)]
+  Features --> Media[Cloudflare R2 media]
+  Features --> Email[Resend]
+  Features --> Errors[Sentry]
   DB --> Backup[Job backup terjadwal]
-  Backup --> BackupStore[Cloudflare R2 untuk backup]
-  App --> Email[Resend]
-  App --> Errors[Sentry]
+  Backup --> BackupStore[Cloudflare R2 backup]
   Visitor --> Analytics[Umami]
 ```
 
-Satu VPS merupakan pilihan awal sesuai PRD, dengan kompromi bahwa kegagalan host
-dapat menghentikan aplikasi serta database sekaligus. Backup di luar VPS, uji
-restore, dan monitoring dari luar VPS tetap diperlukan. Menambah replica, Redis,
-message broker, atau cluster belum dibutuhkan untuk scope awal; perubahan itu
-dipertimbangkan berdasarkan beban dan kebutuhan keandalan yang terukur.
+Website, admin, session, dan fitur adalah modul dalam proses yang sama, bukan service/container terpisah. Better Auth menyediakan mekanisme autentikasi; aplikasi menentukan izin domain dan UI admin. Drizzle adalah library akses data/migration, bukan CMS. [Integrasi Next.js](https://better-auth.com/docs/integrations/next), [adapter Drizzle](https://better-auth.com/docs/adapters/drizzle).
 
-| Lingkungan | Isolasi yang dituju |
+Satu VPS sesuai keputusan awal; kegagalan host dapat menghentikan aplikasi dan database sekaligus. Backup di luar VPS, restore teruji, dan monitoring eksternal tetap diperlukan. Replica, Redis, message broker, dan cluster baru dipertimbangkan berdasarkan kebutuhan terukur.
+
+| Lingkungan | Isolasi |
 |---|---|
-| Lokal | PostgreSQL developer dengan volume bernama; test memakai service/database terpisah |
-| Preview | Setiap PR memiliki database terisolasi, kredensial terbatas, dan prefix media sendiri |
-| Production | Database, kredensial, media, dan konfigurasi provider khusus production |
+| Lokal | Database developer persisten; test memakai service/database terpisah |
+| Preview | Database per PR pada instance staging, credential/prefix media per PR, tanpa data pribadi production |
+| Production | Database, credential, media, dan provider khusus production |
 
-Untuk preview, satu instance PostgreSQL staging boleh menampung beberapa database
-PR; istilah “database staging” pada PRD tidak berarti seluruh preview menulis ke
-schema yang sama. Cleanup setelah PR ditutup hanya boleh menghapus resource PR
-tersebut. CPR-11 menentukan mekanisme dan batas resource yang benar-benar dapat
-diterapkan di Coolify. Preview tidak menerima salinan data pribadi production.
-Pilihan awal adalah database per PR pada instance staging yang sama; tidak
-bergantung pada opsi `schemaName` eksperimental adapter Payload.
+CPR-11 menentukan provisioning dan cleanup yang hanya menyentuh resource PR tersebut. Migration SQL dilacak di Git, direview, dan dijalankan oleh satu langkah deploy sebelum trafik aplikasi baru. Startup tidak membuat database atau mengubah schema otomatis; rolling deploy memakai perubahan yang tetap kompatibel dengan versi lama. [Migration Drizzle](https://orm.drizzle.team/docs/migrations).
 
-Migration dijalankan oleh satu langkah deployment yang terkontrol sebelum
-aplikasi baru menerima trafik. Jangan menjalankan migration yang sama dari setiap
-replica atau mengaktifkan development schema push di production. Pada saat ada
-rolling deployment, perubahan schema perlu tetap kompatibel dengan versi
-aplikasi lama selama keduanya hidup bersamaan.
-
-## 2. Batas aplikasi dan arah dependensi
-
-Alur dependensi aplikasi:
+## 2. Batas modul dan dependensi
 
 ```text
-Halaman / komponen UI
+Route / komponen UI
         ↓
-Server Action atau query server milik fitur
+Query server / Server Action fitur
         ↓
-Aturan bisnis fitur
+Validasi + session/izin + aturan bisnis
         ↓
-Payload Local API atau adapter provider
+Query Drizzle / adapter provider
         ↓
-Database / layanan eksternal
+PostgreSQL / R2 / Resend / Turnstile
 ```
 
-Untuk read konten yang sederhana, query server fitur langsung memakai Payload;
-tidak perlu memaksakan lapisan service kosong. Service digunakan ketika terdapat
-alur bisnis yang nyata, seperti validasi, anti-spam, penyimpanan lead, dan
-pengiriman notifikasi.
+Read sederhana cukup berupa query server eksplisit. Service digunakan untuk workflow nyata, misalnya validasi → anti-spam → simpan lead → email; tidak membuat wrapper CRUD atau lapisan service kosong.
 
 | Bagian | Tanggung jawab | Batas |
 |---|---|---|
-| `app/` | Routing, layout, metadata, komposisi halaman | Tidak menjadi tempat seluruh query dan workflow bisnis |
-| `features/` | Query publik, validasi input, workflow, hasil yang dikonsumsi UI | Fitur tidak mengimpor halaman atau komponen internal fitur lain |
-| `collections/`, `globals/` | Schema CMS, access control, field validation, hook perubahan konten | Tidak berisi rendering UI atau workflow form publik yang panjang |
-| `lib/cms/` | Inisialisasi Payload yang hanya dipakai pada server | Tidak membungkus seluruh Local API sebagai generic repository |
-| `lib/integrations/` | Adapter email, anti-spam, dan provider lain | Tidak menetapkan aturan bisnis lead atau menentukan respons UI |
-| `components/` | Komponen UI dan layout yang dipakai lintas halaman | Tidak membaca secret atau menjalankan SDK database/provider |
-| `env/` | Pembacaan serta validasi konfigurasi server | Tidak diekspor lewat barrel yang juga dipakai client |
+| `app/` | Routing, layout, metadata, komposisi, handler auth | Tidak menampung seluruh query/workflow |
+| `features/<fitur>/` | Schema domain, query, validasi, action, service, UI fitur | Tidak mengimpor halaman atau internal fitur lain |
+| `features/auth/` | Session, izin domain, lockout, pengelolaan akun | Role berasal dari server |
+| `lib/db/` | Pool PostgreSQL, ORM, agregasi schema | Tidak menyediakan generic public CRUD |
+| `lib/auth/` | Konfigurasi/integrasi library auth | Tidak menggantikan otorisasi domain |
+| `lib/integrations/` | Adapter provider server | Tidak menentukan respons UI/aturan lead |
+| `components/` | UI bersama dengan props terbatas | Tidak membaca database, provider server, atau secret |
+| `env/` | Konfigurasi tervalidasi | Tidak diekspor lewat barrel client/server campuran |
 
-Kode server khusus Next dapat memakai guard `server-only`. Helper environment
-yang juga dipakai CLI Payload dan unit test tetap dapat dimuat oleh Node biasa.
-Jangan memberikan seluruh objek dokumen CMS, kredensial, atau detail error
-provider sebagai props Client Component; petakan field yang benar-benar dibutuhkan
-menjadi hasil serializable yang kecil. [Panduan keamanan data Next.js](https://nextjs.org/docs/app/guides/data-security).
+Schema domain berada bersama fitur dan diagregasi di `lib/db/schema.ts`; schema auth library berada di `features/auth/schema.ts` dan direview bersama migration. Query database tidak mengimpor rendering UI atau adapter email.
 
-## 3. Struktur kode yang bertumbuh sesuai tiket
+Modul Next.js khusus server memakai `server-only`. Helper environment/schema yang juga dibaca CLI tetap dapat dimuat Node biasa. Client Component menerima DTO kecil: hash password, token session, konfigurasi provider, dan data lead tidak ikut props publik. [Keamanan data Next.js](https://nextjs.org/docs/app/guides/data-security).
+
+## 3. Struktur target
 
 ```text
 src/
 ├── app/
-│   ├── (frontend)/
-│   │   └── [locale]/          Routing bahasa pada CPR-25
-│   └── (payload)/            Entry admin/API resmi Payload
+│   ├── layout.tsx                 Root layout bersama yang minimal
+│   ├── (public)/[locale]/         Halaman publik; i18n di subtree publik
+│   ├── (admin)/admin/
+│   │   ├── login/page.tsx         Login custom
+│   │   └── (protected)/           Dashboard dan admin berizin
+│   └── api/auth/[...all]/         Handler auth, bukan API konten
 ├── features/
-│   ├── services/             Query dan tampilan layanan
-│   ├── portfolio/            Query studi kasus
-│   ├── blog/                 Query artikel terbit dan kategori
-│   ├── leads/                Validasi dan workflow konsultasi
-│   └── waitlist/             Validasi, normalisasi, dan deduplikasi
-├── components/
-│   ├── ui/                   Komponen design system
-│   └── layout/               Header, footer, navigasi
-├── collections/              Schema Users, Posts, Leads, dan lainnya
-├── globals/                  Pengaturan Situs dan konten global
+│   ├── auth/                     Session, izin, lockout, schema auth
+│   ├── services/                 Data/form layanan dan query publik
+│   ├── portfolio/                Data/form showcase dan publikasi
+│   ├── blog/                     Artikel, kategori, rich text, publikasi
+│   ├── team/                     Tim dan penulis
+│   ├── media/                    Metadata/alt text dan upload
+│   ├── site-settings/            Pengaturan dan konten halaman
+│   ├── leads/                    Intake publik dan mini-CRM
+│   └── waitlist/                 Intake, deduplikasi dan ekspor
+├── components/ui/                Design system
+├── components/layout/            Header/footer dan shell admin
 ├── lib/
-│   ├── cms/                  Inisialisasi SDK server
-│   └── integrations/         Email, anti-spam, dan logging provider
-├── env/                      Konfigurasi tervalidasi
-├── i18n/                     Routing dan konfigurasi bahasa
-├── migrations/               Migration hasil CLI, direview dan dilacak
-├── payload.config.ts
-└── payload-types.ts           Hasil generator
-
-tests/
-├── unit/                     Aturan validasi dan transformasi tanpa network
-├── integration/              Izin, persistence, deduplikasi, error provider
-└── e2e/                      Alur pengunjung dan admin
+│   ├── db/                       Pool, ORM dan agregasi schema
+│   ├── auth/                     Konfigurasi server/client terpisah
+│   ├── cache/                    Pemetaan entity → path/tag publik
+│   └── integrations/             Email, storage, anti-spam
+├── env/                          Konfigurasi tervalidasi
+└── i18n/                         Routing dan messages publik
+drizzle/                          Migration SQL dan metadata versioned
+scripts/                          Setup dan bootstrap operator
+tests/unit/                       Aturan murni
+tests/integration/                Database, izin, efek eksternal
+tests/e2e/                        Pengunjung dan admin
 ```
 
-Ini struktur tujuan saat fitur mulai dikerjakan, bukan instruksi membuat semua
-folder kosong pada CPR-7. Foundation hanya membuat route group, environment,
-Users, konfigurasi, migration awal, dan tests yang memang dibutuhkan.
+Ini struktur tujuan, bukan instruksi membuat folder kosong. CPR-7 membuat database/auth dan shell admin; schema/form konten mengikuti tiket pemilik. Root layout tetap Server Component. i18n publik tidak mengalihkan `/admin` atau auth handler. Admin v1 berbahasa Indonesia dan bertema terang yang aksesibel; konten ID/EN serta tema terang/gelap publik tetap wajib.
 
-Setiap fitur boleh memiliki `queries.server.ts`, `validation.ts`,
-`service.server.ts`, `actions.ts`, serta komponen sendiri jika ada kebutuhan nyata.
-File tipe respons dipasang bersama fitur pemiliknya. Schema model berasal dari
-types yang dihasilkan Payload; tipe data untuk UI hanya memuat field yang
-dibutuhkan. Hindari `utils.ts` raksasa, barrel yang mencampur server/client, dan
-kelas `BaseService` atau `BaseRepository` yang hanya memindahkan panggilan SDK.
+File fitur mengikuti kebutuhan: `schema.ts`, `validation.ts`, `queries.server.ts`, `service.server.ts`, `actions.ts`, `types.ts`, dan UI lokal. Tidak membuat `BaseService`, `BaseRepository`, DI container, atau `utils.ts` raksasa. Tipe ORM tidak otomatis menjadi respons UI.
 
-## 4. Pattern untuk konten dan data pribadi
+## 4. Autentikasi dan izin
 
-**Konten publik:** query server mengirim locale secara eksplisit, mengambil hanya
-field yang digunakan halaman, dan menerapkan access control serta status terbit.
-Artikel tanpa terjemahan tidak tampil melalui fallback bahasa pada daftar bahasa
-lain. Preview draft memerlukan pengguna CMS yang berhak dan tidak ikut cache
-publik. Revalidation setelah publish memperbarui halaman padanan kedua bahasa.
+- Library menangani hashing password, session, cookie, dan logout; aplikasi tidak menulis algoritmanya sendiri. [Better Auth email/password](https://better-auth.com/docs/authentication/email-password).
+- Signup publik ditutup. Bootstrap Admin pertama berupa perintah operator terhadap database yang telah dimigrasi, tanpa password bawaan atau endpoint anonim. Perintah menolak salah lingkungan, aman dijalankan ulang dan bersamaan.
+- Admin mengelola Editor lewat aksi server berizin. Role, identitas pemilik, status lead, dan catatan internal tidak diambil dari mass assignment input publik. [Pengelolaan akun library](https://better-auth.com/docs/plugins/admin).
+- Setiap query, action, upload, preview, dan export memeriksa session aktif serta role di server. Redirect layout/proxy dan menu tersembunyi hanya membantu UI. [Autentikasi Next.js](https://nextjs.org/docs/app/guides/authentication).
+- Editor hanya konten/media; tidak membaca Leads/Waitlist, mengekspor data pribadi, mengubah role atau mengelola Users.
+- Lockout 15 menit setelah 5 kegagalan berturut-turut, counter database atomik, reset saat login berhasil, respons tanpa pengungkapan email terdaftar. Rate limit request melengkapi lockout. Semua jalur login, termasuk handler auth langsung, melewati kebijakan yang sama.
+- Trusted origin sesuai environment; cookie HttpOnly dan Secure di production; logout mencabut session, perubahan role segera berlaku. Session dan query admin tidak masuk cache publik.
 
-**Akses Local API:** untuk Payload v3, jangan mengandalkan default opsi SDK.
-`overrideAccess: false` ditulis eksplisit pada operasi yang perlu memeriksa izin;
-operasi pengguna CMS menyertakan user yang diperoleh melalui autentikasi server.
-Operasi baca publik tidak menggunakan identitas admin. Ini mengikuti
-[opsi Local API Payload](https://payloadcms.com/docs/local-api/overview).
+## 5. Konten, bahasa dan publikasi
 
-Hook koleksi memakai instance `req.payload` yang sudah ada dan meneruskan `req`
-jika melibatkan transaksi. Jangan mengimpor factory CMS global dari hook yang
-dibaca saat `payload.config.ts` dibangun: pola itu dapat menciptakan import
-melingkar atau menginisialisasi ulang Payload. Hook revalidation harus kecil dan
-memanggil fungsi invalidasi yang terpisah dari query/init CMS.
+ID entitas stabil; terjemahan disimpan per `(entity_id, locale)`. Constraint bahasa dan slug unik per jenis konten/bahasa berada di database. Relasi memakai foreign key; field berulang boleh berupa JSON terstruktur tervalidasi, bukan satu blob seluruh situs.
 
-**Write lead dari pengunjung:** REST create koleksi Leads tetap ditutup untuk
-publik sesuai PRD. Server Action memperlakukan semua input sebagai tidak tepercaya.
-Setelah validasi dan anti-spam, satu workflow server internal di fitur Leads
-boleh melakukan write dengan `overrideAccess: true` secara sengaja. Pengecualian
-ini hanya untuk create field lead yang sudah dinormalisasi, bukan read/modify Users,
-ekspor data, atau query generik berdasarkan nama koleksi dari client. Jangan membuat
-akun admin palsu untuk mewakili pengunjung. Pengecualian tersebut harus memiliki
-negative tests sebelum digunakan pada M3.
+Posts dan Portfolio memisahkan draft dari snapshot terbit per bahasa. Query publik memilih snapshot terbit, kolom yang diperlukan, dan locale eksplisit tanpa fallback. Menyimpan draft tidak mengubah snapshot publik. Artikel boleh terbit satu bahasa.
 
-Field internal seperti status awal, catatan internal, dan identitas pemilik
-ditentukan server. Input form dipetakan ke daftar field yang diizinkan; jangan
-menyebarkan seluruh objek input client langsung ke operasi create.
+Publish: validasi field/slug → transaksi snapshot/status → invalidasi cache setelah commit. Rename, unpublish, delete memperbarui URL lama/baru, padanan, daftar, beranda dan sitemap. Preview memerlukan session/role, `noindex`, serta respons tanpa cache publik. Tidak membuat API konten CRUD REST/GraphQL generik.
 
-**Form dan email:** server memvalidasi input/persetujuan → memeriksa anti-spam →
-menyimpan lead → mencoba notifikasi/balasan → mengembalikan hasil form yang aman.
-Kegagalan email tidak membatalkan lead yang sudah tersimpan. Panggilan email
-memiliki timeout dan ditunggu/dikelola secara eksplisit, tidak berupa promise yang
-dilepas begitu saja. Jangan menahan transaksi database selama request email.
-Kegagalan dicatat dengan redaksi data pribadi, tanpa isi form lengkap atau secret.
-Mekanisme retry/outbox ditambahkan hanya bila menjadi kebutuhan yang disepakati,
-melalui tiket tersendiri; tidak dibuat pada fondasi CPR-7.
+Rich text berupa dokumen JSON tervalidasi dengan renderer aplikasi untuk heading, daftar, tautan, gambar, kutipan dan kode. Batasi URL/elemen; HTML mentah tidak dirender tanpa sanitasi. SEO adalah field schema/form admin yang dibaca `generateMetadata`, tanpa plugin CMS.
 
-**Waitlist:** email dinormalisasi dan mempunyai constraint unik di database.
-Pemeriksaan `find` lalu `create` saja tidak cukup untuk kiriman bersamaan.
-Hanya konflik duplikasi yang diketahui diterjemahkan menjadi hasil sukses yang
-sama; error database lain tetap ditangani sebagai kegagalan penyimpanan.
+## 6. Lead dan integrasi
 
-**Caching:** hanya konten terbit yang boleh masuk cache publik. Key mencakup locale
-dan konteks environment. Data Leads, Waitlist, Users, serta hasil autentikasi tidak
-masuk cache publik. Server Action yang mengelola data CMS harus memeriksa
-autentikasi/otorisasi setiap request; keberadaan tombol di UI tidak menjadi batas
-keamanan.
+Form publik → validasi/persetujuan → honeypot/Turnstile/rate limit → pemetaan field yang diizinkan → penyimpanan → percobaan email → hasil aman. Status Baru/waktu/catatan ditetapkan server. Tidak ada endpoint publik untuk membaca, mengubah, menghapus, atau mengekspor Leads/Waitlist.
 
-## 5. Pattern pengujian dan batas kesimpulan
+Lead disimpan sebelum email; email gagal tidak membatalkan lead dan tetap menghasilkan sukses. Log/Sentry meredaksi data pribadi. Network call memiliki timeout/penyelesaian terkelola, tidak menahan transaksi database. Retry/outbox mengikuti kebutuhan dan tiket tersendiri.
 
-Pattern kode yang dipakai sesuai kebutuhan:
+Email waitlist dinormalisasi dengan constraint unik; hanya konflik duplikasi yang dikenal menjadi sukses. `find` lalu `create` tidak cukup untuk concurrency. Error database lain tetap kegagalan penyimpanan.
+
+Adapter R2 milik aplikasi memeriksa session/role, tipe/ukuran file, alt text per bahasa, prefix environment; credential tidak masuk browser. Ekspor CSV memerlukan Admin, tidak dicache, dan menghindari formula injection.
+
+## 7. Pattern dan pembuktian
 
 | Pattern | Pemakaian |
 |---|---|
-| Feature modules | Kode layanan, blog, lead, dan waitlist dikelompokkan menurut perubahan bisnis |
-| Service layer | Workflow form mempunyai satu pemilik urutan validasi, write, dan notifikasi |
-| Adapter | Provider email/anti-spam dapat diganti atau diberi test double tanpa mengubah workflow |
-| Composition | Halaman menyusun komponen kecil, dengan data yang diperlukan melalui props |
-| Explicit data access | Query menentukan izin, locale, field, dan status publik; tidak bergantung pada default SDK |
+| Feature modules | Schema, query, action, UI, dan test mengikuti fitur bisnis |
+| Service layer | Workflow berurutan |
+| Adapter | Provider mempunyai test double |
+| Composition | Halaman menyusun komponen dengan props terbatas |
+| Explicit data access | Locale, snapshot, kolom, dan izin jelas pada query |
 
-Dependency injection cukup melalui parameter fungsi atau adapter kecil saat ada
-efek eksternal yang perlu diuji. Tidak membuat DI container, generic CRUD service,
-atau hierarchy kelas sebagai prasyarat membangun fitur.
+Dependency injection cukup parameter fungsi/adapter kecil. Pengujian Payload lama tidak dihitung sebagai evidence arsitektur baru.
 
-- Unit: input kosong/salah, normalisasi, dan aturan bisnis tanpa SDK network.
-- Integrasi: izin Local API/REST, schema migration, write ke database test,
-  duplikasi bersamaan, serta email gagal setelah data tersimpan.
-- E2E: konsultasi, waitlist, bahasa, tema, dan alur admin melalui browser.
-- Operasional: production build, health/readiness, backup/restore, resource preview,
-  serta startup pada schema yang sudah dimigrasi.
+- Unit: environment, input, normalisasi, izin, pemetaan locale/cache.
+- Integrasi: migration bersih, koneksi terbatas waktu, signup ditolak, bootstrap konkuren, session/logout, lockout konkuren, Admin vs Editor, draft tidak bocor, duplikasi waitlist, email gagal setelah lead tersimpan.
+- E2E: konsultasi, waitlist, bahasa/tema, login/logout, edit/publish/preview, mini-CRM, ekspor dan penolakan Editor.
+- Operasional: build production, health/readiness, backup/restore, resource preview, migration terkontrol.
 
-Pada tahap ini arsitektur dinilai layak untuk scope Compro, tetapi kualitas kode,
-kompatibilitas dependency akhir, akses data yang sebenarnya, dan kapasitas VPS
-harus dibuktikan melalui implementasi dan pengujian. Dokumen ini tidak mengklaim
-aplikasi sudah siap production.
+Dokumen ini adalah target implementasi; versi dependency final, UI, keamanan akses yang sebenarnya dan kapasitas VPS harus dibuktikan setelah fondasi diganti.

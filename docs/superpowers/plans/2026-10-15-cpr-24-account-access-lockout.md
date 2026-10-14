@@ -10,7 +10,7 @@
 
 **Spec:** [Rancangan CPR-24 yang disetujui](../specs/2026-10-15-cpr-24-account-access-lockout-design.md). [PRD Rev. 2](../../prd/2026-10-14-company-profile-prd.md) §9.3 dan [CPR-24](https://linear.app/sineva-tech/issue/CPR-24/admin-kelola-pengguna-peran-admineditor-and-lockout-login).
 
-**Status:** spec telah disetujui; plan ini menunggu review dan pilihan metode eksekusi. Belum ada source fitur/migration CPR-24 yang dibuat. Base adalah `origin/main` pada `641d867d863010ccbc96780d9930335f837de5a2`; branch CPR-24 menggunakan worktree terisolasi yang sudah ada. Checkout utama memiliki perubahan dokumen lokal yang dipertahankan.
+**Status:** Spec dan plan disetujui Founder; metode Native dipilih. Implementasi berjalan dengan ledger per task. Base adalah `origin/main` pada `641d867d863010ccbc96780d9930335f837de5a2`; branch CPR-24 menggunakan worktree terisolasi yang sudah ada. Checkout utama memiliki perubahan dokumen lokal yang dipertahankan.
 
 ## Global Constraints
 

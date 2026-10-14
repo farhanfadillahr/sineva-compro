@@ -1,0 +1,12 @@
+assets/
+docs/
+exports/
+scripts/vectorize_logos.py
+node_modules/
+.next/
+.superpowers/
+coverage/
+package-lock.json
+src/payload-types.ts
+src/app/(payload)/
+src/migrations/

@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:17.11-bookworm
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Run npm run setup:env first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run npm run setup:env first}
+      POSTGRES_DB: ${POSTGRES_DB:?Run npm run setup:env first}
+    ports:
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  postgres-test:
+    image: postgres:17.11-bookworm
+    profiles: [test]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Run npm run setup:env first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run npm run setup:env first}
+      POSTGRES_DB: sineva_compro_app_test
+    ports:
+      - '127.0.0.1:${TEST_POSTGRES_PORT:-5433}:5432'
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  postgres_data:

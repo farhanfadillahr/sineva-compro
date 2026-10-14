@@ -1,6 +1,6 @@
 # CPR-24 — Account Access and Lockout Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Admin dapat mengelola akun Editor dengan otorisasi server, credential/session library yang atomik, serta lockout akun 15 menit setelah lima kegagalan login berturut-turut pada seluruh jalur HTTP login.
 
@@ -168,7 +168,7 @@ function changeEditorPassword(
 
 **Consumes:** `createDatabase`, `readTestEnv`, `createAuth`, schema auth fondasi. **Produces:** `LockoutState`, dua fungsi policy pada kontrak, tabel `authLockout`, dan `createAuthTestContext()` dengan fixture/cleanup nyata.
 
-- [ ] Tulis tes RED untuk threshold, lock tidak diperpanjang, expiry boundary dan reset sukses:
+- [x] Tulis tes RED untuk threshold, lock tidak diperpanjang, expiry boundary dan reset sukses:
 
 ```ts
 import { expect, it } from 'vitest'
@@ -197,8 +197,8 @@ it('clears failures on success but cannot clear an active lock', () => {
 })
 ```
 
-- [ ] Run `npm test -- tests/unit/auth-lockout.test.ts`; kedua tes harus gagal karena modul/perilaku baru belum ada.
-- [ ] Implementasikan policy murni: evaluasi expiry dengan `lockedUntil <= now`; threshold tepat 5; lock aktif tidak berubah; tidak membaca clock mesin di fungsi. Tambahkan schema berikut dan export melalui agregator:
+- [x] Run `npm test -- tests/unit/auth-lockout.test.ts`; kedua tes harus gagal karena modul/perilaku baru belum ada.
+- [x] Implementasikan policy murni: evaluasi expiry dengan `lockedUntil <= now`; threshold tepat 5; lock aktif tidak berubah; tidak membaca clock mesin di fungsi. Tambahkan schema berikut dan export melalui agregator:
 
 ```ts
 import { sql } from 'drizzle-orm'
@@ -218,7 +218,7 @@ export const authLockout = pgTable(
 )
 ```
 
-- [ ] Buat `createAuthTestContext()` berikut dengan `readTestEnv` dan satu `createDatabase`. Pembuatan akun tanpa headers hanya helper test trusted; tidak menambah jalur produksi. Setiap IP default memakai subnet dokumentasi IPv6 baru agar data rate-limit fixture file lain tidak mengganggu tes account lockout. Tes limiter memakai IP yang sama secara sengaja.
+- [x] Buat `createAuthTestContext()` berikut dengan `readTestEnv` dan satu `createDatabase`. Pembuatan akun tanpa headers hanya helper test trusted; tidak menambah jalur produksi. Setiap IP default memakai subnet dokumentasi IPv6 baru agar data rate-limit fixture file lain tidak mengganggu tes account lockout. Tes limiter memakai IP yang sama secara sengaja.
 
 ```ts
 import 'dotenv/config'
@@ -286,7 +286,7 @@ export async function createAuthTestContext() {
 }
 ```
 
-- [ ] Untuk mengimpor modul `server-only` dalam tes Node, alias hanya marker tersebut ke `node_modules/server-only/empty.js` pada config database/integration. Guard/session/library nyata tidak dimock. Contoh konfigurasi:
+- [x] Untuk mengimpor modul `server-only` dalam tes Node, alias hanya marker tersebut ke `node_modules/server-only/empty.js` pada config database/integration. Guard/session/library nyata tidak dimock. Contoh konfigurasi:
 
 ```ts
 import { fileURLToPath } from 'node:url'
@@ -295,8 +295,8 @@ const serverOnly = fileURLToPath(new URL('./node_modules/server-only/empty.js', 
 const resolve = { alias: { 'server-only': serverOnly } }
 ```
 
-- [ ] Run `npm run db:generate -- --name=auth_lockout`, periksa SQL hanya CREATE tabel/index/constraint baru; generator auth tetap tidak diubah. Run `npm run test:prepare` dua kali ke DB test. Tes schema harus membuktikan FK cascade untuk fixture, constraint menolak -1/6, timestamp timezone roundtrip dan tidak ada penghapusan tabel lama.
-- [ ] Run unit policy + suite database; commit `feat(auth): add persisted account lockout state (CPR-24)` dengan source/schema/test/migration task ini saja.
+- [x] Run `npm run db:generate -- --name=auth_lockout`, periksa SQL hanya CREATE tabel/index/constraint baru; generator auth tetap tidak diubah. Run `npm run test:prepare` dua kali ke DB test. Tes schema harus membuktikan FK cascade untuk fixture, constraint menolak -1/6, timestamp timezone roundtrip dan tidak ada penghapusan tabel lama.
+- [x] Run unit policy + suite database; commit `feat(auth): add persisted account lockout state (CPR-24)` dengan source/schema/test/migration task ini saja.
 
 ### Task 2: Login HTTP transaksional dan non-enumerasi
 
@@ -304,7 +304,7 @@ const resolve = { alias: { 'server-only': serverOnly } }
 
 **Consumes:** Task 1 policy/schema/fixture. **Produces:** `handlePasswordLogin` dan `AuthPolicy.beforeCreateSession`; handler HTTP login tidak mempunyai dispatch alternatif.
 
-- [ ] Tulis RED memakai DB/library nyata: empat kegagalan, kegagalan kelima, password benar tetap ditolak selama lock, reset sukses dan login sesudah expiry. Setiap request memakai IP test berbeda untuk membuktikan lockout akun tidak bergantung pada limit per IP:
+- [x] Tulis RED memakai DB/library nyata: empat kegagalan, kegagalan kelima, password benar tetap ditolak selama lock, reset sukses dan login sesudah expiry. Setiap request memakai IP test berbeda untuk membuktikan lockout akun tidak bergantung pada limit per IP:
 
 ```ts
 const context = await createAuthTestContext()
@@ -340,8 +340,8 @@ try {
 }
 ```
 
-- [ ] Run `npm run test:database -- tests/database/account-lockout.test.ts`; tes harus RED sebelum handler/policy dibuat.
-- [ ] Implementasikan `AuthPolicy` sebagai parameter optional ketiga factory. Hook tidak melepas guard ban plugin; ia hanya memanggil callback request-scoped sebelum session disimpan:
+- [x] Run `npm run test:database -- tests/database/account-lockout.test.ts`; tes harus RED sebelum handler/policy dibuat.
+- [x] Implementasikan `AuthPolicy` sebagai parameter optional ketiga factory. Hook tidak melepas guard ban plugin; ia hanya memanggil callback request-scoped sebelum session disimpan:
 
 ```ts
 // Di betterAuth options dalam createAuth(database, env, policy).
@@ -352,8 +352,8 @@ databaseHooks: policy?.beforeCreateSession ? {
 } : undefined,
 ```
 
-- [ ] Implementasikan parser body JSON maksimum 8 KiB menggunakan reader dengan penghentian setelah batas; validasi Content-Type, JSON object, email string ≤254 dan password string nonkosong ≤128. Normalisasi email; pertahankan hanya opsi library yang tervalidasi (`rememberMe` boolean dan `callbackURL` string ≤2048), tanpa menganggap callback dipercaya. Rebuild Request dengan body canonical dan headers/origin asli. JSON malformed/oversized ditolak 400/413 tanpa SQL counter; callback/origin tetap diverifikasi library. Tambahkan tes unit untuk seluruh kondisi, termasuk role/actorId tambahan yang ditolak.
-- [ ] Implementasikan envelope `database.transaction`: `SET LOCAL lock_timeout='5s'`; lookup user canonical `FOR UPDATE`; baca state + `clock_timestamp()` setelah lock didapat; evaluasi expiry; buat auth pada `tx` dengan hook untuk menolak session ketika state terkunci. Jalankan handler library pada semua credential attempt agar rate limit, CSRF dan pekerjaan password tetap berlaku. Contoh hook pada akun terkunci:
+- [x] Implementasikan parser body JSON maksimum 8 KiB menggunakan reader dengan penghentian setelah batas; validasi Content-Type, JSON object, email string ≤254 dan password string nonkosong ≤128. Normalisasi email; pertahankan hanya opsi library yang tervalidasi (`rememberMe` boolean dan `callbackURL` string ≤2048), tanpa menganggap callback dipercaya. Rebuild Request dengan body canonical dan headers/origin asli. JSON malformed/oversized ditolak 400/413 tanpa SQL counter; callback/origin tetap diverifikasi library. Tambahkan tes unit untuk seluruh kondisi, termasuk role/actorId tambahan yang ditolak.
+- [x] Implementasikan envelope `database.transaction`: `SET LOCAL lock_timeout='5s'`; lookup user canonical `FOR UPDATE`; baca state + `clock_timestamp()` setelah lock didapat; evaluasi expiry; buat auth pada `tx` dengan hook untuk menolak session ketika state terkunci. Jalankan handler library pada semua credential attempt agar rate limit, CSRF dan pekerjaan password tetap berlaku. Contoh hook pada akun terkunci:
 
 ```ts
 import { APIError } from 'better-auth/api'
@@ -372,13 +372,13 @@ const response = await scopedAuth.handler(normalizedRequest)
 
 `target`, `decision`, `tx` dan `normalizedRequest` berasal dari lookup/policy/parser pada step ini. Tidak memanggil handler dari pool lain di dalam transaksi dan tidak menulis/menjalankan session di luar envelope.
 
-- [ ] Periksa response clone tanpa mencetak body. Counter hanya berubah untuk code library `INVALID_EMAIL_OR_PASSWORD` pada akun dikenal, tidak terkunci dan tidak banned; sukses 200 mereset state. `BANNED_USER`/lock/invalid credential dinormalisasi menjadi JSON 401 `{code:'INVALID_EMAIL_OR_PASSWORD',message:'Invalid email or password'}` tanpa Set-Cookie. Rate limit 429, CSRF/origin 403, malformed 400 dan infrastructure error tidak menambah counter. Database/commit failure, termasuk response 5xx yang sudah ditangkap handler library, dikembalikan sebagai response aman 503, tanpa cookie sukses atau raw error. Log hanya kategori tetap.
-- [ ] Di route POST, dispatch `/sign-in/email` hanya ke envelope; GET/login POST lain tetap mengikuti allowlist fondasi. Signup/operator endpoints tetap tertutup. Tidak mengubah auth client untuk membuat endpoint kedua.
-- [ ] Tambahkan burst lima password salah secara konkuren: seluruh response 401 dan final state tepat 5/locked, tanpa session. Untuk password benar + kegagalan kelima konkuren dari state 4, hasil harus cocok dengan salah satu urutan serial sah: valid menang → 200, kemudian state 1/unlocked; salah menang → state 5/locked dan valid 401. Tidak menerima state locked dengan session baru dari request yang kalah setelah lock.
-- [ ] Tambahkan lock timeout dengan transaksi test yang menahan row target: request gagal aman, setelah lock dilepas request berikutnya berhasil diproses dan pool tetap dapat dipakai. Tambahkan trigger fixture yang menolak INSERT session untuk membuktikan tidak ada cookie/session parsial ketika library gagal; hapus trigger/function pada finally sebelum cleanup.
-- [ ] Tambahkan pemeriksaan rate limit tetap berlaku pada akun terkunci dan callback/origin invalid tidak memicu counter. Bandingkan status/body/Set-Cookie untuk unknown email, password salah, banned dan lock. Unknown email tidak membuat user/lockout row.
-- [ ] Untuk expiry fixture, set `locked_until` hanya pada ID test melalui clock SQL database, lalu assert nilainya sudah expired sebelum login. Jangan menunggu 15 menit atau mengirim Date ke kolom tanpa timezone.
-- [ ] Run suites DB dan HTTP bergantian pada build production; commit `feat(auth): enforce transactional login lockout (CPR-24)` setelah regresi library binding, nested transaction dan failure counter terbukti GREEN.
+- [x] Periksa response clone tanpa mencetak body. Counter hanya berubah untuk code library `INVALID_EMAIL_OR_PASSWORD` pada akun dikenal, tidak terkunci dan tidak banned; sukses 200 mereset state. `BANNED_USER`/lock/invalid credential dinormalisasi menjadi JSON 401 `{code:'INVALID_EMAIL_OR_PASSWORD',message:'Invalid email or password'}` tanpa Set-Cookie. Rate limit 429, CSRF/origin 403, malformed 400 dan infrastructure error tidak menambah counter. Database/commit failure, termasuk response 5xx yang sudah ditangkap handler library, dikembalikan sebagai response aman 503, tanpa cookie sukses atau raw error. Log hanya kategori tetap.
+- [x] Di route POST, dispatch `/sign-in/email` hanya ke envelope; GET/login POST lain tetap mengikuti allowlist fondasi. Signup/operator endpoints tetap tertutup. Tidak mengubah auth client untuk membuat endpoint kedua.
+- [x] Tambahkan burst lima password salah secara konkuren: seluruh response 401 dan final state tepat 5/locked, tanpa session. Untuk password benar + kegagalan kelima konkuren dari state 4, hasil harus cocok dengan salah satu urutan serial sah: valid menang → 200, kemudian state 1/unlocked; salah menang → state 5/locked dan valid 401. Tidak menerima state locked dengan session baru dari request yang kalah setelah lock.
+- [x] Tambahkan lock timeout dengan transaksi test yang menahan row target: request gagal aman, setelah lock dilepas request berikutnya berhasil diproses dan pool tetap dapat dipakai. Tambahkan trigger fixture yang menolak INSERT session untuk membuktikan tidak ada cookie/session parsial ketika library gagal; hapus trigger/function pada finally sebelum cleanup.
+- [x] Tambahkan pemeriksaan rate limit tetap berlaku pada akun terkunci dan callback/origin invalid tidak memicu counter. Bandingkan status/body/Set-Cookie untuk unknown email, password salah, banned dan lock. Unknown email tidak membuat user/lockout row.
+- [x] Untuk expiry fixture, set `locked_until` hanya pada ID test melalui clock SQL database, lalu assert nilainya sudah expired sebelum login. Jangan menunggu 15 menit atau mengirim Date ke kolom tanpa timezone.
+- [x] Run suites DB dan HTTP bergantian pada build production; commit `feat(auth): enforce transactional login lockout (CPR-24)` setelah regresi library binding, nested transaction dan failure counter terbukti GREEN.
 
 ### Task 3: Guard authoritative dan service Users atomik
 
@@ -386,7 +386,7 @@ const response = await scopedAuth.handler(normalizedRequest)
 
 **Consumes:** Factory auth berparameter policy, schema user/session/lockout dan fixture. **Produces:** `loadPrincipal`, `assertCapability`, DTO/error domain dan semua function Users pada kontrak bersama.
 
-- [ ] Tulis RED matrix Admin/Editor/anonim untuk query dan mutation nyata. Contoh pengujian target dan payload:
+- [x] Tulis RED matrix Admin/Editor/anonim untuk query dan mutation nyata. Contoh pengujian target dan payload:
 
 ```ts
 await expect(
@@ -414,8 +414,8 @@ await expect(
 
 `db`, `env`, identities dan headers diperoleh dari context Task 1. Buat fresh credential fixture untuk tiap mutation yang mengubah akses.
 
-- [ ] Run `npm run test:database -- tests/database/users-access.test.ts tests/database/users-mutations.test.ts` dan `npm test -- tests/unit/users-input.test.ts`; harus RED.
-- [ ] Definisikan `UsersServiceError` dengan constructor code/message/fieldErrors aman. Implementasikan lima parser pada kontrak dengan whitelist object berikut; `invalidInput()` membuat `new UsersServiceError('VALIDATION', 'Periksa kembali data yang Anda masukkan.')`, tanpa menyertakan value input:
+- [x] Run `npm run test:database -- tests/database/users-access.test.ts tests/database/users-mutations.test.ts` dan `npm test -- tests/unit/users-input.test.ts`; harus RED.
+- [x] Definisikan `UsersServiceError` dengan constructor code/message/fieldErrors aman. Implementasikan lima parser pada kontrak dengan whitelist object berikut; `invalidInput()` membuat `new UsersServiceError('VALIDATION', 'Periksa kembali data yang Anda masukkan.')`, tanpa menyertakan value input:
 
 ```ts
 function requireKeys(value: unknown, keys: readonly string[]): Record<string, unknown> {
@@ -437,14 +437,14 @@ export function parseCreateEditor(input: unknown): CreateEditorInput {
 
 Import `validateBootstrapInput` dari fitur auth; role selalu fixed Editor di service. Update menerima tepat userId/name/email dan menerapkan batas nama/email fondasi; status tepat userId/active boolean; password tepat userId/newPassword dengan batas 12–128 dan bukan whitespace. ID nonkosong ≤128; page 1..100000 dan pageSize default 20 dengan batas maksimum 50; search trim ≤100. SQL query selalu parameterized; pencarian `%`/`_` diperlakukan literal saat pengguna memasukkannya. Unit tests mencakup value non-string/File-like, extra keys, duplicate-field FormData di adapter, dan batas ukuran.
 
-- [ ] `loadPrincipal` memanggil `createAuth(database, env).api.getSession` dengan `disableCookieCache:true`, menolak user banned/role tak dikenal dan mengeluarkan Principal terbatas. `assertCapability` melempar `AccessDeniedError` milik fitur auth dengan UNAUTHORIZED/FORBIDDEN; tidak mengimpor error Users sehingga tidak membuat dependency terbalik. Adapter Next tetap mengarahkan anonim ke login; service framework-independent memakai headers nyata, bukan objek Principal client. Role yang berubah pada DB berlaku pada request berikutnya.
-- [ ] Query Users mengautentikasi sebelum SELECT. Daftar memfilter role dikenal sebelum menghitung count dan memproyeksikan DTO, dengan pagination stabil menurut createdAt/id; tidak melakukan cast role asing menjadi Editor. `getEditor` menolak target bukan Editor; Admin boleh terlihat read-only di daftar.
-- [ ] Pada mutation, gunakan satu transaksi/adapter library. Dapatkan actor dari session, kunci row actor/target dengan urutan ID konsisten, lalu konfirmasi ulang role/banned actor dan role Editor target dari rows yang dikunci. Login Task 2 mengunci row target yang sama. Create memegang actor lock dan mengandalkan constraint unique email untuk dua request bersamaan.
-- [ ] Gunakan API server library dengan headers aktor nyata dan body whitelist: createUser(role Editor), adminUpdateUser(name/email), banUser/unbanUser dan setUserPassword. Setelah email/password/status berubah, panggil revokeUserSessions di dalam transaksi sebelum commit; nama saja tidak membutuhkan logout. Tidak memasukkan data arbitrary, role/banned/password lewat adminUpdateUser, atau memakai API operator tanpa headers di service produksi.
-- [ ] Tambahkan duplicate-email race: tepat satu Editor dan credential dibuat. Paksa credential insert gagal dengan trigger database test dan assert tidak ada user parsial. Untuk password change, paksa DELETE session gagal dan assert rollback password + revokasi: password lama/session lama masih konsisten; tidak ada credential baru dengan session lama yang tertinggal. Trigger/function hanya DB test dan dibersihkan pada finally.
-- [ ] Tambahkan ban/password change bersamaan dengan login. Setelah ban commit, tidak ada session valid dan login gagal; setelah password change commit, tidak ada session dengan password lama yang dibuat sesudah revokasi. Session yang dibuat sebelum mutation ikut dicabut. Aktif kembali tidak menghidupkan cookie lama; email lama tidak dapat login setelah update.
-- [ ] Uji actor/session expired/revoked, role berubah dan akun nonaktif; Admin/self/role palsu tidak termodifikasi. Uji capability Leads/Waitlist ditolak Editor melalui guard bersama tanpa membuat endpoint data yang belum ada. Tangkap console pada forced failure untuk memastikan password/token/query parameters tidak dicetak.
-- [ ] Run unit/DB suites, lint/typecheck; commit `feat(users): add authorized editor management services (CPR-24)`.
+- [x] `loadPrincipal` memanggil `createAuth(database, env).api.getSession` dengan `disableCookieCache:true`, menolak user banned/role tak dikenal dan mengeluarkan Principal terbatas. `assertCapability` melempar `AccessDeniedError` milik fitur auth dengan UNAUTHORIZED/FORBIDDEN; tidak mengimpor error Users sehingga tidak membuat dependency terbalik. Adapter Next tetap mengarahkan anonim ke login; service framework-independent memakai headers nyata, bukan objek Principal client. Role yang berubah pada DB berlaku pada request berikutnya.
+- [x] Query Users mengautentikasi sebelum SELECT. Daftar memfilter role dikenal sebelum menghitung count dan memproyeksikan DTO, dengan pagination stabil menurut createdAt/id; tidak melakukan cast role asing menjadi Editor. `getEditor` menolak target bukan Editor; Admin boleh terlihat read-only di daftar.
+- [x] Pada mutation, gunakan satu transaksi/adapter library. Dapatkan actor dari session, kunci row actor/target dengan urutan ID konsisten, lalu konfirmasi ulang role/banned actor dan role Editor target dari rows yang dikunci. Login Task 2 mengunci row target yang sama. Create memegang actor lock dan mengandalkan constraint unique email untuk dua request bersamaan.
+- [x] Gunakan API server library dengan headers aktor nyata dan body whitelist: createUser(role Editor), adminUpdateUser(name/email), banUser/unbanUser dan setUserPassword. Setelah email/password/status berubah, panggil revokeUserSessions di dalam transaksi sebelum commit; nama saja tidak membutuhkan logout. Tidak memasukkan data arbitrary, role/banned/password lewat adminUpdateUser, atau memakai API operator tanpa headers di service produksi.
+- [x] Tambahkan duplicate-email race: tepat satu Editor dan credential dibuat. Paksa credential insert gagal dengan trigger database test dan assert tidak ada user parsial. Untuk password change, paksa DELETE session gagal dan assert rollback password + revokasi: password lama/session lama masih konsisten; tidak ada credential baru dengan session lama yang tertinggal. Trigger/function hanya DB test dan dibersihkan pada finally.
+- [x] Tambahkan ban/password change bersamaan dengan login. Setelah ban commit, tidak ada session valid dan login gagal; setelah password change commit, tidak ada session dengan password lama yang dibuat sesudah revokasi. Session yang dibuat sebelum mutation ikut dicabut. Aktif kembali tidak menghidupkan cookie lama; email lama tidak dapat login setelah update.
+- [x] Uji actor/session expired/revoked, role berubah dan akun nonaktif; Admin/self/role palsu tidak termodifikasi. Uji capability Leads/Waitlist ditolak Editor melalui guard bersama tanpa membuat endpoint data yang belum ada. Tangkap console pada forced failure untuk memastikan password/token/query parameters tidak dicetak.
+- [x] Run unit/DB suites, lint/typecheck; commit `feat(users): add authorized editor management services (CPR-24)`.
 
 ### Task 4: Halaman dan Server Actions Users
 
@@ -452,10 +452,10 @@ Import `validateBootstrapInput` dari fitur auth; role selalu fixed Editor di ser
 
 **Consumes:** Guard/query/service/DTO Task 3. **Produces:** daftar/tambah/edit Editor yang bekerja lewat Server Actions, dengan menu sesuai izin dan penolakan server.
 
-- [ ] Tulis RED untuk action nyata dengan request headers fixture dari mocked `next/headers`, sementara service/DB/auth tetap nyata. Panggil exported action langsung dengan FormData role/id target palsu dan Editor/anonim: state error, tidak ada mutation. Header mocking hanya menyediakan request context; tidak memalsukan role/Principal. Tambahkan HTTP production anon/Editor tidak mendapat form/detail Users dan Admin mendapat halaman/noindex tanpa hash/token/password.
-- [ ] Read panduan Next terpasang `node_modules/next/dist/docs/01-app/02-guides/server-actions.md` dan `03-api-reference/04-functions/not-found.md` sebelum source UI/action. Jangan mengaktifkan authInterrupts eksperimental hanya untuk penolakan route.
-- [ ] Definisikan exported action `(previousState: UserActionState, formData: FormData): Promise<UserActionState>` untuk create/update/status/password. Ambil `await headers()` di setiap action; parse field yang sah, tolak extra keys aplikasi seperti role/actorId/emailVerified, dan abaikan hanya metadata framework `$ACTION_` yang tidak diteruskan ke service. Service melakukan guard lagi. Return hanya message/fieldErrors/userId; tidak mengembalikan credential atau raw Error.
-- [ ] Terapkan pola adapter berikut untuk create; action lain memanggil service pemiliknya dengan aturan state yang sama:
+- [x] Tulis RED untuk action nyata dengan request headers fixture dari mocked `next/headers`, sementara service/DB/auth tetap nyata. Panggil exported action langsung dengan FormData role/id target palsu dan Editor/anonim: state error, tidak ada mutation. Header mocking hanya menyediakan request context; tidak memalsukan role/Principal. Tambahkan HTTP production anon/Editor tidak mendapat form/detail Users dan Admin mendapat halaman/noindex tanpa hash/token/password.
+- [x] Read panduan Next terpasang `node_modules/next/dist/docs/01-app/02-guides/server-actions.md` dan `03-api-reference/04-functions/not-found.md` sebelum source UI/action. Jangan mengaktifkan authInterrupts eksperimental hanya untuk penolakan route.
+- [x] Definisikan exported action `(previousState: UserActionState, formData: FormData): Promise<UserActionState>` untuk create/update/status/password. Ambil `await headers()` di setiap action; parse field yang sah, tolak extra keys aplikasi seperti role/actorId/emailVerified, dan abaikan hanya metadata framework `$ACTION_` yang tidak diteruskan ke service. Service melakukan guard lagi. Return hanya message/fieldErrors/userId; tidak mengembalikan credential atau raw Error.
+- [x] Terapkan pola adapter berikut untuk create; action lain memanggil service pemiliknya dengan aturan state yang sama:
 
 ```ts
 'use server'
@@ -484,10 +484,10 @@ export async function createEditorAction(
 
 `readCreateEditorForm` dibuat pada adapter action task ini; ia memeriksa allowed keys dan field duplicate sebelum memanggil `parseCreateEditor`. `readUpdateEditorForm`, `readEditorStatusForm` dan `readEditorPasswordForm` memakai parser pemilik pada kontrak. Metadata `$ACTION_` diabaikan saat membuat object aplikasi. `toUserActionState` dibuat di `users/errors.ts`: maps `AccessDeniedError`/`UsersServiceError`, unknown error → message kategori tetap; tidak mencetak error. Action ini tidak memanggil redirect/notFound di dalam try/catch; navigasi client setelah sukses memakai userId yang aman.
 
-- [ ] Halaman memanggil query berizin sebelum merender data. Anon → redirect login; Forbidden/not-found target → `notFound()` tanpa menelan interrupt; status response streamed tidak dijadikan satu-satunya bukti keamanan. Cek body tidak mengandung data/form target. Protected layout memakai Principal untuk menampilkan menu Users hanya saat `can(principal,'users:manage')`; layout tidak menggantikan guard query/action.
-- [ ] Form client memakai `useActionState`, label terhubung, password autocomplete new-password, error `role=alert`, tombol pending, dan reset password input setelah sukses. Separate form status/password mengurangi kemungkinan perubahan tak sengaja. Akun Admin hanya read-only; form Editor tidak mempunyai dropdown role. Table menampilkan status/peran/search/pagination serta empty state.
-- [ ] Tambahkan CSS memakai warna/typography/token shell yang sudah ada, tanpa desain marketing baru atau perubahan logo. Form/table harus dapat dibaca pada 390 px dan 1440 px; tidak membocorkan data melalui attributes/title/serialized props. Render password kosong pada SSR.
-- [ ] Run action/HTTP tests, lint/typecheck/build; commit `feat(admin): add editor account management UI (CPR-24)`.
+- [x] Halaman memanggil query berizin sebelum merender data. Anon → redirect login; Forbidden/not-found target → `notFound()` tanpa menelan interrupt; status response streamed tidak dijadikan satu-satunya bukti keamanan. Cek body tidak mengandung data/form target. Protected layout memakai Principal untuk menampilkan menu Users hanya saat `can(principal,'users:manage')`; layout tidak menggantikan guard query/action.
+- [x] Form client memakai `useActionState`, label terhubung, password autocomplete new-password, error `role=alert`, tombol pending, dan reset password input setelah sukses. Separate form status/password mengurangi kemungkinan perubahan tak sengaja. Akun Admin hanya read-only; form Editor tidak mempunyai dropdown role. Table menampilkan status/peran/search/pagination serta empty state.
+- [x] Tambahkan CSS memakai warna/typography/token shell yang sudah ada, tanpa desain marketing baru atau perubahan logo. Form/table harus dapat dibaca pada 390 px dan 1440 px; tidak membocorkan data melalui attributes/title/serialized props. Render password kosong pada SSR.
+- [x] Run action/HTTP tests, lint/typecheck/build; commit `feat(admin): add editor account management UI (CPR-24)`.
 
 ### Task 5: Acceptance production, review dan handoff
 
@@ -495,12 +495,12 @@ export async function createEditorAction(
 
 **Consumes:** hasil Task 1–4. **Produces:** evidence terikat revision yang diuji, review independen dan PR yang layak direview.
 
-- [ ] Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format:check`, `npm run db:check`, lalu `npm run test:prepare`, `npm run test:database`. DB dan HTTP tidak dijalankan paralel. Periksa `auth:generate` tidak menghapus tabel aplikasi atau mengubah schema library; `db:generate` setelah migration final no-op.
-- [ ] Build production setelah menghentikan server preview terkait secara terkontrol; start `npm run test:server -- --production`, lalu `npm run test:integration`. Runtime harus menunjuk DB test dan origin auth sama dengan URL tes. Request tidak memakai database developer sebagai fallback.
+- [x] Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format:check`, `npm run db:check`, lalu `npm run test:prepare`, `npm run test:database`. DB dan HTTP tidak dijalankan paralel. Periksa `auth:generate` tidak menghapus tabel aplikasi atau mengubah schema library; `db:generate` setelah migration final no-op.
+- [x] Build production setelah menghentikan server preview terkait secara terkontrol; start `npm run test:server -- --production`, lalu `npm run test:integration`. Runtime harus menunjuk DB test dan origin auth sama dengan URL tes. Request tidak memakai database developer sebagai fallback.
 - [ ] Browser pada origin yang diizinkan: buat Admin fixture melalui operator; Admin membuat Editor, mengubah nama/email, menonaktifkan, mengaktifkan dan mengganti password. Login Editor, cek menu Users tidak ada dan akses langsung ditolak. Uji login/logout serta lima password salah → password benar masih gagal → expiry fixture via DB test → login berhasil. Jika IP limiter ikut menolak, laporkan sebagai limiter; gunakan tes HTTP dengan IP test berbeda sebagai bukti threshold akun. Tidak menonaktifkan limiter/CSRF dalam source untuk memperoleh hasil GREEN.
-- [ ] Periksa form/table pada 390×844 dan 1440×1000, label/fokus/error/loading, noindex dan console/hydration. Error JavaScript/hydration tidak boleh tersisa; respons HTTP 401/429 yang sengaja dipicu dicatat sebagai hasil negatif yang diharapkan. Screenshot tanpa input password/token disimpan sebagai bukti chat. Pulihkan viewport dan bersihkan hanya fixture milik pemeriksaan.
-- [ ] Inventaris database developer sebelum migration aditif. Jalankan migration lokal secara eksplisit; pertahankan database/volume lama. README menjelaskan bootstrap Admin, pengelolaan Editor, batas auth, lockout/counter, dan bahwa invite/forgot-password email belum tersedia. Bukti mencatat commands, counts, revision dan keterbatasan yang nyata.
-- [ ] Fresh whole-branch reviewer memeriksa transaksi/urutan lock, semua jalur login, otorisasi action/query, session revocation, payload whitelisting dan redaksi log. Reproduksi temuan penting dengan tes RED sebelum perbaikan; jalankan regression GREEN dan suite relevan. Jangan mengklaim review selesai dari laporan parsial.
+- [x] Periksa form/table pada 390×844 dan 1440×1000, label/fokus/error/loading, noindex dan console/hydration. Error JavaScript/hydration tidak boleh tersisa; respons HTTP 401/429 yang sengaja dipicu dicatat sebagai hasil negatif yang diharapkan. Screenshot tanpa input password/token disimpan sebagai bukti chat. Pulihkan viewport dan bersihkan hanya fixture milik pemeriksaan.
+- [x] Inventaris database developer sebelum migration aditif. Jalankan migration lokal secara eksplisit; pertahankan database/volume lama. README menjelaskan bootstrap Admin, pengelolaan Editor, batas auth, lockout/counter, dan bahwa invite/forgot-password email belum tersedia. Bukti mencatat commands, counts, revision dan keterbatasan yang nyata.
+- [x] Fresh whole-branch reviewer memeriksa transaksi/urutan lock, semua jalur login, otorisasi action/query, session revocation, payload whitelisting dan redaksi log. Reproduksi temuan penting dengan tes RED sebelum perbaikan; jalankan regression GREEN dan suite relevan. Jangan mengklaim review selesai dari laporan parsial.
 - [ ] Setelah seluruh acceptance lulus, commit/push dan buat/update PR dengan judul `CPR-24 | [Admin] Kelola Editor dan lockout login`; attach PR ke chat. Linear mencentang hanya acceptance yang mempunyai bukti; status tetap In Progress sampai integrasi. Tidak merge/deploy tanpa instruksi user.
 
 ## Self-review plan

@@ -32,7 +32,7 @@ export async function handlePasswordLogin(
       const decision = evaluateLockout(stored ?? { failedAttempts: 0, lockedUntil: null }, now)
       const scopedAuth = createAuth(tx, env, {
         beforeCreateSession: async (userId) => {
-          if (decision.locked && target?.id === userId)
+          if (!target || target.id !== userId || decision.locked)
             throw new APIError('UNAUTHORIZED', {
               code: 'INVALID_EMAIL_OR_PASSWORD',
               message: 'Invalid email or password',

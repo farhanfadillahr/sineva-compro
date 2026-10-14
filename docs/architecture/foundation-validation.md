@@ -22,8 +22,11 @@ merge atau deployment.
 - Lint, typecheck, dan format check lulus setelah instalasi ulang.
 - PNG sumber logo sama dengan base commit `393b487`.
 
-Build production dan HTTP production sedang diverifikasi; hasil final harus
-dicatat sebelum acceptance tersebut dinyatakan terpenuhi.
+- Build production lulus: frontend diprerender statis, admin dan REST API dinamis.
+  Build perlu dijalankan di luar sandbox Codex agar IPC compiler dapat bekerja.
+
+- HTTP integration production: 4/4 lulus terhadap database test; `/` dan `/admin`
+  200, read/create Users anonim 403. Waktu suite sekitar 0,86 detik.
 
 ## Pemeriksaan UI yang masih diperlukan
 

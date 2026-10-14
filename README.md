@@ -39,8 +39,9 @@ menunggu kombinasi plugin yang kompatibel, tanpa mengabaikan peer dependencies.
 
 Audit 14 Oktober 2026: `npm audit --omit=dev` mencatat lima temuan **moderate**
 pada jalur `drizzle-kit → @esbuild-kit → esbuild`, tanpa temuan high/critical.
-Advisory tersebut terkait server development esbuild; aplikasi ini tidak
-menjalankan server tersebut. Audit seluruh dependency juga mencatat lima temuan
+[Advisory tersebut](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99)
+terkait server development esbuild; aplikasi ini tidak menjalankan server tersebut.
+Audit seluruh dependency juga mencatat lima temuan
 **high** pada jalur glob ESLint (`braces`), yang hanya digunakan untuk lint atas
 source repo. Patch upstream yang kompatibel belum tersedia; rekomendasi audit
 berupa downgrade framework tidak diterapkan. Evaluasi lagi saat upgrade dependency;

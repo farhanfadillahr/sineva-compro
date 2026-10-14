@@ -1,0 +1,64 @@
+{
+  "figma": "https://www.figma.com/design/vdG8pTacFcbDnEUb8cjBDM",
+  "method": "Alpha contour tracing + fitted cubic B\u00e9zier paths; original wordmark outlined",
+  "contourSimplificationSourcePixels": 0.2,
+  "curveFittingSourcePixels": 0.3,
+  "originalCanvas": [
+    5225,
+    5225
+  ],
+  "assets": [
+    {
+      "source": "source/Sineva_Logo.png",
+      "files": [
+        "svg/sineva-symbol-original.svg",
+        "svg/sineva-symbol-dark.svg"
+      ],
+      "curves": 3404,
+      "geometrySha256": "09e9df7204ab091d3f83033eb4057579086009bdafacc56a979a3e40049730ad",
+      "sourceSha256": "fc9ecc04eac409593fe9be56c8e98cbe28c5b02f6edef0df14282cb0ac5d6ed7",
+      "verification": {
+        "silhouetteIoU": 0.999688513979387,
+        "interiorRgbMeanAbsoluteError": 0.15256941479063352,
+        "interiorRgbMaxAbsoluteError": 1.0,
+        "originalDarkGeometryIdentical": true,
+        "originalDarkRenderedAlphaIdentical": true,
+        "svgBytes": 182009,
+        "minimumDarkContrastOn0B1620": 8.7841815380991
+      }
+    },
+    {
+      "source": "source/Sineva_Stacked_Wordmark_With_Logo.png",
+      "files": [
+        "svg/sineva-stacked-original.svg",
+        "svg/sineva-stacked-dark.svg"
+      ],
+      "curves": 1973,
+      "geometrySha256": "8f59a4d36ed03c8404312fc47fc2085330dbd8a0cef340627fdf02fc7837f563",
+      "sourceSha256": "9c9cf9ce08ac42b4fa0d5d74e71da7e5698b39f6c5ea8538b25518a472a3fa65",
+      "verification": {
+        "silhouetteIoU": 0.9992078653566174,
+        "interiorRgbMeanAbsoluteError": 0.13615090195028387,
+        "interiorRgbMaxAbsoluteError": 2.0,
+        "originalDarkGeometryIdentical": true,
+        "originalDarkRenderedAlphaIdentical": true,
+        "svgBytes": 110090,
+        "minimumDarkContrastOn0B1620": 8.281890089646922
+      }
+    }
+  ],
+  "figmaBoard": "https://www.figma.com/design/vdG8pTacFcbDnEUb8cjBDM?node-id=7-2",
+  "figmaVerification": {
+    "originalDarkGeometryIdentical": true,
+    "allAssetFramesTransparent": true,
+    "vectorLayers": 6,
+    "rasterImageLayers": 0,
+    "assetNodeIds": [
+      "8:2",
+      "8:4",
+      "10:2",
+      "10:5"
+    ]
+  },
+  "assetRoot": ".."
+}

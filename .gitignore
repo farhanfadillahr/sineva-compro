@@ -1,0 +1,6 @@
+# Download packages are generated from the versioned logo assets.
+/exports/
+
+# Python tracing script cache.
+__pycache__/
+*.pyc

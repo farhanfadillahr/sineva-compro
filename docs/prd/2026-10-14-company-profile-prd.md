@@ -22,7 +22,7 @@ Website tampil dalam dua bahasa (Indonesia dan Inggris) sejak hari pertama. Kont
 ## 2. Latar belakang
 
 - Sineva Tech belum punya kehadiran online. Domain, portofolio, dan legalitas usaha belum ada.
-- Logo sudah ada di folder `assets/` repo ini: `Sineva_Logo.png` (simbol) dan `Sineva_Stacked_Wordmark_With_Logo.png` (simbol + tulisan "Sineva"). Keduanya PNG transparan 5225×5225 px. Warnanya gradasi teal dari ±`#009EA6` (terang) ke ±`#08404D` (tua). Versi vektor (SVG) belum tersedia.
+- Logo sumber ada di folder `assets/brand/logos/source/` repo ini: `Sineva_Logo.png` (simbol) dan `Sineva_Stacked_Wordmark_With_Logo.png` (simbol + tulisan "Sineva"). Keduanya PNG transparan 5225×5225 px. Warnanya gradasi teal dari ±`#009EA6` (terang) ke ±`#08404D` (tua). File vektor dari pembuat tidak tersedia (jawaban Founder untuk Q7). Hasil tracing SVG dan PNG transparan versi warna asli serta dark mode tersedia di [`assets/brand/logos/`](../../assets/brand/logos/README.md) dan [Figma](https://www.figma.com/design/vdG8pTacFcbDnEUb8cjBDM?node-id=7-2); bentuk dan susunan mengikuti sumber, kedua varian hanya berbeda warna.
 - Tanpa portofolio klien, kredibilitas dibangun dari **2–3 proyek showcase internal** yang bisa dicoba langsung.
 - Produk chatbot dikembangkan terpisah dan kemungkinan belum siap saat Compro diluncurkan. Karena itu Compro hanya menampilkan chatbot sebagai produk yang "segera hadir".
 - Pengerjaan dilakukan oleh tim campuran: Founder bersama Claude, ditambah anggota tim atau freelancer. Karena itu setiap pekerjaan harus punya acceptance criteria yang jelas.
@@ -403,7 +403,7 @@ Konvensi tiket Linear: `CPR-{nomor}` diberikan otomatis oleh Linear, dan judul t
 | Beban operasional VPS | Downtime atau kehilangan data | Backup otomatis + uji restore, uptime monitor eksternal, update keamanan otomatis |
 | Spam di form | Inbox penuh, data kotor | Honeypot + Turnstile + rate limit |
 | Perubahan versi Payload/Next.js | Build rusak | Versi dikunci, upgrade lewat PR terpisah |
-| Logo hanya tersedia sebagai PNG raster berukuran besar | Logo buram atau berat dimuat; tulisan logo tidak terbaca di mode gelap | Minta file vektor dari pembuat logo (Q7). Kalau tidak ada, logo di-trace ulang ke SVG. Buat varian untuk latar gelap |
+| Penggunaan logo warna asli di latar gelap | Tulisan logo tidak terbaca di mode gelap | Gunakan SVG varian dark mode di `assets/brand/logos/svg/`. Tracing logo dan varian terang sudah tersedia; Q7 terjawab |
 | Setiap komponen harus dirancang dan diuji di dua tema | Pekerjaan desain dan QA bertambah | Warna hanya lewat token tema (tanpa hardcode), axe dijalankan di kedua tema |
 
 ## 18. Catatan keputusan
@@ -431,4 +431,8 @@ Konvensi tiket Linear: `CPR-{nomor}` diberikan otomatis oleh Linear, dan judul t
 | Q4 | Topik 2–3 showcase. Usulan: (a) chatbot FAQ & booking untuk klinik fiktif, butuh `CBT`; (b) dashboard pesanan WhatsApp untuk UMKM F&B; (c) website Sineva Tech ini sendiri sebagai studi kasus | Founder | awal M1 |
 | Q5 | Desain UI dibuat di Figma dulu atau langsung di kode | Founder | awal M1 |
 | Q6 | Siapa yang mereview teks Kebijakan Privasi dari sisi legal | Founder | sebelum M4 |
-| Q7 | Apakah ada file vektor logo (SVG/AI/Figma)? Kalau tidak ada, logo di-trace ulang ke SVG | Founder | awal M1 |
+
+**Q7 terjawab — 14 Oktober 2026:** Founder mengonfirmasi tidak ada file vektor
+dari pembuat logo. Logo telah di-trace ke SVG dan dimasukkan ke Figma, berikut
+versi terang untuk dark mode. Path kedua varian identik; hanya warna yang berbeda.
+Aset dan hasil pemeriksaan tersedia di [`assets/brand/logos/`](../../assets/brand/logos/README.md).

@@ -6,12 +6,26 @@ import type { readServerEnv } from '../../env/server'
 import type { Database, DatabaseTransaction } from '../db/connection'
 import * as schema from '../db/schema'
 
+export type AuthPolicy = { beforeCreateSession?: (userId: string) => Promise<void> }
+
 export function createAuth(
   database: Database | DatabaseTransaction,
   env: ReturnType<typeof readServerEnv>,
+  policy?: AuthPolicy,
 ) {
   return betterAuth({
     appName: 'Sineva Tech',
+    databaseHooks: policy?.beforeCreateSession
+      ? {
+          session: {
+            create: {
+              before: async (session) => {
+                await policy.beforeCreateSession!(session.userId)
+              },
+            },
+          },
+        }
+      : undefined,
     baseURL: env.authUrl,
     secret: env.authSecret,
     trustedOrigins: [env.authUrl],
@@ -32,7 +46,7 @@ export function createAuth(
       maxPasswordLength: 128,
     },
     session: { expiresIn: 8 * 60 * 60, updateAge: 60 * 60, cookieCache: { enabled: false } },
-    advanced: { cookiePrefix: 'sineva' },
+    advanced: { cookiePrefix: 'sineva', disableOriginCheck: false, disableCSRFCheck: false },
     rateLimit: {
       enabled: true,
       storage: 'database',

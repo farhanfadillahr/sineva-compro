@@ -19,24 +19,25 @@
     "test:integration": "vitest run --config vitest.integration.config.mts",
     "test:database": "vitest run --config vitest.database.config.mts",
     "setup:env": "node scripts/setup-env.mjs",
-    "payload": "payload",
-    "generate:types": "payload generate:types",
-    "generate:importmap": "payload generate:importmap",
-    "db:migrate": "payload migrate",
-    "db:migrate:create": "payload migrate:create",
-    "db:migrate:status": "payload migrate:status"
+    "auth:generate": "auth generate --config src/lib/auth/config.ts --output src/features/auth/schema.ts --yes && prettier --write src/features/auth/schema.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
+    "test:prepare": "tsx scripts/test-runtime.ts prepare",
+    "test:server": "tsx scripts/test-runtime.ts server"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.90.2",
-    "@payloadcms/next": "3.90.2",
-    "@payloadcms/ui": "3.90.2",
     "dotenv": "16.6.1",
-    "graphql": "16.14.2",
     "next": "16.4.0",
     "next-intl": "4.14.9",
-    "payload": "3.90.2",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "better-auth": "1.7.7",
+    "@better-auth/drizzle-adapter": "1.7.7",
+    "drizzle-orm": "0.45.4",
+    "pg": "8.23.1",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
@@ -52,15 +53,10 @@
     "tailwindcss": "4.3.3",
     "typescript": "5.7.3",
     "vitest": "4.1.11",
-    "yaml": "2.9.1"
-  },
-  "overrides": {
-    "payload": {
-      "undici": "7.29.1"
-    },
-    "@payloadcms/next": {
-      "sass": "1.105.1"
-    },
-    "dompurify": "3.4.17"
+    "yaml": "2.9.1",
+    "auth": "1.7.7",
+    "drizzle-kit": "0.31.11",
+    "@types/pg": "8.23.1",
+    "tsx": "4.23.15"
   }
 }

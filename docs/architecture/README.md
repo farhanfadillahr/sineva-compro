@@ -1,10 +1,10 @@
 # Arsitektur Sineva Compro — admin custom
 
-**Tanggal:** 14 Oktober 2026. **Status:** arah produk disetujui Founder; rancangan pengganti belum diimplementasikan.
+**Tanggal:** 14–15 Oktober 2026. **Status:** arah produk disetujui Founder; fondasi pengganti teruji di salinan kerja, review independen selesai dan verifikasi browser production lokal lulus. Publikasi source/metadata PR masih tertunda.
 
 **Acuan:** [PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [keputusan arsitektur](decisions/2026-10-14-custom-admin.md), dan [rencana CPR-7](../superpowers/plans/2026-10-14-cpr-7-foundation.md).
 
-Fondasi pada commit `a7f00fb` dan draft PR #1 masih menggunakan Payload. [Hasil verifikasi lama](foundation-validation.md) hanya berlaku untuk fondasi tersebut. Penggantian source, dependency, schema, dan test belum dilakukan dalam revisi dokumentasi ini.
+Fondasi pada commit `a7f00fb` dan draft PR #1 masih menggunakan Payload. [Hasil verifikasi lama](foundation-validation.md) hanya berlaku untuk fondasi tersebut. Source, dependency, schema dan test pengganti kini tersedia di salinan kerja branch CPR-7, belum di-commit/push. Bukti baru dicatat di [verifikasi custom](custom-admin-foundation-validation.md); bukti historis tetap terpisah.
 
 ## 1. Arsitektur sistem
 

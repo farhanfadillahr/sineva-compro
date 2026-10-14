@@ -1,6 +1,6 @@
 # ADR — Mengganti headless CMS dengan admin custom
 
-**Tanggal:** 14 Oktober 2026. **Status:** keputusan produk disetujui Founder; implementasi pengganti belum dimulai.
+**Tanggal:** 14 Oktober 2026. **Status:** keputusan produk disetujui Founder; implementasi fondasi pengganti berjalan pada salinan kerja CPR-7.
 
 ## Keputusan
 
@@ -10,7 +10,7 @@ Website publik dan admin `/admin` berada dalam satu aplikasi Next.js modular mon
 
 Library rancangan: Drizzle ORM + node-postgres untuk data/migration dan Better Auth untuk autentikasi melalui adapter Drizzle. Library tersebut tidak menyediakan panel CMS; schema domain, UI, kebijakan Admin/Editor, bootstrap operator dan lockout menjadi tanggung jawab aplikasi. [Drizzle migrations](https://orm.drizzle.team/docs/migrations), [Better Auth Next.js](https://better-auth.com/docs/integrations/next), [adapter Drizzle](https://better-auth.com/docs/adapters/drizzle).
 
-Library dipilih sebagai keputusan teknis rancangan, bukan klaim bahwa Founder memilih merek library atau dependency telah terpasang. Versi stabil yang kompatibel dan advisory diperiksa sebelum manifest dikunci.
+Library dipilih sebagai keputusan teknis rancangan, bukan klaim bahwa Founder memilih merek library. Library terpin telah dipasang pada salinan kerja implementasi; bukan berarti admin konten lengkap sudah tersedia. Versi stabil yang kompatibel dan advisory diperiksa sebelum manifest dikunci.
 
 ## Konsekuensi
 
@@ -26,7 +26,7 @@ Fondasi lama ada pada commit `a7f00fb`, draft [PR #1](https://github.com/farhanf
 
 CPR-7 menginventarisasi data, menghapus integrasi/dependency/generated files Payload, membuat migration aplikasi, lalu membuktikan database/session dan shell admin custom. Tidak otomatis menghapus database/volume/data developer. Bila data perlu dipertahankan, gunakan database pengganti dengan export-import/pemetaan yang direview. Password hash/session Payload tidak diasumsikan kompatibel dengan Better Auth.
 
-Revisi dokumen ini tidak menjalankan perubahan source, instalasi library, migration, merge atau deploy.
+Catatan revisi awal hanya mengubah dokumen. Eksekusi CPR-7 berikutnya telah mengganti source/dependency serta menerapkan migration pada database aplikasi lokal yang baru, tanpa menghapus database lama. Belum commit/push, merge atau deploy implementasi pengganti.
 
 ## Acuan
 

@@ -19,7 +19,7 @@ Website company profile ("Compro") v1 punya satu tugas utama: **mengubah pengunj
 
 Website tampil dalam dua bahasa (Indonesia dan Inggris) sejak hari pertama. Konten, blog, dan lead dikelola lewat **admin custom di `/admin` dalam aplikasi Next.js yang sama**, dengan data di PostgreSQL. Tidak menggunakan headless CMS.
 
-**Status implementasi:** arah ini menggantikan rancangan Payload sebelumnya. Kode fondasi pada draft PR #1 masih menggunakan Payload dan belum memenuhi Rev. 2. Revisi ini mengubah dokumen dan rencana; penggantian kode mengikuti rencana CPR-7 yang baru.
+**Status implementasi:** arah ini menggantikan rancangan Payload sebelumnya. Fondasi pengganti Next.js/admin custom telah dibuat pada salinan kerja branch CPR-7. Pengujian unit, database, HTTP production dan review independen lulus setelah perbaikan; verifikasi browser production lokal lulus pada 15 Oktober 2026, termasuk login setelah restart database developer. Implementasi pengganti belum di-commit/push; draft PR #1 belum boleh dianggap siap merge/launch.
 
 ## 2. Latar belakang
 

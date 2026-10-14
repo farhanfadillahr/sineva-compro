@@ -5,9 +5,9 @@ const password = randomBytes(24).toString('base64url')
 const secret = randomBytes(48).toString('base64url')
 const values = {
   POSTGRES_PASSWORD: password,
-  DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5432/sineva_compro`,
-  TEST_DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5433/sineva_compro_test`,
-  PAYLOAD_SECRET: secret,
+  DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5432/sineva_compro_app`,
+  TEST_DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5433/sineva_compro_app_test`,
+  BETTER_AUTH_SECRET: secret,
 }
 let content = readFileSync('.env.example', 'utf8')
 for (const [key, value] of Object.entries(values)) {

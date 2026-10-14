@@ -14,7 +14,5 @@ export default defineConfig([
     'exports/**',
     '.superpowers/**',
     'next-env.d.ts',
-    'src/payload-types.ts',
-    'src/app/(payload)/admin/importMap.js',
   ]),
 ])

@@ -10,7 +10,7 @@
 
 **Spec:** [PRD Rev. 2](../../prd/2026-10-14-company-profile-prd.md), terutama §9, §13–16; [arsitektur](../../architecture/README.md); [ADR](../../architecture/decisions/2026-10-14-custom-admin.md); CPR-7 di Linear.
 
-**Status:** rencana pengganti; tidak ada langkah implementasi di bawah yang sudah dieksekusi. Founder memilih admin custom. Revisi ini tidak memasang library atau mengubah source/database.
+**Status:** Task 1–3 terimplementasi dan teruji pada salinan kerja CPR-7. Gate teknis Task 4, review independen dan acceptance browser production lokal selesai; pemeriksaan UI pada 15 Oktober 2026 meliputi login/logout, dua viewport dan login setelah restart database developer. Publikasi source/metadata akhir PR belum dilakukan. Lihat [bukti baru](../../architecture/custom-admin-foundation-validation.md).
 
 **Kondisi awal:** commit `a7f00fb` di branch fondasi lama berisi Next 16.4.0, React 19.2.6, Node 24.21.0 dan integrasi Payload 3.90.2. Draft [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) tetap draft, tidak memenuhi Rev. 2. [Rencana lama](2026-10-14-cpr-7-payload-foundation-superseded.md) dan [verifikasi lama](../../architecture/foundation-validation.md) adalah arsip.
 
@@ -28,7 +28,7 @@
 - CPR-7 mencakup session dasar, bootstrap dan shell admin. Peran lengkap/pengelolaan Users/lockout adalah CPR-24; form konten/media/lead mengikuti tiket masing-masing.
 - UI marketing, routing ID/EN lengkap, tema publik, R2, email, analytics, CI dan deploy mengikuti tiket pemilik. Tidak menambah workflow cloud atau mengubah DNS dalam fondasi.
 - Aset brand dan hasil tracing tidak diubah. Jangan menjalankan generator aplikasi yang menimpa repo.
-- Kode pengganti dikerjakan setelah rencana ini direview; revisi dokumentasi tidak menyiratkan penggantian sudah selesai.
+- Rencana telah direview dan di-commit; eksekusi pengganti dicatat terpisah dari bukti Payload lama.
 
 ## Review Focus
 
@@ -83,7 +83,7 @@ Kontrak ini menetapkan batas antarmuka, bukan file implementasi siap salin. Sess
 **Consumes:** fondasi lama pada `a7f00fb`, PRD Rev. 2, inventory file/data.
 **Produces:** Next.js tanpa route/dependency CMS; halaman publik dan entry admin custom, konfigurasi tanpa wrapper CMS.
 
-- [ ] Periksa status Git dan seluruh file bergantung CMS; pisahkan perubahan user yang muncul setelah base commit.
+- [x] Periksa status Git dan seluruh file bergantung CMS; pisahkan perubahan user yang muncul setelah base commit.
 
 ```bash
 git status --short
@@ -91,13 +91,13 @@ rg -n 'payload|@payloadcms|PAYLOAD_SECRET|withPayload' package.json next.config.
 rg --files src tests scripts
 ```
 
-- [ ] Catat database dan jumlah entitas yang ada tanpa mencetak PII/secret. Jika ada data yang perlu disimpan, buat database pengganti dan rencana export-import; jangan drop schema/volume atau menganggap password hash kompatibel.
-- [ ] Periksa registry, peer dependency dan advisory untuk versi stabil Drizzle/pg/Better Auth/adapter/CLI yang kompatibel dengan Node/Next terpasang. Catat angka final dan sumber dalam README; pin exact. Pertahankan Next/React/Node yang kompatibel kecuali ada alasan upgrade yang dibuktikan.
-- [ ] Hapus paket langsung Payload, kebutuhan peer/override yang hanya berasal dari CMS, scripts generator dan alias TS Payload. Regenerasi lockfile secara normal, lalu periksa graph dependency/audit. Override yang masih diperlukan dependency lain tidak dihapus tanpa pemeriksaan.
-- [ ] Lepas `withPayload`, route CMS, config/types/import map/SCSS dan collection lama. Hentikan penggunaan migration Payload; jangan menimpa database yang telah berisi schema lama.
-- [ ] Buat root layout minimal, pindahkan homepage/CSS ke route group publik; admin memiliki subtree sendiri di bawah root. Provider i18n/theme publik tidak membungkus handler auth atau memaksa `use client` pada root.
-- [ ] Ganti tes HTTP yang sebelumnya mengharapkan panel CMS/API Users. Dalam aplikasi baru endpoint legacy `/api/users` tidak terdaftar (404); protected admin mengarah ke login, bukan create-first-user.
-- [ ] Jalankan lint/typecheck dan scan source/manifest aktif. Referensi dalam arsip dokumentasi diizinkan; import/dependency/config CMS aktif harus nol.
+- [x] Catat database dan jumlah entitas yang ada tanpa mencetak PII/secret. Jika ada data yang perlu disimpan, buat database pengganti dan rencana export-import; jangan drop schema/volume atau menganggap password hash kompatibel.
+- [x] Periksa registry, peer dependency dan advisory untuk versi stabil Drizzle/pg/Better Auth/adapter/CLI yang kompatibel dengan Node/Next terpasang. Catat angka final dan sumber dalam README; pin exact. Pertahankan Next/React/Node yang kompatibel kecuali ada alasan upgrade yang dibuktikan.
+- [x] Hapus paket langsung Payload, kebutuhan peer/override yang hanya berasal dari CMS, scripts generator dan alias TS Payload. Regenerasi lockfile secara normal, lalu periksa graph dependency/audit. Override yang masih diperlukan dependency lain tidak dihapus tanpa pemeriksaan.
+- [x] Lepas `withPayload`, route CMS, config/types/import map/SCSS dan collection lama. Hentikan penggunaan migration Payload; jangan menimpa database yang telah berisi schema lama.
+- [x] Buat root layout minimal, pindahkan homepage/CSS ke route group publik; admin memiliki subtree sendiri di bawah root. Provider i18n/theme publik tidak membungkus handler auth atau memaksa `use client` pada root.
+- [x] Ganti tes HTTP yang sebelumnya mengharapkan panel CMS/API Users. Dalam aplikasi baru endpoint legacy `/api/users` tidak terdaftar (404); protected admin mengarah ke login, bukan create-first-user.
+- [x] Jalankan lint/typecheck dan scan source/manifest aktif. Referensi dalam arsip dokumentasi diizinkan; import/dependency/config CMS aktif harus nol.
 
 ## Task 2: Database aplikasi dan migration terkontrol
 
@@ -106,13 +106,13 @@ rg --files src tests scripts
 **Consumes:** aplikasi tanpa CMS dari Task 1.
 **Produces:** pool PostgreSQL/ORM server, schema auth dan migration baru, perintah database yang konsisten.
 
-- [ ] Perbarui kontrak environment: `DATABASE_URL`, `TEST_DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` dan origin publik. Secret auth acak minimal 32 karakter. Hilangkan `PAYLOAD_SECRET` dari kontrak aktif; setup tidak menimpa `.env` yang ada.
-- [ ] Tes validasi secret kosong/pendek, protokol URL salah, URL auth tanpa origin valid, dan larangan credential/secret muncul dalam error. Jalankan unit suite sebelum dan sesudah perubahan.
-- [ ] Gunakan node-postgres Pool dengan maksimum awal 10 koneksi, `connectionTimeoutMillis: 5000`, query/statement timeout awal 30 detik; satu instance per proses yang tidak bertambah saat hot reload. Uji listener yang tidak menyelesaikan handshake dan nama DB yang salah: gagal terbatas waktu, tanpa CREATE DATABASE otomatis.
-- [ ] Konfigurasi Better Auth melalui adapter Drizzle versi terpasang, signup publik dimatikan. Generate schema auth melalui CLI terpin, review field/index/foreign key dan agregasikan schema. Gunakan schema library untuk credential/session, bukan tabel/hash buatan sendiri.
-- [ ] Buat migration SQL aplikasi di `drizzle/` dari schema yang direview. Jangan menerapkan migration baru pada database Payload lama tanpa rencana cutover. Migration auth tidak sekaligus membuat semua tabel konten kosong.
-- [ ] Standarkan scripts yang benar-benar dibuat: `db:generate`, `db:migrate`, `db:check`, `test:database`. Migration hanya melalui perintah operator/deploy; tidak ada schema push pada startup.
-- [ ] Jalankan migration pada database test kosong, jalankan ulang, pastikan no-op dan graph/schema tetap konsisten.
+- [x] Perbarui kontrak environment: `DATABASE_URL`, `TEST_DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` dan origin publik. Secret auth acak minimal 32 karakter. Hilangkan `PAYLOAD_SECRET` dari kontrak aktif; setup tidak menimpa `.env` yang ada.
+- [x] Tes validasi secret kosong/pendek, protokol URL salah, URL auth tanpa origin valid, dan larangan credential/secret muncul dalam error. Jalankan unit suite sebelum dan sesudah perubahan.
+- [x] Gunakan node-postgres Pool dengan maksimum awal 10 koneksi, `connectionTimeoutMillis: 5000`, query/statement timeout awal 30 detik; satu instance per proses yang tidak bertambah saat hot reload. Uji listener yang tidak menyelesaikan handshake dan nama DB yang salah: gagal terbatas waktu, tanpa CREATE DATABASE otomatis.
+- [x] Konfigurasi Better Auth melalui adapter Drizzle versi terpasang, signup publik dimatikan. Generate schema auth melalui CLI terpin, review field/index/foreign key dan agregasikan schema. Gunakan schema library untuk credential/session, bukan tabel/hash buatan sendiri.
+- [x] Buat migration SQL aplikasi di `drizzle/` dari schema yang direview. Jangan menerapkan migration baru pada database Payload lama tanpa rencana cutover. Migration auth tidak sekaligus membuat semua tabel konten kosong.
+- [x] Standarkan scripts yang benar-benar dibuat: `db:generate`, `db:migrate`, `db:check`, `test:database`. Migration hanya melalui perintah operator/deploy; tidak ada schema push pada startup.
+- [x] Jalankan migration pada database test kosong, jalankan ulang, pastikan no-op dan graph/schema tetap konsisten.
 
 ```bash
 npm run db:generate
@@ -130,13 +130,13 @@ Perintah di atas baru sah setelah scripts dibuat. Test menerima hanya database l
 **Consumes:** schema/library dari Task 2.
 **Produces:** login/logout berbasis library, `Principal` dan guard server, Admin pertama dari operator, dashboard minimal.
 
-- [ ] Tulis negative tests untuk signup langsung ke handler, session palsu/expired, protected query tanpa login dan bootstrap dua proses. Run untuk membuktikan perilaku belum ada sebelum implementasi.
-- [ ] Pasang handler resmi library di `/api/auth/[...all]`; konfigurasi trusted origins/cookie sesuai environment. Signup dinonaktifkan untuk seluruh permintaan HTTP. Tidak membuat endpoint account CRUD custom terbuka.
-- [ ] Implementasikan `getPrincipal`, `requirePrincipal`, `can`, dan `requireCapability` dengan kontrak di atas. Baca session pada server, ambil role server, keluarkan field aman. Semua aksi yang perlu izin memanggil guard sendiri.
-- [ ] Implementasikan `scripts/bootstrap-admin.ts`: validasi DB tujuan/environment; baca email/nama/password melalui input operator aman; buat akun melalui API library yang diverifikasi untuk versi terpasang; role awal ditetapkan server. Tidak mencetak credential, tidak mengaktifkan signup pada handler aplikasi.
-- [ ] Serialisasi bootstrap dengan PostgreSQL advisory lock pada koneksi khusus; setelah memperoleh lock, periksa akun yang sudah ada, lakukan create melalui library, dan tunggu operasi selesai sebelum lock dilepas dalam `finally`. Bootstrap kedua menghasilkan status sudah tersedia, tidak membuat akun baru. Jangan mempertahankan transaksi dari query count yang memiliki snapshot usang.
-- [ ] Buat login custom dengan label/error/loading, logout melalui library, dan dashboard minimal berisi nama pengguna serta navigasi sesuai izin dasar. Redirect `/admin` tanpa session ke `/admin/login`; jangan mengirim token/hash sebagai props atau membuka form create-first-user.
-- [ ] Tes login/logout dengan cookie sebenarnya; session setelah logout tidak mengakses query/protected page. Jalankan ulang bootstrap dan uji dua bootstrap konkuren pada DB test kosong.
+- [x] Tulis negative tests untuk signup langsung ke handler, session palsu/expired, protected query tanpa login dan bootstrap dua proses. Run untuk membuktikan perilaku belum ada sebelum implementasi.
+- [x] Pasang handler resmi library di `/api/auth/[...all]`; konfigurasi trusted origins/cookie sesuai environment. Signup dinonaktifkan untuk seluruh permintaan HTTP. Tidak membuat endpoint account CRUD custom terbuka.
+- [x] Implementasikan `getPrincipal`, `requirePrincipal`, `can`, dan `requireCapability` dengan kontrak di atas. Baca session pada server, ambil role server, keluarkan field aman. Semua aksi yang perlu izin memanggil guard sendiri.
+- [x] Implementasikan `scripts/bootstrap-admin.ts`: validasi DB tujuan/environment; baca email/nama/password melalui input operator aman; buat akun melalui API library yang diverifikasi untuk versi terpasang; role awal ditetapkan server. Tidak mencetak credential, tidak mengaktifkan signup pada handler aplikasi.
+- [x] Serialisasi bootstrap dengan PostgreSQL advisory lock pada koneksi khusus; setelah memperoleh lock, periksa akun yang sudah ada, lakukan create melalui library, dan tunggu operasi selesai sebelum lock dilepas dalam `finally`. Bootstrap kedua menghasilkan status sudah tersedia, tidak membuat akun baru. Jangan mempertahankan transaksi dari query count yang memiliki snapshot usang.
+- [x] Buat login custom dengan label/error/loading, logout melalui library, dan dashboard minimal berisi nama pengguna serta navigasi sesuai izin dasar. Redirect `/admin` tanpa session ke `/admin/login`; jangan mengirim token/hash sebagai props atau membuka form create-first-user.
+- [x] Tes login/logout dengan cookie sebenarnya; session setelah logout tidak mengakses query/protected page. Jalankan ulang bootstrap dan uji dua bootstrap konkuren pada DB test kosong.
 
 **Batas:** pengelolaan akun lengkap, Editor/RBAC seluruh fitur dan lockout 5 kegagalan/15 menit dikerjakan dalam CPR-24. Fondasi belum boleh dianggap siap launch sebelum tiket itu lulus; jangan mengklaim library menyediakan lockout requirement secara otomatis.
 
@@ -147,8 +147,8 @@ Perintah di atas baru sah setelah scripts dibuat. Test menerima hanya database l
 **Consumes:** hasil Task 1–3.
 **Produces:** evidence untuk fondasi tanpa CMS dan batas pekerjaan berikutnya yang jelas.
 
-- [ ] Instalasi bersih melalui `npm ci`; verifikasi runtime, dependency graph dan audit. Regenerasi schema/migration tidak menghasilkan diff tak disengaja.
-- [ ] Jalankan quality gate dan tes database/HTTP terhadap DB test.
+- [x] Instalasi bersih melalui `npm ci`; verifikasi runtime, dependency graph dan audit. Regenerasi schema/migration tidak menghasilkan diff tak disengaja.
+- [x] Jalankan quality gate dan tes database/HTTP terhadap DB test.
 
 ```bash
 npm ci
@@ -163,10 +163,10 @@ npm run build
 git diff --check
 ```
 
-- [ ] Jalankan hasil build production dengan database test dan uji homepage, redirect/login admin, signup ditolak, API Users legacy 404, session invalid ditolak. Status/response diperiksa sesuai auth handler yang dipilih; jangan bergantung pada string error library yang tidak stabil.
-- [ ] Verifikasi lewat browser yang diizinkan: bootstrap operator → login → dashboard → logout → login; restart DB developer dan login lagi dengan akun yang sama; cek styling, label/focus, console/hydration. Jika browser menolak akses, catat sebagai acceptance yang belum diverifikasi tanpa bypass izin.
-- [ ] README menjelaskan source yang sekarang berjalan, setup/migration/bootstrap/testing aktual. Simpan evidence baru dengan commit/versi/perintah/hasil; catatan Payload tetap berlabel arsip.
-- [ ] Ubah judul/deskripsi PR sesuai implementasi akhir. PR boleh keluar dari draft hanya jika seluruh acceptance fondasi baru lulus dan review selesai. Tidak merge/deploy sebagai bagian penggantian lokal ini.
+- [x] Jalankan hasil build production dengan database test dan uji homepage, redirect/login admin, signup ditolak, API Users legacy 404, session invalid ditolak. Status/response diperiksa sesuai auth handler yang dipilih; jangan bergantung pada string error library yang tidak stabil.
+- [x] Verifikasi lewat browser yang diizinkan: bootstrap operator → login → dashboard → logout → login; restart DB developer dan login lagi dengan akun yang sama; cek styling, label/focus, console/hydration. Lulus pada `http://localhost:3001` tanggal 15 Oktober 2026 setelah user membuka origin tersebut. Fixture dibersihkan; ukuran browser dipulihkan. Penolakan awal origin `127.0.0.1` tetap dicatat sebagai riwayat, tanpa bypass izin.
+- [x] README menjelaskan source yang sekarang berjalan, setup/migration/bootstrap/testing aktual. Simpan evidence baru dengan commit/versi/perintah/hasil; catatan Payload tetap berlabel arsip.
+- [ ] Ubah judul/deskripsi PR sesuai implementasi akhir setelah source pengganti dipublikasikan; source saat ini belum di-commit/push. PR boleh keluar dari draft hanya jika seluruh acceptance fondasi baru lulus dan review selesai. Tidak merge/deploy sebagai bagian penggantian lokal ini.
 
 ## Tiket berikutnya dan pembagian scope
 
@@ -193,4 +193,4 @@ Modul `[CMS]` menjadi `[Admin]`; M2 menjadi **Admin & Halaman**. Identifier teta
 - Batas custom UI jelas; bukan penggantian nama CMS atau admin yang masih mengandalkan panel Payload.
 - Langkah inventory/cutover menjaga data, logo dan source user; tidak ada drop volume otomatis.
 - Hasil test lama tidak menandai checklist baru selesai.
-- Belum ada klaim bahwa source sekarang sudah menggunakan stack pengganti.
+- Source pengganti tersedia di salinan kerja; belum ada klaim fondasi lengkap atau aplikasi siap launch.

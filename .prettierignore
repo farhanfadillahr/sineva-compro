@@ -7,6 +7,4 @@ node_modules/
 .superpowers/
 coverage/
 package-lock.json
-src/payload-types.ts
-src/app/(payload)/
-src/migrations/
+drizzle/meta/

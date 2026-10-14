@@ -1,12 +1,12 @@
 # Verifikasi fondasi admin custom — CPR-7
 
-**Tanggal:** 14–15 Oktober 2026. **Status:** implementasi tersedia di salinan kerja; review independen selesai dan dua temuan Important diperbaiki dengan regresi RED→GREEN. Acceptance browser production lokal lulus pada 15 Oktober 2026. Publikasi source/metadata PR masih tertunda; CPR-7 tetap In Progress dan PR #1 tetap draft.
+**Tanggal:** 14–15 Oktober 2026. **Status:** implementasi telah dipublikasikan; review independen selesai dan dua temuan Important diperbaiki dengan regresi RED→GREEN. Acceptance browser production lokal lulus pada 15 Oktober 2026. PR #1 siap review; CPR-7 tetap In Progress sampai integrasi selesai. Belum merge/deploy.
 
 ## Revisi yang diperiksa
 
-Checkout: `/Users/farhanfadillahr/Documents/data/SinevaTech/.worktrees/cpr-7-foundation`. Base/HEAD dokumentasi `cf4db5dab2ce8a2e9b7faca88c6f7efc2234c891`; hasil di bawah memeriksa perubahan source **yang belum di-commit/push**, termasuk file baru. Bukan hasil source yang sekarang berada di remote PR.
+Checkout: `/Users/farhanfadillahr/Documents/data/SinevaTech/.worktrees/cpr-7-foundation`. Base rancangan `cf4db5dab2ce8a2e9b7faca88c6f7efc2234c891`; commit implementasi yang diuji dan dipush adalah `e9cb9b39efe75ea09e955596d61751110022614a`. Source custom, migration dan test baru tersebut kini berada pada remote PR. Pembaruan status dokumentasi setelah publikasi tidak mengubah source aplikasi.
 
-[PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [arsitektur](README.md), [ADR](decisions/2026-10-14-custom-admin.md), [rencana](../superpowers/plans/2026-10-14-cpr-7-foundation.md), dan [draft PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1).
+[PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [arsitektur](README.md), [ADR](decisions/2026-10-14-custom-admin.md), [rencana](../superpowers/plans/2026-10-14-cpr-7-foundation.md), dan [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1).
 
 Node 24.21.0; Next 16.4.0; React 19.2.6; Better Auth/adapter/CLI 1.7.7; Drizzle ORM 0.45.4 / Kit 0.31.11; pg 8.23.1; PostgreSQL 17.11-bookworm. Dependency langsung exact dan lockfile dilacak.
 
@@ -29,7 +29,7 @@ Node 24.21.0; Next 16.4.0; React 19.2.6; Better Auth/adapter/CLI 1.7.7; Drizzle 
 | Browser visual             | **Lulus 15 Oktober 2026** pada `http://localhost:3001`: login/logout/login, proteksi route, styling 390/1440 px, label/fokus, console tanpa warning/error, session dan login setelah restart DB developer |
 | Review kode independen     | Selesai; nol Critical/Minor, dua Important direproduksi dan diperbaiki; regresi unit dan suite DB/kualitas lulus                                                                                          |
 
-Tes otomatis pada tabel dijalankan 14 Oktober 2026. Tes HTTP production memeriksa homepage, redirect anonim ke login custom, API Users legacy 404, signup 400/operator create-user 404, cookie login sebenarnya, dashboard berizin, redirect login untuk session aktif, pencabutan session saat logout, cookie palsu dan session expired. Tes itu memeriksa respons server; bukti interaksi UI berasal dari pemeriksaan browser terpisah pada 15 Oktober 2026 di bawah.
+Instalasi, generator, migration dan review awal pada tabel dilakukan 14 Oktober 2026. Unit 50/50, database/CLI 9/9, HTTP production 7/7, lint, typecheck, formatter, whitespace dan production build diulang dan lulus pada 15 Oktober sebelum publikasi. Tes HTTP production memeriksa homepage, redirect anonim ke login custom, API Users legacy 404, signup 400/operator create-user 404, cookie login sebenarnya, dashboard berizin, redirect login untuk session aktif, pencabutan session saat logout, cookie palsu dan session expired. Tes itu memeriksa respons server; bukti interaksi UI berasal dari pemeriksaan browser terpisah pada 15 Oktober 2026 di bawah.
 
 Fixture expired sempat gagal karena `pg` menulis Date dengan zona waktu lokal ke kolom timestamp tanpa timezone, sedangkan Drizzle memetakannya sebagai UTC. Diagnostic clock PostgreSQL menunjukkan expiry masih 25.140 detik ke depan. Fixture diperbaiki memakai Drizzle dan mengassert expiry database sebelum meminta protected page; cookie yang sebelumnya valid kemudian ditolak. Tidak ada perubahan algoritma expiry aplikasi.
 
@@ -76,16 +76,16 @@ Keputusan berikut dicatat berurutan dalam ledger eksekusi, beserta konsekuensiny
 3. Mengikat API createUser library ke transaksi Drizzle eksplisit supaya user/credential atomik. Konsekuensi: kompatibilitas transaksi adapter harus dibuktikan; rollback dan concurrency sudah teruji.
 4. Membatasi endpoint auth HTTP selama fondasi. Konsekuensi: fitur auth berikutnya harus menambah endpoint secara sengaja setelah kebijakan akses siap.
 5. Parameter DB hanya menerima satu `sslmode=verify-full` atau `disable`. Konsekuensi: provider yang membutuhkan opsi TLS lain memerlukan perluasan konfigurasi yang direview sebelum deploy.
-6. Visual yang belum dapat dinilai reviewer tetap acceptance terbuka sampai diperiksa langsung. Konsekuensi awal: tiket/PR belum boleh dianggap siap. Gate visual ditutup pada 15 Oktober setelah alur production diperiksa di Browser yang diizinkan; publikasi source/metadata PR masih menjadi pekerjaan tersisa.
+6. Visual yang belum dapat dinilai reviewer tetap acceptance terbuka sampai diperiksa langsung. Konsekuensi awal: tiket/PR belum boleh dianggap siap. Gate visual ditutup pada 15 Oktober setelah alur production diperiksa di Browser yang diizinkan; source dipublikasikan dan PR siap review setelah pemeriksaan akhir lulus.
 7. Users, lockout dan izin domain lengkap tetap CPR-24. Konsekuensi: shell tidak boleh diluncurkan sebagai admin lengkap sebelum kontrol akses itu terbukti.
 8. Marketing/konten/media/CRM/i18n/tema publik/deployment tetap tiket pemilik. Konsekuensi: fondasi ini belum merupakan website lengkap.
 9. Diagnosis expiry diselesaikan coordinator melalui clock DB dan kode serializer terpasang; yang salah adalah fixture. Konsekuensi bila diagnosis keliru: bukti expiry akan lemah; tes final kini memastikan nilai DB expired dan respons protected menolak.
-10. Publikasi source PR tetap menunggu commit/push implementasi. Konsekuensi: review hasil ini memakai checkout lokal; diff remote belum berisi source custom yang diuji.
+10. Publikasi source dilakukan setelah user meminta commit/push dan pemeriksaan akhir lulus. Konsekuensi: review independen sebelumnya memakai checkout lokal; source yang sama kini dipublikasikan pada commit `e9cb9b3`, sehingga diff remote dapat direview. Merge/deploy belum dilakukan.
 
 ## Dependency dan batas acceptance
 
 Audit tanpa dev: empat moderate pada jalur tooling Drizzle/esbuild, nol high/critical. Audit penuh juga melaporkan lima high pada tooling lint `braces`. Tidak dilakukan downgrade/`audit fix --force`. Lihat [README](../../README.md#pemeriksaan-dependency); angka ini hasil tanggal pemeriksaan, bukan jaminan keamanan seluruh aplikasi.
 
-Percobaan awal pada `http://127.0.0.1:3001` ditolak oleh kontrol izin browser. Setelah user secara eksplisit membuka dan meminta pemeriksaan `http://localhost:3001`, kontrol browser mengizinkan pembacaan origin yang dipilih user tersebut dan pemeriksaan UI fondasi di atas lulus. Tidak digunakan browser lain, raw CDP atau akses tidak langsung terhadap origin yang ditolak. Pekerjaan tersisa adalah commit/push source pengganti dan pembaruan metadata PR; belum merge/deploy.
+Percobaan awal pada `http://127.0.0.1:3001` ditolak oleh kontrol izin browser. Setelah user secara eksplisit membuka dan meminta pemeriksaan `http://localhost:3001`, kontrol browser mengizinkan pembacaan origin yang dipilih user tersebut dan pemeriksaan UI fondasi di atas lulus. Tidak digunakan browser lain, raw CDP atau akses tidak langsung terhadap origin yang ditolak. Commit/push implementasi dan pembaruan metadata PR selesai pada 15 Oktober; pekerjaan berikutnya adalah review/integrasi PR. Belum merge/deploy.
 
 Konten/blog/media/SEO, publikasi/preview, RBAC/lockout lengkap, lead/waitlist, i18n/tema publik, R2/Resend/analytics, CI dan deployment mengikuti tiket pemilik. Shell admin bukan admin konten lengkap atau bukti siap launch. [Bukti Payload](foundation-validation.md) tetap arsip dan tidak dihitung sebagai bukti implementasi ini.

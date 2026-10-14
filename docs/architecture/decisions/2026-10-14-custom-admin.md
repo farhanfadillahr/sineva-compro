@@ -22,11 +22,11 @@ Alternatif yang tidak dipilih: melanjutkan headless CMS, konten hanya di file re
 
 ## Transisi
 
-Fondasi lama ada pada commit `a7f00fb`, draft [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1). PR tetap draft dan tidak boleh di-merge sebagai implementasi Rev. 2. Rencana/setup lama adalah arsip; test lama hanya evidence fondasi lama.
+Pada saat keputusan ini dibuat, fondasi lama ada pada commit `a7f00fb` dan [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) ditahan sebagai draft sampai source pengganti dan acceptance Rev. 2 terpenuhi. Rencana/setup lama adalah arsip; test lama hanya evidence fondasi lama.
 
 CPR-7 menginventarisasi data, menghapus integrasi/dependency/generated files Payload, membuat migration aplikasi, lalu membuktikan database/session dan shell admin custom. Tidak otomatis menghapus database/volume/data developer. Bila data perlu dipertahankan, gunakan database pengganti dengan export-import/pemetaan yang direview. Password hash/session Payload tidak diasumsikan kompatibel dengan Better Auth.
 
-Catatan revisi awal hanya mengubah dokumen. Eksekusi CPR-7 berikutnya telah mengganti source/dependency serta menerapkan migration pada database aplikasi lokal yang baru, tanpa menghapus database lama. Belum commit/push, merge atau deploy implementasi pengganti.
+Catatan revisi awal hanya mengubah dokumen. Eksekusi CPR-7 berikutnya telah mengganti source/dependency serta menerapkan migration pada database aplikasi lokal yang baru, tanpa menghapus database lama. Source pengganti dipublikasikan pada commit `e9cb9b3` tanggal 15 Oktober 2026 setelah pemeriksaan teknis dan browser lulus. PR #1 siap review; belum merge/deploy.
 
 ## Acuan
 

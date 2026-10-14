@@ -19,7 +19,7 @@ Website company profile ("Compro") v1 punya satu tugas utama: **mengubah pengunj
 
 Website tampil dalam dua bahasa (Indonesia dan Inggris) sejak hari pertama. Konten, blog, dan lead dikelola lewat **admin custom di `/admin` dalam aplikasi Next.js yang sama**, dengan data di PostgreSQL. Tidak menggunakan headless CMS.
 
-**Status implementasi:** arah ini menggantikan rancangan Payload sebelumnya. Fondasi pengganti Next.js/admin custom telah dibuat pada salinan kerja branch CPR-7. Pengujian unit, database, HTTP production dan review independen lulus setelah perbaikan; verifikasi browser production lokal lulus pada 15 Oktober 2026, termasuk login setelah restart database developer. Implementasi pengganti belum di-commit/push; draft PR #1 belum boleh dianggap siap merge/launch.
+**Status implementasi:** arah ini menggantikan rancangan Payload sebelumnya. Fondasi pengganti Next.js/admin custom telah dipublikasikan pada branch CPR-7 melalui commit `e9cb9b3`. Pengujian unit, database, HTTP production dan review independen lulus setelah perbaikan; verifikasi browser production lokal lulus pada 15 Oktober 2026, termasuk login setelah restart database developer. PR #1 siap review, belum merge/deploy. Ini fondasi aplikasi, bukan implementasi lengkap Compro yang siap launch.
 
 ## 2. Latar belakang
 
@@ -420,7 +420,7 @@ Format tampilan tiket: **`CPR-{nomor} | [MODUL] Aksi`**. `CPR-{nomor}` diberikan
 | Legalitas usaha belum ada | Footer dan Kebijakan Privasi belum lengkap | Field disembunyikan selama kosong. Kebijakan Privasi memakai nama "Sineva Tech" dan email kontak sampai badan usaha resmi terbentuk |
 | Beban operasional VPS | Downtime atau kehilangan data | Backup otomatis + uji restore, uptime monitor eksternal, update keamanan otomatis |
 | Spam di form | Inbox penuh, data kotor | Honeypot + Turnstile + rate limit |
-| Penggantian fondasi Payload yang sudah dibuat | Bukti fondasi lama tidak membuktikan arsitektur baru | PR lama tetap draft, integrasi CMS diganti melalui CPR-7 dan diuji ulang; data developer tidak dihapus otomatis |
+| Penggantian fondasi Payload yang sudah dibuat | Bukti fondasi lama tidak membuktikan arsitektur baru | Integrasi CMS diganti melalui CPR-7 dan diuji ulang sebelum PR siap review; data developer tidak dihapus otomatis |
 | Pengembangan admin custom | Form, hak akses, rich text, dan publikasi membutuhkan pekerjaan tambahan | Gunakan library autentikasi yang terawat; scope admin v1 eksplisit di §9; schema + query + UI + test berada dalam tiket pemilik yang sama |
 | Perubahan versi Next.js/library aplikasi | Build rusak | Versi dikunci, upgrade lewat PR terpisah |
 | Penggunaan logo warna asli di latar gelap | Tulisan logo tidak terbaca di mode gelap | Gunakan SVG varian dark mode di `assets/brand/logos/svg/`. Tracing logo dan varian terang sudah tersedia; Q7 terjawab |

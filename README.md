@@ -2,7 +2,7 @@
 
 Website company profile Sineva Tech dengan Next.js App Router dan **admin custom tanpa headless CMS**. Fondasi menyediakan PostgreSQL, autentikasi Better Auth, login/logout, bootstrap operator, dan dashboard dasar. Konten ID/EN, blog, media, SEO, mini-CRM dan integrasi mengikuti tiket berikutnya. Produk chatbot dikembangkan terpisah.
 
-Fondasi custom tersedia pada branch CPR-7; belum di-commit/push pada tahap implementasi ini. PR #1 tetap draft. Pemeriksaan browser production lokal lulus pada 15 Oktober 2026 melalui origin `http://localhost:3001`, termasuk login/logout, responsif/fokus, console dan login setelah restart database developer. Bukti browser melengkapi tes HTTP; publikasi source dan metadata PR masih tertunda.
+Fondasi custom dipublikasikan pada branch CPR-7 melalui commit `e9cb9b3`; [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) siap untuk review. Pemeriksaan browser production lokal lulus pada 15 Oktober 2026 melalui origin `http://localhost:3001`, termasuk login/logout, responsif/fokus, console dan login setelah restart database developer. Bukti browser melengkapi tes HTTP. PR belum di-merge atau di-deploy.
 
 ## Runtime dan dependency
 

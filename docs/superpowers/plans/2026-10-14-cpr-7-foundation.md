@@ -10,9 +10,9 @@
 
 **Spec:** [PRD Rev. 2](../../prd/2026-10-14-company-profile-prd.md), terutama §9, §13–16; [arsitektur](../../architecture/README.md); [ADR](../../architecture/decisions/2026-10-14-custom-admin.md); CPR-7 di Linear.
 
-**Status:** Task 1–3 terimplementasi dan teruji pada salinan kerja CPR-7. Gate teknis Task 4, review independen dan acceptance browser production lokal selesai; pemeriksaan UI pada 15 Oktober 2026 meliputi login/logout, dua viewport dan login setelah restart database developer. Publikasi source/metadata akhir PR belum dilakukan. Lihat [bukti baru](../../architecture/custom-admin-foundation-validation.md).
+**Status:** Task 1–4 selesai untuk fondasi CPR-7. Gate teknis, review independen dan acceptance browser production lokal lulus; pemeriksaan UI pada 15 Oktober 2026 meliputi login/logout, dua viewport dan login setelah restart database developer. Source dipublikasikan pada commit `e9cb9b3`; judul/deskripsi PR diperbarui dan PR #1 siap review. Belum merge/deploy. Lihat [bukti baru](../../architecture/custom-admin-foundation-validation.md).
 
-**Kondisi awal:** commit `a7f00fb` di branch fondasi lama berisi Next 16.4.0, React 19.2.6, Node 24.21.0 dan integrasi Payload 3.90.2. Draft [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) tetap draft, tidak memenuhi Rev. 2. [Rencana lama](2026-10-14-cpr-7-payload-foundation-superseded.md) dan [verifikasi lama](../../architecture/foundation-validation.md) adalah arsip.
+**Kondisi awal:** commit `a7f00fb` di branch fondasi lama berisi Next 16.4.0, React 19.2.6, Node 24.21.0 dan integrasi Payload 3.90.2. [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) saat itu ditahan sebagai draft karena belum memenuhi Rev. 2. [Rencana lama](2026-10-14-cpr-7-payload-foundation-superseded.md) dan [verifikasi lama](../../architecture/foundation-validation.md) adalah arsip.
 
 ## Global Constraints
 
@@ -166,7 +166,7 @@ git diff --check
 - [x] Jalankan hasil build production dengan database test dan uji homepage, redirect/login admin, signup ditolak, API Users legacy 404, session invalid ditolak. Status/response diperiksa sesuai auth handler yang dipilih; jangan bergantung pada string error library yang tidak stabil.
 - [x] Verifikasi lewat browser yang diizinkan: bootstrap operator → login → dashboard → logout → login; restart DB developer dan login lagi dengan akun yang sama; cek styling, label/focus, console/hydration. Lulus pada `http://localhost:3001` tanggal 15 Oktober 2026 setelah user membuka origin tersebut. Fixture dibersihkan; ukuran browser dipulihkan. Penolakan awal origin `127.0.0.1` tetap dicatat sebagai riwayat, tanpa bypass izin.
 - [x] README menjelaskan source yang sekarang berjalan, setup/migration/bootstrap/testing aktual. Simpan evidence baru dengan commit/versi/perintah/hasil; catatan Payload tetap berlabel arsip.
-- [ ] Ubah judul/deskripsi PR sesuai implementasi akhir setelah source pengganti dipublikasikan; source saat ini belum di-commit/push. PR boleh keluar dari draft hanya jika seluruh acceptance fondasi baru lulus dan review selesai. Tidak merge/deploy sebagai bagian penggantian lokal ini.
+- [x] Ubah judul/deskripsi PR sesuai implementasi akhir setelah source pengganti dipublikasikan. Commit `e9cb9b3` dipush pada 15 Oktober 2026; PR #1 keluar dari draft setelah acceptance fondasi dan review independen lulus. Tidak merge/deploy sebagai bagian publikasi ini.
 
 ## Tiket berikutnya dan pembagian scope
 
@@ -193,4 +193,4 @@ Modul `[CMS]` menjadi `[Admin]`; M2 menjadi **Admin & Halaman**. Identifier teta
 - Batas custom UI jelas; bukan penggantian nama CMS atau admin yang masih mengandalkan panel Payload.
 - Langkah inventory/cutover menjaga data, logo dan source user; tidak ada drop volume otomatis.
 - Hasil test lama tidak menandai checklist baru selesai.
-- Source pengganti tersedia di salinan kerja; belum ada klaim fondasi lengkap atau aplikasi siap launch.
+- Source pengganti telah dipublikasikan dan fondasi terverifikasi; aplikasi Compro lengkap belum siap launch karena fitur berikutnya tetap mengikuti tiket pemilik.

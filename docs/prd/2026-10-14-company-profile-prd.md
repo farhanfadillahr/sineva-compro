@@ -2,8 +2,9 @@
 
 | | |
 |---|---|
-| **Status** | Draft — menunggu review Founder |
+| **Status** | Final — disetujui Founder |
 | **Tanggal** | 14 Oktober 2026 |
+| **Revisi** | Rev. 1 (14 Oktober 2026): penambahan mode terang & gelap |
 | **Pemilik** | Founder Sineva Tech |
 | **Linear** | Team `CPR` (Compro) |
 | **Proyek terkait** | Sineva Chatbot — team `CBT`, dikembangkan terpisah |
@@ -20,7 +21,8 @@ Website tampil dalam dua bahasa (Indonesia dan Inggris) sejak hari pertama. Kont
 
 ## 2. Latar belakang
 
-- Sineva Tech belum punya kehadiran online. Domain, portofolio, dan legalitas usaha belum ada. Logo dan identitas brand sudah ada.
+- Sineva Tech belum punya kehadiran online. Domain, portofolio, dan legalitas usaha belum ada.
+- Logo sudah ada di folder `assets/` repo ini: `Sineva_Logo.png` (simbol) dan `Sineva_Stacked_Wordmark_With_Logo.png` (simbol + tulisan "Sineva"). Keduanya PNG transparan 5225×5225 px. Warnanya gradasi teal dari ±`#009EA6` (terang) ke ±`#08404D` (tua). Versi vektor (SVG) belum tersedia.
 - Tanpa portofolio klien, kredibilitas dibangun dari **2–3 proyek showcase internal** yang bisa dicoba langsung.
 - Produk chatbot dikembangkan terpisah dan kemungkinan belum siap saat Compro diluncurkan. Karena itu Compro hanya menampilkan chatbot sebagai produk yang "segera hadir".
 - Pengerjaan dilakukan oleh tim campuran: Founder bersama Claude, ditambah anggota tim atau freelancer. Karena itu setiap pekerjaan harus punya acceptance criteria yang jelas.
@@ -59,7 +61,7 @@ Pengguna internal:
 - [ ] Form kontak, tombol WhatsApp, dan waitlist berfungsi di production. Email notifikasi dan balasan otomatis terkirim, dengan SPF/DKIM lolos.
 - [ ] Semua event analytics di §12 tercatat di Umami.
 - [ ] Lighthouse mobile ≥ 90 untuk Performance, Accessibility, Best Practices, dan SEO di 5 halaman kunci: Beranda, detail Layanan, detail Portofolio, Artikel, dan Kontak.
-- [ ] Tidak ada pelanggaran aksesibilitas level *critical* atau *serious* (diperiksa dengan axe).
+- [ ] Tidak ada pelanggaran aksesibilitas level *critical* atau *serious* (diperiksa dengan axe) di **mode terang dan gelap**.
 - [ ] Sitemap sudah dikirim ke Google Search Console tanpa error indexing.
 - [ ] Backup database berjalan otomatis, dan proses restore sudah diuji minimal sekali.
 - [ ] Panduan admin (cara mengelola konten dan lead) sudah diserahkan.
@@ -73,6 +75,7 @@ Pengguna internal:
 
 ### 5.1 Termasuk (v1)
 - Semua halaman di §6 dalam dua bahasa.
+- Mode terang dan gelap di semua halaman publik (FR-GLB-05).
 - CMS (Payload) dengan koleksi dan global di §9, beserta peran Admin dan Editor.
 - Alur lead: WhatsApp, form kontak, waitlist, dan mini-CRM (§8).
 - SEO teknis (§11), analytics (§12), dan target kualitas (§13).
@@ -119,10 +122,17 @@ Bahasa default adalah `id`. Setiap bahasa punya slug sendiri.
 Setiap kebutuhan diberi ID agar bisa dirujuk dari tiket Linear.
 
 ### 7.1 Elemen global
-- **FR-GLB-01 — Header:** logo, navigasi (Layanan, Portofolio, Produk, Blog, Tentang Kami), tombol pindah bahasa ID/EN, dan tombol CTA *Konsultasi Gratis* ke halaman Kontak. Di layar ≤ 1024 px, navigasi menjadi menu mobile.
+- **FR-GLB-01 — Header:** logo, navigasi (Layanan, Portofolio, Produk, Blog, Tentang Kami), tombol pindah bahasa ID/EN, tombol pindah tema (FR-GLB-05), dan tombol CTA *Konsultasi Gratis* ke halaman Kontak. Di layar ≤ 1024 px, navigasi menjadi menu mobile, dan tombol bahasa serta tema tetap bisa dijangkau.
 - **FR-GLB-02 — Tombol WhatsApp melayang** muncul di semua halaman publik. Pesan yang terisi otomatis mengikuti halaman asal (§8.1).
 - **FR-GLB-03 — Footer:** ringkasan perusahaan, navigasi, daftar layanan, kontak (email, WhatsApp, alamat), data legalitas, media sosial, tautan Kebijakan Privasi, dan hak cipta. Data legalitas dan alamat **disembunyikan selama field-nya kosong di CMS**.
 - **FR-GLB-04 — Halaman 404** tersedia dalam dua bahasa, dengan tautan ke Beranda, Layanan, dan Kontak.
+- **FR-GLB-05 — Mode terang & gelap** tersedia di semua halaman publik:
+  - Kunjungan pertama mengikuti pengaturan sistem perangkat pengunjung (`prefers-color-scheme`).
+  - Tombol di header mengganti tema antara terang dan gelap. Pilihan pengunjung disimpan di perangkatnya dan dipakai lagi di kunjungan berikutnya, mengalahkan pengaturan sistem.
+  - **Tidak ada kedipan tema** saat halaman dimuat. Halaman tidak boleh sempat tampil terang lalu berubah gelap.
+  - Logo memakai varian yang terbaca di latar gelap. Tulisan "Sineva" berwarna teal tua hanya punya kontras 1,6 : 1 di latar gelap.
+  - Animasi transisi tema dimatikan kalau pengunjung mengaktifkan `prefers-reduced-motion`.
+  - Panel admin (`/admin`) memakai pengaturan tema bawaan Payload dan tidak termasuk kebutuhan ini.
 
 ### 7.2 Beranda
 - **FR-HOME-01 — Hero:** judul nilai utama, subjudul, CTA utama *Konsultasi Gratis*, dan CTA kedua *Lihat Layanan*.
@@ -292,6 +302,7 @@ Alat yang dipakai adalah **Umami Cloud (paket gratis)**. Umami tidak memakai coo
 
 ### 13.2 Aksesibilitas
 - Memenuhi WCAG 2.1 AA: kontras warna, navigasi keyboard penuh, focus state terlihat, label pada setiap field form, dan alt text wajib.
+- Kontras AA wajib terpenuhi di **kedua tema**. Teal terang brand (±`#009EA6`) hanya 3,3 : 1 di latar putih, jadi di mode terang warna ini tidak boleh dipakai untuk teks ukuran normal. Untuk teks dan tautan di mode terang, pakai teal yang lebih tua.
 - Desain mobile-first. Lebar layar minimum yang didukung 360 px.
 
 ### 13.3 Keamanan
@@ -363,8 +374,8 @@ PR hanya boleh di-merge ke `main` kalau semua tahap lulus.
 |---|---|
 | **Unit** | pembuat tautan WhatsApp, pemetaan slug antarbahasa, normalisasi nomor telepon, validasi form |
 | **Integrasi** | server action Leads/Waitlist (validasi, honeypot, Turnstile, rate limit, email gagal ≠ data hilang, email ganda di waitlist); hak akses (Editor ditolak saat membaca Leads, REST publik ditolak saat membuat Leads) |
-| **E2E** | kirim form kontak → halaman terima kasih; pindah bahasa di halaman layanan dan artikel; tautan WhatsApp berisi pesan yang benar; daftar waitlist; halaman 404 |
-| **Kualitas** | Lighthouse CI (ambang §13.1); pemeriksaan axe di 5 halaman kunci |
+| **E2E** | kirim form kontak → halaman terima kasih; pindah bahasa di halaman layanan dan artikel; tautan WhatsApp berisi pesan yang benar; daftar waitlist; halaman 404; pindah tema dan pilihan tetap tersimpan setelah reload |
+| **Kualitas** | Lighthouse CI (ambang §13.1); pemeriksaan axe di 5 halaman kunci, di mode terang dan gelap |
 | **Manual (pra-luncur)** | uji di perangkat iOS dan Android, pengiriman email (SPF/DKIM), restore backup |
 
 Di CI dan di lingkungan lokal, Turnstile memakai *test key* resmi Cloudflare, dan pengiriman email diganti dengan adapter tiruan (mock) yang mencatat email tanpa benar-benar mengirimnya. Email sungguhan hanya dikirim dari preview dan production.
@@ -374,8 +385,8 @@ Di CI dan di lingkungan lokal, Turnstile memakai *test key* resmi Cloudflare, da
 | Milestone | Isi | Bergantung pada |
 |---|---|---|
 | **M0 — Fondasi** | PRD final, domain, repo, kerangka Next.js + Payload, CI, VPS + Coolify, DNS Cloudflare, Resend | keputusan domain dan provider VPS |
-| **M1 — Konten & Desain** | arsitektur konten, copywriting ID/EN, design system dari brand, wireframe, desain UI | file brand |
-| **M2 — CMS & Halaman** | koleksi dan global, peran, routing dua bahasa, semua halaman, blog, portofolio | M0, M1 |
+| **M1 — Konten & Desain** | arsitektur konten, copywriting ID/EN, design system dari brand (tema terang & gelap, varian logo), wireframe, desain UI | file brand |
+| **M2 — CMS & Halaman** | koleksi dan global, peran, routing dua bahasa, mode terang & gelap, semua halaman, blog, portofolio | M0, M1 |
 | **M3 — Lead & Integrasi** | form kontak, WhatsApp, waitlist, email, anti-spam, mini-CRM, analytics | M2 |
 | **M4 — Konten & QA** | input konten final, SEO dan structured data, aksesibilitas, performa, E2E, uji perangkat | M3, showcase siap |
 | **M5 — Launch** | domain live, Search Console, monitoring, uji restore backup, panduan admin | M4 |
@@ -392,6 +403,8 @@ Konvensi tiket Linear: `CPR-{nomor}` diberikan otomatis oleh Linear, dan judul t
 | Beban operasional VPS | Downtime atau kehilangan data | Backup otomatis + uji restore, uptime monitor eksternal, update keamanan otomatis |
 | Spam di form | Inbox penuh, data kotor | Honeypot + Turnstile + rate limit |
 | Perubahan versi Payload/Next.js | Build rusak | Versi dikunci, upgrade lewat PR terpisah |
+| Logo hanya tersedia sebagai PNG raster berukuran besar | Logo buram atau berat dimuat; tulisan logo tidak terbaca di mode gelap | Minta file vektor dari pembuat logo (Q7). Kalau tidak ada, logo di-trace ulang ke SVG. Buat varian untuk latar gelap |
+| Setiap komponen harus dirancang dan diuji di dua tema | Pekerjaan desain dan QA bertambah | Warna hanya lewat token tema (tanpa hardcode), axe dijalankan di kedua tema |
 
 ## 18. Catatan keputusan
 
@@ -406,6 +419,7 @@ Konvensi tiket Linear: `CPR-{nomor}` diberikan otomatis oleh Linear, dan judul t
 | D7 | Umami tanpa cookie, tanpa cookie banner | GA4 + cookie banner |
 | D8 | Layout tetap di kode, isi di CMS | page builder blocks |
 | D9 | Linear: satu team per produk (`CPR`, `CBT`) | satu team dengan prefix di judul |
+| D10 | Mode terang & gelap. Bawaannya mengikuti sistem, dan pengunjung bisa menggantinya lewat tombol | hanya mode terang |
 
 ## 19. Pertanyaan terbuka
 
@@ -417,3 +431,4 @@ Konvensi tiket Linear: `CPR-{nomor}` diberikan otomatis oleh Linear, dan judul t
 | Q4 | Topik 2–3 showcase. Usulan: (a) chatbot FAQ & booking untuk klinik fiktif, butuh `CBT`; (b) dashboard pesanan WhatsApp untuk UMKM F&B; (c) website Sineva Tech ini sendiri sebagai studi kasus | Founder | awal M1 |
 | Q5 | Desain UI dibuat di Figma dulu atau langsung di kode | Founder | awal M1 |
 | Q6 | Siapa yang mereview teks Kebijakan Privasi dari sisi legal | Founder | sebelum M4 |
+| Q7 | Apakah ada file vektor logo (SVG/AI/Figma)? Kalau tidak ada, logo di-trace ulang ke SVG | Founder | awal M1 |

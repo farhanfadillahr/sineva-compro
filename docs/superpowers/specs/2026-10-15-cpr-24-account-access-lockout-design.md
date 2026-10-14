@@ -1,6 +1,6 @@
 # CPR-24 | [Admin] Pengguna, hak akses, dan lockout login
 
-**Tanggal:** 15 Oktober 2026. **Status:** rancangan untuk review Founder; belum merupakan implementasi atau bukti fitur selesai.
+**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder melalui jawaban “Setujui rancangan”; belum merupakan implementasi atau bukti fitur selesai.
 
 **Acuan:** [PRD Rev. 2 §9.3](../../prd/2026-10-14-company-profile-prd.md), [CPR-24](https://linear.app/sineva-tech/issue/CPR-24/admin-kelola-pengguna-peran-admineditor-and-lockout-login), dan fondasi CPR-7 yang telah merged ke `main` pada `641d867d863010ccbc96780d9930335f837de5a2`.
 
@@ -10,7 +10,7 @@ Founder dapat mengelola akun penulis/freelancer tanpa memberikan akses ke data l
 
 Keputusan produk yang sudah ada: Next.js admin custom, Better Auth 1.7.7, PostgreSQL/Drizzle, dua peran `admin`/`editor`, signup tertutup, bootstrap Admin melalui operator, lockout 15 menit setelah lima kegagalan berturut-turut. Bahasa UI admin adalah Indonesia.
 
-Usulan detail pengelolaan akun untuk review: Admin dapat membuat Editor dengan password awal, mengubah nama/email Editor, menonaktifkan/mengaktifkan Editor, dan mengganti password Editor. UI tidak membuat/mempromosikan Admin, tidak mengubah akun Admin, dan tidak menghapus akun secara permanen. Pembatasan target diperiksa server; field role dari client ditolak. Email undangan dan forgot-password mandiri menunggu integrasi email, bukan dibuat secara parsial dalam CPR-24.
+Detail pengelolaan akun yang disetujui: Admin dapat membuat Editor dengan password awal, mengubah nama/email Editor, menonaktifkan/mengaktifkan Editor, dan mengganti password Editor. UI tidak membuat/mempromosikan Admin, tidak mengubah akun Admin, dan tidak menghapus akun secara permanen. Pembatasan target diperiksa server; field role dari client ditolak. Email undangan dan forgot-password mandiri menunggu integrasi email, bukan dibuat secara parsial dalam CPR-24.
 
 Tidak termasuk form konten, upload R2, preview konten, Leads/Waitlist/CSV, email nyata, CI/deployment, atau perubahan logo. CPR-24 menyiapkan dan membuktikan guard yang wajib dipakai tiket-tiket tersebut; tidak membuat endpoint kosong untuk fitur yang belum ada.
 
@@ -85,7 +85,7 @@ Create Editor harus atomik untuk user dan credential, mengikuti regresi bootstra
 
 ## Handoff dan sumber
 
-Rancangan ini mengikuti scope akun Editor pada PRD; detail aktif/nonaktif dan penggantian password di atas merupakan usulan yang perlu disetujui Founder. Setelah rancangan disetujui, rencana implementasi akan memecah schema/policy, Users service/UI, integration/browser acceptance dan review menjadi pekerjaan yang dapat diverifikasi.
+Rancangan ini mengikuti scope akun Editor pada PRD; Founder telah menyetujui detail aktif/nonaktif dan penggantian password di atas. [Rencana implementasi](../plans/2026-10-15-cpr-24-account-access-lockout.md) memecah schema/policy, Users service/UI, integration/browser acceptance dan review menjadi pekerjaan yang dapat diverifikasi.
 
 Dokumentasi resmi dan kode terpasang diperiksa melalui Context7 dan `node_modules`:
 

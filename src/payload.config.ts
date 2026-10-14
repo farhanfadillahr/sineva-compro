@@ -18,7 +18,9 @@ export default buildConfig({
   secret: env.payloadSecret,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
-    pool: { connectionString: env.databaseUrl },
+    pool: { connectionString: env.databaseUrl, connectionTimeoutMillis: 5000 },
+    disableCreateDatabase: true,
+    transactionOptions: { isolationLevel: 'read committed' },
     push: false,
     migrationDir: path.resolve(dirname, 'migrations'),
   }),

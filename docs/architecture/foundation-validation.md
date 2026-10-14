@@ -28,6 +28,30 @@ merge atau deployment.
 - HTTP integration production: 4/4 lulus terhadap database test; `/` dan `/admin`
   200, read/create Users anonim 403. Waktu suite sekitar 0,86 detik.
 
+## Hasil review independen
+
+Review tidak menemukan Critical dan menemukan tiga Important, seluruhnya
+direproduksi sebelum diperbaiki:
+
+- Dua bootstrap anonim paralel semula menghasilkan dua akun. Hook sebelum create
+  kini memakai advisory lock transaksi dan recount dengan isolation read committed.
+- Listener TCP yang tidak menyelesaikan handshake semula melewati deadline test.
+  `connectionTimeoutMillis: 5000` kini menghentikan inisialisasi tersebut.
+- Nama database yang salah semula membuat database pengganti. Startup kini memakai
+  `disableCreateDatabase: true` sehingga gagal tanpa membuat database.
+
+`npm run test:database` lulus 3/3 setelah perbaikan, termasuk create pengguna oleh
+admin terautentikasi. Suite menjalankan operasi auth Payload sebenarnya pada
+database tmpfs test; fixture hanya milik test dan dibersihkan. Pengujian ini tidak
+menggantikan pemeriksaan UI admin yang tertahan.
+
+Setelah perbaikan review, lint/typecheck/unit/formatter, build production, serta
+HTTP production 4/4 dijalankan kembali dan lulus. Status migration developer
+tetap applied dan regenerasi types/import map tetap tanpa diff.
+
+Indentasi migration dinormalisasi setelah whole-branch `git diff --check`
+menemukan space-before-tab. Perubahan tidak mengubah SQL atau snapshot schema.
+
 ## Pemeriksaan UI yang masih diperlukan
 
 Browser Codex menolak localhost karena saved permission/managed policy, termasuk
@@ -57,6 +81,11 @@ Tes HTTP anonim yang lulus tidak membuktikan keempat pemeriksaan tersebut.
   Risiko: tooling deprecated sampai kombinasi plugin yang kompatibel tersedia.
 - Peer development Vite, esbuild dan YAML, dipasang exact agar dependency graph
   valid. Risiko: dua dependency development tambahan perlu dipelihara.
+- Hook bootstrap memakai session transaksi adapter PostgreSQL yang terpasang.
+  Risiko: bergantung pada kontrak adapter Payload dan contention bootstrap;
+  regresi konkuren perlu dijalankan pada upgrade.
+- Indentasi migration diperbaiki untuk gate whitespace seluruh branch. Risiko:
+  perubahan tidak sengaja pada SQL; diff perubahan terbatas pada whitespace.
 
 Audit runtime memiliki lima temuan moderate pada tooling migration esbuild;
 audit seluruh dependency juga memiliki lima temuan high pada tooling glob ESLint.

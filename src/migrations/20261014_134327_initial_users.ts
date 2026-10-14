@@ -3,70 +3,70 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TABLE "users_sessions" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"created_at" timestamp(3) with time zone,
-  	"expires_at" timestamp(3) with time zone NOT NULL
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "created_at" timestamp(3) with time zone,
+    "expires_at" timestamp(3) with time zone NOT NULL
   );
 
   CREATE TABLE "users" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"email" varchar NOT NULL,
-  	"reset_password_token" varchar,
-  	"reset_password_expiration" timestamp(3) with time zone,
-  	"salt" varchar,
-  	"hash" varchar,
-  	"reset_password_requested_at" timestamp(3) with time zone,
-  	"login_attempts" numeric DEFAULT 0,
-  	"lock_until" timestamp(3) with time zone
+    "id" serial PRIMARY KEY NOT NULL,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "email" varchar NOT NULL,
+    "reset_password_token" varchar,
+    "reset_password_expiration" timestamp(3) with time zone,
+    "salt" varchar,
+    "hash" varchar,
+    "reset_password_requested_at" timestamp(3) with time zone,
+    "login_attempts" numeric DEFAULT 0,
+    "lock_until" timestamp(3) with time zone
   );
 
   CREATE TABLE "payload_kv" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"key" varchar NOT NULL,
-  	"data" jsonb NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "key" varchar NOT NULL,
+    "data" jsonb NOT NULL
   );
 
   CREATE TABLE "payload_locked_documents" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"global_slug" varchar,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "global_slug" varchar,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
 
   CREATE TABLE "payload_locked_documents_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "users_id" integer
   );
 
   CREATE TABLE "payload_preferences" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"key" varchar,
-  	"value" jsonb,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "key" varchar,
+    "value" jsonb,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
 
   CREATE TABLE "payload_preferences_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "users_id" integer
   );
 
   CREATE TABLE "payload_migrations" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"name" varchar,
-  	"batch" numeric,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "name" varchar,
+    "batch" numeric,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
 
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

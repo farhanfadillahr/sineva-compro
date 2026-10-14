@@ -120,6 +120,13 @@ Tidak mencampur migration dengan schema push atau menjalankan `migrate:fresh`
 terhadap database developer. Deployment harus menjalankan migration sebelum
 aplikasi menggunakan schema baru.
 
+Database dibuat oleh Compose/provisioning, bukan oleh startup Payload.
+`disableCreateDatabase: true` membuat salah nama database gagal secara terlihat;
+koneksi dibatasi 5 detik. Bootstrap pengguna pertama memakai advisory lock dalam
+transaksi yang sama dan menghitung ulang pengguna setelah lock diperoleh, sehingga
+dua permintaan bootstrap bersamaan hanya dapat menghasilkan satu akun. Transaksi
+memakai isolation `read committed` dan lock menunggu paling lama 5 detik.
+
 ## Pemeriksaan kualitas
 
 ```bash
@@ -154,6 +161,14 @@ dengan `TEST_BASE_URL`. Untuk memeriksa production, hentikan server dev test,
 jalankan build, lalu ganti argumen `"dev"` di perintah peluncuran menjadi `"start"`.
 Buka `/admin` di port 3001, buat akun khusus test melalui UI, login, dan periksa
 dashboard serta dokumen Users. Respons HTML anonim tidak cukup untuk menguji CMS.
+
+Jalankan `npm run test:database` setelah migration database test, sebelum membuat
+akun test manual atau menjalankan server test. Suite ini memeriksa listener yang
+tidak menyelesaikan handshake, penolakan database salah nama, serta bootstrap
+konkuren dan create pengguna oleh admin terautentikasi. Suite hanya menerima URL
+loopback dengan nama `sineva_compro_test`, memerlukan database tersebut belum berisi
+Users, dan membersihkan fixture miliknya sendiri. Bila Users test sudah tersedia,
+gunakan container test baru yang disposable; jangan menghapus data developer.
 
 Service test menggunakan tmpfs dan dapat kehilangan data saat container dibuat
 ulang. Database developer memakai volume persisten. Jangan memakai data produksi,

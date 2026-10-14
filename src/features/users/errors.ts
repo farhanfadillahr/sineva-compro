@@ -23,3 +23,14 @@ export function safeUsersError(error: unknown): UsersServiceError | AccessDenied
   }
   return new UsersServiceError('UNAVAILABLE', 'Perubahan belum dapat disimpan. Coba lagi.')
 }
+
+export function toUserActionState(error: unknown): import('./types').UserActionState {
+  const safe = safeUsersError(error)
+  return {
+    status: 'error',
+    message:
+      safe instanceof AccessDeniedError
+        ? 'Anda tidak memiliki akses untuk tindakan ini.'
+        : safe.message,
+  }
+}

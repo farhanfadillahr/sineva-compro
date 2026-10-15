@@ -384,7 +384,7 @@ Pengunjung ──► Cloudflare (DNS, proxy/CDN, Turnstile)
 ### 14.3 CI (GitHub Actions)
 Workflow `CI` menjalankan job `verify` pada setiap PR ke `main`, push ke `main`, dan pemicu manual. Urutan CPR-10: format → lint → typecheck → unit → journal/migration → integration SQL (Postgres disposable) → build → integration HTTP production. HTTP memakai server production hasil build, sehingga dijalankan setelah build; suite SQL/HTTP berurutan karena berbagi fixture bootstrap. E2E Playwright (CPR-56) dan Lighthouse CI (CPR-58) ditambahkan pada tiket QA berikutnya.
 
-PR hanya boleh di-merge ke `main` kalau seluruh tahap CI yang sudah diterapkan lulus. **Status 15 Oktober 2026:** Founder menyetujui CI dahulu; enforcement branch protection menyusul karena paket repository private belum mendukung (GitHub API 403). Proteksi belum aktif dan acceptance larangan merge CI gagal tetap terbuka; pemeriksaan manual bukan pengganti enforcement server.
+PR hanya boleh di-merge ke `main` kalau seluruh tahap CI yang sudah diterapkan lulus. **Status 15 Oktober 2026:** Founder menyetujui CI dahulu; enforcement branch protection menyusul karena paket repository private belum mendukung (GitHub API 403). Proteksi belum aktif dan acceptance larangan merge CI gagal tetap terbuka; pemeriksaan manual bukan pengganti enforcement server. Verifikasi runner CPR-10 juga masih tertahan secara terpisah: GitHub melaporkan pembayaran akun/spending limit sebelum job dimulai; hasil lokal bukan bukti Actions hijau.
 
 ## 15. Strategi testing
 

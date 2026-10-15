@@ -10,7 +10,7 @@
 
 **Spec:** [Rancangan CPR-10 yang disetujui](../specs/2026-10-15-cpr-10-github-actions-design.md), [PRD §14.3](../../prd/2026-10-14-company-profile-prd.md), [CPR-10](https://linear.app/sineva-tech/issue/CPR-10/cpr-10-infra-setup-ci-github-actions).
 
-**Status:** Spec disetujui: CI dahulu, proteksi menyusul. Plan disetujui Founder; implementasi berlangsung dengan metode Native. Runner telah lulus tes; workflow sedang diverifikasi. Branch `farhanfadillahrafi/cpr-10-infra-setup-ci-github-actions` memakai worktree terisolasi yang sudah ada; base main `0156c0e997db79558adba11d874e17a75b7b0c6b`. Checkout utama yang memiliki perubahan dokumen lokal dipertahankan.
+**Status:** Spec disetujui: CI dahulu, proteksi menyusul. Plan disetujui Founder; implementasi berlangsung dengan metode Native. Runner dan rangkaian lokal lulus; PR #3 draft sudah dibuat, sedangkan pembuktian GitHub tertahan pembayaran akun/spending limit sebelum job dimulai. Branch `farhanfadillahrafi/cpr-10-infra-setup-ci-github-actions` memakai worktree terisolasi yang sudah ada; base main `0156c0e997db79558adba11d874e17a75b7b0c6b`. Checkout utama yang memiliki perubahan dokumen lokal dipertahankan.
 
 ## Global Constraints
 
@@ -283,7 +283,7 @@ Manually compare trigger filters, concurrency expression, job timeout, exact act
 
 **Interfaces:** consume workflow `CI`/job `verify` dan feature branch Task 2. Produce PR yang dapat direview, exact-SHA run evidence dan acceptance truthful; tidak menghasilkan merge/deploy/proteksi palsu.
 
-- [ ] **Step 1 — publish draft PR.** Push feature branch, buat PR base `main` dengan judul `CPR-10 | [Infra] Setup CI GitHub Actions`; body dari file dengan `gh pr create --body-file`, lalu selalu `attach_artifact` dengan URL PR. Body menjelaskan check, urutan, bukti dan proteksi deferred. Trigger pertama dari event PR karena workflow belum ada pada default branch; jangan mengandalkan `workflow_dispatch` sebelum merge.
+- [x] **Step 1 — publish draft PR.** Push feature branch, buat PR base `main` dengan judul `CPR-10 | [Infra] Setup CI GitHub Actions`; body dari file dengan `gh pr create --body-file`, lalu selalu `attach_artifact` dengan URL PR. Body menjelaskan check, urutan, bukti dan proteksi deferred. Trigger pertama dari event PR karena workflow belum ada pada default branch; jangan mengandalkan `workflow_dispatch` sebelum merge.
 
 - [ ] **Step 2 — lihat run sesungguhnya.** Gunakan `gh pr checks <number>`, `gh run list --branch <branch> --event pull_request`, dan `gh run view <run-id> --json headSha,conclusion,event,jobs,url`. Cocokkan PR head dan checkout/merge ref; simpan URL run, head SHA, merge SHA bila ada, dan hasil tiap tahap. Perbaiki failure berdasarkan log aman, ulang suite relevan dan push; tidak mengubah timeout/security/test assertion hanya untuk hijau. Jika tidak bisa jalan karena billing/outage, simpan hasil aktual dan jangan centang acceptance yang belum terbukti.
 
@@ -301,9 +301,13 @@ Catat run URL/SHA/conclusion failure dan tahap berikutnya skipped. Hapus file pr
 
 - [ ] **Step 4 — concurrency/cancel.** Push dua revisi dokumentasi evidence berurutan saat run pertama masih aktif; verifikasi run lama canceled dan run baru mencapai `verify` success pada head terbaru. Catat canceled sebagai canceled, bukan pass. Jika run terlalu cepat, gunakan satu `gh run cancel <run-id>` untuk membuktikan cancellation aktual lalu rerun pada head yang sama, tanpa sleep buatan permanen dalam workflow. Process cleanup sinyal/TERM fallback dibuktikan unit tests Task 1; runner/service disposal dikonfirmasi log Actions. Canceled run tidak menjadi bukti semua tes lulus.
 
-- [ ] **Step 5 — whole-branch independent review.** Reviewer baru memeriksa spec+diff, group cleanup/cancellation/readiness, safe environment, action SHAs/permissions/cache, urutan/fresh DB dan batas acceptance. Jangan mengklaim reviewer independen jika tool/agen reviewer tidak tersedia; laporkan keterbatasan tersebut. Reproduksi temuan dengan regression RED lalu perbaiki GREEN. Setiap perubahan source setelah run hijau membutuhkan run final pada head baru.
+- [x] **Step 5 — whole-branch independent review.** Reviewer baru memeriksa spec+diff, group cleanup/cancellation/readiness, safe environment, action SHAs/permissions/cache, urutan/fresh DB dan batas acceptance. Jangan mengklaim reviewer independen jika tool/agen reviewer tidak tersedia; laporkan keterbatasan tersebut. Reproduksi temuan dengan regression RED lalu perbaiki GREEN. Setiap perubahan source setelah run hijau membutuhkan run final pada head baru.
 
 - [ ] **Step 6 — rekonsiliasi evidence dan handoff.** Bukti mencatat commands/counts/revision dan URL run positif/negatif/canceled/restored; tidak menyalin rahasia/log auth. README/PRD dan checklist hanya menyatakan hasil aktual. Final head tanpa probe memperoleh check `verify` success. Update PR ready setelah review selesai; attach jika belum. Linear centang workflow PR dan Postgres hanya setelah terbukti; “PR dengan CI gagal tidak bisa di-merge” tetap unchecked, status belum Done karena paket belum mendukung proteksi. Jangan mengirim request proteksi berulang atau mengubah billing/visibility. Laporkan PR dan keputusan yang masih tertunda, tanpa merge/deploy.
+
+## Status eksekusi Task 3
+
+PR #3 sudah dipush dan di-attach. Pemeriksaan run pertama selesai dengan `startup_failure`, `jobs: []`; browser GitHub menampilkan pesan pembayaran akun/spending limit. Step 2 belum menghasilkan run sukses. Step 3–4 belum dapat dieksekusi dan tidak dicentang. Review independen selesai tanpa temuan Critical/Important/Minor, termasuk unit 100/100 dan probe timeout/cleanup oleh reviewer. Dokumentasi/Linear/PR telah direkonsiliasi; Step 6 belum selesai karena latest-head verify belum dapat dieksekusi dan PR tetap draft. Acceptance remote dan proteksi tetap terbuka. Tidak ada perubahan billing atau visibility.
 
 ## Self-review plan
 

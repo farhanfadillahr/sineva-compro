@@ -1,6 +1,6 @@
 # CPR-10 | [Infra] Setup CI GitHub Actions
 
-**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder pada 15 Oktober 2026; CI dikerjakan terlebih dahulu, proteksi `main` menyusul ketika paket mendukung. Workflow dan runner telah dibuat dan sedang diverifikasi; proteksi repository belum diterapkan.
+**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder pada 15 Oktober 2026; CI dikerjakan terlebih dahulu, proteksi `main` menyusul ketika paket mendukung. Workflow dan runner telah dibuat dan lulus verifikasi lokal; pembuktian GitHub tertahan pembayaran akun/spending limit, dan proteksi repository belum diterapkan.
 
 **Acuan:** [CPR-10](https://linear.app/sineva-tech/issue/CPR-10/infra-setup-ci-github-actions), PRD §14.3, dan `origin/main` pada `0156c0e997db79558adba11d874e17a75b7b0c6b` (hasil merge CPR-24).
 
@@ -73,6 +73,10 @@ Pilihan yang telah direview:
 - **Lengkapi paket yang mendukung proteksi:** Founder menangani pilihan/pembelian paket di akun GitHub, lalu operator memeriksa ulang dan mengaktifkan aturan setelah CI pertama hijau. Tidak ada pembelian, publikasi repository atau perubahan visibilitas oleh asisten.
 
 API 403 yang telah dikonfirmasi adalah batasan produk saat ini, bukan penolakan izin dari browser. Workflow CI tetap dapat dibuat. Tidak ada janji bahwa GitHub akan memblokir merge merah sebelum proteksi benar-benar terpasang dan diuji.
+
+## Status runner saat implementasi
+
+Event PR #3 memicu run 38686730990 pada head fc6be5a, tetapi GitHub mengakhiri startup sebelum job terbentuk. Anotasi halaman run menyatakan pembayaran akun gagal atau spending limit perlu diperiksa. Ini terpisah dari batas proteksi private repository. Tidak mengubah billing/visibility; acceptance eksekusi GitHub serta probe merah/hijau/cancel tetap belum terbukti sampai pemilik akun memulihkan kemampuan menjalankan Actions. Bukti lokal dan review kode tetap dilanjutkan, PR disimpan sebagai draft.
 
 ## Verifikasi dan hasil yang diserahkan
 

@@ -1,6 +1,6 @@
 # CPR-10 — Bukti CI GitHub Actions
 
-Status 15 Oktober 2026: implementasi dan verifikasi berlangsung; belum ada klaim run GitHub hijau. Spec/plan disetujui Founder, metode Native, CI terlebih dahulu dan proteksi main menyusul.
+Status 15 Oktober 2026: implementasi dan verifikasi lokal selesai; GitHub runner belum dapat dimulai karena pembayaran akun/spending limit. Tidak ada klaim run GitHub hijau. Spec/plan disetujui Founder, metode Native, CI terlebih dahulu dan proteksi main menyusul.
 
 ## Runtime dan batas lingkungan
 
@@ -25,12 +25,26 @@ Satu job `verify` pada Ubuntu 24.04, timeout 20 menit, Node `.nvmrc`, cache down
 
 Action resmi dipin: checkout v7.0.1 `3d3c42e5aac5ba805825da76410c181273ba90b1`; setup-node v7.1.0 `949feb2413d6458794dcd2491c4babbbce0c15c1`. Ref dan runtime node24 diperiksa melalui API resmi GitHub pada 15 Oktober 2026.
 
+## Bukti GitHub dan blocker akun
+
+Draft [PR #3](https://github.com/farhanfadillahr/sineva-compro/pull/3), base `0156c0e997db79558adba11d874e17a75b7b0c6b`. [Run pertama 38686730990](https://github.com/farhanfadillahr/sineva-compro/actions/runs/38686730990) terpicu oleh event `pull_request` pada head `fc6be5aa79917c772b034ec0feb81e11941e108e`; hasil `startup_failure`, `jobs: []`, tidak ada check `verify` atau log runner. API tidak memberikan anotasi, sehingga pesan diperiksa pada halaman run melalui browser GitHub yang terautentikasi.
+
+Anotasi menyatakan job tidak dimulai karena pembayaran akun terakhir gagal **atau** spending limit perlu dinaikkan, dan mengarahkan pemilik akun ke Billing & plans. Pesan tidak menetapkan mana dari dua kondisi itu yang berlaku. Ini blocker runner, terpisah dari batas paket untuk branch protection. Workflow belum diuji oleh runner Linux; tidak menyimpulkan YAML salah atau tes gagal dari startup failure ini.
+
+Probe merah/pemulihan hijau/cancellation belum dijalankan karena semuanya bergantung pada runner yang dapat dimulai. Tidak membuat commit probe gagal yang tidak bisa dieksekusi. PR tetap draft. Pemilik akun perlu memeriksa Billing & plans; tidak ada pembelian, perubahan batas belanja, visibility atau secret oleh agen. Setelah runner tersedia, lanjutkan run `verify`, probe terkontrol, pemulihan dan verifikasi latest-head sebelum PR siap merge.
+
+## Review independen
+
+Reviewer fresh-context Dalton memeriksa `0156c0e..fc6be5a` secara read-only terhadap spec/plan, kode dan tes. Hasil: **tidak ada temuan Critical, Important, atau Minor**; tidak ada perilaku yang dikesampingkan dari penilaian. Reviewer menjalankan sendiri unit **100/100** pada Node 24.21.0 dari scratch archive, parse YAML, serta probe response readiness yang stall dan cleanup server tahan TERM. Reviewer tidak mengulang DB/build/HTTP; hasil tersebut adalah bukti implementer di atas.
+
+Verdict: code review lulus, **tetap draft** sampai verifikasi GitHub terpenuhi. Review terikat head `fc6be5aa79917c772b034ec0feb81e11941e108e`; perubahan sesudahnya hanya dokumentasi status/evidence, tanpa perubahan runner/workflow/test/source aplikasi. Tidak diperlukan fix pass atau review kedua.
+
 ## Acceptance dan batas paket
 
 - [ ] Workflow otomatis PR ke main dibuktikan dengan run GitHub.
 - [ ] Integration memakai PostgreSQL fresh di runner GitHub.
 - [ ] CI merah, pemulihan hijau, cancellation dan latest-head dibuktikan.
-- [ ] Review independen seluruh branch selesai.
+- [x] Review independen seluruh branch selesai (scope source/workflow pada fc6be5a; dokumentasi status terbaru diperiksa implementer).
 - [ ] PR dengan CI gagal tidak bisa di-merge — **ditunda**, paket private repository mengembalikan 403 untuk branch protection.
 
 Founder menyetujui CI dahulu. CPR-10 tetap belum Done atas scope awal sampai enforcement tersedia dan terbukti. Visibility/billing tidak diubah; tidak merge/deploy tanpa instruksi Founder.

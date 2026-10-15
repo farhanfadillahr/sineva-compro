@@ -25,7 +25,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "test:prepare": "tsx scripts/test-runtime.ts prepare",
-    "test:server": "tsx scripts/test-runtime.ts server"
+    "test:server": "tsx scripts/test-runtime.ts server",
+    "test:http:production": "tsx scripts/test-http-production.ts"
   },
   "dependencies": {
     "dotenv": "16.6.1",

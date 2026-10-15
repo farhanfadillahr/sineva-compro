@@ -1,5 +1,5 @@
 import { PublicPageShell } from '@/components/public/page-shell'
 
 export default function Page() {
-  return <PublicPageShell page="portfolio" />
+  return <PublicPageShell page="work" />
 }

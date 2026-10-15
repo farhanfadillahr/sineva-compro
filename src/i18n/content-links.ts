@@ -5,7 +5,9 @@ export type ContentKind = 'service' | 'portfolio' | 'post'
 export type TranslationReference = Readonly<{
   kind: ContentKind
   entityId: string
-  locale: Locale
+  // Plain string: rows of a locale that is not enabled may still arrive from the content
+  // layer; they are ignored because matching is by exact target locale, never by fallback.
+  locale: string
   slug: string
   published: boolean
 }>
@@ -16,7 +18,8 @@ export type ContentTarget =
 
 const detailPathnames = {
   service: '/services/[slug]',
-  portfolio: '/portfolio/[slug]',
+  // The entity stays `portfolio`; only its public URL is "work".
+  portfolio: '/work/[slug]',
   post: '/blog/[slug]',
 } as const
 

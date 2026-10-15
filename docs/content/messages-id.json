@@ -1,4 +1,5 @@
 {
+  "$comment": "Source text for a future id locale, moved out of the build when English became the only locale. Not bundled. Its keys predate the English sitemap (Pages.webDevelopment, aiAutomation, portfolio, chatbot) and must be reconciled with messages/en.json before it becomes messages/id.json; drop this key then.",
   "Pages": {
     "home": "Beranda",
     "services": "Layanan",

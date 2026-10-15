@@ -1,170 +1,143 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 const base = new URL(process.env.TEST_BASE_URL ?? 'http://127.0.0.1:3001')
 if (!['127.0.0.1', 'localhost'].includes(base.hostname) || base.protocol !== 'http:') {
   throw new Error('I18n HTTP tests require a loopback server')
 }
+const get = (path: string, headers: Record<string, string> = {}) =>
+  fetch(new URL(path, base), { redirect: 'manual', headers })
+const localeCookie = (response: Response) =>
+  response.headers.getSetCookie().some((value) => value.startsWith('NEXT_LOCALE='))
+
 const shells = [
-  ['/id', 'Beranda', 'id'],
-  ['/en', 'Home', 'en'],
-  ['/id/layanan', 'Layanan', 'id'],
-  ['/en/services', 'Services', 'en'],
-  ['/id/layanan/web-development', 'Web Development', 'id'],
-  ['/en/services/web-development', 'Web Development', 'en'],
-  ['/id/layanan/ai-otomasi', 'AI & Otomasi', 'id'],
-  ['/en/services/ai-automation', 'AI & Automation', 'en'],
-  ['/id/portofolio', 'Portofolio', 'id'],
-  ['/en/portfolio', 'Portfolio', 'en'],
-  ['/id/produk/chatbot', 'Produk Chatbot', 'id'],
-  ['/en/products/chatbot', 'Chatbot Product', 'en'],
-  ['/id/blog', 'Blog', 'id'],
-  ['/en/blog', 'Blog', 'en'],
-  ['/id/tentang-kami', 'Tentang kami', 'id'],
-  ['/en/about', 'About us', 'en'],
-  ['/id/kontak', 'Kontak', 'id'],
-  ['/en/contact', 'Contact', 'en'],
-  ['/id/kontak/terima-kasih', 'Terima kasih', 'id'],
-  ['/en/contact/thank-you', 'Thank you', 'en'],
-  ['/id/kebijakan-privasi', 'Kebijakan Privasi', 'id'],
-  ['/en/privacy-policy', 'Privacy Policy', 'en'],
+  ['/', 'Home'],
+  ['/products/ai-agents', 'AI Agents'],
+  ['/services', 'Services'],
+  ['/work', 'Work'],
+  ['/blog', 'Blog'],
+  ['/about', 'About'],
+  ['/contact', 'Contact'],
+  ['/contact/thank-you', 'Thank you'],
+  ['/privacy-policy', 'Privacy Policy'],
 ] as const
-it.each(shells)('serves localized shell %s', async (path, title, locale) => {
-  const response = await fetch(new URL(path, base), { redirect: 'manual' })
-  const html = await response.text()
-  expect(response.status).toBe(200)
-  expect(html).toContain(`lang="${locale}"`)
-  expect((html.match(/<html\b/g) ?? []).length).toBe(1)
-  expect((html.match(/<body\b/g) ?? []).length).toBe(1)
-  expect(html).toContain(title.replaceAll('&', '&amp;'))
-  expect(html).toContain(
-    locale === 'en' ? 'This page is being prepared.' : 'Halaman sedang disiapkan.',
-  )
-  expect(html).not.toContain(
-    locale === 'en' ? 'Halaman sedang disiapkan.' : 'This page is being prepared.',
-  )
-  expect(html).toMatch(/name="robots"[^>]*content="noindex/)
-  expect(html).not.toMatch(/hreflang=|next-intl\.messages|MISSING_MESSAGE/)
-})
-it.each([
-  [{ cookie: 'NEXT_LOCALE=id', 'accept-language': 'en-US' }, '/id'],
-  [{ cookie: 'NEXT_LOCALE=en', 'accept-language': 'id' }, '/en'],
-  [{ cookie: 'NEXT_LOCALE=unknown', 'accept-language': 'en-GB' }, '/en'],
-  [{ 'accept-language': 'id;q=0.9,en;q=0.1' }, '/id'],
-  [{ 'accept-language': 'en;q=0' }, '/id'],
-  [{ 'accept-language': 'fr-FR' }, '/id'],
-  [{ 'accept-language': 'not_a_locale;q=broken' }, '/id'],
-  [{}, '/id'],
-  ...[
-    'en;q=1.5',
-    'en;q=0.5junk',
-    'en;q=',
-    'en;q=-1',
-    'en;q=1.0001',
-    'en;q=0.0001',
-    'en;q=NaN',
-    'en;q=1;q=0',
-    'en;q=0.5, id;q=',
-    'en_US',
-    'en;foo=bar',
-    'en;q="0.5"',
-  ].map((value) => [{ cookie: 'NEXT_LOCALE=invalid', 'accept-language': value }, '/id'] as const),
-  [{ 'accept-language': 'en-US;Q=0.9,id;q=0.1' }, '/en'],
-  [{ 'accept-language': 'en;Q=0,id;q=1' }, '/id'],
-  [{ cookie: 'NEXT_LOCALE=en', 'accept-language': 'en;q=1.5' }, '/en'],
-  [{ cookie: 'NEXT_LOCALE=id', 'accept-language': 'en;q=0.5junk' }, '/id'],
-] as const)('negotiates root without caching personalized redirect %#', async (headers, want) => {
-  const response = await fetch(new URL('/?utm_source=test', base), {
-    redirect: 'manual',
-    headers: headers as Record<string, string>,
-  })
-  expect(response.status).toBe(307)
-  const target = new URL(response.headers.get('location')!, base)
-  expect(target.origin).toBe(base.origin)
-  expect(target.pathname).toBe(want)
-  expect(target.search).toBe('?utm_source=test')
-  expect(response.headers.get('cache-control')).toContain('private')
-  expect(response.headers.get('cache-control')).toContain('no-store')
-  expect(response.headers.get('vary')?.toLowerCase()).toContain('cookie')
-  expect(response.headers.get('vary')?.toLowerCase()).toContain('accept-language')
-  expect((await fetch(target, { redirect: 'manual' })).status).toBe(200)
-})
-it.each(['id', 'en;q=1.5'])(
-  'honors an explicit EN URL over cookie, browser and forged locale header with %s',
-  async (acceptLanguage) => {
-    const response = await fetch(new URL('/en/about', base), {
-      redirect: 'manual',
-      headers: {
-        cookie: 'NEXT_LOCALE=id',
-        'accept-language': acceptLanguage,
-        'x-next-intl-locale': 'id',
-      },
-    })
+describe('English shells without a locale prefix', () => {
+  it.each(shells)('serves %s', async (path, title) => {
+    const response = await get(path)
     const html = await response.text()
     expect(response.status).toBe(200)
     expect(html).toContain('lang="en"')
-    expect(html).toContain('About us')
-    expect(html).not.toMatch(
-      /Tentang kami|Halaman sedang disiapkan|Web development, AI, dan otomasi bisnis/,
-    )
-    const cookie = response.headers.getSetCookie().find((value) => value.startsWith('NEXT_LOCALE='))
-    expect(cookie).toMatch(/^NEXT_LOCALE=en;/)
-    expect(cookie).toMatch(/Path=\//i)
-    expect(cookie).toMatch(/SameSite=lax/i)
-    expect(cookie).toMatch(/Secure/i)
-    expect(response.headers.get('link') ?? '').not.toContain('hreflang')
-  },
-)
-it('keeps query strings when canonicalizing an internal static pathname', async () => {
-  const response = await fetch(new URL('/id/about?utm_source=alias', base), { redirect: 'manual' })
-  expect([307, 308]).toContain(response.status)
-  const target = new URL(response.headers.get('location')!, base)
-  expect(target.pathname).toBe('/id/tentang-kami')
-  expect(target.search).toBe('?utm_source=alias')
-  expect((await fetch(target, { redirect: 'manual' })).status).toBe(200)
+    expect((html.match(/<html\b/g) ?? []).length).toBe(1)
+    expect((html.match(/<body\b/g) ?? []).length).toBe(1)
+    expect(html).toMatch(new RegExp(`<h1[^>]*>${title}</h1>`))
+    expect(html).toContain('<title>Sineva</title>')
+    expect(html).toContain('This page is being prepared.')
+    expect(html).not.toMatch(/Halaman sedang disiapkan|Sineva Tech/)
+    expect(html).toMatch(/name="robots"[^>]*content="noindex/)
+    expect(html).not.toMatch(/hreflang=|next-intl\.messages|MISSING_MESSAGE/)
+  })
 })
-it.each([
-  '/fr/about',
-  '/unknown',
-  '/id/blog/unknown',
-  '/en/blog/unknown',
-  '/id/portofolio/unknown',
-  '/en/portfolio/unknown',
-  '/en/services/unknown',
-  '/en/blog/a.b',
-])('returns 404 without inventing published content at %s', async (path) => {
-  const response = await fetch(new URL(path, base), { redirect: 'manual' })
-  const html = await response.text()
-  expect(response.status).toBe(404)
-  // Next sends an error transport shell before hydration on notFound().
-  // The locale HTML attribute is verified on the rendered browser DOM.
-  expect(html).toMatch(/name="robots"[^>]*content="noindex/)
-  if (path.startsWith('/en/')) {
+
+describe('root has no locale negotiation', () => {
+  it.each<Record<string, string>>([
+    {},
+    { cookie: 'NEXT_LOCALE=id', 'accept-language': 'id' },
+    { cookie: 'NEXT_LOCALE=en', 'accept-language': 'id;q=0.9,en;q=0.1' },
+    { 'accept-language': 'fr-FR' },
+    { 'accept-language': 'id' },
+    { 'accept-language': 'not_a_locale;q=broken' },
+    { cookie: 'NEXT_LOCALE=unknown', 'accept-language': 'en;q=1.5' },
+  ])('serves English 200 at / for headers %#', async (headers) => {
+    const response = await get('/?utm_source=test', headers)
+    const html = await response.text()
+    expect(response.status).toBe(200)
+    expect(response.headers.get('location')).toBeNull()
+    expect(html).toContain('lang="en"')
+    expect(html).toMatch(/<h1[^>]*>Home<\/h1>/)
+    expect(localeCookie(response)).toBe(false)
+  })
+  it('sets no locale cookie on any English page', async () => {
+    expect(localeCookie(await get('/about', { cookie: 'NEXT_LOCALE=id' }))).toBe(false)
+  })
+})
+
+describe('explicitly prefixed default locale', () => {
+  it.each([
+    ['/en', '/'],
+    ['/en/services', '/services'],
+    ['/en/products/ai-agents', '/products/ai-agents'],
+    ['/en/services?utm_source=x', '/services?utm_source=x'],
+  ])('redirects %s to %s', async (path, want) => {
+    const response = await get(path)
+    expect(response.status).toBe(307)
+    const target = new URL(response.headers.get('location')!, base)
+    expect(target.origin).toBe(base.origin)
+    expect(target.pathname + target.search).toBe(want)
+    expect((await get(want)).status).toBe(200)
+  })
+  it('keeps a trailing slash from becoming a second URL', async () => {
+    const response = await get('/services/')
+    expect([307, 308]).toContain(response.status)
+    expect(new URL(response.headers.get('location')!, base).pathname).toBe('/services')
+  })
+})
+
+describe('retired and unknown URLs', () => {
+  it.each([
+    '/id',
+    '/id/layanan',
+    '/id/tentang-kami',
+    '/id/blog',
+    '/layanan',
+    '/kontak',
+    '/portfolio',
+    '/portofolio',
+    '/products/chatbot',
+    '/produk/chatbot',
+    '/services/web-development/extra',
+    '/fr/about',
+    '/unknown',
+    '/services/unknown',
+    '/work/unknown',
+    '/blog/unknown',
+    '/blog/a.b',
+    '/products/ai-agents/unknown',
+  ])('returns 404 with the English 404 page at %s', async (path) => {
+    const response = await get(path)
+    const html = await response.text()
+    expect(response.status).toBe(404)
+    expect(html).toMatch(/name="robots"[^>]*content="noindex/)
     expect(html).toContain('Page not found.')
-  }
-  if (path.startsWith('/id/')) {
-    expect(html).toContain('Halaman tidak ditemukan.')
-  }
-  expect(html).not.toMatch(/ai-guide|panduan-ai/)
+    expect(html).not.toMatch(/Halaman tidak ditemukan|ai-guide|panduan-ai/)
+  })
+  it('renders the 404 inside the English root layout', async () => {
+    const html = await (await get('/unknown')).text()
+    // Next 16.4 answers notFound() with a synthetic `<html id="__next_error__">` transport
+    // shell that has no lang attribute; the real layout travels in the RSC payload and is
+    // applied on hydration. Assert the payload, since that is what the browser ends up with.
+    expect(html).toContain(String.raw`\"html\",null,{\"lang\":\"en\"`)
+  })
 })
+
 it('leaves admin, API and assets outside localized routing', async () => {
   const headers = { cookie: 'NEXT_LOCALE=en', 'accept-language': 'en', 'x-next-intl-locale': 'en' }
-  const login = await fetch(new URL('/admin/login', base), { headers, redirect: 'manual' })
+  const login = await get('/admin/login', headers)
   const loginHtml = await login.text()
   expect(login.status).toBe(200)
   expect(loginHtml).toContain('lang="id"')
   expect(loginHtml).toContain('name="password"')
   expect(loginHtml).not.toContain('This page is being prepared.')
-  expect(login.headers.getSetCookie().some((value) => value.startsWith('NEXT_LOCALE='))).toBe(false)
-  const admin = await fetch(new URL('/admin', base), { headers, redirect: 'manual' })
+  expect(localeCookie(login)).toBe(false)
+  const admin = await get('/admin', headers)
   expect(admin.status).toBe(307)
   expect(new URL(admin.headers.get('location')!, base).pathname).toBe('/admin/login')
-  const api = await fetch(new URL('/api/users', base), { headers, redirect: 'manual' })
+  const api = await get('/api/users', headers)
   expect(api.status).toBe(404)
-  const asset = await fetch(new URL('/brand/sineva-symbol-original.svg', base), {
-    headers,
-    redirect: 'manual',
-  })
+  const asset = await get('/brand/sineva-symbol-original.svg', headers)
   expect(asset.status).toBe(200)
   expect(asset.headers.get('content-type')).toContain('image/svg+xml')
-  expect(asset.headers.getSetCookie().some((value) => value.startsWith('NEXT_LOCALE='))).toBe(false)
+  expect(localeCookie(asset)).toBe(false)
+  // public/ files are not rewritten into the localized tree.
+  const lottie = await get('/lottie/sineva-symbol-intro.json', headers)
+  expect(lottie.status).toBe(200)
+  expect(lottie.headers.get('content-type')).toContain('application/json')
 })

@@ -4,8 +4,9 @@ import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from './routing'
 
+// Only the active locales are bundled. The Indonesian source text lives in
+// docs/content/messages-id.json and moves to messages/id.json when `id` is enabled.
 const dictionaries = {
-  id: () => import('../../messages/id.json').then((module) => module.default),
   en: () => import('../../messages/en.json').then((module) => module.default),
 }
 export default getRequestConfig(async () => {
@@ -18,7 +19,7 @@ export default getRequestConfig(async () => {
       console.error('Localized message unavailable.')
     },
     getMessageFallback() {
-      return locale === 'en' ? 'Content unavailable.' : 'Konten belum tersedia.'
+      return 'Content unavailable.'
     },
   }
 })

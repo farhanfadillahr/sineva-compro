@@ -2,7 +2,7 @@
 
 Website company profile Sineva Tech dengan Next.js App Router dan **admin custom tanpa headless CMS**. Fondasi menyediakan PostgreSQL, autentikasi Better Auth, login/logout, bootstrap operator, dan dashboard dasar. Konten ID/EN, blog, media, SEO, mini-CRM dan integrasi mengikuti tiket berikutnya. Produk chatbot dikembangkan terpisah.
 
-Fondasi custom dipublikasikan pada branch CPR-7 melalui commit `e9cb9b3`; [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1) siap untuk review. Pemeriksaan browser production lokal lulus pada 15 Oktober 2026 melalui origin `http://localhost:3001`, termasuk login/logout, responsif/fokus, console dan login setelah restart database developer. Bukti browser melengkapi tes HTTP. PR belum di-merge atau di-deploy.
+Fondasi CPR-7 telah diintegrasikan melalui [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1), squash commit `641d867`. CPR-24 menambahkan pengelolaan Editor, otorisasi server dan lockout akun; bukti pengujiannya ada di [validasi CPR-24](docs/architecture/cpr-24-account-access-validation.md). Belum di-deploy.
 
 ## Runtime dan dependency
 
@@ -26,11 +26,21 @@ npm run dev
 
 Bootstrap meminta nama/email dan password tersembunyi melalui terminal. Password 12–128 karakter, tanpa nilai bawaan; tidak dimasukkan ke argumen atau dicetak. Database harus dikonfirmasi secara eksplisit. Target remote memerlukan `--allow-remote` tambahan, hanya untuk operator yang sengaja menyiapkan environment tersebut.
 
-Website: `http://127.0.0.1:3000`. Admin: `http://127.0.0.1:3000/admin`, anonim diarahkan ke `/admin/login`. Signup publik dan API pengelolaan akun melalui HTTP ditutup pada fondasi ini. Peran/UI pengelolaan akun lengkap dan lockout akun adalah CPR-24. Request rate limit library melengkapi keamanan; tidak diklaim sebagai lockout akun.
+Website: `http://127.0.0.1:3000`. Admin: `http://127.0.0.1:3000/admin`, anonim diarahkan ke `/admin/login`. Signup publik dan endpoint CRUD/operator library melalui HTTP tetap tertutup. Pengelolaan Editor tersedia melalui halaman Users dan Server Actions berizin. Rate limit per IP library tetap berlaku selain lockout akun.
 
 `setup:env` membuat `.env` mode 600 dengan credential acak, tidak mencetak nilainya dan menolak overwrite. `.env.example` mendokumentasikan URL DB developer/test, `BETTER_AUTH_SECRET` dan `BETTER_AUTH_URL`. Origin auth harus cocok dengan origin aplikasi. Jangan memakai credential production untuk lokal/test atau mencetak `docker compose config`; gunakan `--quiet`.
 
 URL PostgreSQL memvalidasi target sebelum driver dibuat. Parameter query hanya mendukung satu `sslmode=verify-full` atau `sslmode=disable`; override host/port/credential, fragment dan pembacaan file TLS melalui query ditolak. Konfigurasi TLS tambahan mengikuti provisioning yang direview. Log auth hanya memuat kategori tetap, tanpa pesan/error mentah, token atau parameter SQL.
+
+## Mengelola akun Editor
+
+Masuk sebagai Admin lalu pilih **Pengguna**. Admin dapat menambah Editor dengan nama/email/password awal, mengubah nama/email, menonaktifkan/mengaktifkan akun dan mengganti password. Akun Admin ditampilkan hanya untuk dibaca; pembuatan Admin tetap melalui bootstrap operator. Penghapusan permanen, promosi peran, undangan email dan forgot-password mandiri tidak tersedia.
+
+Password 12–128 karakter. Perubahan email/password/status mencabut seluruh session Editor dalam transaksi yang sama; nama saja tidak memaksa logout. Aktivasi kembali tidak menghidupkan cookie lama. Editor memiliki akses konten, tanpa menu/akses Users, Lead atau ekspor Waitlist. Setiap fitur mendatang wajib memakai guard capability pada query/action/preview/upload/export masing-masing.
+
+Lima kegagalan password berturut-turut mengunci akun selama 15 menit, di seluruh jalur HTTP login dan terlepas dari IP. Login sukses pada akun yang tidak terkunci mereset counter; setelah lock berakhir percobaan baru memulai siklus baru. Password benar selama lock tidak menghasilkan session dan tidak memperpanjang lock. Lockout berlaku untuk login baru; session yang sudah aktif tetap tunduk pada expiry, logout, penonaktifan dan revokasi.
+
+State `auth_lockout` tersimpan di PostgreSQL, terpisah dari schema auth hasil generator. Transaksi mengunci row akun, memakai waktu database, memverifikasi password melalui library, dan mengembalikan cookie hanya setelah commit. Kegagalan database/timeout menghasilkan 503 tanpa cookie; rate limit, CSRF dan request malformed tidak dihitung sebagai password salah. Salah password, akun tidak ada/nonaktif/terkunci memakai response generik yang sama. Tidak ada klaim timing konstan.
 
 ## Transisi checkout yang sebelumnya memakai Payload
 
@@ -52,14 +62,15 @@ Update `.env` dengan URL baru dan secret Better Auth acak; simpan credential lam
 - `src/app/(public)/`: homepage dasar; routing locale mengikuti CPR-25.
 - `src/app/(admin)/admin/`: login dan shell/dashboard berizin; UI v1 Indonesia dan tema terang.
 - `src/app/api/auth/[...all]/`: allowlist login/logout/session dan signup yang dinonaktifkan, tanpa API CRUD konten.
-- `src/features/auth/`: schema library, pemetaan Principal, kemampuan, bootstrap atomik dan guard session.
+- `src/features/auth/`: schema library, bootstrap atomik, guard authoritative dan policy login/lockout.
+- `src/features/users/`: parser, query/service atomik, action dan komponen pengelolaan Editor.
 - `src/lib/db/`: factory pool/ORM untuk CLI/test dan instance server dengan `server-only`, satu pool per proses.
 - `src/lib/auth/`: factory konfigurasi library dan entry server/client yang terpisah.
 - `drizzle/`: migration SQL dan metadata versioned; startup tidak membuat DB/schema.
 - `scripts/`: setup environment, migration dan bootstrap operator.
 - `tests/`: aturan murni, PostgreSQL sebenarnya, CLI proses dan HTTP Next.js.
 
-Root layout tetap Server Component. Session, token/hash dan query admin tidak masuk cache publik. Client hanya menerima Principal (ID/nama/peran). Setiap query/action berizin memanggil guard server sendiri, bukan mengandalkan menu/layout.
+Root layout tetap Server Component. Session, token/hash dan query admin tidak masuk cache publik. Client hanya menerima Principal (ID/nama/peran) atau DTO Users terbatas (ID/nama/email/peran/status). Setiap query/action berizin memanggil guard server sendiri, bukan mengandalkan menu/layout.
 
 ## Migration dan schema
 
@@ -114,6 +125,6 @@ Audit 14 Oktober 2026 setelah pergantian: empat moderate pada jalur tooling migr
 
 [PRD Rev. 2](docs/prd/2026-10-14-company-profile-prd.md), [arsitektur](docs/architecture/README.md), [ADR](docs/architecture/decisions/2026-10-14-custom-admin.md), [rencana CPR-7](docs/superpowers/plans/2026-10-14-cpr-7-foundation.md), [bukti fondasi custom](docs/architecture/custom-admin-foundation-validation.md), [Linear](https://linear.app/sineva-tech/project/company-profile-v1-ee7ed9a91d26).
 
-Fondasi ini belum mencakup halaman marketing final, CRUD konten/blog/media, RBAC/lockout lengkap, lead/waitlist, R2/Resend/analytics, CI atau deploy. Ikuti CPR-24, CPR-23 dan tiket fitur berikutnya; jangan menganggap shell dashboard sebagai admin lengkap atau aplikasi siap launch.
+Fondasi ini belum mencakup halaman marketing final, CRUD konten/blog/media, lead/waitlist, R2/Resend/analytics, CI atau deploy. Ikuti CPR-23 dan tiket fitur berikutnya; jangan menganggap shell dashboard sebagai admin lengkap atau aplikasi siap launch.
 
 Rencana/setup/verifikasi Payload di `docs` berlabel arsip dan hanya berlaku pada commit lama `a7f00fb`. Aset logo asli tidak diubah; SVG publik adalah salinan byte-identik.

@@ -1,3 +1,4 @@
+import { can } from '@/features/auth/authorization'
 import type { ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -5,7 +6,7 @@ import { requirePrincipal } from '@/features/auth/session.server'
 import { LogoutButton } from '@/features/auth/components/logout-button'
 
 export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
-  await requirePrincipal()
+  const principal = await requirePrincipal()
   return (
     <div className="admin-shell">
       <header className="admin-header">
@@ -16,6 +17,11 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
           </span>
         </Link>
         <nav aria-label="Navigasi admin">
+          {can(principal, 'users:manage') ? (
+            <Link href="/admin/users" className="text-link">
+              Pengguna
+            </Link>
+          ) : null}
           <Link href="/" className="text-link">
             Lihat website <span aria-hidden="true">↗</span>
           </Link>

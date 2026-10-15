@@ -382,9 +382,9 @@ Pengunjung ──► Cloudflare (DNS, proxy/CDN, Turnstile)
 - **Lingkungan kerja:** lokal (Postgres via Docker Compose) → preview (per PR) → production.
 
 ### 14.3 CI (GitHub Actions)
-Dijalankan pada setiap PR, berurutan: lint → typecheck → unit & integration test → build → E2E (Playwright, dengan service Postgres) → Lighthouse CI terhadap hasil build production.
+Workflow `CI` menjalankan job `verify` pada setiap PR ke `main`, push ke `main`, dan pemicu manual. Urutan CPR-10: format → lint → typecheck → unit → journal/migration → integration SQL (Postgres disposable) → build → integration HTTP production. HTTP memakai server production hasil build, sehingga dijalankan setelah build; suite SQL/HTTP berurutan karena berbagi fixture bootstrap. E2E Playwright (CPR-56) dan Lighthouse CI (CPR-58) ditambahkan pada tiket QA berikutnya.
 
-PR hanya boleh di-merge ke `main` kalau semua tahap lulus.
+PR hanya boleh di-merge ke `main` kalau seluruh tahap CI yang sudah diterapkan lulus. **Status 15 Oktober 2026:** Founder menyetujui CI dahulu; enforcement branch protection menyusul karena paket repository private belum mendukung (GitHub API 403). Proteksi belum aktif dan acceptance larangan merge CI gagal tetap terbuka; pemeriksaan manual bukan pengganti enforcement server. Verifikasi runner CPR-10 juga masih tertahan secara terpisah: GitHub melaporkan pembayaran akun/spending limit sebelum job dimulai; hasil lokal bukan bukti Actions hijau.
 
 ## 15. Strategi testing
 
@@ -450,10 +450,17 @@ Format tampilan tiket: **`CPR-{nomor} | [MODUL] Aksi`**. `CPR-{nomor}` diberikan
 | Q2 | Provider dan region VPS | Founder + developer | sebelum M0 selesai |
 | Q3 | Nomor WhatsApp Business dan inbox email untuk lead | Founder | sebelum M3 |
 | Q4 | Topik 2–3 showcase. Usulan: (a) chatbot FAQ & booking untuk klinik fiktif, butuh `CBT`; (b) dashboard pesanan WhatsApp untuk UMKM F&B; (c) website Sineva Tech ini sendiri sebagai studi kasus | Founder | awal M1 |
-| Q5 | Desain UI dibuat di Figma dulu atau langsung di kode | Founder | awal M1 |
+| Q5 | Arahan UI sementara sudah ditetapkan; desain final menunggu instruksi Founder | Founder | sebelum implementasi desain final |
 | Q6 | Siapa yang mereview teks Kebijakan Privasi dari sisi legal | Founder | sebelum M4 |
 
 **Q7 terjawab — 14 Oktober 2026:** Founder mengonfirmasi tidak ada file vektor
 dari pembuat logo. Logo telah di-trace ke SVG dan dimasukkan ke Figma, berikut
 versi terang untuk dark mode. Path kedua varian identik; hanya warna yang berbeda.
 Aset dan hasil pemeriksaan tersedia di [`assets/brand/logos/`](../../assets/brand/logos/README.md).
+
+
+**Arahan desain sementara — 15 Oktober 2026:** Founder belum membuat desain final.
+Untuk pengembangan sementara, gunakan desain buatan asisten yang mengikuti
+identitas Sineva Tech dan tetap responsif. Token dan komponen dipisahkan agar
+mudah disesuaikan. Implementasi desain final dilakukan berdasarkan instruksi
+atau referensi Founder berikutnya; UI sementara bukan sign-off desain final.

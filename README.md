@@ -117,6 +117,21 @@ npm run test:integration
 
 `test:server` memakai origin `http://127.0.0.1:3001`; untuk production HTTP, hentikan server dev tersebut, jalankan `npm run build`, lalu `npm run test:server -- --production`. Test DB dan HTTP suite jangan dijalankan bersamaan karena keduanya memakai fixture bootstrap pada DB yang sama.
 
+## CI GitHub Actions
+
+Workflow `CI` menjalankan satu job `verify` pada setiap PR ke `main`, push ke `main`, dan pemicu manual setelah workflow tersedia pada default branch. Urutan: format → lint → typecheck → unit → journal/migration → integration SQL → build → integration HTTP production. Job memakai Node dari `.nvmrc`, `npm ci`, dan PostgreSQL 17.11 disposable. Action dipin ke commit SHA, token read-only, tanpa credential produksi atau deployment.
+
+Untuk menjalankan HTTP production secara otomatis setelah database test disiapkan dan suite database selesai:
+
+```bash
+npm run build
+npm run test:http:production
+```
+
+Helper memvalidasi `TEST_DATABASE_URL`, mengarahkan server dan suite ke database test/origin `http://127.0.0.1:3001`, menunggu `/admin/login` maksimal 30 detik, lalu menghentikan proses miliknya pada sukses/gagal/SIGINT/SIGTERM. Port 3001 harus bebas: helper menolak port terpakai dan tidak menghentikan server lain. Jangan menjalankan suite database dan HTTP bersamaan. Perintah ini membutuhkan macOS/Linux dan hasil build yang sesuai source; `test:server` tetap tersedia untuk pemeriksaan manual.
+
+Concurrency membatalkan run lama pada PR/ref yang sama; timeout job 20 menit. Kegagalan pemeriksaan menggagalkan job. **Proteksi `main` belum aktif:** GitHub API mengembalikan batas paket untuk private repository. Founder menyetujui CI terlebih dahulu; acceptance server yang melarang merge saat CI gagal tetap terbuka. Periksa `verify` hijau sebelum merge sesuai kebijakan tim. **Verifikasi remote 15 Oktober 2026 tertahan:** GitHub belum memulai job karena pembayaran akun atau spending limit (lihat bukti run). CI baru lulus secara lokal; check `verify` belum terdaftar di GitHub. Pemilik akun perlu memeriksa Billing & plans sebelum pembuktian runner dilanjutkan. E2E, Lighthouse dan deploy berada pada tiket terpisah. Lihat [bukti CPR-10](docs/architecture/cpr-10-ci-validation.md) untuk status eksekusi yang sebenarnya.
+
 ## Pemeriksaan dependency
 
 Audit 14 Oktober 2026 setelah pergantian: empat moderate pada jalur tooling migration Drizzle/esbuild; audit penuh juga lima high pada tooling lint (`braces`). Tidak ada high/critical pada audit tanpa dev. Tooling esbuild tersebut tidak menjalankan development server; lint hanya memakai source repo. Tidak menerapkan downgrade Drizzle/framework atau `audit fix --force`. Evaluasi ulang saat upgrade; hasil ini bukan klaim aplikasi sepenuhnya aman.
@@ -125,6 +140,6 @@ Audit 14 Oktober 2026 setelah pergantian: empat moderate pada jalur tooling migr
 
 [PRD Rev. 2](docs/prd/2026-10-14-company-profile-prd.md), [arsitektur](docs/architecture/README.md), [ADR](docs/architecture/decisions/2026-10-14-custom-admin.md), [rencana CPR-7](docs/superpowers/plans/2026-10-14-cpr-7-foundation.md), [bukti fondasi custom](docs/architecture/custom-admin-foundation-validation.md), [Linear](https://linear.app/sineva-tech/project/company-profile-v1-ee7ed9a91d26).
 
-Fondasi ini belum mencakup halaman marketing final, CRUD konten/blog/media, lead/waitlist, R2/Resend/analytics, CI atau deploy. Ikuti CPR-23 dan tiket fitur berikutnya; jangan menganggap shell dashboard sebagai admin lengkap atau aplikasi siap launch.
+Fondasi ini belum mencakup halaman marketing final, CRUD konten/blog/media, lead/waitlist, R2/Resend/analytics atau deploy. Ikuti CPR-23 dan tiket fitur berikutnya; jangan menganggap shell dashboard sebagai admin lengkap atau aplikasi siap launch.
 
 Rencana/setup/verifikasi Payload di `docs` berlabel arsip dan hanya berlaku pada commit lama `a7f00fb`. Aset logo asli tidak diubah; SVG publik adalah salinan byte-identik.

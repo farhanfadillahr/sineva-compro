@@ -72,12 +72,13 @@ describe('usePrefersReducedMotion()', () => {
 
 describe('reduced motion decision lives in one module', () => {
   it('is the only place that spells the media query', async () => {
-    const { readdirSync, readFileSync, statSync } = await import('node:fs')
+    const { existsSync, readdirSync, readFileSync, statSync } = await import('node:fs')
     const { join } = await import('node:path')
     // Scoped to the motion folders so unrelated features are free to evolve.
     const root = process.cwd()
     const hits: string[] = []
     const walk = (dir: string) => {
+      if (!existsSync(dir)) return
       for (const name of readdirSync(dir)) {
         const p = join(dir, name)
         if (statSync(p).isDirectory()) walk(p)

@@ -21,13 +21,16 @@ function declarations(source: string) {
 }
 const decl = declarations(css)
 
-// Whitespace-insensitive and case-insensitive, with `.5` and `0.5` treated alike, because
+// Whitespace-insensitive and case-insensitive, with `.5`, `0.5` and `.50` treated alike, because
 // Prettier rewrites hex case and number formatting in the CSS file but not in the markdown.
 const norm = (value: string) =>
   value
     .toLowerCase()
     .replace(/\s+/g, '')
     .replace(/(^|[^\d])\.(\d)/g, '$10.$2')
+    // `.10` and `.1` are the same number; Prettier drops the trailing zero.
+    .replace(/(\.\d*?)0+(?!\d)/g, '$1')
+    .replace(/\.(?!\d)/g, '')
 
 type Row = { token: string; cells: string[] }
 function rows(markdown: string, tokenPattern: RegExp): Row[] {

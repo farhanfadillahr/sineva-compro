@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
+import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import '../../globals.css'
 
 export const metadata: Metadata = {
@@ -24,8 +25,9 @@ export default async function PublicLayout({
   if (!hasLocale(routing.locales, locale)) notFound()
   const messages = await getMessages()
   return (
-    <html lang={locale}>
-      <body>
+    <html lang={locale} className={`${plusJakartaSans.variable} ${geistMono.variable}`}>
+      {/* Utilities sit in a higher cascade layer than the shared base body rule (admin colours). */}
+      <body className="bg-canvas text-text">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>

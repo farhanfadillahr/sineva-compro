@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { cacheTags } from '../../src/lib/cache/tags'
-import { PAGE_KEYS } from '../../src/features/content/types'
+import { PAGE_KEYS, type ContentLocale } from '../../src/features/content/types'
 
-// 'id' is the second enabled locale in routing, so it doubles as the "fixture second locale".
-const locales = ['en', 'id'] as const
+// Only 'en' is enabled (CPR-72). 'id' simulates a future second locale through a cast so the
+// tests still prove tags never collide across locales.
+const id = 'id' as unknown as ContentLocale
+const locales: readonly ContentLocale[] = ['en', id]
 
 describe('cache tags', () => {
   it('uses the documented literal shapes for the English locale', () => {
@@ -44,10 +46,10 @@ describe('cache tags', () => {
 
   it('is deterministic and never collides across locales or entities', () => {
     expect(cacheTags.page('home', 'en')).toBe(cacheTags.page('home', 'en'))
-    expect(cacheTags.page('home', 'en')).not.toBe(cacheTags.page('home', 'id'))
+    expect(cacheTags.page('home', 'en')).not.toBe(cacheTags.page('home', id))
     // A list tag must never equal an item tag, otherwise revalidating one hits the other.
-    expect(cacheTags.work('en')).not.toBe(cacheTags.workItem('en', 'id'))
-    expect(cacheTags.services('en')).not.toBe(cacheTags.service('en', 'id'))
+    expect(cacheTags.work('en')).not.toBe(cacheTags.workItem('en', id))
+    expect(cacheTags.services('en')).not.toBe(cacheTags.service('en', id))
   })
 
   it.each(['Bad Slug', 'a:b', '', 'UPPER', 'trailing-', '-leading'])(

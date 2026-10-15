@@ -6,8 +6,9 @@ import { walkKeys, walkObjectsWithKey } from '../fixtures/public/walk'
 
 const source: PublicContentSource = createFixtureContentSource()
 const en: ContentLocale = 'en'
-// 'id' is enabled in routing but has no fixture content, which is exactly the "empty" case.
-const id: ContentLocale = 'id'
+// Only 'en' is enabled (CPR-72). A future second locale with no content yet is simulated with a
+// cast, which is exactly the "empty contract" case the landing page must handle.
+const id = 'id' as unknown as ContentLocale
 
 const MEDIA_KEYS = ['alt', 'blurDataUrl', 'height', 'url', 'width']
 const SEO_KEYS = ['canonicalUrl', 'metaDescription', 'metaTitle', 'noindex', 'ogImage']

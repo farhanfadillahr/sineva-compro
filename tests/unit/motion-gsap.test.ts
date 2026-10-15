@@ -13,7 +13,8 @@ const h = vi.hoisted(() => {
     gsapFactoryRuns: 0,
     scrollTriggerFactoryRuns: 0,
     registerPlugin: vi.fn(),
-    context: vi.fn((fn: () => void) => {
+    context: vi.fn((fn: () => void, scope?: Element) => {
+      void scope
       fn()
       return ctx
     }),

@@ -40,12 +40,15 @@ describe('public fixtures: copy rules', () => {
   })
 
   it('keep headlines and body copy inside the copywriting word limits', () => {
-    for (const block of walkObjectsWithKey(publicFixtures.pages, 'headline') as {
+    const headlines = [...walkObjectsWithKey(publicFixtures.pages, 'headline')] as {
       headline: string
-    }[]) {
+    }[]
+    expect(headlines.length).toBeGreaterThan(0)
+    for (const block of headlines) {
       expect(countWords(block.headline)).toBeLessThanOrEqual(FIELD_LIMITS.heroHeadlineWords)
     }
-    for (const block of walkObjectsWithKey(publicFixtures.pages, 'body') as { body: unknown }[]) {
+    const bodies = [...walkObjectsWithKey(publicFixtures.pages, 'body')] as { body: unknown }[]
+    for (const block of bodies) {
       if (typeof block.body === 'string')
         expect(countWords(block.body)).toBeLessThanOrEqual(FIELD_LIMITS.bodyWords)
     }
@@ -136,10 +139,12 @@ describe('public fixtures: structure', () => {
   it('reference only declared pose and icon keys and known categories and services', () => {
     const poses = new Set<string>(POSE_KEYS)
     const icons = new Set<string>(ICON_KEYS)
-    for (const block of walkObjectsWithKey(publicFixtures, 'pose') as { pose: string }[])
-      expect(poses.has(block.pose)).toBe(true)
-    for (const block of walkObjectsWithKey(publicFixtures, 'icon') as { icon: string }[])
-      expect(icons.has(block.icon)).toBe(true)
+    const posed = [...walkObjectsWithKey(publicFixtures, 'pose')] as { pose: string }[]
+    const iconed = [...walkObjectsWithKey(publicFixtures, 'icon')] as { icon: string }[]
+    expect(posed.length).toBeGreaterThan(0)
+    expect(iconed.length).toBeGreaterThan(0)
+    for (const block of posed) expect(poses.has(block.pose)).toBe(true)
+    for (const block of iconed) expect(icons.has(block.icon)).toBe(true)
     const serviceSlugs = new Set(publicFixtures.services.map((item) => item.slug))
     for (const item of publicFixtures.work)
       if (item.serviceSlug !== null) expect(serviceSlugs.has(item.serviceSlug)).toBe(true)

@@ -1,6 +1,6 @@
 # CPR-25 | [I18n] Routing dua bahasa & slug lokal
 
-**Status:** rancangan disetujui Founder pada 15 Oktober 2026; berikutnya rencana implementasi. Belum ada implementasi.
+**Status:** rancangan dan rencana disetujui Founder pada 15 Oktober 2026, metode Native. Implementasi lokal tersedia; bukti dan batas framework dicatat di [validasi CPR-25](../../architecture/cpr-25-i18n-validation.md). Review independen/PR dituntaskan sebelum handoff; belum merge/deploy.
 
 **Tujuan:** pengunjung membuka URL dan teks yang konsisten dalam Indonesia/Inggris; fondasi siap dipakai halaman Compro dan fitur konten berikutnya. Acuan: [CPR-25](https://linear.app/sineva-tech/issue/CPR-25/i18n-routing-dua-bahasa-and-slug-lokal), PRD §6, §9.4 dan FR-I18N-01–06.
 

@@ -1,6 +1,6 @@
 # Sineva Tech — Company Profile
 
-Website company profile Sineva Tech dengan Next.js App Router dan **admin custom tanpa headless CMS**. Fondasi menyediakan PostgreSQL, autentikasi Better Auth, login/logout, bootstrap operator, dan dashboard dasar. Konten ID/EN, blog, media, SEO, mini-CRM dan integrasi mengikuti tiket berikutnya. Produk chatbot dikembangkan terpisah.
+Website company profile Sineva Tech dengan Next.js App Router dan **admin custom tanpa headless CMS**. Fondasi menyediakan PostgreSQL, autentikasi Better Auth, login/logout, bootstrap operator, dan dashboard dasar. Routing dan shell publik ID/EN tersedia melalui CPR-25. Konten bisnis, blog, media, SEO, mini-CRM dan integrasi mengikuti tiket berikutnya. Produk chatbot dikembangkan terpisah.
 
 Fondasi CPR-7 telah diintegrasikan melalui [PR #1](https://github.com/farhanfadillahr/sineva-compro/pull/1), squash commit `641d867`. CPR-24 menambahkan pengelolaan Editor, otorisasi server dan lockout akun; bukti pengujiannya ada di [validasi CPR-24](docs/architecture/cpr-24-account-access-validation.md). Belum di-deploy.
 
@@ -57,9 +57,21 @@ Perintah kedua hanya untuk service test yang sudah berjalan. Pada service/volume
 
 Update `.env` dengan URL baru dan secret Better Auth acak; simpan credential lama secara aman bila masih dibutuhkan. Pada checkout tugas ini, `.env.payload-legacy` menyimpan konfigurasi sebelumnya (ignored Git, mode 600). Port developer aktual adalah **5434** karena 5432 digunakan aplikasi lain; test **5433**. Sesuaikan pasangan port dan URL ketika memakai checkout ini.
 
+## Routing publik ID/EN
+
+URL publik selalu berprefix `/id` atau `/en`. Contoh: `/id/layanan/ai-otomasi` dan `/en/services/ai-automation`, `/id/tentang-kami` dan `/en/about`. Kunjungan `/` memilih cookie `NEXT_LOCALE` yang valid, lalu bobot `Accept-Language`, lalu `id`; URL berprefix menentukan bahasa meskipun cookie/browser berbeda. Query tetap dipertahankan pada redirect. `/admin`, `/api`, `/_next` dan `/brand` tetap tanpa prefix.
+
+`src/i18n/routing.ts` menjadi satu sumber pathname; gunakan helper dari `src/i18n/navigation.ts` untuk navigasi publik. Teks UI hanya memuat kamus locale aktif, tanpa fallback lintas bahasa. Tambahkan key yang sama pada kedua kamus; unit test memeriksa kesetaraannya. Admin tetap Indonesia dengan root layout sendiri.
+
+Halaman publik saat ini berupa shell sementara dan noindex. Detail blog/portofolio/layanan tanpa data terbit tetap404; CPR-27/30/31 mengerjakan schema, constraint/query dan integrasi konten sebenarnya. `resolveTranslatedHref` menerima referensi terjemahan dengan jenis/identitas/locale/status terbit; target post hilang mengarah ke daftar blog, jenis lain menjadi unavailable. Tombol ID/EN serta interaksinya dikerjakan di CPR-34. Hreflang/SEO lengkap mengikuti CPR-52.
+
+Next16.4 mengirim shell error sementara untuk respons `notFound()`; browser merender layout 404 sesuai locale setelah hydration. Status HTTP404, noindex dan teks 404 diuji melalui HTTP; atribut lang pada 404 diperiksa pada DOM browser. Rincian bukti dan batasnya: [validasi CPR-25](docs/architecture/cpr-25-i18n-validation.md).
+
 ## Struktur dan batas modul
 
-- `src/app/(public)/`: homepage dasar; routing locale mengikuti CPR-25.
+- `src/app/(public)/[locale]/`: shell halaman publik ID/EN dan 404 lokal.
+- `src/i18n/`: registry pathname, navigasi, request kamus aktif dan kontrak resolver slug.
+- `messages/`: kamus UI `id.json` dan `en.json` dengan key yang sama.
 - `src/app/(admin)/admin/`: login dan shell/dashboard berizin; UI v1 Indonesia dan tema terang.
 - `src/app/api/auth/[...all]/`: allowlist login/logout/session dan signup yang dinonaktifkan, tanpa API CRUD konten.
 - `src/features/auth/`: schema library, bootstrap atomik, guard authoritative dan policy login/lockout.

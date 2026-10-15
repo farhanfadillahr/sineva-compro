@@ -1,0 +1,111 @@
+{
+  "status": "draft-for-founder-review",
+  "locale": "id",
+  "source": "copy-id.md",
+  "limits": {
+    "title": 60,
+    "description": 160
+  },
+  "pages": [
+    {
+      "id": "home",
+      "path": "/id",
+      "title": "Sineva Tech | Web Development & AI Otomasi",
+      "description": "Diskusikan kebutuhan website, aplikasi web, dan otomasi bisnis bersama Sineva Tech. Kenali layanan kami dan mulai konsultasi.",
+      "dynamic": false
+    },
+    {
+      "id": "services",
+      "path": "/id/layanan",
+      "title": "Layanan Web Development & AI Otomasi | Sineva Tech",
+      "description": "Kenali layanan Web Development serta AI & Otomasi Sineva Tech. Bahas kebutuhan, ruang lingkup, dan langkah pengerjaan bersama kami.",
+      "dynamic": false
+    },
+    {
+      "id": "service-web",
+      "path": "/id/layanan/web-development",
+      "title": "Jasa Web Development | Sineva Tech",
+      "description": "Bahas kebutuhan website atau aplikasi web bisnis Anda, dari struktur halaman hingga fitur dan pengelolaan konten bersama Sineva Tech.",
+      "dynamic": false
+    },
+    {
+      "id": "service-ai",
+      "path": "/id/layanan/ai-otomasi",
+      "title": "Layanan AI & Otomasi Bisnis | Sineva Tech",
+      "description": "Diskusikan pekerjaan berulang, integrasi sistem, dan kebutuhan AI bisnis Anda. Sineva Tech membantu membahas alur dan ruang lingkup solusi.",
+      "dynamic": false
+    },
+    {
+      "id": "portfolio",
+      "path": "/id/portofolio",
+      "title": "Portofolio & Proyek Demo Internal | Sineva Tech",
+      "description": "Jelajahi portofolio Sineva Tech. Kenali konteks, pendekatan, dan hasil pekerjaan melalui dokumentasi proyek serta demo yang tersedia.",
+      "dynamic": false
+    },
+    {
+      "id": "portfolio-detail",
+      "path": "/id/portofolio/[slug]",
+      "title": "{{judul_portofolio}} | Sineva Tech",
+      "description": "{{ringkasan_portofolio}}",
+      "dynamic": true
+    },
+    {
+      "id": "chatbot",
+      "path": "/id/produk/chatbot",
+      "title": "Chatbot Sineva Segera Hadir | Sineva Tech",
+      "description": "Produk chatbot Sineva sedang kami persiapkan. Daftarkan email Anda ke waitlist untuk menerima kabar saat produk siap.",
+      "dynamic": false
+    },
+    {
+      "id": "blog",
+      "path": "/id/blog",
+      "title": "Blog Teknologi, Website & Otomasi | Sineva Tech",
+      "description": "Baca tulisan Sineva Tech seputar website, pengembangan aplikasi, AI, dan otomasi untuk membantu Anda memahami pilihan teknologi bisnis.",
+      "dynamic": false
+    },
+    {
+      "id": "article",
+      "path": "/id/blog/[slug]",
+      "title": "{{judul_artikel}} | Sineva Tech",
+      "description": "{{ringkasan_artikel}}",
+      "dynamic": true
+    },
+    {
+      "id": "about",
+      "path": "/id/tentang-kami",
+      "title": "Tentang Sineva Tech | Website, AI & Otomasi",
+      "description": "Kenali Sineva Tech, perusahaan teknologi dengan layanan Web Development serta AI & Otomasi dan rencana produk chatbot untuk bisnis.",
+      "dynamic": false
+    },
+    {
+      "id": "contact",
+      "path": "/id/kontak",
+      "title": "Konsultasi Kebutuhan Teknologi | Sineva Tech",
+      "description": "Ceritakan kebutuhan website, aplikasi web, atau otomasi bisnis Anda. Hubungi Sineva Tech lewat form kontak atau WhatsApp.",
+      "dynamic": false
+    },
+    {
+      "id": "thank-you",
+      "path": "/id/kontak/terima-kasih",
+      "title": "Terima Kasih Telah Menghubungi | Sineva Tech",
+      "description": "Terima kasih telah menghubungi Sineva Tech. Anda dapat melanjutkan percakapan lewat WhatsApp atau kembali menjelajahi layanan kami.",
+      "dynamic": false,
+      "index": false
+    },
+    {
+      "id": "privacy",
+      "path": "/id/kebijakan-privasi",
+      "title": "Kebijakan Privasi | Sineva Tech",
+      "description": "Informasi tentang pengumpulan dan penggunaan data di website Sineva Tech, masa simpan, serta cara mengajukan permintaan terkait data Anda.",
+      "dynamic": false
+    },
+    {
+      "id": "not-found",
+      "path": "404",
+      "title": "Halaman Tidak Ditemukan | Sineva Tech",
+      "description": "Halaman yang Anda cari tidak tersedia. Kunjungi Beranda, lihat layanan Sineva Tech, atau hubungi kami untuk membahas kebutuhan Anda.",
+      "dynamic": false,
+      "index": false
+    }
+  ]
+}

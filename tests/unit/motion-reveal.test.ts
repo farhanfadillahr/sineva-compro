@@ -3,11 +3,11 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react'
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
 import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isInViewport, observeVisibility } from '../../src/lib/motion/in-view'
 import { revealDelayMs, useReveal } from '../../src/lib/motion/use-reveal'
-import { Reveal } from '../../src/components/motion/Reveal'
+import { Reveal, type RevealProps } from '../../src/components/motion/Reveal'
 import {
   type MediaController,
   MockIntersectionObserver as IO,
@@ -41,7 +41,9 @@ function renderAt(top: number, props: Record<string, unknown> = {}, height = 200
     setRect(this, { top, height })
     return this.getBoundingClientRect()
   })
-  const view = render(createElement(Reveal, { 'data-testid': 'r', ...props }, 'Hello'))
+  const view = render(
+    createElement(Reveal, { 'data-testid': 'r', ...props } as RevealProps, 'Hello'),
+  )
   spy.mockRestore()
   const el = view.getByTestId('r')
   setRect(el, { top, height })
@@ -273,10 +275,8 @@ describe('useReveal', () => {
 })
 
 describe('Reveal.module.css', () => {
-  const css = readFileSync(
-    fileURLToPath(new URL('../../src/components/motion/Reveal.module.css', import.meta.url)),
-    'utf8',
-  )
+  // process.cwd(): import.meta.url is not a file URL under the jsdom environment.
+  const css = readFileSync(join(process.cwd(), 'src/components/motion/Reveal.module.css'), 'utf8')
 
   it('only hides content under the JS-applied hidden class, never on the base class', () => {
     const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({

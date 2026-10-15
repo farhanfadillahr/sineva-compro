@@ -30,7 +30,7 @@ describe('Button variants', () => {
     ['dark', ['bg-action-dark', 'text-text-inverse', 'rounded-sm', 'shadow-button-bevel']],
     ['secondary', ['bg-surface', 'text-text', 'rounded-pill', 'shadow-button-bevel-light']],
     ['ghost', ['bg-transparent', 'text-text', 'rounded-sm', 'hover:bg-canvas-alt']],
-    ['link', ['text-link', 'underline-offset-4']],
+    ['link', ['text-(--color-link)', 'underline-offset-4']],
     ['whatsapp', ['bg-surface', 'text-text', 'rounded-pill', 'shadow-button-bevel-light']],
   ] as const)('maps the %s variant to its token classes', (variant, expected) => {
     render(<Button variant={variant}>Label</Button>)

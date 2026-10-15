@@ -88,11 +88,11 @@ describe('Section', () => {
 
 describe('Split', () => {
   it('keeps text before visual in the DOM so the visual stacks second on mobile', () => {
-    render(<Split data-testid="split" text={<p>Text</p>} visual={<img alt="Visual" />} />)
+    render(<Split data-testid="split" text={<p>Text</p>} visual={<figure aria-label="Visual" />} />)
     const children = Array.from(byTestId('split').children)
     expect(children).toHaveLength(2)
     expect(children[0].textContent).toBe('Text')
-    expect(children[1].querySelector('img')).not.toBeNull()
+    expect(children[1].querySelector('figure')).not.toBeNull()
   })
 
   it('uses a 12 column grid with five text columns and seven visual columns', () => {
@@ -120,7 +120,7 @@ describe('SectionHeader', () => {
         eyebrow="Product"
         title="Hand off the busywork"
         lead="Sino replies to customers."
-        action={<a href="/x">Join the waitlist</a>}
+        action={<button type="button">Join the waitlist</button>}
       />,
     )
     expect(screen.getByRole('heading', { level: 2, name: 'Hand off the busywork' })).toBeTruthy()
@@ -128,7 +128,7 @@ describe('SectionHeader', () => {
     expect(screen.getByText('Sino replies to customers.').classList.contains('text-lead')).toBe(
       true,
     )
-    expect(screen.getByRole('link', { name: 'Join the waitlist' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Join the waitlist' })).toBeTruthy()
     expect(has(byTestId('header'), 'text-center', 'items-center')).toBe(true)
   })
 
@@ -213,9 +213,9 @@ describe('Card', () => {
         'duration-(--dur-med)',
         'ease-out',
         'motion-reduce:transition-none',
-        'focus-within:outline-2',
-        'focus-within:outline-offset-2',
-        'focus-within:outline-focus',
+        'has-[:focus-visible]:outline-2',
+        'has-[:focus-visible]:outline-offset-2',
+        'has-[:focus-visible]:outline-focus',
       ),
     ).toBe(true)
   })

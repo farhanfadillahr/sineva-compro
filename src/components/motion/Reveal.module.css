@@ -1,0 +1,35 @@
+/*
+ * Reveal on scroll (docs/design/motion.md 4.1). The server renders no state class at all, so with
+ * JavaScript off (or before it runs) every block is in its final, visible state. `.hidden` is only
+ * ever added by useReveal on the client, before first paint, for blocks below the fold.
+ *
+ * Only opacity and transform are animated. The var() fallbacks are the documented token values so
+ * the component works regardless of whether the global motion tokens are loaded.
+ */
+
+.hidden {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance, 24px));
+  will-change: opacity, transform;
+}
+
+.shown {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-slow, 520ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--dur-slow, 520ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+/* Safety net for a preference flipped after JS decided: never leave anything hidden or moving. */
+@media (prefers-reduced-motion: reduce) {
+  .hidden,
+  .shown {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}

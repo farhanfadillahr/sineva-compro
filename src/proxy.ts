@@ -1,36 +1,22 @@
 import createMiddleware from 'next-intl/middleware'
-import { NextResponse, type NextRequest } from 'next/server'
-import { hasLocale } from 'next-intl'
+import type { NextRequest } from 'next/server'
 import { routing } from './i18n/routing'
-import { normalizeAcceptLanguage } from './i18n/accept-language'
 
+// With `localePrefix: 'as-needed'` the middleware must see every public URL: it rewrites the
+// unprefixed `/services` to the internal `/en/services` and redirects an explicit `/en/...`
+// back to the unprefixed URL. Locale detection and the cookie are off (single locale), so `/`
+// is a plain cacheable 200 and Accept-Language is never read. `./i18n/accept-language` is
+// intentionally unused for now: it validates the header for detection, which a second locale
+// would bring back.
 const localize = createMiddleware(routing)
 export function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname
-  // Only the entry point and explicit supported locales participate in negotiation.
-  if (pathname !== '/' && !hasLocale(routing.locales, pathname.split('/')[1])) {
-    return NextResponse.next()
-  }
-  // Invalid weights must not become permissive library matches; cookie/URL still win.
-  request.headers.set(
-    'accept-language',
-    normalizeAcceptLanguage(request.headers.get('accept-language')),
-  )
-  const response = localize(request)
-  if (pathname === '/') {
-    response.headers.set('Cache-Control', 'private, no-store')
-    const vary = new Set(
-      (response.headers.get('Vary') ?? '')
-        .split(',')
-        .map((value) => value.trim())
-        .filter(Boolean),
-    )
-    vary.add('Cookie')
-    vary.add('Accept-Language')
-    response.headers.set('Vary', [...vary].join(', '))
-  }
-  return response
+  return localize(request)
 }
+// Static files that live outside the localized tree must be excluded here, otherwise they
+// would be rewritten to `/en/...` and 404: /admin, /api, /_next, /brand, /lottie (public/)
+// and the root files browsers and crawlers request by name.
 export const config = {
-  matcher: ['/((?!admin(?:/|$)|api(?:/|$)|_next(?:/|$)|brand(?:/|$)).*)'],
+  matcher: [
+    '/((?!admin(?:/|$)|api(?:/|$)|_next(?:/|$)|brand(?:/|$)|lottie(?:/|$)|(?:favicon\\.ico|robots\\.txt|sitemap\\.xml)$).*)',
+  ],
 }

@@ -1,13 +1,14 @@
 {
+  "Brand": {
+    "name": "Sineva"
+  },
   "Pages": {
     "home": "Home",
+    "aiAgents": "AI Agents",
     "services": "Services",
-    "webDevelopment": "Web Development",
-    "aiAutomation": "AI & Automation",
-    "portfolio": "Portfolio",
-    "chatbot": "Chatbot Product",
+    "work": "Work",
     "blog": "Blog",
-    "about": "About us",
+    "about": "About",
     "contact": "Contact",
     "thankYou": "Thank you",
     "privacy": "Privacy Policy"

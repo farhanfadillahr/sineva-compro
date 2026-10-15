@@ -7,7 +7,7 @@ import { routing } from '@/i18n/routing'
 import '../../globals.css'
 
 export const metadata: Metadata = {
-  title: 'Sineva Tech',
+  title: 'Sineva',
   robots: { index: false, follow: false },
 }
 export function generateStaticParams() {

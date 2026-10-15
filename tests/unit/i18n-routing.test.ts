@@ -23,7 +23,7 @@ describe('single English locale with as-needed prefix', () => {
   it('enables only en, as the default, with an unprefixed default locale', () => {
     expect(routing.locales).toEqual(['en'])
     expect(routing.defaultLocale).toBe('en')
-    expect(routing.localePrefix).toEqual({ mode: 'as-needed' })
+    expect(routing.localePrefix).toBe('as-needed')
   })
   it('does no locale detection and sets no locale cookie', () => {
     expect(routing.localeDetection).toBe(false)
@@ -37,7 +37,11 @@ describe('single English locale with as-needed prefix', () => {
       expect(routing.pathnames[en as keyof typeof routing.pathnames]).toBe(en)
     }
   })
-  it.each(sitemapRows().map((row) => row.en))('builds %s without a locale prefix', (href) => {
+  it.each(
+    sitemapRows()
+      .map((row) => row.en)
+      .filter((en) => !en.includes('[slug]')),
+  )('builds %s without a locale prefix', (href) => {
     expect(getPathname({ locale: 'en', href: href as never })).toBe(href)
   })
   it.each([
@@ -63,8 +67,11 @@ describe('i18n-ready registry', () => {
   it('documents the future id URLs of the table, one per registered pathname', () => {
     const rows = sitemapRows()
     expect(Object.keys(plannedIdPathnames).sort()).toEqual(rows.map((row) => row.en).sort())
+    // Stored without the `/id` prefix, which next-intl adds for non-default locales.
     for (const { en, id } of rows) {
-      expect(plannedIdPathnames[en as keyof typeof plannedIdPathnames]).toBe(id)
+      expect(plannedIdPathnames[en as keyof typeof plannedIdPathnames]).toBe(
+        id === '/id' ? '/' : id.replace(/^\/id/, ''),
+      )
     }
   })
   it('adds id as a data-only change that leaves English URLs unchanged', () => {
@@ -85,9 +92,7 @@ describe('i18n-ready registry', () => {
       const slugged = (path: string) => path.replace('[slug]', 'x')
       const href = en.includes('[slug]') ? { pathname: en, params: { slug: 'x' } } : en
       expect(nav.getPathname({ locale: 'en', href })).toBe(slugged(en))
-      expect(nav.getPathname({ locale: 'id', href })).toBe(
-        id === '/id' ? '/id' : `/id${slugged(id)}`,
-      )
+      expect(nav.getPathname({ locale: 'id', href })).toBe(slugged(id))
     }
   })
 })

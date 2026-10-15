@@ -38,7 +38,7 @@ describe('English shells without a locale prefix', () => {
 })
 
 describe('root has no locale negotiation', () => {
-  it.each([
+  it.each<Record<string, string>>([
     {},
     { cookie: 'NEXT_LOCALE=id', 'accept-language': 'id' },
     { cookie: 'NEXT_LOCALE=en', 'accept-language': 'id;q=0.9,en;q=0.1' },
@@ -109,9 +109,12 @@ describe('retired and unknown URLs', () => {
     expect(html).toContain('Page not found.')
     expect(html).not.toMatch(/Halaman tidak ditemukan|ai-guide|panduan-ai/)
   })
-  it('declares the document language on the 404 response', async () => {
+  it('renders the 404 inside the English root layout', async () => {
     const html = await (await get('/unknown')).text()
-    expect(html).toContain('lang="en"')
+    // Next 16.4 answers notFound() with a synthetic `<html id="__next_error__">` transport
+    // shell that has no lang attribute; the real layout travels in the RSC payload and is
+    // applied on hydration. Assert the payload, since that is what the browser ends up with.
+    expect(html).toContain(String.raw`\"html\",null,{\"lang\":\"en\"`)
   })
 })
 
@@ -133,4 +136,8 @@ it('leaves admin, API and assets outside localized routing', async () => {
   expect(asset.status).toBe(200)
   expect(asset.headers.get('content-type')).toContain('image/svg+xml')
   expect(localeCookie(asset)).toBe(false)
+  // public/ files are not rewritten into the localized tree.
+  const lottie = await get('/lottie/sineva-symbol-intro.json', headers)
+  expect(lottie.status).toBe(200)
+  expect(lottie.headers.get('content-type')).toContain('application/json')
 })

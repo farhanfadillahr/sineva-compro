@@ -1,6 +1,6 @@
 # CPR-10 | [Infra] Setup CI GitHub Actions
 
-**Tanggal:** 15 Oktober 2026. **Status:** rancangan untuk review Founder; belum ada workflow atau perubahan proteksi repository yang diterapkan.
+**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder pada 15 Oktober 2026; CI dikerjakan terlebih dahulu, proteksi `main` menyusul ketika paket mendukung. Belum ada workflow atau perubahan proteksi repository yang diterapkan.
 
 **Acuan:** [CPR-10](https://linear.app/sineva-tech/issue/CPR-10/infra-setup-ci-github-actions), PRD §14.3, dan `origin/main` pada `0156c0e997db79558adba11d874e17a75b7b0c6b` (hasil merge CPR-24).
 
@@ -65,7 +65,9 @@ Workflow job tidak diberi kemampuan mengubah proteksi repository. Konfigurasi pr
 
 Target penuh: PR wajib, check `verify` wajib sukses, branch harus mutakhir terhadap `main`, force-push/deletion ditolak, dan aturan berlaku juga untuk admin. Karena pemilik repo juga pembuat PR, tidak mensyaratkan approval reviewer lain yang belum tersedia; aturan kualitas dan keputusan Founder tetap berlaku.
 
-**Pilihan yang perlu ditentukan Founder:**
+**Keputusan Founder — 15 Oktober 2026:** “Setujui — CI dulu, proteksi menyusul (rekomendasi)”. Implementasi workflow dilanjutkan; acceptance enforcement merge tetap unchecked dan CPR-10 belum dapat dinyatakan Done atas scope awal.
+
+Pilihan yang telah direview:
 
 - **CI dulu, proteksi ditunda:** implementasikan workflow, buktikan di GitHub, catat branch-protection sebagai acceptance belum terpenuhi. CPR-10 tidak diberi status Done atas scope awal; pekerjaan proteksi dilanjutkan ketika paket mendukung. Prosedur manual memeriksa CI sebelum merge tidak disebut pengganti enforcement server.
 - **Lengkapi paket yang mendukung proteksi:** Founder menangani pilihan/pembelian paket di akun GitHub, lalu operator memeriksa ulang dan mengaktifkan aturan setelah CI pertama hijau. Tidak ada pembelian, publikasi repository atau perubahan visibilitas oleh asisten.
@@ -84,7 +86,7 @@ API 403 yang telah dikonfirmasi adalah batasan produk saat ini, bukan penolakan 
 
 ## Self-review spec
 
-Satu scope CI, tanpa modifikasi fitur produk atau runtime dependency. Origin/DB sesuai validator yang sudah tersedia. Lifecycle/failure/cancel bukan hanya happy path. Urutan SQL/build/HTTP konsisten. Proteksi tidak diklaim sebagai fitur yang tersedia sebelum paket mendukung; keputusan Founder menentukan pekerjaan yang bisa diselesaikan sekarang.
+Satu scope CI, tanpa modifikasi fitur produk atau runtime dependency. Origin/DB sesuai validator yang sudah tersedia. Lifecycle/failure/cancel bukan hanya happy path. Urutan SQL/build/HTTP konsisten. Proteksi tidak diklaim sebagai fitur yang tersedia sebelum paket mendukung; Founder menyetujui CI dahulu dengan acceptance proteksi tetap terbuka.
 
 ## Sumber primer yang diperiksa
 

@@ -450,10 +450,17 @@ Format tampilan tiket: **`CPR-{nomor} | [MODUL] Aksi`**. `CPR-{nomor}` diberikan
 | Q2 | Provider dan region VPS | Founder + developer | sebelum M0 selesai |
 | Q3 | Nomor WhatsApp Business dan inbox email untuk lead | Founder | sebelum M3 |
 | Q4 | Topik 2–3 showcase. Usulan: (a) chatbot FAQ & booking untuk klinik fiktif, butuh `CBT`; (b) dashboard pesanan WhatsApp untuk UMKM F&B; (c) website Sineva Tech ini sendiri sebagai studi kasus | Founder | awal M1 |
-| Q5 | Desain UI dibuat di Figma dulu atau langsung di kode | Founder | awal M1 |
+| Q5 | Arahan UI sementara sudah ditetapkan; desain final menunggu instruksi Founder | Founder | sebelum implementasi desain final |
 | Q6 | Siapa yang mereview teks Kebijakan Privasi dari sisi legal | Founder | sebelum M4 |
 
 **Q7 terjawab — 14 Oktober 2026:** Founder mengonfirmasi tidak ada file vektor
 dari pembuat logo. Logo telah di-trace ke SVG dan dimasukkan ke Figma, berikut
 versi terang untuk dark mode. Path kedua varian identik; hanya warna yang berbeda.
 Aset dan hasil pemeriksaan tersedia di [`assets/brand/logos/`](../../assets/brand/logos/README.md).
+
+
+**Arahan desain sementara — 15 Oktober 2026:** Founder belum membuat desain final.
+Untuk pengembangan sementara, gunakan desain buatan asisten yang mengikuti
+identitas Sineva Tech dan tetap responsif. Token dan komponen dipisahkan agar
+mudah disesuaikan. Implementasi desain final dilakukan berdasarkan instruksi
+atau referensi Founder berikutnya; UI sementara bukan sign-off desain final.

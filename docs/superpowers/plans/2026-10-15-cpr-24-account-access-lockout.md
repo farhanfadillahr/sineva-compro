@@ -10,7 +10,7 @@
 
 **Spec:** [Rancangan CPR-24 yang disetujui](../specs/2026-10-15-cpr-24-account-access-lockout-design.md). [PRD Rev. 2](../../prd/2026-10-14-company-profile-prd.md) §9.3 dan [CPR-24](https://linear.app/sineva-tech/issue/CPR-24/admin-kelola-pengguna-peran-admineditor-and-lockout-login).
 
-**Status:** Spec dan plan disetujui Founder; metode Native dipilih. Implementasi berjalan dengan ledger per task. Base adalah `origin/main` pada `641d867d863010ccbc96780d9930335f837de5a2`; branch CPR-24 menggunakan worktree terisolasi yang sudah ada. Checkout utama memiliki perubahan dokumen lokal yang dipertahankan.
+**Status:** Spec dan plan disetujui Founder; metode Native dipilih. Implementasi dan acceptance selesai dengan pengecualian tes UI password yang disetujui Founder. Base adalah `origin/main` pada `641d867d863010ccbc96780d9930335f837de5a2`; branch CPR-24 menggunakan worktree terisolasi yang sudah ada. Checkout utama memiliki perubahan dokumen lokal yang dipertahankan.
 
 ## Global Constraints
 
@@ -491,17 +491,19 @@ export async function createEditorAction(
 
 ### Task 5: Acceptance production, review dan handoff
 
+**Pengecualian acceptance disetujui:** Founder memilih “Lewati tes UI password; gunakan bukti tes otomatis”. Submission UI password tidak dijalankan; bukti action/library/rollback/revokasi digunakan. Semua pemeriksaan UI lainnya tetap berlaku.
+
 **Files:** seluruh tests fitur, `README.md`, `docs/architecture/cpr-24-account-access-validation.md`, spec/plan checklist, draft PR dan Linear CPR-24.
 
 **Consumes:** hasil Task 1–4. **Produces:** evidence terikat revision yang diuji, review independen dan PR yang layak direview.
 
 - [x] Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format:check`, `npm run db:check`, lalu `npm run test:prepare`, `npm run test:database`. DB dan HTTP tidak dijalankan paralel. Periksa `auth:generate` tidak menghapus tabel aplikasi atau mengubah schema library; `db:generate` setelah migration final no-op.
 - [x] Build production setelah menghentikan server preview terkait secara terkontrol; start `npm run test:server -- --production`, lalu `npm run test:integration`. Runtime harus menunjuk DB test dan origin auth sama dengan URL tes. Request tidak memakai database developer sebagai fallback.
-- [ ] Browser pada origin yang diizinkan: buat Admin fixture melalui operator; Admin membuat Editor, mengubah nama/email, menonaktifkan, mengaktifkan dan mengganti password. Login Editor, cek menu Users tidak ada dan akses langsung ditolak. Uji login/logout serta lima password salah → password benar masih gagal → expiry fixture via DB test → login berhasil. Jika IP limiter ikut menolak, laporkan sebagai limiter; gunakan tes HTTP dengan IP test berbeda sebagai bukti threshold akun. Tidak menonaktifkan limiter/CSRF dalam source untuk memperoleh hasil GREEN.
+- [x] Browser pada origin yang diizinkan: buat Admin fixture melalui operator; Admin membuat Editor, mengubah nama/email, menonaktifkan, mengaktifkan dan mengganti password. Login Editor, cek menu Users tidak ada dan akses langsung ditolak. Uji login/logout serta lima password salah → password benar masih gagal → expiry fixture via DB test → login berhasil. Jika IP limiter ikut menolak, laporkan sebagai limiter; gunakan tes HTTP dengan IP test berbeda sebagai bukti threshold akun. Tidak menonaktifkan limiter/CSRF dalam source untuk memperoleh hasil GREEN.
 - [x] Periksa form/table pada 390×844 dan 1440×1000, label/fokus/error/loading, noindex dan console/hydration. Error JavaScript/hydration tidak boleh tersisa; respons HTTP 401/429 yang sengaja dipicu dicatat sebagai hasil negatif yang diharapkan. Screenshot tanpa input password/token disimpan sebagai bukti chat. Pulihkan viewport dan bersihkan hanya fixture milik pemeriksaan.
 - [x] Inventaris database developer sebelum migration aditif. Jalankan migration lokal secara eksplisit; pertahankan database/volume lama. README menjelaskan bootstrap Admin, pengelolaan Editor, batas auth, lockout/counter, dan bahwa invite/forgot-password email belum tersedia. Bukti mencatat commands, counts, revision dan keterbatasan yang nyata.
 - [x] Fresh whole-branch reviewer memeriksa transaksi/urutan lock, semua jalur login, otorisasi action/query, session revocation, payload whitelisting dan redaksi log. Reproduksi temuan penting dengan tes RED sebelum perbaikan; jalankan regression GREEN dan suite relevan. Jangan mengklaim review selesai dari laporan parsial.
-- [ ] Setelah seluruh acceptance lulus, commit/push dan buat/update PR dengan judul `CPR-24 | [Admin] Kelola Editor dan lockout login`; attach PR ke chat. Linear mencentang hanya acceptance yang mempunyai bukti; status tetap In Progress sampai integrasi. Tidak merge/deploy tanpa instruksi user.
+- [x] Setelah seluruh acceptance lulus, commit/push dan buat/update PR dengan judul `CPR-24 | [Admin] Kelola Editor dan lockout login`; attach PR ke chat. Linear mencentang hanya acceptance yang mempunyai bukti; status tetap In Progress sampai integrasi. Tidak merge/deploy tanpa instruksi user.
 
 ## Self-review plan
 

@@ -1,6 +1,6 @@
 # CPR-24 — Bukti pengelolaan Editor dan lockout
 
-Tanggal: 15 Oktober 2026 (Asia/Jakarta). Metode: Native sesuai persetujuan Founder. Base merged CPR-7 `641d867d863010ccbc96780d9930335f837de5a2`; UI/services pada `fcdcec6cfdda83dc97ad1600d67396288169ec04`; perbaikan review dan source final pada `7ea9bb3`. Status bukti: tes otomatis final lulus dan seluruh temuan review ditangani; handoff browser ganti password masih menunggu pengguna. Ini bukan bukti merge/deploy.
+Tanggal: 15 Oktober 2026 (Asia/Jakarta). Metode: Native sesuai persetujuan Founder. Base merged CPR-7 `641d867d863010ccbc96780d9930335f837de5a2`; UI/services pada `fcdcec6cfdda83dc97ad1600d67396288169ec04`; perbaikan review dan source final pada `7ea9bb3`. Status bukti: tes otomatis final lulus dan seluruh temuan review ditangani; Founder memilih melewati submission UI ganti password dan memakai bukti tes otomatis. Ini bukan bukti merge/deploy.
 
 ## Cakupan yang diuji
 
@@ -21,13 +21,13 @@ Responsive: 390×844 dan 1440×1000. Lebar dokumen 390 pada viewport 390, table 
 
 Screenshot chat: `cpr24-users-desktop.png`, `cpr24-editor-mobile.png`, `cpr24-password-handoff.png` pada direktori visualisasi chat, di luar repo. Tidak menyimpan screenshot password/token.
 
-Ganti password telah lulus tes action/library/transaksi/revokasi dan form browser dirender kosong; submission browser sedang diserahkan kepada pengguna sesuai aturan computer-use yang mengharuskan pengguna memasukkan credential baru sendiri. Jangan menganggap submission tersebut lulus sebelum ada hasil yang diamati.
+Founder memilih “Lewati tes UI password; gunakan bukti tes otomatis” melalui chat. Ganti password telah lulus tes action/library/transaksi/revokasi dan form browser dirender kosong; submission browser sengaja tidak dijalankan dan tidak diklaim lulus. Ini pengecualian acceptance yang disetujui, bukan bukti manual.
 
 ## Migration dan data
 
 Developer DB `sineva_compro_app` diinventaris sebelum migration: **0 user, 0 session**. Migration `0001_auth_lockout` aditif diterapkan eksplisit melalui `npm run db:migrate`; hanya tabel aplikasi/FK/check baru. Database dan volume Payload lama tetap dipertahankan. Test prepare dua kali lulus, journal mencegah reapply.
 
-Fixture browser hanya akun disposable pada `sineva_compro_app_test`; cleanup ditahan sampai handoff pengguna selesai. Credential hanya file ignored mode 600, tidak dicetak atau dimasukkan ke Git. Tidak ada migration remote/production, email nyata, merge atau deploy.
+Dua akun fixture browser pada `sineva_compro_app_test` telah dihapus hanya berdasarkan ID/email miliknya; FK mencabut session dan lockout terkait. File credential ignored mode 600 telah dihapus. Tidak ada credential yang dicetak atau dimasukkan ke Git. Tidak ada migration remote/production, email nyata, merge atau deploy.
 
 ## Review independen
 
@@ -37,16 +37,20 @@ Ketiga temuan direproduksi sebelum fix: race email baru menghasilkan HTTP 200/se
 
 Tidak ada minor yang ditunda. Rulings coordinator:
 
-| Keputusan                                                                     | Alasan                                                                  | Biaya bila keliru                                       |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |
-| Parser FormData/page interrupt/feedback dipisah menjadi file kecil            | Memisahkan client/server dan menghindari duplikasi                      | Tambahan file untuk dirawat                             |
-| Socket error dinilai Important                                                | Mencegah exception/log transport mentah                                 | Tambahan regression/guard                               |
-| Akuisisi/release pool dimiliki aplikasi; discard setiap exception transaction | BEGIN di luar finally Drizzle dan state rollback dapat tidak pasti      | Reconnect lebih sering untuk transaksi gagal            |
-| Session harus sesuai row yang dikunci, termasuk target kosong                 | Mencegah email baru muncul di lookup library lalu melampaui lockout     | Login mungkin perlu diulang saat email diubah bersamaan |
-| Browser acceptance dipenuhi coordinator; password submission menunggu handoff | Aturan computer-use credential dan bukti otomatis dipertahankan         | UI submission issue masih mungkin sebelum handoff       |
-| Bukti/README kemudian direview coordinator                                    | Di luar head reviewer yang dipin                                        | Dokumentasi readiness bisa tidak tepat jika salah       |
-| Deployment/credential ignored tetap di luar review ini                        | Tidak ada deploy/akses production yang dikerjakan                       | Deployment perlu verifikasi sendiri                     |
-| Endpoint fitur mendatang tidak dibuat; capability matrix diuji                | Scope CPR-24 tanpa dummy API                                            | Fitur mendatang wajib menerapkan guard masing-masing    |
-| Full DB/HTTP final di instance/salinan disposable terpisah                    | Mempertahankan pending fixture browser dan contract bootstrap DB kosong | Resource lokal sementara, kemudian dibersihkan          |
+| Keputusan                                                                                           | Alasan                                                                  | Biaya bila keliru                                       |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |
+| Parser FormData/page interrupt/feedback dipisah menjadi file kecil                                  | Memisahkan client/server dan menghindari duplikasi                      | Tambahan file untuk dirawat                             |
+| Socket error dinilai Important                                                                      | Mencegah exception/log transport mentah                                 | Tambahan regression/guard                               |
+| Akuisisi/release pool dimiliki aplikasi; discard setiap exception transaction                       | BEGIN di luar finally Drizzle dan state rollback dapat tidak pasti      | Reconnect lebih sering untuk transaksi gagal            |
+| Session harus sesuai row yang dikunci, termasuk target kosong                                       | Mencegah email baru muncul di lookup library lalu melampaui lockout     | Login mungkin perlu diulang saat email diubah bersamaan |
+| Browser acceptance dipenuhi coordinator; password submission kemudian dilewati atas pilihan Founder | Aturan computer-use credential dan bukti otomatis dipertahankan         | Submission UI password tidak diverifikasi secara manual |
+| Bukti/README kemudian direview coordinator                                                          | Di luar head reviewer yang dipin                                        | Dokumentasi readiness bisa tidak tepat jika salah       |
+| Deployment/credential ignored tetap di luar review ini                                              | Tidak ada deploy/akses production yang dikerjakan                       | Deployment perlu verifikasi sendiri                     |
+| Endpoint fitur mendatang tidak dibuat; capability matrix diuji                                      | Scope CPR-24 tanpa dummy API                                            | Fitur mendatang wajib menerapkan guard masing-masing    |
+| Full DB/HTTP final di instance/salinan disposable terpisah                                          | Mempertahankan pending fixture browser dan contract bootstrap DB kosong | Resource lokal sementara, kemudian dibersihkan          |
 
-Draft PR disiapkan sementara satu handoff UI belum selesai. Keputusan ini membuat source yang telah direview/diperbaiki dan diuji dapat diperiksa tanpa menyatakan acceptance final/ready to merge; biayanya adalah PR harus tetap draft sampai handoff atau keputusan skip diberikan.
+PR semula dibuat draft sambil menunggu handoff. Setelah Founder menyetujui skip submission UI password, acceptance tersebut ditutup dengan bukti otomatis dan pengecualian eksplisit; PR dapat diajukan untuk review tanpa mengklaim tes manual yang tidak dilakukan. Tidak ada izin merge/deploy yang ditambahkan.
+
+## Penutupan setelah keputusan Founder
+
+Setelah skip UI password disetujui, build production di worktree utama diperbarui ke source final dan preview test `http://localhost:3001` dipulihkan. Verifikasi ulang pada DB test asli: PostgreSQL **34/34**, HTTP production **11/11**, unit **77/77**, lint/typecheck/format/build lulus. Setelah fixture suite dibersihkan, DB test berisi **0 user, 0 session dan 0 lockout**. PR #2 diajukan untuk review dengan pengecualian manual yang dicatat; Linear tetap In Progress sampai integrasi.

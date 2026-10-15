@@ -6,8 +6,12 @@ if (!['localhost', '127.0.0.1'].includes(base.hostname) || base.protocol !== 'ht
 }
 
 describe('custom-admin foundation HTTP boundary', () => {
-  it('serves the public homepage', async () => {
-    const result = await fetch(base)
+  it('redirects the public entry point to the default localized homepage', async () => {
+    const root = await fetch(base, { redirect: 'manual' })
+    expect(root.status).toBe(307)
+    const target = new URL(root.headers.get('location')!, base)
+    expect(target.pathname).toBe('/id')
+    const result = await fetch(target, { redirect: 'manual' })
     expect(result.status).toBe(200)
     expect(await result.text()).toContain('Sineva Tech')
   })

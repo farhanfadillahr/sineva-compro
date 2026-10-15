@@ -1,6 +1,10 @@
+## Design system (Rev. 3)
+
+Before any public UI, copy, animation or mascot work, read [`docs/design/README.md`](docs/design/README.md) and follow its reading order. Brand name is "Sineva". Public site: English, light theme only, no em dash or en dash in copy.
+
 ## Arah produk aktif
 
-Ikuti PRD Rev. 2 dan `docs/architecture/decisions/2026-10-14-custom-admin.md`: website publik dan admin custom terintegrasi dalam Next.js, tanpa headless CMS. Integrasi Payload telah diganti pada salinan kerja fondasi; dokumentasi/setup/test lama berlabel historis. Jangan mengembalikan dependency/route CMS atau memakai hasil test historis sebagai bukti fondasi baru. Schema aplikasi memakai migration di `drizzle/`; database/volume lama dipertahankan.
+Ikuti PRD Rev. 3 dan `docs/architecture/decisions/2026-10-14-custom-admin.md`: website publik dan admin custom terintegrasi dalam Next.js, tanpa headless CMS. Integrasi Payload telah diganti pada salinan kerja fondasi; dokumentasi/setup/test lama berlabel historis. Jangan mengembalikan dependency/route CMS atau memakai hasil test historis sebagai bukti fondasi baru. Schema aplikasi memakai migration di `drizzle/`; database/volume lama dipertahankan.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

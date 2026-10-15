@@ -1,5 +1,7 @@
 # CPR-16 | [Content] Draft topik showcase portofolio
 
+> **Note (PRD Rev. 3, 2026-10-15):** showcase topics should now demonstrate AI work (Product and AI consulting). Web Development is no longer a standalone service. See [docs/design/brand-positioning.md](../design/brand-positioning.md).
+
 **Status:** draft usulan, 15 Oktober 2026. Founder meminta draft terlebih dahulu; topik, penanggung jawab, jadwal dan tiket demo belum ditetapkan. CPR-16 belum selesai; Q4 PRD tetap terbuka.
 
 **Acuan:** [PRD §2, FR-PF-03 dan Q4](../prd/2026-10-14-company-profile-prd.md), [outline portofolio](outline.md), [CPR-16](https://linear.app/sineva-tech/issue/CPR-16/content-tetapkan-topik-showcase-portofolio).

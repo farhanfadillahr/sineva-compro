@@ -1,5 +1,7 @@
 # CPR-19 | [Content] Copywriting Bahasa Indonesia
 
+> **Superseded for v1 (PRD Rev. 3, 2026-10-15).** The site launches in English with a new positioning (AI consulting: Product + Services) and the brand name "Sineva". This Indonesian draft is kept only as source material for a future `id` locale. Do not use it for v1 copy; see [docs/design/copywriting.md](../design/copywriting.md).
+
 **Status:** draft untuk review Founder, 15 Oktober 2026. Bukan naskah final yang sudah disetujui. Data perusahaan, kemampuan layanan spesifik, proyek, artikel dan rencana fitur chatbot masih memerlukan materi/konfirmasi.
 
 **Acuan:** [outline yang disetujui](outline.md), [PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [metadata ID](seo-id.json), [CPR-19](https://linear.app/sineva-tech/issue/CPR-19/cpr-19-content-copywriting-bahasa-indonesia).

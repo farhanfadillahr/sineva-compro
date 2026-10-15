@@ -1,5 +1,7 @@
 # CPR-15 | [Content] Outline konten Company Profile Sineva Tech
 
+> **Superseded for v1 (PRD Rev. 3, 2026-10-15).** Page structure now follows [docs/design/page-patterns.md](../design/page-patterns.md). Content-sourcing rules in §19 (no invented facts) still apply.
+
 **Status:** outline lengkap disetujui Founder pada 15 Oktober 2026. CPR-15 selesai. Persetujuan mencakup struktur dan arahan konten; copy final dan materi perusahaan tetap mengikuti tiket serta konfirmasi pada §19.
 
 **Acuan:** [PRD Rev. 2](../prd/2026-10-14-company-profile-prd.md), [rancangan CPR-15](../superpowers/specs/2026-10-15-cpr-15-content-outline-design.md), [tiket CPR-15](https://linear.app/sineva-tech/issue/CPR-15/cpr-15-content-susun-outline-konten-per-halaman).

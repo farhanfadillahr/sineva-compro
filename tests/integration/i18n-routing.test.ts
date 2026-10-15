@@ -54,6 +54,24 @@ it.each([
   [{ 'accept-language': 'fr-FR' }, '/id'],
   [{ 'accept-language': 'not_a_locale;q=broken' }, '/id'],
   [{}, '/id'],
+  ...[
+    'en;q=1.5',
+    'en;q=0.5junk',
+    'en;q=',
+    'en;q=-1',
+    'en;q=1.0001',
+    'en;q=0.0001',
+    'en;q=NaN',
+    'en;q=1;q=0',
+    'en;q=0.5, id;q=',
+    'en_US',
+    'en;foo=bar',
+    'en;q="0.5"',
+  ].map((value) => [{ cookie: 'NEXT_LOCALE=invalid', 'accept-language': value }, '/id'] as const),
+  [{ 'accept-language': 'en-US;Q=0.9,id;q=0.1' }, '/en'],
+  [{ 'accept-language': 'en;Q=0,id;q=1' }, '/id'],
+  [{ cookie: 'NEXT_LOCALE=en', 'accept-language': 'en;q=1.5' }, '/en'],
+  [{ cookie: 'NEXT_LOCALE=id', 'accept-language': 'en;q=0.5junk' }, '/id'],
 ] as const)('negotiates root without caching personalized redirect %#', async (headers, want) => {
   const response = await fetch(new URL('/?utm_source=test', base), {
     redirect: 'manual',
@@ -70,25 +88,32 @@ it.each([
   expect(response.headers.get('vary')?.toLowerCase()).toContain('accept-language')
   expect((await fetch(target, { redirect: 'manual' })).status).toBe(200)
 })
-it('honors an explicit EN URL over cookie, browser and forged locale header', async () => {
-  const response = await fetch(new URL('/en/about', base), {
-    redirect: 'manual',
-    headers: { cookie: 'NEXT_LOCALE=id', 'accept-language': 'id', 'x-next-intl-locale': 'id' },
-  })
-  const html = await response.text()
-  expect(response.status).toBe(200)
-  expect(html).toContain('lang="en"')
-  expect(html).toContain('About us')
-  expect(html).not.toMatch(
-    /Tentang kami|Halaman sedang disiapkan|Web development, AI, dan otomasi bisnis/,
-  )
-  const cookie = response.headers.getSetCookie().find((value) => value.startsWith('NEXT_LOCALE='))
-  expect(cookie).toMatch(/^NEXT_LOCALE=en;/)
-  expect(cookie).toMatch(/Path=\//i)
-  expect(cookie).toMatch(/SameSite=lax/i)
-  expect(cookie).toMatch(/Secure/i)
-  expect(response.headers.get('link') ?? '').not.toContain('hreflang')
-})
+it.each(['id', 'en;q=1.5'])(
+  'honors an explicit EN URL over cookie, browser and forged locale header with %s',
+  async (acceptLanguage) => {
+    const response = await fetch(new URL('/en/about', base), {
+      redirect: 'manual',
+      headers: {
+        cookie: 'NEXT_LOCALE=id',
+        'accept-language': acceptLanguage,
+        'x-next-intl-locale': 'id',
+      },
+    })
+    const html = await response.text()
+    expect(response.status).toBe(200)
+    expect(html).toContain('lang="en"')
+    expect(html).toContain('About us')
+    expect(html).not.toMatch(
+      /Tentang kami|Halaman sedang disiapkan|Web development, AI, dan otomasi bisnis/,
+    )
+    const cookie = response.headers.getSetCookie().find((value) => value.startsWith('NEXT_LOCALE='))
+    expect(cookie).toMatch(/^NEXT_LOCALE=en;/)
+    expect(cookie).toMatch(/Path=\//i)
+    expect(cookie).toMatch(/SameSite=lax/i)
+    expect(cookie).toMatch(/Secure/i)
+    expect(response.headers.get('link') ?? '').not.toContain('hreflang')
+  },
+)
 it('keeps query strings when canonicalizing an internal static pathname', async () => {
   const response = await fetch(new URL('/id/about?utm_source=alias', base), { redirect: 'manual' })
   expect([307, 308]).toContain(response.status)

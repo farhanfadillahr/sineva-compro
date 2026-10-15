@@ -1,31 +1,93 @@
-import { expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { createNavigation } from 'next-intl/navigation'
+import { defineRouting } from 'next-intl/routing'
+import { describe, expect, it } from 'vitest'
 import { getPathname } from '../../src/i18n/navigation'
-import type { Locale } from '../../src/i18n/routing'
+import { plannedIdPathnames, routing } from '../../src/i18n/routing'
 
-const pages = [
-  ['/', '/id', '/en'],
-  ['/services', '/id/layanan', '/en/services'],
-  ['/services/web-development', '/id/layanan/web-development', '/en/services/web-development'],
-  ['/services/ai-automation', '/id/layanan/ai-otomasi', '/en/services/ai-automation'],
-  ['/portfolio', '/id/portofolio', '/en/portfolio'],
-  ['/products/chatbot', '/id/produk/chatbot', '/en/products/chatbot'],
-  ['/blog', '/id/blog', '/en/blog'],
-  ['/about', '/id/tentang-kami', '/en/about'],
-  ['/contact', '/id/kontak', '/en/contact'],
-  ['/contact/thank-you', '/id/kontak/terima-kasih', '/en/contact/thank-you'],
-  ['/privacy-policy', '/id/kebijakan-privasi', '/en/privacy-policy'],
-] as const
-it.each(pages)('maps %s to the PRD URL in each locale', (href, id, en) => {
-  expect(getPathname({ locale: 'id', href })).toBe(id)
-  expect(getPathname({ locale: 'en', href })).toBe(en)
+// The URL table in docs/design/page-patterns.md section 1 is the source of truth.
+function sitemapRows(): { en: string; id: string }[] {
+  const doc = readFileSync(new URL('../../docs/design/page-patterns.md', import.meta.url), 'utf8')
+  const section = doc.slice(doc.indexOf('## 1. Sitemap'), doc.indexOf('## 2. Page compositions'))
+  const rows: { en: string; id: string }[] = []
+  for (const line of section.split('\n')) {
+    const cells = line.split('|').map((cell) => cell.trim())
+    const [en, id] = [cells[2], cells[3]].map((cell) => /^`([^`]+)`$/.exec(cell ?? '')?.[1])
+    // Skips the header, separator, "(any)" 404 row and the unlocalised admin row.
+    if (en?.startsWith('/') && id && en !== '/admin') rows.push({ en, id })
+  }
+  return rows
+}
+
+describe('single English locale with as-needed prefix', () => {
+  it('enables only en, as the default, with an unprefixed default locale', () => {
+    expect(routing.locales).toEqual(['en'])
+    expect(routing.defaultLocale).toBe('en')
+    expect(routing.localePrefix).toEqual({ mode: 'as-needed' })
+  })
+  it('does no locale detection and sets no locale cookie', () => {
+    expect(routing.localeDetection).toBe(false)
+    expect(routing.localeCookie).toBe(false)
+  })
+  it('registers exactly the URL table of page-patterns.md section 1', () => {
+    const rows = sitemapRows()
+    expect(rows).toHaveLength(12)
+    expect(Object.keys(routing.pathnames).sort()).toEqual(rows.map((row) => row.en).sort())
+    for (const { en } of rows) {
+      expect(routing.pathnames[en as keyof typeof routing.pathnames]).toBe(en)
+    }
+  })
+  it.each(sitemapRows().map((row) => row.en))('builds %s without a locale prefix', (href) => {
+    expect(getPathname({ locale: 'en', href: href as never })).toBe(href)
+  })
+  it.each([
+    ['/services/[slug]', 'ai-build', '/services/ai-build'],
+    ['/work/[slug]', 'ai-case', '/work/ai-case'],
+    ['/blog/[slug]', 'ai-guide', '/blog/ai-guide'],
+  ] as const)('builds dynamic %s without a prefix', (pathname, slug, want) => {
+    expect(getPathname({ locale: 'en', href: { pathname, params: { slug } } })).toBe(want)
+  })
+  it('does not register the removed legacy or static service pages', () => {
+    for (const gone of [
+      '/portfolio',
+      '/products/chatbot',
+      '/services/web-development',
+      '/services/ai-automation',
+    ]) {
+      expect(routing.pathnames).not.toHaveProperty(gone)
+    }
+  })
 })
-it.each([
-  ['id', '/services/[slug]', 'layanan-baru', '/id/layanan/layanan-baru'],
-  ['en', '/services/[slug]', 'new-service', '/en/services/new-service'],
-  ['id', '/portfolio/[slug]', 'kasus-ai', '/id/portofolio/kasus-ai'],
-  ['en', '/portfolio/[slug]', 'ai-case', '/en/portfolio/ai-case'],
-  ['id', '/blog/[slug]', 'panduan-ai', '/id/blog/panduan-ai'],
-  ['en', '/blog/[slug]', 'ai-guide', '/en/blog/ai-guide'],
-] as const)('builds dynamic %s %s without translating its slug', (locale, pathname, slug, want) => {
-  expect(getPathname({ locale: locale as Locale, href: { pathname, params: { slug } } })).toBe(want)
+
+describe('i18n-ready registry', () => {
+  it('documents the future id URLs of the table, one per registered pathname', () => {
+    const rows = sitemapRows()
+    expect(Object.keys(plannedIdPathnames).sort()).toEqual(rows.map((row) => row.en).sort())
+    for (const { en, id } of rows) {
+      expect(plannedIdPathnames[en as keyof typeof plannedIdPathnames]).toBe(id)
+    }
+  })
+  it('adds id as a data-only change that leaves English URLs unchanged', () => {
+    const pathnames = Object.fromEntries(
+      Object.entries(routing.pathnames).map(([key, en]) => [
+        key,
+        { en, id: plannedIdPathnames[key as keyof typeof plannedIdPathnames] },
+      ]),
+    )
+    // Only `locales` and `pathnames` differ from the production config.
+    const fixture = defineRouting({ ...routing, locales: ['en', 'id'], pathnames } as never)
+    expect(fixture.defaultLocale).toBe('en')
+    expect(fixture.localePrefix).toEqual(routing.localePrefix)
+    const nav = createNavigation(fixture as never) as unknown as {
+      getPathname: (input: { locale: string; href: unknown }) => string
+    }
+    for (const { en, id } of sitemapRows()) {
+      const slugged = (path: string) => path.replace('[slug]', 'x')
+      const href = en.includes('[slug]') ? { pathname: en, params: { slug: 'x' } } : en
+      expect(nav.getPathname({ locale: 'en', href })).toBe(slugged(en))
+      expect(nav.getPathname({ locale: 'id', href })).toBe(
+        id === '/id' ? '/id' : `/id${slugged(id)}`,
+      )
+    }
+  })
 })

@@ -1,0 +1,21 @@
+{
+  "Pages": {
+    "home": "Beranda",
+    "services": "Layanan",
+    "webDevelopment": "Web Development",
+    "aiAutomation": "AI & Otomasi",
+    "portfolio": "Portofolio",
+    "chatbot": "Produk Chatbot",
+    "blog": "Blog",
+    "about": "Tentang kami",
+    "contact": "Kontak",
+    "thankYou": "Terima kasih",
+    "privacy": "Kebijakan Privasi"
+  },
+  "Status": {
+    "pending": "Halaman sedang disiapkan."
+  },
+  "NotFound": {
+    "title": "Halaman tidak ditemukan."
+  }
+}

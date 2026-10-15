@@ -1,0 +1,21 @@
+{
+  "Pages": {
+    "home": "Home",
+    "services": "Services",
+    "webDevelopment": "Web Development",
+    "aiAutomation": "AI & Automation",
+    "portfolio": "Portfolio",
+    "chatbot": "Chatbot Product",
+    "blog": "Blog",
+    "about": "About us",
+    "contact": "Contact",
+    "thankYou": "Thank you",
+    "privacy": "Privacy Policy"
+  },
+  "Status": {
+    "pending": "This page is being prepared."
+  },
+  "NotFound": {
+    "title": "Page not found."
+  }
+}

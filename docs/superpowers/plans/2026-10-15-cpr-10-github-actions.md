@@ -10,7 +10,7 @@
 
 **Spec:** [Rancangan CPR-10 yang disetujui](../specs/2026-10-15-cpr-10-github-actions-design.md), [PRD §14.3](../../prd/2026-10-14-company-profile-prd.md), [CPR-10](https://linear.app/sineva-tech/issue/CPR-10/cpr-10-infra-setup-ci-github-actions).
 
-**Status:** Spec disetujui: CI dahulu, proteksi menyusul. Plan ini menunggu review Founder; belum ada implementasi workflow/helper. Metode Native mengikuti pilihan eksplisit Founder sebelumnya. Branch `farhanfadillahrafi/cpr-10-infra-setup-ci-github-actions` memakai worktree terisolasi yang sudah ada; base main `0156c0e997db79558adba11d874e17a75b7b0c6b`. Checkout utama yang memiliki perubahan dokumen lokal dipertahankan.
+**Status:** Spec disetujui: CI dahulu, proteksi menyusul. Plan disetujui Founder; implementasi berlangsung dengan metode Native. Runner telah lulus tes; workflow sedang diverifikasi. Branch `farhanfadillahrafi/cpr-10-infra-setup-ci-github-actions` memakai worktree terisolasi yang sudah ada; base main `0156c0e997db79558adba11d874e17a75b7b0c6b`. Checkout utama yang memiliki perubahan dokumen lokal dipertahankan.
 
 ## Global Constraints
 
@@ -78,7 +78,7 @@ export async function main(input: NodeJS.ProcessEnv): Promise<number>
 
 `withTestServer` menghasilkan 0 hanya jika server tetap hidup sampai seluruh HTTP tests sukses. Test nonzero diteruskan; startup/readiness/early-exit/spawn error menghasilkan 1; SIGINT 130; SIGTERM 143. Tidak memanggil `process.exit` dari library. CLI menetapkan `process.exitCode` setelah cleanup. Hanya CLI memuat `dotenv/config`.
 
-- [ ] **Step 1 — tulis tes RED dengan child nyata.** Gunakan `node:net` untuk memperoleh port bebas pada `127.0.0.1`, HTTP dummy melalui `process.execPath -e`, dan Vitest timeout 10 detik untuk setiap kasus. Tutup listener/proses fixture di `afterEach`, termasuk ketika assertion gagal. Contoh inti:
+- [x] **Step 1 — tulis tes RED dengan child nyata.** Gunakan `node:net` untuk memperoleh port bebas pada `127.0.0.1`, HTTP dummy melalui `process.execPath -e`, dan Vitest timeout 10 detik untuk setiap kasus. Tutup listener/proses fixture di `afterEach`, termasuk ketika assertion gagal. Contoh inti:
 
 ```ts
 import { expect, it } from 'vitest'
@@ -109,7 +109,7 @@ it.each([0, 7])('returns HTTP test exit %i and closes its server', async (code) 
 
 `unusedLoopbackUrl(): Promise<URL>` membuka `net.Server` pada port 0, membaca `AddressInfo.port`, menutup listener dan mengembalikan URL. `canBindLoopback(url: URL): Promise<boolean>` mencoba bind lalu menutup listener sementara; mengembalikan false pada `EADDRINUSE`, sedangkan error lain menggagalkan tes. Kedua helper hanya untuk tes. Assertion port bebas membuktikan cleanup nyata.
 
-- [ ] **Step 2 — tambahkan tes kegagalan berikut.** Gunakan Node-command pada tabel; periksa status serta apakah testcommand dijalankan melalui marker file dalam direktori `mkdtemp` milik tes. Bersihkan hanya direktori tersebut setelah setiap tes.
+- [x] **Step 2 — tambahkan tes kegagalan berikut.** Gunakan Node-command pada tabel; periksa status serta apakah testcommand dijalankan melalui marker file dalam direktori `mkdtemp` milik tes. Bersihkan hanya direktori tersebut setelah setiap tes.
 
 | Scenario               | Fixture/hasil yang diharapkan                                                                                                                      |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -124,7 +124,7 @@ it.each([0, 7])('returns HTTP test exit %i and closes its server', async (code) 
 
 Worker mengimpor `withTestServer`, memakai dummy HTTP-command yang sama dan menulis PID server/tests ke direktori tes. Marker fase `server-started` dan `tests-started` menentukan kapan testparent mengirim sinyal untuk masing-masing kasus startup/tes aktif. Pasang signal handler sebelum spawn agar cancellation saat startup tidak lolos dari cleanup. Hanya testparent mengirim sinyal. `process.kill(pid, 0)` harus akhirnya menghasilkan `ESRCH`; gunakan deadline. Port unit tests bersifat ephemeral agar preview 3001 tetap bekerja. Tidak ada credential produksi dalam fixture/logs.
 
-- [ ] **Step 3 — jalankan tes RED terarah.**
+- [x] **Step 3 — jalankan tes RED terarah.**
 
 ```bash
 npm test -- tests/unit/with-test-server.test.ts tests/unit/test-http-production.test.ts
@@ -132,7 +132,7 @@ npm test -- tests/unit/with-test-server.test.ts tests/unit/test-http-production.
 
 Harus gagal karena module/export belum ada; tidak mencoba migration database lokal.
 
-- [ ] **Step 4 — implementasikan lifecycle.** Gunakan `spawn(file, [...args], { env, stdio: 'inherit', detached: true })` pada macOS/Linux, tanpa shell. Preflight bind/tutup host/port readyUrl; jika terpakai langsung gagal. Pasang listener `error` dan `exit` sejak spawn. Race setiap request readiness (request-timeout + AbortController) terhadap server-exit dan deadline total; hanya HTTP 2xx dianggap ready. Periksa server masih hidup sebelum/sesudah tes. Race test-exit terhadap server-exit tak terduga dan cancellation; hentikan tests jika server mati.
+- [x] **Step 4 — implementasikan lifecycle.** Gunakan `spawn(file, [...args], { env, stdio: 'inherit', detached: true })` pada macOS/Linux, tanpa shell. Preflight bind/tutup host/port readyUrl; jika terpakai langsung gagal. Pasang listener `error` dan `exit` sejak spawn. Race setiap request readiness (request-timeout + AbortController) terhadap server-exit dan deadline total; hanya HTTP 2xx dianggap ready. Periksa server masih hidup sebelum/sesudah tes. Race test-exit terhadap server-exit tak terduga dan cancellation; hentikan tests jika server mati.
 
 ```ts
 // Hanya grup dari proses detached yang dimulai helper ini.
@@ -147,7 +147,7 @@ function signalOwnedGroup(pid: number, signal: NodeJS.Signals): void {
 
 Dalam `finally`: batalkan fetch/timer aktif, kirim TERM ke kedua grup milik helper (termasuk ketika wrapper langsung sudah exit), tunggu maksimal shutdownTimeoutMs, kirim KILL ke grup yang masih hidup, tunggu exit child langsung dan lepaskan signal listener milik helper. Hasil 0 hanya setelah cleanup sukses. Log hanya kategori pesan/status tetap, tanpa exception/command/env/URL lengkap. Jangan memakai `pkill` luas atau membunuh pemilik port. Library menolak platform non-POSIX dengan pesan jelas; target sekarang Linux/macOS.
 
-- [ ] **Step 5 — implementasikan CLI dan tes environment.** Panggil `productionHttpOptions` sebelum spawn; tes meliputi DB kosong/remote/nama salah, auth secret terlalu pendek dan `DATABASE_URL` developer yang berbeda. Harus gagal aman tanpa spawn; config test valid mengganti DB/origin untuk server dan tests. Inti factory:
+- [x] **Step 5 — implementasikan CLI dan tes environment.** Panggil `productionHttpOptions` sebelum spawn; tes meliputi DB kosong/remote/nama salah, auth secret terlalu pendek dan `DATABASE_URL` developer yang berbeda. Harus gagal aman tanpa spawn; config test valid mengganti DB/origin untuk server dan tests. Inti factory:
 
 ```ts
 const validated = readTestEnv(input)
@@ -178,7 +178,7 @@ return {
 "test:http:production": "tsx scripts/test-http-production.ts"
 ```
 
-- [ ] **Step 6 — GREEN dan commit.** Jalankan tes terarah, seluruh `npm test`, lint/typecheck/format. `next typegen` boleh menghasilkan `.next/types` bila belum ada. Tidak perlu perubahan source produk atau dependency/lockfile. Commit `test(ci): add managed production HTTP runner (CPR-10)`.
+- [x] **Step 6 — GREEN dan commit.** Jalankan tes terarah, seluruh `npm test`, lint/typecheck/format. `next typegen` boleh menghasilkan `.next/types` bila belum ada. Tidak perlu perubahan source produk atau dependency/lockfile. Commit `test(ci): add managed production HTTP runner (CPR-10)`.
 
 ## Task 2: Workflow GitHub minimal dan dokumentasi
 
@@ -186,7 +186,7 @@ return {
 
 **Interfaces:** memakai `npm run test:http:production` dari Task 1, exit 0 = suite hijau dan server dibersihkan. Menghasilkan check `verify`; tanpa artifact/deployment atau kemampuan API-write.
 
-- [ ] **Step 1 — tulis workflow.** Releases/tag-refs dan action metadata diperiksa pada 15 Oktober 2026 melalui GitHub API resmi: checkout v7.0.1 → `3d3c42e5aac5ba805825da76410c181273ba90b1`, setup-node v7.1.0 → `949feb2413d6458794dcd2491c4babbbce0c15c1`; keduanya `node24`. Gunakan SHA lengkap berikut:
+- [x] **Step 1 — tulis workflow.** Releases/tag-refs dan action metadata diperiksa pada 15 Oktober 2026 melalui GitHub API resmi: checkout v7.0.1 → `3d3c42e5aac5ba805825da76410c181273ba90b1`, setup-node v7.1.0 → `949feb2413d6458794dcd2491c4babbbce0c15c1`; keduanya `node24`. Gunakan SHA lengkap berikut:
 
 ```yaml
 name: CI
@@ -263,7 +263,7 @@ jobs:
 
 Tidak ada `NODE_ENV=production` saat install (dev tooling tetap dipasang). Tidak ada shell interpolation judul/body PR. Port service hanya untuk runner ephemeral; contract aplikasi tetap loopback. Tidak ada `if`/`continue-on-error` yang mengubah gagal menjadi sukses.
 
-- [ ] **Step 2 — validasi YAML dan semantik.** Jalankan `npx prettier --check .github/workflows/ci.yml` dan parse dengan dependency `yaml` yang sudah ada:
+- [x] **Step 2 — validasi YAML dan semantik.** Jalankan `npx prettier --check .github/workflows/ci.yml` dan parse dengan dependency `yaml` yang sudah ada:
 
 ```bash
 node --input-type=module -e 'import{readFileSync}from"node:fs";import{parseDocument}from"yaml";const d=parseDocument(readFileSync(".github/workflows/ci.yml","utf8"),{uniqueKeys:true});if(d.errors.length)throw new Error("Invalid CI YAML");const w=d.toJS();if(w.jobs.verify.name!=="verify"||w.permissions.contents!=="read"||!("pull_request"in w.on)||("pull_request_target"in w.on))throw new Error("Invalid CI gate");console.log("CI YAML parsed; review remaining semantics against plan")'
@@ -271,11 +271,11 @@ node --input-type=module -e 'import{readFileSync}from"node:fs";import{parseDocum
 
 Manually compare trigger filters, concurrency expression, job timeout, exact action refs, service health/env, command order dan tidak adanya bypass terhadap YAML di atas. GitHub run pada Task 3 adalah validasi platform yang sebenarnya; parse lokal bukan klaim schema Actions sepenuhnya valid. Tidak menambah test yang hanya menyalin semua baris workflow.
 
-- [ ] **Step 3 — dokumentasikan perilaku.** README: perintah baru harus setelah build dan saat port 3001 bebas; helper tidak start dev, SQL/HTTP sequential, environment test aman, preview lokal jangan dimatikan sembarangan. Tambahkan bagian CI berisi event/check/stages dan batas proteksi, serta hapus “CI” dari daftar fitur belum ada hanya setelah workflow benar-benar diterapkan. PRD §14.3 mengganti urutan lama menjadi `format → lint → typecheck → unit → journal/migration → integration SQL → build → integration HTTP production`; E2E/Lighthouse disebut tahap tiket QA mendatang, bukan gate saat ini. Aturan “semua lulus sebelum merge” tetap kebijakan; enforcement server belum tersedia pada paket repo private ini.
+- [x] **Step 3 — dokumentasikan perilaku.** README: perintah baru harus setelah build dan saat port 3001 bebas; helper tidak start dev, SQL/HTTP sequential, environment test aman, preview lokal jangan dimatikan sembarangan. Tambahkan bagian CI berisi event/check/stages dan batas proteksi, serta hapus “CI” dari daftar fitur belum ada hanya setelah workflow benar-benar diterapkan. PRD §14.3 mengganti urutan lama menjadi `format → lint → typecheck → unit → journal/migration → integration SQL → build → integration HTTP production`; E2E/Lighthouse disebut tahap tiket QA mendatang, bukan gate saat ini. Aturan “semua lulus sebelum merge” tetap kebijakan; enforcement server belum tersedia pada paket repo private ini.
 
-- [ ] **Step 4 — verifikasi fresh secara lokal tanpa DB developer.** Gunakan checkout/archive test terpisah dari source revision dan PostgreSQL disposable bernama unik (port host bebas yang dipetakan ke `TEST_DATABASE_URL`). Jangan memakai `.env` dari checkout utama. Pastikan nama DB test sesuai validator; jalankan urutan workflow persis. Hentikan container/proses/checkout sementara milik task setelah selesai. Preview existing 3001 tidak boleh dibunuh karena port conflict: gunakan lingkungan/container terisolasi untuk end-to-end atau hentikan hanya session preview milik agen secara terkontrol lalu pulihkan setelahnya. Catat OS dan bahwa lokal bukan GitHub runner.
+- [x] **Step 4 — verifikasi fresh secara lokal tanpa DB developer.** Gunakan checkout/archive test terpisah dari source revision dan PostgreSQL disposable bernama unik (port host bebas yang dipetakan ke `TEST_DATABASE_URL`). Jangan memakai `.env` dari checkout utama. Pastikan nama DB test sesuai validator; jalankan urutan workflow persis. Hentikan container/proses/checkout sementara milik task setelah selesai. Preview existing 3001 tidak boleh dibunuh karena port conflict: gunakan lingkungan/container terisolasi untuk end-to-end atau hentikan hanya session preview milik agen secara terkontrol lalu pulihkan setelahnya. Catat OS dan bahwa lokal bukan GitHub runner.
 
-- [ ] **Step 5 — commit.** `git diff --check`, format/lint/typecheck/tests relevan lulus; periksa staged diff tidak memuat `.env`, credential pengguna, generated build atau source produk. Commit `ci: verify Compro against disposable PostgreSQL (CPR-10)`.
+- [x] **Step 5 — commit.** `git diff --check`, format/lint/typecheck/tests relevan lulus; periksa staged diff tidak memuat `.env`, credential pengguna, generated build atau source produk. Commit `ci: verify Compro against disposable PostgreSQL (CPR-10)`.
 
 ## Task 3: Bukti GitHub, review independen dan PR
 

@@ -1,6 +1,6 @@
 # CPR-10 | [Infra] Setup CI GitHub Actions
 
-**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder pada 15 Oktober 2026; CI dikerjakan terlebih dahulu, proteksi `main` menyusul ketika paket mendukung. Belum ada workflow atau perubahan proteksi repository yang diterapkan.
+**Tanggal:** 15 Oktober 2026. **Status:** rancangan disetujui Founder pada 15 Oktober 2026; CI dikerjakan terlebih dahulu, proteksi `main` menyusul ketika paket mendukung. Workflow dan runner telah dibuat dan sedang diverifikasi; proteksi repository belum diterapkan.
 
 **Acuan:** [CPR-10](https://linear.app/sineva-tech/issue/CPR-10/infra-setup-ci-github-actions), PRD §14.3, dan `origin/main` pada `0156c0e997db79558adba11d874e17a75b7b0c6b` (hasil merge CPR-24).
 

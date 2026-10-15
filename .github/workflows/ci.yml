@@ -1,0 +1,70 @@
+name: CI
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17.11-bookworm
+        env:
+          POSTGRES_USER: sineva
+          POSTGRES_PASSWORD: ci-disposable-only
+          POSTGRES_DB: sineva_compro_app_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U sineva -d sineva_compro_app_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+      DATABASE_URL: postgresql://sineva:ci-disposable-only@127.0.0.1:5433/sineva_compro_app_test
+      TEST_DATABASE_URL: postgresql://sineva:ci-disposable-only@127.0.0.1:5433/sineva_compro_app_test
+      BETTER_AUTH_SECRET: ci-disposable-auth-secret-for-isolated-tests-only
+      BETTER_AUTH_URL: http://127.0.0.1:3001
+      TEST_BASE_URL: http://127.0.0.1:3001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Format
+        run: npm run format:check
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Migration journal
+        run: npm run db:check
+      - name: Prepare test database
+        run: npm run test:prepare
+      - name: Database tests
+        run: npm run test:database
+      - name: Production build
+        run: npm run build
+      - name: Production HTTP tests
+        run: npm run test:http:production

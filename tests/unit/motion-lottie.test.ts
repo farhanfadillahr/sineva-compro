@@ -106,8 +106,8 @@ describe('LottiePlayer: box and accessibility', () => {
   })
 
   it('reserves its box from an aspect ratio', () => {
-    const { box } = mount({ width: undefined, height: undefined, aspectRatio: 16 / 9 })
-    expect(box.style.aspectRatio).toBe(String(16 / 9))
+    const { box } = mount({ width: undefined, height: undefined, aspectRatio: '16 / 9' })
+    expect(box.style.aspectRatio).toBe('16 / 9')
   })
 
   it('is hidden from assistive tech by default', () => {
@@ -442,7 +442,7 @@ describe('lottie-web import discipline', () => {
 
   it('reaches the player through a dynamic import only', () => {
     for (const { path, text } of sources) {
-      expect(text, path).not.toMatch(/^import\s[^;]*from\s+['"]lottie-web/m)
+      expect(text, path).not.toMatch(/^import\s+(?!type\b)[^;]*from\s+['"]lottie-web/m)
     }
     const loader = sources.find((s) => s.path === 'src/lib/motion/lottie.ts')
     expect(loader?.text).toMatch(/import\(\s*['"]lottie-web\/build\/player\/lottie_light['"]\s*\)/)

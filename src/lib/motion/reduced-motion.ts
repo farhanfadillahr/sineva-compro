@@ -12,7 +12,8 @@ export function prefersReducedMotion(): boolean {
   return window.matchMedia(QUERY).matches
 }
 
-function subscribe(onChange: () => void): () => void {
+/** Call `onChange` whenever the preference flips. Returns the unsubscribe function. */
+export function subscribeToReducedMotion(onChange: () => void): () => void {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => {}
   const mql = window.matchMedia(QUERY)
   mql.addEventListener('change', onChange)
@@ -26,5 +27,5 @@ function subscribe(onChange: () => void): () => void {
  * trusting this value on the first pass.
  */
 export function usePrefersReducedMotion(): boolean {
-  return useSyncExternalStore(subscribe, prefersReducedMotion, () => false)
+  return useSyncExternalStore(subscribeToReducedMotion, prefersReducedMotion, () => false)
 }

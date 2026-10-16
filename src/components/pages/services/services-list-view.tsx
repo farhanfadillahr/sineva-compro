@@ -1,19 +1,17 @@
+import { JourneySteps } from '@/components/sections/journey-steps'
 import type { ReactNode } from 'react'
 import {
   AudienceCards,
   FaqSection,
   FinalCta,
   HeroSplit,
-  SinoStage,
-  StickySteps,
   faqEntriesFromDto,
 } from '@/components/sections'
 import type { ActionLinkComponent, SectionTone } from '@/components/ui'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
 import { whatsappHrefFor } from '@/lib/whatsapp'
 import { SelectedWorkSection } from '../home/card-sections'
-import { PoseImage } from '../home/pose-image'
-import { HOW_WE_WORK_POSES, poseImage } from '../home/poses'
+import { poseImage } from '../home/poses'
 import { ServiceCardsSection } from './service-cards-section'
 import type { ServicesLabels } from './services-labels'
 import {
@@ -69,25 +67,7 @@ export function ServicesListView({ model, labels, linkComponent }: ServicesListV
       />
     ),
     howWeWork: (tone) => (
-      <StickySteps
-        title={page.howWeWork.title}
-        tone={tone}
-        steps={page.howWeWork.steps.map((step, index) => ({
-          ...step,
-          screen: (
-            // The stage glow spills past its box; the clip keeps it from widening the page.
-            <div className="overflow-x-clip">
-              <SinoStage className="max-w-xs sm:max-w-sm">
-                <PoseImage
-                  pose={HOW_WE_WORK_POSES[index % HOW_WE_WORK_POSES.length]!}
-                  sizes="(min-width: 1024px) 384px, 80vw"
-                  className="size-full object-contain"
-                />
-              </SinoStage>
-            </div>
-          ),
-        }))}
-      />
+      <JourneySteps title={page.howWeWork.title} steps={page.howWeWork.steps} tone={tone} />
     ),
     whoWeHelp: (tone) => (
       <AudienceCards title={page.whoWeHelp.title} items={page.whoWeHelp.cards} tone={tone} />

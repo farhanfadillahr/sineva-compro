@@ -203,7 +203,6 @@ describe('every pose on Home goes through AnimatedPose', () => {
   it('Home draws every pose key through PoseImage (which is AnimatedPose), never a bare Image', () => {
     const users = homeFiles.filter((f) => imports(f, /<PoseImage\b/))
     expect(users.map(rel).sort()).toEqual([
-      'src/components/pages/home/home-view.tsx',
       'src/components/pages/home/meet-sino-section.tsx',
       'src/components/pages/home/post-card.tsx',
     ])

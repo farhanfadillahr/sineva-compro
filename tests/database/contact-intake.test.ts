@@ -29,12 +29,15 @@ const valid = {
   consent: true,
   email: 'Ayu@Example.com',
   whatsapp: '+62 812 3456 7890',
+  turnstileToken: 'valid-token',
 }
 
 beforeAll(async () => {
   ctx = await createCmsTestContext()
   intake = await import('../../src/features/leads/intake.server')
   actions = await import('../../src/features/leads/actions')
+  const hooks = await import('../../src/features/leads/hooks.server')
+  hooks.setTurnstileVerifierForTests(async (token) => token === 'valid-token')
   await ctx.connection.db.delete(lead)
 })
 afterAll(async () => {

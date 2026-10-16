@@ -59,6 +59,8 @@ export async function createContactLead(
     input: (input && typeof input === 'object' ? input : {}) as Record<string, unknown>,
     headers: context.headers,
   })
+  // A bot that filled the honeypot gets the same success as a person, and nothing is stored.
+  if (!verdict.ok && verdict.reason === 'honeypot') return { ok: true, id: 'discarded' }
   if (!verdict.ok)
     return {
       ok: false,

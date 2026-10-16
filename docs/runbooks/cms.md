@@ -215,3 +215,18 @@ errors, a form error and the submitted values so the form can keep them and offe
 The launch form (Faishal, CPR-47) still composes a WhatsApp message and posts nothing. To switch it
 on, the form adds the email and WhatsApp fields and calls `submitContact`; the design is unchanged
 until then. There is no public `/api/leads` route.
+
+## Anti-spam (CPR-49)
+
+Every public submission (contact, waitlist) goes through `checkSpam` before anything is stored:
+
+1. Honeypot: the form sends a hidden, empty `website` field. Filled means a bot; the submission is
+   dropped silently and the visitor still sees success.
+2. Rate limit: at most 5 submissions per client per 10 minutes, counted by a keyed hash of the
+   trusted client IP (`intake_attempt`, rows older than a day are deleted). The IP is trusted only
+   behind Cloudflare (`CLIENT_IP_MODE=cloudflare` with a locked origin, CPR-68). Without a trusted
+   IP, one shared bucket allows 30 per 10 minutes.
+3. Turnstile: the form sends the widget token as `turnstileToken`; the server verifies it with
+   `TURNSTILE_SECRET_KEY`. Outside production Cloudflare's always-pass test secret is used;
+   production refuses submissions until the real secret is set. The form needs
+   `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (test site key `1x00000000000000000000AA` locally).

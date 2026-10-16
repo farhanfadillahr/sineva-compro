@@ -40,13 +40,13 @@ export const pages: PageContentMap = {
     key: 'home',
     locale: 'en',
     seo: seo(
-      'A little help with everyday work | Sineva',
-      'More room for the work that matters. Explore practical AI help for your business, and talk to us about a first step.',
+      'Make your business run smarter with AI | Sineva',
+      'Save time on everyday tasks with AI that fits your business. Meet Sino and book a free consultation.',
     ),
     hero: {
       eyebrow: null,
       headline: 'AI for your business, without the hassle',
-      lead: 'A little help with the tasks that fill your day. Let us find where AI can make things easier for you.',
+      lead: 'We make AI accessible for everyone. Let us find where it can make your day easier.',
       primaryCtaLabel: 'Book a free consultation',
       secondaryCtaLabel: 'Get notified about Sino',
       poster: asset(
@@ -84,7 +84,7 @@ export const pages: PageContentMap = {
     whoWeHelp: { title: 'Who we help', cards: audienceCards },
     // Hidden until real projects exist. The section is switched off, not filled with filler.
     selectedWork: { visible: false, title: 'Selected work', intro: null },
-    fromBlog: { visible: true, title: 'From the blog' },
+    fromBlog: { visible: true, title: 'Insights to get you started' },
     faq: { title: 'Questions, answered', intro: 'Short answers about Sino and our services.' },
     finalCta: {
       headline: 'Ready when you are',
@@ -99,8 +99,8 @@ export const pages: PageContentMap = {
     key: 'product',
     locale: 'en',
     seo: seo(
-      'Sineva AI Agents: meet Sino | Sineva',
-      'Meet Sino, an AI agent for everyday business tasks. It is not available yet. Ask to be notified when it is ready.',
+      'Hand off your busywork to Sino AI | Sineva',
+      'Meet Sino AI, a helper for everyday business tasks. Coming soon: get notified the moment it is ready.',
     ),
     productStatus: 'coming_soon',
     hero: {
@@ -169,7 +169,7 @@ export const pages: PageContentMap = {
     hero: {
       eyebrow: null,
       headline: 'AI help that fits your business',
-      lead: 'Tell us where the work gets tangled. We will help you find a useful first step and build from there.',
+      lead: 'AI should be accessible to every business. Tell us where the work gets tangled and we will help you find a first step.',
       primaryCtaLabel: 'Book a free consultation',
     },
     servicesIntro: {
@@ -192,12 +192,12 @@ export const pages: PageContentMap = {
     key: 'about',
     locale: 'en',
     seo: seo(
-      'About Sineva | Sineva',
-      'Every business day brings a lot to look after. Sineva helps make everyday work feel lighter, with practical support for you and your team.',
+      'See how Sineva makes AI simple | Sineva',
+      'Sineva makes AI accessible for everyone, with practical, safe support for your business and your team. See how we work.',
     ),
     hero: {
       title: 'More room for what matters',
-      lead: 'You have a business to care for. We are here to help make the everyday work a little lighter.',
+      lead: 'Our mission is to make AI accessible for everyone, so the everyday work of running a business feels lighter.',
       scene: asset('/mascot/poses/v008/sino-relaxed.webp', 1200, 1200, 'Sino relaxing with a mug'),
     },
     // Story and mission are proposals from docs/design/brand-positioning.md. The Founder has not
@@ -216,7 +216,7 @@ export const pages: PageContentMap = {
     ),
     mission: {
       title: 'Why we are here',
-      body: 'We help people make room for the work, people, and plans that matter to them.',
+      body: 'Make AI accessible for everyone. We help people make room for the work, people, and plans that matter to them.',
     },
     values: {
       title: 'What we value',
@@ -244,7 +244,7 @@ export const pages: PageContentMap = {
     key: 'contact',
     locale: 'en',
     seo: seo(
-      'Talk to us | Sineva',
+      'Book your free AI consultation | Sineva',
       'Tell us about your project and get a free consultation. Send your message on WhatsApp and we will reply with next steps.',
     ),
     metaChips: ['Free consultation', 'Plain words, no jargon'],
@@ -319,8 +319,8 @@ export const pages: PageContentMap = {
     key: 'blogIndex',
     locale: 'en',
     seo: seo(
-      'Blog | Sineva',
-      'Practical notes on using AI in everyday work, from the Sineva team. Read an article, or talk to us about your own project.',
+      'Get practical AI insights for your business | Sineva',
+      'Short, practical guides to using AI in everyday work. Read the latest insights, then talk to us about your own project.',
     ),
     title: 'Blog',
     intro: 'Practical notes on using AI in everyday work.',

@@ -86,7 +86,7 @@
       "legal": "Legal"
     },
     "links": {
-      "aiAgents": "AI Agents",
+      "aiAgents": "Sino AI",
       "joinWaitlist": "Join the waitlist",
       "allServices": "All services",
       "about": "About",
@@ -104,7 +104,8 @@
       "tiktok": "Sineva on TikTok",
       "youtube": "Sineva on YouTube",
       "x": "Sineva on X"
-    }
+    },
+    "tagline": "Making AI accessible for everyone."
   },
   "Home": {
     "stickyBarLabel": "Next steps",

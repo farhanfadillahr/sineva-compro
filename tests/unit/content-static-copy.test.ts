@@ -115,7 +115,7 @@ describe('static content: metadata limits', () => {
   }[]
 
   it('covers every page and every service and post', () => {
-    expect(seoBlocks.length).toBe(PAGE_KEYS.length + 3 + 3)
+    expect(seoBlocks.length).toBe(PAGE_KEYS.length + 3 + 4)
   })
 
   it('keeps meta titles within 60 and descriptions within 160 characters', () => {

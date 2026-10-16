@@ -85,7 +85,7 @@ describe('BlogListView', () => {
       (a) => a.getAttribute('href') === `/blog/${LATEST}`,
     )
     expect(links).toHaveLength(1)
-    expect(container.querySelectorAll('[data-blog-grid] article')).toHaveLength(2)
+    expect(container.querySelectorAll('[data-blog-grid] article')).toHaveLength(3)
   })
 
   it('renders cards with category, date and read time, and clamps titles to two lines', async () => {
@@ -124,7 +124,7 @@ describe('BlogListView', () => {
       .filter((a) => a.getAttribute('aria-current') === 'true')
     expect(current.map((a) => a.textContent)).toEqual(['AI basics'])
     expect(container.querySelector('[data-blog-featured]')).toBeNull()
-    expect(container.querySelectorAll('[data-blog-grid] article')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-blog-grid] article')).toHaveLength(2)
   })
 
   it('hides the pagination when everything fits on one page', async () => {

@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl'
 import { LogoSymbol } from '@/components/brand/logo-symbol'
-import { INTRO_TARGET_ATTRIBUTE } from '@/components/brand/intro-gate'
 import { cx } from '@/components/ui/cx'
 
 /**
@@ -12,7 +11,7 @@ import { cx } from '@/components/ui/cx'
  * The symbol is a plain <img> on purpose (next/image cannot optimise SVG, so it would add the
  * loader and placeholder machinery without shrinking anything); LogoSymbol keeps that as the
  * default render and only adds the hover replay. The lockup with a wordmark is the navbar logo, so
- * it is also the landing slot of the first-visit intro flight and the one that replays on hover.
+ * it is the one that replays on hover.
  */
 export function Logo({
   wordmark = true,
@@ -23,9 +22,8 @@ export function Logo({
   className?: string
 }) {
   const t = useTranslations('Brand')
-  const navbarLockup = wordmark ? { [INTRO_TARGET_ATTRIBUTE]: '' } : undefined
   return (
-    <span {...navbarLockup} className={cx('inline-flex items-center gap-2.5', className)}>
+    <span className={cx('inline-flex items-center gap-2.5', className)}>
       <LogoSymbol src="/brand/sineva-symbol-original.svg" replayOnHover={wordmark} />
       {wordmark ? (
         // --color-wordmark is --teal-900 (tokens.md 1.2) and a light tint in the dark theme.

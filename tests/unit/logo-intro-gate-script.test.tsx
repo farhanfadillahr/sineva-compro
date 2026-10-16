@@ -3,13 +3,10 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { shouldPlayIntro } from '../../src/components/brand/intro-gate'
-import {
-  INTRO_GATE_SCRIPT,
-  INTRO_SESSION_STORAGE_KEY,
-} from '../../src/components/brand/intro-gate-script'
+import { INTRO_LIVE_ATTRIBUTE, shouldPlayIntro } from '../../src/components/brand/intro-gate'
+import { INTRO_GATE_SCRIPT } from '../../src/components/brand/intro-gate-script'
 import { LogoIntroGateScript, LogoIntroShell } from '../../src/components/brand/logo-intro-server'
-import { claimSessionOnce } from '../../src/lib/motion/session'
+import { SPLASH_TIMING, wipeClipPath } from '../../src/components/brand/splash-sequence'
 import { installMatchMedia, REDUCED_MOTION_QUERY, removeMatchMedia } from './layout-test-utils'
 
 const read = (relative: string) =>
@@ -49,66 +46,44 @@ afterEach(() => {
 })
 
 describe('intro gate script', () => {
-  it('plays on a first visit and marks the document before first paint', () => {
+  it('plays on a full page load and marks the document before first paint', () => {
     expect(runGate({ enabled: true, force: false })).toBe(true)
   })
 
-  it('claims the session flag when it plays, so a reload during the intro does not replay it', () => {
+  it('plays again on a reload: the splash shows on every full page load', () => {
     runGate({ enabled: true, force: false })
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).not.toBeNull()
     delete document.documentElement.dataset.logoIntro
-    expect(runGate({ enabled: true, force: false })).toBe(false)
+    expect(runGate({ enabled: true, force: false })).toBe(true)
   })
 
-  it('uses the same storage slot as claimSessionOnce, the app-wide once-per-session helper', () => {
-    expect(claimSessionOnce('logo-intro')).toBe(true)
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).not.toBeNull()
-    expect(runGate({ enabled: true, force: false })).toBe(false)
-  })
-
-  it('leaves the flag alone when it does not play', () => {
-    runGate({ enabled: false, force: false })
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).toBeNull()
+  it('does not touch sessionStorage, so a blocked storage can never hide the splash', () => {
+    const get = vi.spyOn(Storage.prototype, 'getItem')
+    const set = vi.spyOn(Storage.prototype, 'setItem')
+    expect(runGate({ enabled: true, force: false })).toBe(true)
+    expect(get).not.toHaveBeenCalled()
+    expect(set).not.toHaveBeenCalled()
   })
 
   // The script is hand-minified ES5 and cannot import intro-gate.ts, so this table is what keeps
-  // the two in lockstep: every combination of the five inputs must give the same answer.
+  // the two in lockstep: every combination of the four inputs must give the same answer.
   describe('agrees with shouldPlayIntro for every input combination', () => {
     const bools = [false, true]
     const cases = bools.flatMap((enabled) =>
-      bools.flatMap((visited) =>
-        bools.flatMap((reducedMotion) =>
-          bools.flatMap((webdriver) =>
-            bools.map((force) => ({ enabled, visited, reducedMotion, webdriver, force })),
-          ),
+      bools.flatMap((reducedMotion) =>
+        bools.flatMap((webdriver) =>
+          bools.map((force) => ({ enabled, reducedMotion, webdriver, force })),
         ),
       ),
     )
     it.each(cases)(
-      'enabled=$enabled visited=$visited reduced=$reducedMotion webdriver=$webdriver force=$force',
+      'enabled=$enabled reduced=$reducedMotion webdriver=$webdriver force=$force',
       (input) => {
-        window.sessionStorage.clear()
-        if (input.visited) window.sessionStorage.setItem(INTRO_SESSION_STORAGE_KEY, '1')
         installMatchMedia({ [REDUCED_MOTION_QUERY]: input.reducedMotion })
         setWebdriver(input.webdriver)
         delete document.documentElement.dataset.logoIntro
         expect(runGate({ enabled: input.enabled, force: input.force })).toBe(shouldPlayIntro(input))
       },
     )
-  })
-
-  it('does not play, and does not throw, when reading sessionStorage throws', () => {
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
-      throw new DOMException('denied', 'SecurityError')
-    })
-    expect(runGate({ enabled: true, force: false })).toBe(false)
-  })
-
-  it('does not play when the flag cannot be stored (it would replay on every load)', () => {
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new DOMException('quota', 'QuotaExceededError')
-    })
-    expect(runGate({ enabled: true, force: false })).toBe(false)
   })
 
   it('plays when matchMedia is missing, like prefersReducedMotion()', () => {
@@ -193,20 +168,107 @@ describe('shell CSS', () => {
     expect(css).toMatch(/var\(--color-canvas/)
   })
 
-  it('turns inert after 1.2 s and fades out by 1.8 s with CSS alone, even if JS never runs', () => {
-    expect(css).toMatch(/animation:[^;]*1200ms/)
-    expect(css).toMatch(/animation:[^;]*1600ms/)
-    expect(css).toMatch(/@keyframes[^{]+\{[^}]*pointer-events:\s*none/s)
-    expect(css).toMatch(/@keyframes[^{]+\{[\s\S]*visibility:\s*hidden/)
+  it('stops covering the page by 5 s with CSS alone, even if JS never runs: inert at 4.8 s, gone at 5 s', () => {
+    const pending = css.match(/html\[data-logo-intro='pending'\]\)\s+\.shell\s*\{([^}]*)\}/)![1]
+    expect(pending).toMatch(/shell-inert 0s linear 4800ms forwards/)
+    expect(pending).toMatch(/shell-safety 200ms linear 4800ms forwards/)
+    // 4800 ms delay + 200 ms fade = 5000 ms, the hard stop of SPLASH_TIMING
+    expect(4800 + 200).toBe(SPLASH_TIMING.hardStopMs)
+    expect(css).toMatch(/@keyframes shell-inert\s*\{[^}]*pointer-events:\s*none/s)
+    expect(css).toMatch(/@keyframes shell-safety\s*\{[\s\S]*visibility:\s*hidden/)
   })
 
-  it('never intercepts input from the client-side stage: only the shell does, and only until 1.2 s', () => {
-    const stage = css.match(/\.stage\s*\{([^}]*)\}/)![1]
-    expect(stage).toMatch(/pointer-events:\s*none/)
+  it('no longer carries the old 1.2 s and 1.8 s timers', () => {
+    expect(css).not.toMatch(/\b1200ms\b|\b1600ms\b/)
   })
 
-  it('fades out over 200 ms when JavaScript removes the marker', () => {
-    const base = css.match(/\.shell\s*\{([^}]*)\}/)![1]
-    expect(base).toMatch(/transition:[^;]*opacity 200ms/)
+  it('is hidden at once, and stays hidden, while the client overlay is the cover', () => {
+    const live = css.match(
+      /html\[data-logo-intro='pending'\]\[data-logo-intro-live\]\)\s+\.shell\s*\{([^}]*)\}/,
+    )![1]
+    expect(live).toMatch(/opacity:\s*0/)
+    expect(live).toMatch(/visibility:\s*hidden/)
+    expect(live).toMatch(/pointer-events:\s*none/)
+    expect(live).toMatch(/animation:\s*none/)
+    expect(live).toMatch(/transition:\s*none/)
+  })
+
+  it('names the live attribute the overlay sets', () => {
+    expect(INTRO_LIVE_ATTRIBUTE).toBe('data-logo-intro-live')
+  })
+})
+
+describe('overlay CSS', () => {
+  const css = read('../../src/components/brand/logo-intro.module.css')
+  const root = css.match(/\.root\s*\{([^}]*)\}/)![1]
+  const launch = css.match(/\.launch\s*\{([^}]*)\}/)![1]
+
+  it('is a full-screen layer above the shell, in the canvas colour', () => {
+    expect(root).toMatch(/position:\s*fixed/)
+    expect(root).toMatch(/inset:\s*0/)
+    expect(root).toMatch(/z-index:\s*71/)
+    expect(root).toMatch(/var\(--color-canvas/)
+  })
+
+  it('blocks input until it is gone', () => {
+    expect(root).toMatch(/pointer-events:\s*auto/)
+  })
+
+  it('starts fully covering, with the very clip-path the sequence animates from', () => {
+    expect(root).toContain(`clip-path: ${wipeClipPath(0)};`)
+  })
+
+  it('carries its own CSS stop at 5 s in case the script never gets to remove it', () => {
+    expect(root).toMatch(/animation:\s*root-safety 0s linear 5000ms forwards/)
+    expect(css).toMatch(
+      /@keyframes root-safety\s*\{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s,
+    )
+    expect(5000).toBe(SPLASH_TIMING.hardStopMs)
+  })
+
+  it('centres a smaller Sino: a 54svh 3:4 box with her middle on the middle of the screen', () => {
+    expect(launch).toMatch(/position:\s*absolute/)
+    // her middle sits at 59 % of the box: 50svh - 0.59 * 54svh = 18svh
+    expect(launch).toMatch(/top:\s*18svh/)
+    expect(launch).toMatch(/height:\s*54svh/)
+    expect(launch).toMatch(/aspect-ratio:\s*3\s*\/\s*4/)
+    expect(launch).toMatch(/pointer-events:\s*none/)
+  })
+
+  it('fades the top of the clip so Sino leaves without a visible cut line', () => {
+    expect(css).toMatch(
+      /\.launch video\s*{[^}]*mask-image:\s*linear-gradient\(to bottom, transparent/,
+    )
+  })
+
+  it('sizes and places her from the measured silhouette: about 40svh tall, centred', () => {
+    // Per-frame alpha bounding box of the standing pose (ffmpeg cropdetect, limit 0.03): the
+    // silhouette spans y 204..924 of the 960 px frame.
+    const top = 204 / 960
+    const bottom = 924 / 960
+    const boxHeightSvh = Number(launch.match(/height:\s*(\d+)svh/)![1])
+    const boxTopSvh = Number(launch.match(/top:\s*(\d+)svh/)![1])
+    const heightSvh = (bottom - top) * boxHeightSvh
+    const middleSvh = boxTopSvh + ((top + bottom) / 2) * boxHeightSvh
+    // The owner found 57svh too big.
+    expect(heightSvh).toBeGreaterThan(36)
+    expect(heightSvh).toBeLessThan(44)
+    expect(Math.abs(middleSvh - 50)).toBeLessThan(2)
+  })
+
+  it('moves nothing but clip-path: no layout properties and no dissolve', () => {
+    expect(css).not.toMatch(/launch-dissolve/)
+    const keyframes = [...css.matchAll(/@keyframes\s+[\w-]+\s*\{[\s\S]*?\n\}/g)].map((m) => m[0])
+    for (const frame of keyframes) {
+      expect(frame).not.toMatch(/\b(width|height|top|left|right|bottom|margin|box-shadow)\s*:/)
+    }
+  })
+
+  it('has a CSS lock for reduced motion on top of the gate', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^@]*\.root/)
+  })
+
+  it('has no Lottie stage', () => {
+    expect(css).not.toMatch(/\.stage\b/)
   })
 })

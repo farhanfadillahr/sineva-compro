@@ -40,12 +40,12 @@ export function ServiceCardsSection({
   return (
     <Section tone={tone}>
       <Container size="wide" className="flex flex-col gap-12">
-        <Reveal>
-          <SectionHeader title={title} lead={intro} />
+        <Reveal variant="lines">
+          <SectionHeader title={title} lead={intro} rule />
         </Reveal>
         <ul className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {services.map((service, index) => (
-            <Reveal as="li" key={service.slug} index={index} className="flex">
+            <Reveal as="li" variant="depth" key={service.slug} className="flex">
               <Card
                 as="article"
                 variant="path"

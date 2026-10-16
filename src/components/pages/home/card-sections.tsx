@@ -32,12 +32,12 @@ export function SelectedWorkSection({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} lead={intro} />
         </Reveal>
         <ul className={GRID}>
-          {items.map((item, index) => (
-            <Reveal as="li" key={item.slug} index={index} className="flex">
+          {items.map((item) => (
+            <Reveal as="li" variant="depth" key={item.slug} className="flex">
               <WorkCard
                 item={item}
                 internalDemoLabel={internalDemoLabel}
@@ -63,12 +63,12 @@ export function BlogSection({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ul className={GRID}>
-          {posts.map((post, index) => (
-            <Reveal as="li" key={post.slug} index={index} className="flex">
+          {posts.map((post) => (
+            <Reveal as="li" variant="depth" key={post.slug} className="flex">
               <PostCard post={post} locale={locale} linkComponent={linkComponent} />
             </Reveal>
           ))}

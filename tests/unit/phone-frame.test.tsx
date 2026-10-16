@@ -42,4 +42,11 @@ describe('PhoneFrame', () => {
     )
     expect(screen.querySelector('[data-slot="chat-header"]')?.textContent).toContain('Sino')
   })
+
+  it('starts the screen above the hole top (50 of 1847 px = 2.7 %) so no page strip shows', () => {
+    const { container } = view()
+    const screen = container.querySelector('[data-slot="phone-screen"]') as HTMLElement
+    const top = Number(/top-\[([\d.]+)%\]/.exec(screen.className)?.[1])
+    expect(top).toBeLessThan((50 / 1847) * 100)
+  })
 })

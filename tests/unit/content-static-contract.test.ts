@@ -290,9 +290,9 @@ function textOf(node: unknown): string {
 }
 
 describe('static content source: blog', () => {
-  it('has three launch articles, newest first, written by the Sineva team', async () => {
+  it('has four launch articles, newest first, written by the Sineva team', async () => {
     const page = await source.listPosts({ locale: 'en', page: 1, pageSize: 10 })
-    expect(page.total).toBe(3)
+    expect(page.total).toBe(4)
     const dates = page.posts.map((post) => post.publishedAt)
     expect([...dates].sort().reverse()).toEqual(dates)
     for (const post of page.posts) {
@@ -332,8 +332,8 @@ describe('static content source: blog', () => {
     expect(filtered.posts.length).toBeGreaterThan(0)
     expect(filtered.posts.every((post) => post.category?.slug === category.slug)).toBe(true)
     const paged = await source.listPosts({ locale: 'en', page: 2, pageSize: 2 })
-    expect(paged.posts).toHaveLength(1)
-    expect(paged.total).toBe(3)
+    expect(paged.posts).toHaveLength(2)
+    expect(paged.total).toBe(4)
   })
 
   it('rejects invalid page and pageSize like the database source', async () => {

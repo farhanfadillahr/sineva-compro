@@ -5,6 +5,8 @@
 // - each section below the hero has its heading and its list items (cards, steps) inside a Reveal;
 // - the hero, and the h1 band of pages that have no hero, are NOT inside one: the hero has its own
 //   entrance and the h1 is the LCP candidate, which a reveal must never delay.
+// - each kind of element plays its own preset (motion.md 4.1): section headers `lines`, list cards
+//   `depth`, the final CTA panel `rise-scale`, article pictures `clip`.
 import { render } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
@@ -103,6 +105,31 @@ function expectSectionsRevealed(
   expect(seen.length).toBeGreaterThan(0)
 }
 
+/**
+ * The roles of motion.md 4.1, checked on whatever is rendered. A heading block that is not `lines`
+ * would read as "ordinary" again, which is the regression this guards.
+ */
+function expectPresetRoles(root: ParentNode = document) {
+  for (const title of root.querySelectorAll('[data-reveal-part="title"]')) {
+    if (title.closest('[data-home-section="hero"], [data-about-section="hero"]')) continue
+    // "Meet Sino" is built around its own scroll sequence and is edited by that work, not here.
+    if (title.closest('[data-home-section="meetSino"], [data-about-section="meetSino"]')) continue
+    if (title.tagName === 'H1') continue
+    const owner = title.closest('[data-reveal]')
+    expect(owner, `title "${title.textContent}" is inside a reveal`).not.toBeNull()
+    expect(owner!.getAttribute('data-reveal-variant'), `title "${title.textContent}"`).toBe('lines')
+  }
+  for (const li of root.querySelectorAll('li[data-reveal]')) {
+    expect(
+      li.getAttribute('data-reveal-variant'),
+      `card ${(li.textContent ?? '').slice(0, 30)}`,
+    ).toBe('depth')
+  }
+  for (const panel of root.querySelectorAll('[data-tone="inverse"][data-reveal]')) {
+    expect(panel.getAttribute('data-reveal-variant'), 'final CTA panel').toBe('rise-scale')
+  }
+}
+
 beforeEach(() => {
   stubMedia({})
   installIntersectionObserver()
@@ -129,12 +156,14 @@ describe('scroll reveal on every public page', () => {
       />,
     )
     expectSectionsRevealed('data-home-section')
+    expectPresetRoles()
   })
 
   it('Services list', async () => {
     const model = (await loadServicesListModel(FIXTURE, 'en'))!
     render(<ServicesListView model={model} labels={servicesLabelsFromMessages(en)} />)
     expectSectionsRevealed('data-services-section')
+    expectPresetRoles()
   })
 
   for (const slug of ['ai-discovery', 'ai-build', 'ai-enablement']) {
@@ -142,6 +171,7 @@ describe('scroll reveal on every public page', () => {
       const model = (await loadServiceDetailModel(FIXTURE, slug, 'en'))!
       render(<ServiceDetailView model={model} labels={servicesLabelsFromMessages(en)} />)
       expectSectionsRevealed('data-services-section')
+      expectPresetRoles()
     })
   }
 
@@ -153,6 +183,7 @@ describe('scroll reveal on every public page', () => {
     expectSectionsRevealed('data-product-section', {
       skip: { howItWorks: '[data-slot="sticky-steps"]' },
     })
+    expectPresetRoles()
   })
 
   it('About', async () => {
@@ -172,6 +203,7 @@ describe('scroll reveal on every public page', () => {
     }
     render(<AboutView model={model} labels={{ chatOnWhatsapp: 'Chat' }} />)
     expectSectionsRevealed('data-about-section')
+    expectPresetRoles()
   })
 
   describe('Blog list', () => {
@@ -188,6 +220,8 @@ describe('scroll reveal on every public page', () => {
       const cards = Array.from(container.querySelectorAll('[data-blog-grid] > li'))
       expect(cards.length).toBeGreaterThan(1)
       for (const card of cards) expect(inReveal(card)).toBe(true)
+      expectPresetRoles(container)
+      expect(featured.closest('[data-reveal]')?.getAttribute('data-reveal-variant')).toBe('depth')
       const paging = container.querySelector(
         `nav[aria-label="${blogLabelsFromMessages(en).paginationLabel}"]`,
       )
@@ -232,6 +266,7 @@ describe('scroll reveal on every public page', () => {
     for (const li of related.querySelectorAll('ul > li')) expect(inReveal(li)).toBe(true)
     const cta = container.querySelector('[data-tone="inverse"]')!
     expect(inReveal(cta)).toBe(true)
+    expectPresetRoles(container)
   })
 
   it('Contact: steps, side card and form card reveal; the h1 header does not', async () => {
@@ -241,6 +276,7 @@ describe('scroll reveal on every public page', () => {
     const steps = Array.from(container.querySelectorAll('[data-variant="step"]'))
     expect(steps).toHaveLength(3)
     for (const step of steps) expect(inReveal(step)).toBe(true)
+    expectPresetRoles(container)
     expect(inReveal(container.querySelector('[data-slot="form-card"]')!)).toBe(true)
     const side = container.querySelector('h2')
     expect(side && inReveal(side), 'the WhatsApp / details card').toBe(true)

@@ -1,13 +1,13 @@
 import { Reveal } from '@/components/motion/Reveal'
-import { SinoLoop } from '@/components/motion/sino-loop'
+import { ScrollScrubSequence } from '@/components/motion/ScrollScrubSequence'
 import { SinoStage } from '@/components/sections'
 import { Container, Section, SectionHeader, type SectionTone } from '@/components/ui'
-import { poseImage } from './poses'
+import { SINO_LOOK_UP } from './sino-look-up'
 
 /**
- * "Meet Sino" (page-patterns.md 2.1 row 3): a centred intro and a still of Sino on his stage.
- * The scroll-scrubbed scene of motion.md section 4.3 is a later decision (sprite sequence or GLB
- * scrub); this still reserves the same box, so adding it does not move the page.
+ * "Meet Sino" (page-patterns.md 2.1 row 3): a centred intro and Sino on his stage. This is the page's
+ * scroll-scrubbed scene (motion.md section 4.3): Sino starts with the head bowed and lifts his face
+ * to the visitor as the section scrolls into view, and bows again when scrolling back.
  */
 export function MeetSinoSection({
   title,
@@ -23,18 +23,12 @@ export function MeetSinoSection({
     // add a horizontal scrollbar on a phone (the hero does the same).
     <Section tone={tone} className="overflow-x-clip">
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} lead={body} />
         </Reveal>
         <Reveal>
           <SinoStage className="max-w-sm">
-            <SinoLoop
-              loop="L-wave"
-              still={poseImage('relaxed-mug')}
-              sizes="(min-width: 640px) 384px, 90vw"
-              fit="contain"
-              className="size-full"
-            />
+            <ScrollScrubSequence {...SINO_LOOK_UP} className="size-full" />
           </SinoStage>
         </Reveal>
       </Container>

@@ -29,7 +29,7 @@ import { LogoSymbol } from '../../src/components/brand/logo-symbol'
 function renderSymbol() {
   // Hover is observed on the surrounding link, like the real navbar logo.
   render(
-    <a href="/" data-testid="link">
+    <a href="#home" data-testid="link">
       <LogoSymbol src="/brand/sineva-symbol-original.svg" replayOnHover />
     </a>,
   )
@@ -132,7 +132,7 @@ describe('LogoSymbol', () => {
 
   it('does not replay when the option is off (footer symbol)', () => {
     render(
-      <a href="/" data-testid="link">
+      <a href="#home" data-testid="link">
         <LogoSymbol src="/brand/sineva-symbol-original.svg" />
       </a>,
     )

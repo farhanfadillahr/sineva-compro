@@ -1,0 +1,35 @@
+/*
+ * First-visit logo intro overlay (docs/design/motion.md section 3.1). Only transform and opacity
+ * animate, and both are driven from logo-intro-overlay.tsx with the Web Animations API, so this
+ * file holds layout and the pending state only.
+ */
+
+/* Above the skip link (z 60) and the mobile sheet (z 50): nothing may peek through while it plays. */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+}
+
+/* Mounted before the Lottie is ready but invisible: the page is never hidden for nothing. */
+.root[data-state='pending'] {
+  opacity: 0;
+}
+
+/* Solid canvas colour, so the page underneath (SSR hero included) is fully covered while it plays. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-canvas, #fff);
+}
+
+/* The flying box: a square sized for the stacked logo, centred in the viewport. */
+.stage {
+  position: relative;
+  width: min(60vw, 20rem);
+  aspect-ratio: 1;
+  /* Promoted only for the one-off flight; the whole node is removed right after. */
+  will-change: transform;
+}

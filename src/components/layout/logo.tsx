@@ -1,4 +1,6 @@
 import { useTranslations } from 'next-intl'
+import { LogoSymbol } from '@/components/brand/logo-symbol'
+import { INTRO_TARGET_ATTRIBUTE } from '@/components/brand/intro-gate'
 import { cx } from '@/components/ui/cx'
 
 /**
@@ -7,8 +9,10 @@ import { cx } from '@/components/ui/cx'
  * exports it; swapping it is a change in this file only. The accessible name belongs to the
  * link around the logo, so the symbol is decorative.
  *
- * Plain <img> on purpose: next/image cannot optimise SVG, so it would add the loader and
- * placeholder machinery without shrinking anything.
+ * The symbol is a plain <img> on purpose (next/image cannot optimise SVG, so it would add the
+ * loader and placeholder machinery without shrinking anything); LogoSymbol keeps that as the
+ * default render and only adds the hover replay. The lockup with a wordmark is the navbar logo, so
+ * it is also the landing slot of the first-visit intro flight and the one that replays on hover.
  */
 export function Logo({
   wordmark = true,
@@ -19,17 +23,10 @@ export function Logo({
   className?: string
 }) {
   const t = useTranslations('Brand')
+  const navbarLockup = wordmark ? { [INTRO_TARGET_ATTRIBUTE]: '' } : undefined
   return (
-    <span className={cx('inline-flex items-center gap-2.5', className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/brand/sineva-symbol-original.svg"
-        alt=""
-        width={28}
-        height={28}
-        decoding="async"
-        className="size-7 shrink-0"
-      />
+    <span {...navbarLockup} className={cx('inline-flex items-center gap-2.5', className)}>
+      <LogoSymbol src="/brand/sineva-symbol-original.svg" replayOnHover={wordmark} />
       {wordmark ? (
         // No semantic token exists for the deep brand teal (tokens.md 1.2 lists --teal-900 as the
         // wordmark colour), so the primitive is read directly.

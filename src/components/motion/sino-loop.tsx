@@ -121,7 +121,7 @@ function LoopVideo({
   )
 }
 
-function ReadyLoop({ loop, still: _still, ...pose }: SinoLoopProps) {
+function ReadyLoop({ loop, pose }: { loop: LoopId; pose: Omit<SinoLoopProps, 'loop' | 'still'> }) {
   const kind = useLoopKind()
   const asset = SINO_LOOPS[loop]
   const poster = loopPoster(loop)
@@ -154,10 +154,7 @@ function ReadyLoop({ loop, still: _still, ...pose }: SinoLoopProps) {
  * - Same as AnimatedPose: do not use it for the LCP image.
  * - The loop is decorative. The poster alt is empty; give the surrounding text the meaning.
  */
-export function SinoLoop(props: SinoLoopProps) {
-  if (!SINO_LOOPS[props.loop].ready) {
-    const { loop: _loop, still, ...pose } = props
-    return <AnimatedPose {...pose} image={still} />
-  }
-  return <ReadyLoop {...props} />
+export function SinoLoop({ loop, still, ...pose }: SinoLoopProps) {
+  if (!SINO_LOOPS[loop].ready) return <AnimatedPose {...pose} image={still} />
+  return <ReadyLoop loop={loop} pose={pose} />
 }

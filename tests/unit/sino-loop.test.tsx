@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '@testing-library/react'
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { SinoLoop } from '../../src/components/motion/sino-loop'
 import type { MediaAsset } from '../../src/features/content/types'
 import {
@@ -43,8 +43,8 @@ const SAFARI_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15'
 
 let media: MediaController
-let play: ReturnType<typeof vi.fn>
-let pause: ReturnType<typeof vi.fn>
+let play: Mock<() => Promise<void>>
+let pause: Mock<() => void>
 
 /** What the browser answers to `canPlayType` for the two probes pickLoopSource makes. */
 function canPlay(types: { hevc: boolean; webm: boolean }) {
@@ -69,8 +69,8 @@ beforeEach(() => {
   vi.stubGlobal('requestAnimationFrame', () => 0)
   vi.stubGlobal('cancelAnimationFrame', () => {})
   // jsdom does not implement media playback; the calls are what the component is accountable for.
-  play = vi.fn(() => Promise.resolve())
-  pause = vi.fn()
+  play = vi.fn<() => Promise<void>>(() => Promise.resolve())
+  pause = vi.fn<() => void>()
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(play)
   vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(pause)
   setUserAgent(CHROME_UA)
@@ -218,7 +218,7 @@ describe('playback', () => {
     })
     const el = video(mount().container)!
     expect(() => setInView(el, true)).not.toThrow()
-    play.mockImplementation(() => undefined)
+    play.mockImplementation(() => undefined as unknown as Promise<void>)
     expect(() => setInView(el, false)).not.toThrow()
     expect(() => setInView(el, true)).not.toThrow()
   })

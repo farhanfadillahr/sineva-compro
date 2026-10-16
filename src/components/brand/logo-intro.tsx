@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { INTRO_MARKER_PENDING } from './intro-gate'
+import { prepareSplashLaunch, type SplashLaunch } from './splash-launch'
 
 // Only a visitor the gate marked ever requests this chunk (and, through it, the Lottie player),
 // which keeps the intro out of the network for everyone else (motion.md section 3.1). ssr:false
@@ -13,6 +14,7 @@ const LogoIntroOverlay = dynamic(
 )
 
 type Phase = 'idle' | 'playing' | 'done'
+type State = { phase: Phase; launch: SplashLaunch | null }
 
 /**
  * Client takeover of the first-visit logo intro (CPR-76). The decision is not made here: the
@@ -21,6 +23,10 @@ type Phase = 'idle' | 'playing' | 'done'
  * component only looks for that marker once mounted and, if it is there, plays the Lottie on top of
  * the shell. It renders nothing on the server and on the first client render, so hydration and the
  * SSR HTML are identical with or without the intro.
+ *
+ * The jetpack launch clip is also started from here (splash-launch.ts): this component is in the
+ * main bundle and mounts before the overlay chunk exists, so the download overlaps with the chunk
+ * and the Lottie instead of queueing behind them. The overlay adopts the element when it is ready.
  *
  * Gotchas:
  * - It never claims the session flag, that is the gate script's job (a reload mid-intro must not
@@ -31,15 +37,26 @@ type Phase = 'idle' | 'playing' | 'done'
  *   therefore never plays on in-app navigation.
  */
 export function LogoIntro() {
-  const [phase, setPhase] = useState<Phase>('idle')
+  const [{ phase, launch }, setState] = useState<State>({ phase: 'idle', launch: null })
 
   useEffect(() => {
     const pending = document.documentElement.dataset.logoIntro === INTRO_MARKER_PENDING
+    // Only a document the gate marked ever fetches the clip. Null under reduced motion, webdriver,
+    // Save-Data and in a browser with no playable alpha encoding.
+    const started = pending ? prepareSplashLaunch() : null
     // The marker lives outside React (set by the gate script), so it can only be read after mount.
+    // StrictMode runs this effect twice in development; the cleanup below drops the first clip, so
+    // the second run's state is the one that must win.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPhase((current) => (current === 'idle' ? (pending ? 'playing' : 'done') : current))
+    setState({ phase: pending ? 'playing' : 'done', launch: started })
+    return () => started?.dispose()
   }, [])
 
   if (phase !== 'playing') return null
-  return <LogoIntroOverlay onDone={() => setPhase('done')} />
+  return (
+    <LogoIntroOverlay
+      launch={launch}
+      onDone={() => setState((current) => ({ ...current, phase: 'done' }))}
+    />
+  )
 }

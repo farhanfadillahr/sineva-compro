@@ -9,7 +9,6 @@ import {
   ABOUT_HREFS,
   ABOUT_POSES,
   planAboutSections,
-  storyBlocks,
   type AboutModel,
   type AboutSectionId,
 } from './about-model'
@@ -61,7 +60,9 @@ export function AboutView({ model, labels, linkComponent }: AboutViewProps) {
         linkComponent={linkComponent}
       />
     ),
-    story: (tone) => <StorySection blocks={storyBlocks(page.story)} tone={tone} />,
+    story: (tone) => (
+      <StorySection document={page.story} tone={tone} linkComponent={linkComponent} />
+    ),
     mission: (tone) => (
       <MissionSection title={page.mission.title} body={page.mission.body} tone={tone} />
     ),

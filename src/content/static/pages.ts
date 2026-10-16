@@ -208,7 +208,7 @@ export const pages: PageContentMap = {
         'Sineva is an AI consulting company. We believe AI should be useful for people who run businesses, not only for engineers.',
       ),
       paragraph(
-        'We work in two ways. You can use Sino, our AI agent, yourself. Or you can work with us to find, build, and run AI that fits how your business already works.',
+        'We work in two ways. We are building Sino, an AI agent you will be able to use yourself. Or you can work with us to find, build, and run AI that fits how your business already works.',
       ),
       paragraph(
         'We keep things simple and honest. We tell you what AI can do, and what it cannot.',

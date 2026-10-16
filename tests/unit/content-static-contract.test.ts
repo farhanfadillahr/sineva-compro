@@ -290,7 +290,7 @@ function textOf(node: unknown): string {
 }
 
 describe('static content source: blog', () => {
-  it('has three starter posts, newest first, written by the Sineva team', async () => {
+  it('has three launch articles, newest first, written by the Sineva team', async () => {
     const page = await source.listPosts({ locale: 'en', page: 1, pageSize: 10 })
     expect(page.total).toBe(3)
     const dates = page.posts.map((post) => post.publishedAt)
@@ -308,8 +308,8 @@ describe('static content source: blog', () => {
       const detail = await source.getPost(summary.slug, 'en')
       expect(detail).toMatchObject(summary)
       const words = textOf(detail!.body).trim().split(/\s+/).length
-      expect(words, summary.slug).toBeGreaterThanOrEqual(450)
-      expect(words, summary.slug).toBeLessThanOrEqual(900)
+      expect(words, summary.slug).toBeGreaterThanOrEqual(600)
+      expect(words, summary.slug).toBeLessThanOrEqual(1000)
       expect(summary.readingMinutes).toBeGreaterThanOrEqual(2)
     }
   })

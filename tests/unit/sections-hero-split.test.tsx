@@ -154,7 +154,7 @@ describe('HeroSplit variants', () => {
     expect(screen.getByAltText('Sino poster')).toBeTruthy()
   })
 
-  it('sino-canvas without a canvas still shows the poster (the CPR-77 swap point is empty)', () => {
+  it('sino-canvas without a canvas still shows the poster (the canvas swap point is empty)', () => {
     const { container } = render(
       <HeroSplit {...baseProps} variant="sino-canvas" image={image('Sino poster')} />,
     )
@@ -213,8 +213,9 @@ describe('HeroSplit entrance (motion.md section 3.2)', () => {
     const html = renderToString(
       <HeroSplit {...baseProps} variant="sino-still" image={image('Sino')} />,
     )
-    expect(html).not.toMatch(/opacity:\s*0/)
-    expect(html).not.toMatch(/translate/)
+    // Only inline style attributes count: utility class names such as hover:-translate-y-0.5
+    // are not a from-state.
+    expect(html).not.toMatch(/style="[^"]*(opacity|transform|transition)/)
     // Content is present in the server HTML (works without JavaScript).
     expect(html).toContain(home.hero.headline)
   })
@@ -256,7 +257,9 @@ describe('HeroSplit entrance (motion.md section 3.2)', () => {
       <HeroSplit {...baseProps} variant="sino-still" image={image('Sino')} />,
     )
     for (const el of container.querySelectorAll<HTMLElement>('[data-hero-delay]')) {
-      expect(el.getAttribute('style')).toBeNull()
+      expect(el.style.opacity).toBe('')
+      expect(el.style.transform).toBe('')
+      expect(el.style.transition).toBe('')
     }
     expect(frames).toHaveLength(0)
   })
@@ -276,14 +279,14 @@ describe('SinoStage (mascot-sino.md section 4)', () => {
   it('has a glow, two orbit arcs, a contact shadow and the Sino slot', () => {
     const { container } = render(
       <SinoStage>
-        <img alt="Sino" src="data:," />
+        <span role="img" aria-label="Sino" />
       </SinoStage>,
     )
     const stage = container.querySelector('[data-slot="sino-stage"]') as HTMLElement
     expect(stage.querySelector('[data-slot="stage-glow"]')).toBeTruthy()
     expect(stage.querySelectorAll('[data-slot="orbit-arc"]')).toHaveLength(2)
     expect(stage.querySelector('[data-slot="contact-shadow"]')).toBeTruthy()
-    expect(within(stage).getByAltText('Sino')).toBeTruthy()
+    expect(within(stage).getByRole('img', { name: 'Sino' })).toBeTruthy()
   })
 
   it('hides the decoration from assistive tech', () => {

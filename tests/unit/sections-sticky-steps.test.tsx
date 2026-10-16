@@ -18,7 +18,13 @@ const gsapMock = vi.hoisted(() => {
   }
   const created: { config: TriggerConfig; kill: ReturnType<typeof vi.fn> }[] = []
   const bundle = {
-    gsap: { context: (fn: () => void) => ({ revert: () => {}, kill: () => {}, add: fn }) },
+    // Like the real gsap.context: the setup callback runs immediately.
+    gsap: {
+      context: (fn: () => void) => {
+        fn()
+        return { revert: () => {}, kill: () => {} }
+      },
+    },
     ScrollTrigger: {
       create: (config: TriggerConfig) => {
         const entry = { config, kill: vi.fn() }

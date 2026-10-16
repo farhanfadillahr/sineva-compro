@@ -92,7 +92,7 @@ describe('no hardcoded copy in src/components/sections', () => {
 })
 
 describe('section blocks are server components unless they need the browser', () => {
-  // Client-only behaviour lives in small child components (CPR-75): these are the only files
+  // Client-only behaviour lives in small child components: these are the only files
   // allowed to opt in, and the public blocks themselves stay server components.
   const CLIENT_ALLOWED = new Set([
     'sections/_internal/hero-entrance.tsx',

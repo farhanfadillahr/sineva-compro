@@ -212,6 +212,16 @@ describe('Product hero', () => {
     ).toEqual(base.industries.map((industry) => industry.label))
   })
 
+  it('keeps the waitlist form as the only hero action while coming soon', () => {
+    renderProduct(base)
+    // Two primary actions in one hero split attention; the consultation lives in the final CTA.
+    const form = document.getElementById('waitlist')
+    const actionLinks = within(section('hero'))
+      .queryAllByRole('link')
+      .filter((link) => !form?.contains(link))
+    expect(actionLinks).toHaveLength(0)
+  })
+
   it('exposes the hero CTA group id the sticky bar observes', () => {
     renderProduct(base)
     expect(document.getElementById('hero-cta')).toBeTruthy()

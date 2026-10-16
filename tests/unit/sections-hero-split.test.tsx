@@ -42,6 +42,22 @@ describe('HeroSplit content', () => {
     expect(secondary.getAttribute('href')).toBe('/products/ai-agents')
   })
 
+  it('renders no CTA buttons when the page passes no primary CTA (the form is the main action)', () => {
+    const { container } = render(
+      <HeroSplit
+        {...baseProps}
+        primaryCta={null}
+        secondaryCta={null}
+        ctaId="hero-cta"
+        variant="sino-still"
+        image={image('Sino waving')}
+      />,
+    )
+    expect(screen.queryByRole('link', { name: home.hero.primaryCtaLabel })).toBeNull()
+    // The id stays so the sticky CTA bar can still observe where the hero actions are.
+    expect(container.querySelector('#hero-cta')).not.toBeNull()
+  })
+
   it('can render the headline as an h2 for pages that already have an h1 (gallery)', () => {
     render(<HeroSplit {...baseProps} headingAs="h2" variant="sino-still" image={image('Sino')} />)
     expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(home.hero.headline)

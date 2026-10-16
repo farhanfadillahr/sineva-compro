@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion/Reveal'
 import { Button, Container, Section, SectionHeader, type SectionTone } from '@/components/ui'
 import { FaqAccordion } from './_internal/faq-accordion'
 import { buildFaqPageJsonLd, serializeJsonLd, type FaqEntry } from './_internal/faq'
@@ -39,7 +40,7 @@ export function FaqSection({
     <Section tone={tone}>
       <Container>
         <div className="grid grid-cols-1 gap-x-8 gap-y-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <Reveal className="lg:col-span-5">
             <SectionHeader
               align="start"
               eyebrow={eyebrow}
@@ -58,10 +59,10 @@ export function FaqSection({
                 ) : undefined
               }
             />
-          </div>
-          <div className="lg:col-span-7">
+          </Reveal>
+          <Reveal className="lg:col-span-7" delayMs={80}>
             <FaqAccordion items={items.map(({ question, answer }) => ({ question, answer }))} />
-          </div>
+          </Reveal>
         </div>
       </Container>
       {jsonLd ? (

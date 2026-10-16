@@ -1,5 +1,6 @@
 import { Button, Container, Section, type SectionTone } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
+import { Reveal } from '@/components/motion/Reveal'
 import { AnimatedPose } from '@/components/motion/animated-pose'
 import { SinoLoop } from '@/components/motion/sino-loop'
 import { isLoopReady, type LoopId } from '@/components/motion/sino-loops'
@@ -51,7 +52,8 @@ export function FinalCta({
   return (
     <Section id={id} tone="canvas">
       <Container size="wide">
-        <div
+        {/* The panel is the Reveal element itself (same attributes, no extra wrapper). */}
+        <Reveal
           data-tone={FINAL_CTA_TONE}
           className="relative isolate overflow-hidden rounded-2xl bg-surface-inverse text-text-inverse"
         >
@@ -133,7 +135,7 @@ export function FinalCta({
               </div>
             ) : null}
           </div>
-        </div>
+        </Reveal>
       </Container>
     </Section>
   )

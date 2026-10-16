@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ActionLinkComponent } from '@/components/ui'
+import { Reveal } from '@/components/motion/Reveal'
 import { cx, focusRing } from '@/components/ui/cx'
 import type { RichTextDocument } from '@/features/content/types'
 import {
@@ -18,6 +19,12 @@ export type RichTextProps = {
   /** Localised link for root-relative links. External links and anchors stay plain anchors. */
   linkComponent?: ActionLinkComponent
   className?: string
+  /**
+   * Reveal each top-level block on scroll (motion.md 4.1). Per block, not for the whole text: a
+   * long document is many viewports tall and could never reach the observer's 15% threshold as
+   * one element. Off by default so short rich text (a card, a hero lead) stays unmoved.
+   */
+  reveal?: boolean
 }
 
 const LINK_CLASS = cx(
@@ -50,7 +57,13 @@ function renderInline(node: RichInline, key: number): ReactNode {
   return <span key={key}>{content}</span>
 }
 
-export function RichText({ document, reservedIds, linkComponent, className }: RichTextProps) {
+export function RichText({
+  document,
+  reservedIds,
+  linkComponent,
+  className,
+  reveal = false,
+}: RichTextProps) {
   const blocks = sanitizeRichText(document, { reservedIds })
 
   // Links wrap the whole inline node (marks inside), so they are applied here where the link
@@ -167,7 +180,9 @@ export function RichText({ document, reservedIds, linkComponent, className }: Ri
 
   return (
     <div className={cx('flex min-w-0 flex-col gap-5 text-body text-text break-words', className)}>
-      {blocks.map(block)}
+      {blocks.map((item, index) =>
+        reveal ? <Reveal key={index}>{block(item, index)}</Reveal> : block(item, index),
+      )}
     </div>
   )
 }

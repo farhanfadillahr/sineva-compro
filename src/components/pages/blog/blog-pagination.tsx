@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion/Reveal'
 import { Button, type ActionLinkComponent } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
 import { blogListHref, paginationItems } from './blog-query'
@@ -29,7 +30,7 @@ export function BlogPagination({
   if (totalPages <= 1) return null
   const href = (target: number) => blogListHref({ category, page: target })
   return (
-    <nav aria-label={label}>
+    <Reveal as="nav" aria-label={label}>
       <ul className="flex flex-wrap items-center justify-center gap-2">
         {page > 1 ? (
           <li>
@@ -87,6 +88,6 @@ export function BlogPagination({
           </li>
         ) : null}
       </ul>
-    </nav>
+    </Reveal>
   )
 }

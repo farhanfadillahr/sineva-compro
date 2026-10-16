@@ -5,6 +5,7 @@ import { mediaSeed } from './media'
 import { settingsSeed } from './settings'
 import { pagesSeed } from './pages'
 import { collectionSeed } from './collections'
+import { servicesSeed } from './services'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
@@ -18,6 +19,7 @@ const modules: readonly SeedModule[] = [
   collectionSeed('capabilities', 'capabilities'),
   collectionSeed('businessTypes', 'business-types'),
   collectionSeed('faq', 'faq'),
+  servicesSeed,
 ]
 export async function runSeeds(
   database: Database,

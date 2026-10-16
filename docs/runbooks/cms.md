@@ -92,3 +92,12 @@ paragraphs and lists with bold, italic and links. The landing page builds `FAQPa
 the same items with plain-text answers (`buildFaqPageJsonLd`). Tags live in the item's validated
 `data`, which keeps the library on the shared collection engine; a separate tag table can be added
 if the library grows beyond a few hundred items.
+
+## Services (CPR-27)
+
+`/admin/services`: list in site order with publish status, and an editor per service. Slugs are
+per locale and unique within it (database constraint `service_translation_locale_slug_unique`).
+New services start as drafts with the Home "How we work" steps as their process. A published
+service must be unpublished before it can be deleted. The summary is the card's "who it is for"
+line ("For ..."). Service FAQs come from the FAQ library (`service:<slug>` tags). Saving a service
+also refreshes the site settings cache, because the per-service WhatsApp messages list services.

@@ -4,6 +4,7 @@ import { requireCapability } from '@/features/auth/session.server'
 import { PageHeader } from '@/components/admin/shell'
 import { listCollectionForAdmin } from '@/features/collections/service.server'
 import { CollectionList } from '@/features/collections/components/collection-list'
+import { reorderCollectionAction } from '@/features/collections/actions'
 import { FAQ_BASE_TAGS, faqConfig } from '@/features/collections/configs'
 import { serviceTagOptions } from '@/features/faq/public.server'
 import { routing } from '@/i18n/routing'
@@ -43,7 +44,7 @@ export default async function FaqAdminPage({
       </nav>
       <CollectionList
         key={tag}
-        name="faq"
+        reorder={{ action: reorderCollectionAction, fields: { collection: 'faq' } }}
         title={tag ? `Pertanyaan untuk ${labelOf(tag)}` : 'Semua pertanyaan'}
         description={
           tag

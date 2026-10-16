@@ -50,7 +50,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'en',
     title: 'AI Build',
     summary:
-      'For businesses that know their problem. We build an AI solution that fits how your team works and take it from prototype to production ready.',
+      'For businesses that know their problem. We build an AI solution that fits how your team works and take it from prototype to production ready, safely.',
     icon: 'puzzle-plug',
     pose: 'building-blocks',
     problems: [
@@ -73,12 +73,17 @@ export const serviceDetails: readonly ServiceDetail[] = [
       'Testing on your real work',
       'A connection to the systems you already use, where it makes sense',
       'A production-ready release your team can rely on every day',
+      'Security built in: limited access, protected data, and a record of what the AI did',
+      'Clear rules on what the AI may and may not do, and who checks its work',
       'Simple notes your team can follow',
     ],
     process: [
       step('Scope', 'We agree on one clear task and what a good result looks like.'),
       step('Build', 'We build a first version in small steps and show you as we go.'),
-      step('Test', 'We try it on your real work and fix what we find.'),
+      step(
+        'Test',
+        'We try it on your real work, check it for security and privacy risks, and fix what we find.',
+      ),
       step('Launch', 'We take it from prototype to production and hand over simple notes.'),
     ],
     tools: ['Language models', 'Workflow automation', 'Chat interfaces', 'Web apps'],
@@ -93,7 +98,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'en',
     title: 'AI Enablement',
     summary:
-      'For teams that are starting with AI. We help your team learn to use AI well in everyday work.',
+      'For teams that are starting with AI. We help your team learn to use AI well and safely in everyday work.',
     icon: 'chart-rising',
     pose: 'whiteboard',
     problems: [
@@ -106,7 +111,8 @@ export const serviceDetails: readonly ServiceDetail[] = [
     ],
     deliverables: [
       'Hands-on sessions built around your own tasks',
-      'Shared guidelines for everyday use',
+      'Shared guidelines for everyday use, including what is safe to share with AI',
+      'A simple way to approve new AI tools and uses, so nothing runs unchecked',
       'Practice exercises and example prompts',
       'Follow-up support after the sessions',
     ],

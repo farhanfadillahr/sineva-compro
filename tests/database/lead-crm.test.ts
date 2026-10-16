@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, it, vi } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { createCmsTestContext } from '../helpers/cms-context'
 import { runSeeds } from '../../scripts/seed/runner'
 import { lead } from '../../src/features/leads/schema'
@@ -84,5 +84,22 @@ it('lets an Admin change status and notes, audited by field name only', async ()
     admin.updateLead(ctx.adminHeaders, { id: first.id, status: 'vip', notes: '' }),
   ).rejects.toMatchObject({
     code: 'INVALID',
+  })
+})
+
+it('lets only an Admin delete a lead, audited without personal data', async () => {
+  const [row] = await ctx.connection.db.select().from(lead).limit(1)
+  await expect(admin.deleteLead(ctx.editorHeaders, row.id)).rejects.toThrow()
+  await admin.deleteLead(ctx.adminHeaders, row.id)
+  expect(await ctx.connection.db.select().from(lead).where(eq(lead.id, row.id))).toHaveLength(0)
+  const [entry] = await ctx.connection.db
+    .select()
+    .from(auditLog)
+    .where(eq(auditLog.entityId, row.id))
+    .orderBy(desc(auditLog.createdAt))
+  expect(entry.action).toBe('delete')
+  expect(JSON.stringify(entry)).not.toContain(row.email)
+  await expect(admin.deleteLead(ctx.adminHeaders, row.id)).rejects.toMatchObject({
+    code: 'NOT_FOUND',
   })
 })

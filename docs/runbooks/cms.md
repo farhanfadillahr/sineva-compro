@@ -237,7 +237,8 @@ Every public submission (contact, waitlist) goes through `checkSpam` before anyt
 paginated, newest first. The detail page shows the submission, copy buttons, a WhatsApp reply link
 and the follow-up form (status: Baru, Dihubungi, Berpotensi, Berhasil, Tidak lanjut; internal
 notes). Editors and anonymous users are refused by the queries and actions, not only the menu.
-Audit entries name the changed fields (`status`, `notes`), never their values. Public input can
+Audit entries name the changed fields (`status`, `notes`), never their values. **Hapus lead**
+(detail page, Admin, confirm by typing the email) deletes a lead on request (UU PDP). Public input can
 only create a lead through `submitContact` (CPR-78).
 
 ## Waitlist (CPR-48)
@@ -294,3 +295,11 @@ CSP, HSTS (production), `X-Content-Type-Options`, `Referrer-Policy`, `Permission
   preview pass over Home (mascot), the logo intro, a Lottie animation, a Turnstile form and an
   article with media shows no violations. Every new third-party host needs an entry here and in
   the release checklist.
+
+### Gmail SMTP
+
+"Isi preset Gmail" fills `smtp.gmail.com`, port 465 with TLS (587 with STARTTLS also works). Use
+the full Gmail address as username and a Google App Password (2-Step Verification required) as the
+secret. The sender must be that Gmail address or a verified "Send mail as" alias. Gmail allows
+about 500 recipients a day (Google Workspace 2,000), enough for the lead form; switch to the Resend
+API with the Sineva domain (CPR-12) for domain sending at higher volume.

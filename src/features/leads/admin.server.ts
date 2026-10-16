@@ -138,3 +138,26 @@ export async function updateLead(headers: Headers, input: unknown) {
     },
   })
 }
+
+/**
+ * Deletes a lead on request (UU PDP). Admin only; the audit entry names the record, never the
+ * person's data. Exports made earlier must be deleted by hand.
+ */
+export async function deleteLead(headers: Headers, id: string) {
+  if (!UUID.test(id)) throw new CmsError('NOT_FOUND', 'Lead tidak ditemukan.')
+  await cmsMutation({
+    headers,
+    capability: 'leads:manage',
+    adminOnly: true,
+    run: async (tx, actor) => {
+      const [row] = await tx.delete(lead).where(eq(lead.id, id)).returning({ id: lead.id })
+      if (!row) throw new CmsError('NOT_FOUND', 'Lead tidak ditemukan.')
+      await writeAudit(tx, actor, {
+        entity: 'leads',
+        entityId: id,
+        action: 'delete',
+        changedFields: ['name', 'email', 'phone', 'message'],
+      })
+    },
+  })
+}

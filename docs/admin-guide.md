@@ -119,8 +119,7 @@ Bila seseorang meminta datanya dihapus:
 
 1. Cari datanya di **Lead** dan/atau **Waitlist** memakai email yang ia sebut.
 2. Waitlist: klik **Hapus** pada barisnya dan ketik email untuk konfirmasi.
-3. Lead: catat permintaan di catatan, lalu minta operator menghapus lead tersebut (penghapusan lead
-   belum tersedia di admin).
+3. Lead: buka lead, klik **Hapus lead** dan ketik email untuk konfirmasi.
 4. Balas pemohon bahwa permintaannya sudah diproses. Ekspor CSV lama yang memuat datanya juga harus
    dihapus.
 

@@ -2,7 +2,8 @@
 import { CmsForm } from '@/components/admin/cms/cms-form'
 import { DescriptionList } from '@/components/admin/display'
 import { LEAD_STATUSES } from '../schema'
-import { updateLeadAction } from '../admin-actions'
+import { deleteLeadAction, updateLeadAction } from '../admin-actions'
+import { ConfirmAction } from '@/components/admin/cms/confirm-action'
 import s from '@/components/admin/admin.module.css'
 
 const labels: Record<string, string> = {
@@ -105,6 +106,21 @@ export function LeadDetail({ lead }: { lead: Lead }) {
             </div>
           )}
         </CmsForm>
+        <section className={s.panel} aria-label="Hapus data">
+          <p className={s.muted}>
+            Untuk permintaan penghapusan data (UU PDP). Hapus juga file ekspor lama yang memuat lead
+            ini.
+          </p>
+          <ConfirmAction
+            action={deleteLeadAction}
+            fields={{ id: lead.id }}
+            label="Hapus lead"
+            title="Hapus lead permanen"
+            description="Data lead ini dihapus permanen dan tidak dapat dikembalikan."
+            confirmName={lead.email}
+            redirectTo="/admin/leads"
+          />
+        </section>
       </aside>
     </div>
   )

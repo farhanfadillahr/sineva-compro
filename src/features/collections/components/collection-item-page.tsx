@@ -34,7 +34,11 @@ export async function CollectionItemPage({
     }
   }
   const title = item
-    ? String(item.locales[routing.defaultLocale]?.[config.titleField] ?? item.key)
+    ? String(
+        item.locales[routing.defaultLocale]?.[config.titleField] ??
+          item.global[config.titleField] ??
+          item.key,
+      )
     : `Tambah ${config.itemLabel.toLowerCase()}`
   return (
     <main>

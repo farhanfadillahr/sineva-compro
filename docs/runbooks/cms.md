@@ -101,3 +101,11 @@ New services start as drafts with the Home "How we work" steps as their process.
 service must be unpublished before it can be deleted. The summary is the card's "who it is for"
 line ("For ..."). Service FAQs come from the FAQ library (`service:<slug>` tags). Saving a service
 also refreshes the site settings cache, because the per-service WhatsApp messages list services.
+
+## Team and authors (CPR-28)
+
+`/admin/team`: name, photo (from Media), social link and "show on About" are language-independent;
+role and bio are per locale. Only members with "show on About" appear on the About page, and only
+when the About team section and the site setting `showTeam` are on. Any member can be an article
+author; the article keeps pointing at the member's stable id when the profile changes. The launch
+has no members until someone agrees to be listed.

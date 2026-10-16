@@ -86,4 +86,33 @@ export const collectionSeedData: Record<
       },
     ],
   },
+  // No team member has agreed to be listed yet, so the launch has none.
+  team: {
+    launch: () =>
+      staticContent.team.map((member) => ({
+        key: keyFromText(member.name),
+        global: {
+          name: member.name,
+          photo: member.photo
+            ? {
+                kind: 'static',
+                url: member.photo.url,
+                width: member.photo.width,
+                height: member.photo.height,
+                alt: member.photo.alt,
+              }
+            : null,
+          socialUrl: member.socialUrl,
+          showOnAbout: true,
+        },
+        local: { role: member.role, bio: member.bio },
+      })),
+    demo: [
+      {
+        key: 'demo-team-member',
+        global: { name: '[Demo] Team member', photo: null, socialUrl: null, showOnAbout: false },
+        local: { role: 'Demo role', bio: 'Demo profile for development and tests.' },
+      },
+    ],
+  },
 }

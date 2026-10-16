@@ -32,7 +32,7 @@ Single source of truth for how the Sineva public website looks, moves, and speak
 | [brand-positioning.md](brand-positioning.md) | Who Sineva is, two pillars (Product, Services), audience, personality, language policy |
 | [copywriting.md](copywriting.md) | Voice, hard rules (no em dash, no unverified claims), CTA lexicon, microcopy, WhatsApp templates, metadata |
 | [tokens.md](tokens.md) | Color (primitive + semantic, verified contrast), gradients, typography, spacing, radius, elevation, icons |
-| [motion.md](motion.md) | Easing/duration tokens, logo intro, hero entrance, scroll patterns, navbar, micro-interactions, Lottie library, reduced motion |
+| [motion.md](motion.md) | Easing/duration tokens, first-load splash, hero entrance, scroll patterns, navbar, micro-interactions, Lottie library, reduced motion |
 | [components.md](components.md) | Buttons, navbar, footer, cards, badges, forms, accordion, tabs, comparison table, media frames, feedback |
 | [page-patterns.md](page-patterns.md) | Sitemap (EN, i18n-ready), section order per page, reusable section blocks |
 | [mascot-sino.md](mascot-sino.md) | Sino asset facts, loading strategy, choreography, per-page usage |
@@ -45,7 +45,7 @@ Single source of truth for how the Sineva public website looks, moves, and speak
 
 | Asset | Path | Source |
 |---|---|---|
-| Logo intro Lottie (stacked) | `public/lottie/sineva-logo-intro.json` | `scripts/lottie/build-logo-intro.mjs` |
+| Logo intro Lottie (stacked, retired from the splash, no consumer) | `public/lottie/sineva-logo-intro.json` | `scripts/lottie/build-logo-intro.mjs` |
 | Symbol intro Lottie | `public/lottie/sineva-symbol-intro.json` | same |
 | Logo SVG/PNG | `assets/brand/logos/` | traced from source PNG |
 | Sino GLB + renders | `../sino-3d-mascot/export/` (separate project) | Blender |

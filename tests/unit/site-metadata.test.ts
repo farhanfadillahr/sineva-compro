@@ -29,7 +29,7 @@ describe('buildRootMetadata', () => {
       siteName: 'Sineva',
       locale: 'en_US',
       description: settings.seo.defaultDescription,
-      images: [{ url: '/og/default-v006.png', width: 1200, height: 630 }],
+      images: [{ url: '/og/default-v008.png', width: 1200, height: 630 }],
     })
   })
 
@@ -37,7 +37,7 @@ describe('buildRootMetadata', () => {
     const meta = buildRootMetadata({ settings, siteUrl, robots: noindex })
     expect(meta.twitter).toMatchObject({
       card: 'summary_large_image',
-      images: ['/og/default-v006.png'],
+      images: ['/og/default-v008.png'],
     })
   })
 
@@ -52,7 +52,7 @@ describe('buildRootMetadata', () => {
     expect(meta.title).toEqual({ default: 'Sineva', template: '%s | Sineva' })
     expect(meta.openGraph).toMatchObject({
       siteName: 'Sineva',
-      images: [{ url: '/og/default-v006.png', width: 1200, height: 630 }],
+      images: [{ url: '/og/default-v008.png', width: 1200, height: 630 }],
     })
     expect(typeof meta.description).toBe('string')
   })

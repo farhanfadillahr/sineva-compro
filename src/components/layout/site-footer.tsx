@@ -65,7 +65,7 @@ export function SiteFooter({
 
   return (
     <footer className="relative overflow-hidden bg-canvas-alt">
-      <Container size="wide" className="pt-12 md:pt-16">
+      <Container size="wide" data-slot="footer-content" className="relative z-10 pt-12 md:pt-16">
         <div className="grid md:grid-cols-2 md:gap-x-8 lg:grid-cols-4">
           <FooterColumn title={t('columns.product')}>
             <ul className="m-0 list-none p-0 pb-4 md:pb-0">
@@ -210,11 +210,13 @@ export function SiteFooter({
         </div>
       </Container>
 
-      {/* Quiet brand moment, cropped by the footer's bottom edge. Decorative only. */}
+      {/* Quiet brand moment behind the navigation, not below it: the wordmark is out of flow and
+          sits under the columns, anchored to the bottom edge and cropped by it, so the footer is
+          only as tall as its links and the bottom bar stays last. Decorative only. */}
       <div
         aria-hidden="true"
         data-slot="footer-watermark"
-        className="pointer-events-none -mt-2 translate-y-[16%] text-center font-sans text-[20vw] leading-[0.85] font-semibold tracking-[-0.04em] text-border select-none"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 translate-y-[18%] text-center font-sans text-[20vw] leading-[0.85] font-semibold tracking-[-0.04em] text-border select-none"
       >
         {brand('name')}
       </div>

@@ -8,33 +8,42 @@ import { EmptyState } from '@/components/admin/display'
 import { InlineBanner } from '@/components/admin/feedback'
 import { SectionHeader } from '@/components/admin/shell'
 import { idleState } from '../../cms/errors'
-import { reorderCollectionAction } from '../actions'
-import type { CollectionName } from '../configs'
+import type { CmsAction } from '@/components/admin/cms/cms-form'
 import s from '@/components/admin/admin.module.css'
 
-export type ListRow = { id: string; key: string; title: string; isDemo: boolean; meta?: string }
+export type ListRow = {
+  id: string
+  key: string
+  title: string
+  isDemo: boolean
+  meta?: string
+  status?: { label: string; tone: 'success' | 'warning' | 'brand' | 'danger' }
+}
 
 /** Ordered collection table: edit links, move up/down and one "save order" submit. */
 export function CollectionList({
-  name,
+  reorder,
   title,
   description,
   rows,
   basePath,
   itemLabel,
   orderable = true,
+  keyLabel = 'Kunci',
 }: {
-  name: CollectionName
+  /** Action that saves the order, with the hidden fields it needs (for example the collection). */
+  reorder: { action: CmsAction; fields: Readonly<Record<string, string>> }
   title: string
   description: string
   rows: ListRow[]
   basePath: string
   itemLabel: string
   orderable?: boolean
+  keyLabel?: string
 }) {
   const router = useRouter()
   const [order, setOrder] = useState(rows)
-  const [state, submit, pending] = useActionState(reorderCollectionAction, idleState)
+  const [state, submit, pending] = useActionState(reorder.action, idleState)
   const dirty = order.some((row, i) => row.id !== rows[i]?.id)
   useEffect(() => {
     if (state.status === 'success') router.refresh()
@@ -67,7 +76,8 @@ export function CollectionList({
               <tr>
                 {orderable ? <th scope="col">Urutan</th> : null}
                 <th scope="col">{itemLabel}</th>
-                <th scope="col">Kunci</th>
+                <th scope="col">{keyLabel}</th>
+                <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -103,6 +113,13 @@ export function CollectionList({
                     {row.meta ? <span className={s.muted}> · {row.meta}</span> : null}
                   </td>
                   <td className={s.mono}>{row.key}</td>
+                  <td>
+                    {row.status ? (
+                      <Badge tone={row.status.tone}>{row.status.label}</Badge>
+                    ) : (
+                      'Tampil'
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -111,7 +128,9 @@ export function CollectionList({
       )}
       {orderable && dirty ? (
         <form action={submit} className={s.row}>
-          <input type="hidden" name="collection" value={name} />
+          {Object.entries(reorder.fields).map(([field, value]) => (
+            <input key={field} type="hidden" name={field} value={value} />
+          ))}
           <input type="hidden" name="payload" value={JSON.stringify(order.map((r) => r.id))} />
           <AdminButton tone="primary" type="submit" disabled={pending}>
             {pending ? 'Menyimpan urutan…' : 'Simpan urutan'}

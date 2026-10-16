@@ -3,6 +3,7 @@ import { requireCapability } from '@/features/auth/session.server'
 import { PageHeader } from '@/components/admin/shell'
 import { listCollectionForAdmin } from '@/features/collections/service.server'
 import { CollectionList } from '@/features/collections/components/collection-list'
+import { reorderCollectionAction } from '@/features/collections/actions'
 import { businessTypesConfig, capabilitiesConfig } from '@/features/collections/configs'
 import { readProductStatus } from '@/features/product/service.server'
 import { ProductStatusForm } from '@/features/product/components/product-status-form'
@@ -32,7 +33,7 @@ export default async function ProductAdminPage() {
       />
       <ProductStatusForm status={status} />
       <CollectionList
-        name="capabilities"
+        reorder={{ action: reorderCollectionAction, fields: { collection: 'capabilities' } }}
         title={capabilitiesConfig.title}
         description={capabilitiesConfig.description}
         itemLabel={capabilitiesConfig.itemLabel}
@@ -46,7 +47,7 @@ export default async function ProductAdminPage() {
         }))}
       />
       <CollectionList
-        name="businessTypes"
+        reorder={{ action: reorderCollectionAction, fields: { collection: 'businessTypes' } }}
         title={businessTypesConfig.title}
         description={businessTypesConfig.description}
         itemLabel={businessTypesConfig.itemLabel}

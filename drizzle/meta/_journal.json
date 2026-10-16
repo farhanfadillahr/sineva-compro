@@ -57,6 +57,13 @@
       "when": 1792153940483,
       "tag": "0007_cpr84_faq_library",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792154172377,
+      "tag": "0008_cpr27_services",
+      "breakpoints": true
     }
   ]
 }

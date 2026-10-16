@@ -119,7 +119,9 @@ export function parseRichText(input: unknown, profile: RichTextProfile = 'full')
   try {
     if (!isRecord(input) || input.type !== 'doc') throw new Invalid('Isi teks tidak valid.')
     if (JSON.stringify(input).length > MAX_BYTES) throw new Invalid('Isi teks terlalu panjang.')
-    const content = Array.isArray(input.content) ? input.content.map((child) => node(child, 1, profile)) : []
+    const content = Array.isArray(input.content)
+      ? input.content.map((child) => node(child, 1, profile))
+      : []
     // An editor's empty document is one empty paragraph; store it as an empty document.
     const meaningful = content.filter(
       (child) => child.type !== 'paragraph' || child.content?.length,

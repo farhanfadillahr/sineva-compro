@@ -8,7 +8,7 @@ export default async function DashboardPage() {
     <main>
       <p className="eyebrow">Ringkasan</p>
       <h1 className="dashboard-title">Halo, {principal.name}.</h1>
-      <p className="muted">Selamat datang di ruang kerja Sineva Tech.</p>
+      <p className="muted">Selamat datang di ruang kerja Sineva.</p>
       <section className="account-card" aria-labelledby="account-title">
         <div>
           <h2 id="account-title">Akun Anda</h2>

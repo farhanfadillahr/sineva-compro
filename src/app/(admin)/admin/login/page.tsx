@@ -10,10 +10,10 @@ export default async function LoginPage() {
   if (await getPrincipal()) redirect('/admin')
   return (
     <main className="login-page">
-      <section className="login-intro" aria-label="Sineva Tech">
+      <section className="login-intro" aria-label="Sineva">
         <Link href="/" className="brand">
           <Image src="/brand/sineva-symbol-original.svg" alt="" width={44} height={44} priority />
-          <span>Sineva Tech</span>
+          <span>Sineva</span>
         </Link>
         <div>
           <p className="eyebrow">Ruang kerja Sineva</p>
@@ -23,7 +23,7 @@ export default async function LoginPage() {
             kembali.
           </h1>
           <p className="login-description">
-            Masuk dengan akun tim Anda untuk mengelola website Sineva Tech.
+            Masuk dengan akun tim Anda untuk mengelola website Sineva.
           </p>
         </div>
         <Link href="/" className="text-link">
@@ -36,7 +36,7 @@ export default async function LoginPage() {
           <h2 id="login-title">Masuk ke admin</h2>
           <p className="muted">Gunakan email dan password akun Anda.</p>
           <LoginForm />
-          <p className="login-help">Belum memiliki akun? Hubungi administrator Sineva Tech.</p>
+          <p className="login-help">Belum memiliki akun? Hubungi administrator Sineva.</p>
         </div>
       </section>
     </main>

@@ -15,3 +15,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Integrasi pekerjaan Farhan
+
+Per instruksi Founder pada 16 Oktober 2026, perubahan Farhan setelah CPR-68 masuk ke branch `development` sebagai staging. Mulai branch tiket dari `origin/development`, buat satu PR per tiket dengan base `development`, verifikasi lalu merge sesuai otorisasi sesi. Pertahankan perubahan publik statis Faishal di `main`; jangan promosikan `development` ke `main` tanpa instruksi Founder berikutnya. Gunakan satu agen saja. Lihat [keputusan staging](docs/architecture/decisions/2026-10-16-development-staging.md).

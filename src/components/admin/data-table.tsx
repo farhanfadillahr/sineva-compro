@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table'
 import { readTableQuery, tableUrl } from './table-state'
 import { Pagination } from './pagination'
+import { ChevronDown } from 'lucide-react'
 import s from './admin.module.css'
 const features = tableFeatures({
   columnVisibilityFeature,
@@ -139,7 +140,7 @@ function TablePage<T extends { id: string }>({
   const selected = rows.filter((r) => table.state.rowSelection[r.id]).map((r) => r.id)
   return (
     <div className={s.stack}>
-      <div className={s.row}>
+      <div className={s.filterBar}>
         <Search
           label={label}
           value={state.search}
@@ -153,13 +154,13 @@ function TablePage<T extends { id: string }>({
             aria-expanded={showColumns}
             onClick={() => setShowColumns((v) => !v)}
           >
-            Kolom
+            Kolom <ChevronDown size={16} aria-hidden />
           </button>
           {showColumns ? (
-            <fieldset className={s.popup}>
-              <legend>Kolom yang ditampilkan</legend>
+            <div className={s.popup} role="group" aria-label="Kolom yang ditampilkan">
+              <p className={s.popupTitle}>Kolom yang ditampilkan</p>
               {table.getAllLeafColumns().map((c) => (
-                <label key={c.id} className={s.row}>
+                <label key={c.id} className={s.option}>
                   <input
                     type="checkbox"
                     checked={c.getIsVisible()}
@@ -168,7 +169,7 @@ function TablePage<T extends { id: string }>({
                   {columns.find((col) => col.id === c.id)?.label}
                 </label>
               ))}
-            </fieldset>
+            </div>
           ) : null}
         </div>
         <button

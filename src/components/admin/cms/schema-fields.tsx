@@ -307,7 +307,7 @@ function ListInput(props: Props & { schema: Extract<FieldSchema, { kind: 'list' 
                 <div className={s.row}>
                   <button
                     type="button"
-                    className={s.button}
+                    className={`${s.button} ${s.iconButton}`}
                     aria-label={`Naikkan ${label} ${index + 1}`}
                     disabled={index === 0}
                     onClick={() => move(index, -1)}
@@ -316,7 +316,7 @@ function ListInput(props: Props & { schema: Extract<FieldSchema, { kind: 'list' 
                   </button>
                   <button
                     type="button"
-                    className={s.button}
+                    className={`${s.button} ${s.iconButton}`}
                     aria-label={`Turunkan ${label} ${index + 1}`}
                     disabled={index === items.length - 1}
                     onClick={() => move(index, 1)}
@@ -325,7 +325,7 @@ function ListInput(props: Props & { schema: Extract<FieldSchema, { kind: 'list' 
                   </button>
                   <button
                     type="button"
-                    className={`${s.button} ${s.danger}`}
+                    className={`${s.button} ${s.iconButton} ${s.danger}`}
                     aria-label={`Hapus ${label} ${index + 1}`}
                     disabled={items.length <= (schema.min ?? 0)}
                     onClick={() => onChange(items.filter((_, i) => i !== index))}

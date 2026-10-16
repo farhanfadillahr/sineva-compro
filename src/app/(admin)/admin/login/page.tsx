@@ -35,7 +35,7 @@ export default async function LoginPage() {
         <div className={s.toolbar}>
           <ThemeToggle
             labels={{ toDark: 'Ganti ke mode gelap', toLight: 'Ganti ke mode terang' }}
-            className={a.button}
+            className={`${a.button} ${a.iconButton}`}
           />
         </div>
         <div className={s.formWrap}>

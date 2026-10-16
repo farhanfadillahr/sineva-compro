@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useLayoutEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { ChevronDown, X } from 'lucide-react'
 import s from './admin.module.css'
 type DialogProps = {
   open: boolean
@@ -89,8 +90,13 @@ function Modal({
     >
       <div className={s.dialogHead}>
         <h2 id={`${id}-title`}>{title}</h2>
-        <button className={s.button} type="button" aria-label="Tutup" onClick={onClose}>
-          ×
+        <button
+          className={`${s.button} ${s.iconButton}`}
+          type="button"
+          aria-label="Tutup"
+          onClick={onClose}
+        >
+          <X size={16} aria-hidden />
         </button>
       </div>
       {children}
@@ -123,17 +129,25 @@ function Modal({
     </dialog>
   )
 }
-export type MenuItem = { label: string; href?: string; onSelect?: () => void; danger?: boolean }
+export type MenuItem = {
+  label: string
+  href?: string
+  onSelect?: () => void
+  danger?: boolean
+  icon?: ReactNode
+}
 export function DropdownMenu({
   label,
   items,
   children,
   footer,
+  triggerClassName,
 }: {
   label: string
   items: MenuItem[]
   children?: ReactNode
   footer?: ReactNode
+  triggerClassName?: string
 }) {
   const id = useId()
   const [open, setOpen] = useState(false)
@@ -157,7 +171,7 @@ export function DropdownMenu({
     <div ref={container} className={s.popupAnchor}>
       <button
         ref={trigger}
-        className={s.button}
+        className={`${s.button} ${triggerClassName ?? ''}`}
         type="button"
         aria-label={label}
         aria-haspopup="menu"
@@ -172,6 +186,7 @@ export function DropdownMenu({
         }}
       >
         {children ?? label}
+        <ChevronDown className={s.menuChevron} size={16} aria-hidden />
       </button>
       {open ? (
         <div
@@ -206,6 +221,7 @@ export function DropdownMenu({
           {items.map((item) =>
             item.href ? (
               <a key={item.label} role="menuitem" tabIndex={-1} href={item.href} onClick={close}>
+                {item.icon}
                 {item.label}
               </a>
             ) : (
@@ -220,11 +236,16 @@ export function DropdownMenu({
                   item.onSelect?.()
                 }}
               >
+                {item.icon}
                 {item.label}
               </button>
             ),
           )}
-          {footer ? <div role="none">{footer}</div> : null}
+          {footer ? (
+            <div className={s.menuFooter} role="none">
+              {footer}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>

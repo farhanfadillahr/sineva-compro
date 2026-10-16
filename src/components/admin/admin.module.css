@@ -20,6 +20,8 @@
   --admin-text-sm: var(--text-micro);
   --admin-text-base: var(--text-body-sm);
   --admin-gap: var(--space-4);
+  --admin-control-height: 40px;
+  --admin-icon-size: 16px;
   --admin-shadow: var(--shadow-md);
   color: var(--admin-text);
   background: var(--admin-canvas);
@@ -58,14 +60,15 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 36px;
+  min-height: var(--admin-control-height);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius);
-  padding: 7px 12px;
+  padding: 9px 12px;
   background: var(--admin-surface);
   color: var(--admin-text);
   font-weight: 500;
-  line-height: 1.2;
+  font-size: 14px;
+  line-height: 20px;
   box-shadow: var(--shadow-button-bevel-light);
   transition:
     background-color var(--dur-fast) var(--ease-out),
@@ -73,6 +76,45 @@
     box-shadow var(--dur-fast) var(--ease-out);
   text-decoration: none;
   cursor: pointer;
+}
+.button > svg,
+.popup [role='menuitem'] > svg,
+.menuAction > svg {
+  width: var(--admin-icon-size);
+  height: var(--admin-icon-size);
+  flex: none;
+}
+/* Older Users/Audit controls must beat the root button font reset as well. */
+.root :global(.button-primary),
+.root :global(.button-secondary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--admin-control-height);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.iconButton {
+  width: var(--admin-control-height);
+  height: var(--admin-control-height);
+  min-width: var(--admin-control-height);
+  padding: 0;
+  flex: none;
+}
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+.filterBar > .field {
+  flex: 1 1 160px;
+}
+.filterBar > .button,
+.filterBar > .popupAnchor {
+  flex: none;
 }
 .button:hover:not(:disabled) {
   background: var(--admin-canvas);
@@ -203,12 +245,21 @@
   border-left-color: var(--admin-action);
   color: var(--admin-brand);
 }
-.tree ul .treeItem {
-  padding-left: 28px;
-  min-height: 32px;
+/* Indent by the actual tree level, not by the section's wrapper <ul>. */
+.treeItem[aria-level='2'] {
+  padding-inline-start: 54px;
 }
-.tree ul ul .treeItem {
-  padding-left: 42px;
+.treeItem[aria-level='3'] {
+  padding-inline-start: 70px;
+}
+.treeItem > svg {
+  flex: none;
+}
+.navText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .chevron {
   margin-left: auto;
@@ -232,10 +283,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 24px;
+  padding: 0 24px;
   border-bottom: 1px solid var(--admin-border);
-  background: var(--surface-nav);
-  backdrop-filter: blur(16px);
+  background: var(--admin-surface);
 }
 .breadcrumb {
   display: flex;
@@ -352,13 +402,43 @@ label.field > span:first-child {
 .field :where(input:not([type='checkbox'], [type='radio']), textarea, select),
 .input {
   width: 100%;
-  min-height: 40px;
+  min-height: var(--admin-control-height);
   border: 1px solid var(--admin-input-border);
   border-radius: var(--admin-radius);
   padding: 8px 12px;
   color: var(--admin-text);
   background: var(--admin-surface);
   box-shadow: var(--shadow-xs);
+}
+/* Native controls outside schema fields (pagination and rich text) use the same box. */
+.root :where(select) {
+  height: var(--admin-control-height);
+  min-width: 0;
+  border: 1px solid var(--admin-input-border);
+  border-radius: var(--admin-radius);
+  padding: 8px 12px;
+  color: var(--admin-text);
+  background-color: var(--admin-surface);
+  box-shadow: var(--shadow-xs);
+}
+.root :where(select:not([multiple])) {
+  appearance: none;
+  padding-inline-end: 36px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--admin-muted) 50%),
+    linear-gradient(135deg, var(--admin-muted) 50%, transparent 50%);
+  background-position:
+    right 17px center,
+    right 12px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+.field
+  :where(
+    input:not([type='checkbox'], [type='radio'], [type='hidden'], [type='file'], [type='range'])
+  ),
+.input {
+  height: var(--admin-control-height);
 }
 .field :where(input, textarea, select):focus-visible,
 .input:focus-visible {
@@ -471,10 +551,13 @@ label.field > span:first-child {
   z-index: 40;
 }
 .popup [role='menuitem'],
+.menuAction,
 .option {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  min-height: 36px;
+  min-height: var(--admin-control-height);
   border: 0;
   background: transparent;
   color: inherit;
@@ -484,9 +567,31 @@ label.field > span:first-child {
   border-radius: var(--admin-radius);
   cursor: pointer;
 }
-.popup [role='menuitem']:focus,
+.popup [role='menuitem']:is(:hover, :focus),
+.menuAction:is(:hover, :focus-visible),
 .option[aria-selected='true'] {
   background: var(--admin-tint);
+}
+.menuFooter {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--admin-border);
+}
+.accountTrigger {
+  padding-block: 7px;
+}
+.accountTrigger .avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+.menuChevron {
+  flex: none;
+}
+.pageHeader .chip {
+  min-height: var(--admin-control-height);
+  justify-content: center;
+  padding-inline: 12px;
 }
 .chip {
   display: inline-flex;
@@ -534,6 +639,7 @@ label.field > span:first-child {
   margin-top: 20px;
 }
 .drawer {
+  max-width: 100vw;
   margin: 0 0 0 auto;
   height: 100svh;
   max-height: 100svh;
@@ -646,8 +752,8 @@ label.field > span:first-child {
   gap: 4px;
 }
 .pageButton {
-  min-width: 36px;
-  height: 36px;
+  min-width: var(--admin-control-height);
+  height: var(--admin-control-height);
   padding: 6px;
 }
 .pageButton[aria-current='page'] {
@@ -723,13 +829,20 @@ label.field > span:first-child {
 .editorToolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   position: sticky;
   top: 56px;
   z-index: 5;
   padding: 12px;
   background: var(--admin-surface);
   border-bottom: 1px solid var(--admin-border);
+}
+.editorToolbar > label {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 .editorContent {
   padding: 20px;
@@ -743,34 +856,34 @@ label.field > span:first-child {
   .shell {
     grid-template-columns: 64px minmax(0, 1fr);
   }
-  .sidebar {
+  .shell .sidebar {
     padding-inline: 6px;
     overflow: visible;
   }
-  .navText,
-  .groupLabel,
-  .logoText,
-  .sideFooter {
+  .shell :where(.navText, .groupLabel, .logoText, .sideFooter) {
     display: none;
   }
-  .logo {
+  .shell .logo {
     padding: 0;
     justify-content: center;
   }
-  .treeItem {
+  .shell .tree > li + li {
+    margin-top: 8px;
+  }
+  .shell .treeItem {
     justify-content: center;
     padding: 8px;
   }
-  .chevron {
+  .shell .chevron {
     display: none;
   }
-  .tree li {
+  .shell .tree li {
     position: relative;
   }
-  .tree ul {
+  .shell .treeGroup {
     display: none;
     position: absolute;
-    left: 52px;
+    left: calc(100% - 4px);
     top: 0;
     width: 224px;
     padding: 8px;
@@ -780,23 +893,27 @@ label.field > span:first-child {
     border-radius: var(--admin-panel-radius);
     box-shadow: var(--admin-shadow);
   }
-  .tree li:focus-within > ul,
-  .tree li:hover > ul {
+  .shell li:focus-within > .treeGroup,
+  .shell li:hover > .treeGroup {
     display: block;
   }
-  .tree ul .treeItem {
+  .shell .treeGroup .treeItem {
     justify-content: flex-start;
-    padding-left: 12px;
+    padding-inline: 12px;
   }
-  .tree ul .navText {
-    display: inline;
+  .shell .treeGroup :where(.navText, .chevron) {
+    display: block;
   }
-  .tree ul ul {
+  .shell .treeGroup .treeGroup {
     position: static;
     width: auto;
+    padding: 0;
     box-shadow: none;
     border: 0;
     display: block;
+  }
+  .shell .treeGroup .treeGroup .treeItem {
+    padding-inline-start: 28px;
   }
   .formLayout {
     grid-template-columns: minmax(0, 1fr);
@@ -915,24 +1032,30 @@ label.field > span:first-child {
     padding-inline: 6px;
     overflow: visible;
   }
-  .shell[data-sidebar='collapsed'] :where(.navText, .groupLabel, .logoText, .sideFooter, .chevron) {
+  .shell[data-sidebar='collapsed'] :where(.navText, .groupLabel, .logoText, .sideFooter) {
     display: none;
   }
   .shell[data-sidebar='collapsed'] .logo {
     padding: 0;
     justify-content: center;
   }
+  .shell[data-sidebar='collapsed'] .tree > li + li {
+    margin-top: 8px;
+  }
   .shell[data-sidebar='collapsed'] .treeItem {
     justify-content: center;
     padding: 8px;
   }
+  .shell[data-sidebar='collapsed'] .chevron {
+    display: none;
+  }
   .shell[data-sidebar='collapsed'] .tree li {
     position: relative;
   }
-  .shell[data-sidebar='collapsed'] .tree ul {
+  .shell[data-sidebar='collapsed'] .treeGroup {
     display: none;
     position: absolute;
-    left: 52px;
+    left: calc(100% - 4px);
     top: 0;
     width: 224px;
     padding: 8px;
@@ -942,15 +1065,93 @@ label.field > span:first-child {
     border-radius: var(--admin-panel-radius);
     box-shadow: var(--admin-shadow);
   }
-  .shell[data-sidebar='collapsed'] .tree li:focus-within > ul,
-  .shell[data-sidebar='collapsed'] .tree li:hover > ul {
+  .shell[data-sidebar='collapsed'] li:focus-within > .treeGroup,
+  .shell[data-sidebar='collapsed'] li:hover > .treeGroup {
     display: block;
   }
-  .shell[data-sidebar='collapsed'] .tree ul :where(.treeItem) {
+  .shell[data-sidebar='collapsed'] .treeGroup .treeItem {
     justify-content: flex-start;
-    padding-left: 12px;
+    padding-inline: 12px;
   }
-  .shell[data-sidebar='collapsed'] .tree ul :where(.navText) {
-    display: inline;
+  .shell[data-sidebar='collapsed'] .treeGroup :where(.navText, .chevron) {
+    display: block;
   }
+  .shell[data-sidebar='collapsed'] .treeGroup .treeGroup {
+    position: static;
+    width: auto;
+    padding: 0;
+    box-shadow: none;
+    border: 0;
+    display: block;
+  }
+  .shell[data-sidebar='collapsed'] .treeGroup .treeGroup .treeItem {
+    padding-inline-start: 28px;
+  }
+}
+
+@media (max-width: 767px) {
+  .accountTrigger {
+    width: var(--admin-control-height);
+    height: var(--admin-control-height);
+    padding: 0;
+  }
+  .accountTrigger .menuChevron {
+    display: none;
+  }
+}
+@media (max-width: 599px) {
+  .filterBar > .field {
+    flex-basis: 100%;
+  }
+}
+
+.button:disabled {
+  opacity: 0.45;
+}
+.button[aria-pressed='true'] {
+  background: var(--admin-tint);
+  border-color: var(--admin-focus);
+  color: var(--admin-brand);
+}
+
+/* Six lead controls keep equal columns instead of leaving the action on its own row. */
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 12px;
+}
+@media (max-width: 1279px) {
+  .filterGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 599px) {
+  .filterGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .filterBar > .button,
+  .filterBar > .popupAnchor {
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .filterBar > .popupAnchor > .button {
+    width: 100%;
+  }
+}
+
+.popupTitle {
+  margin: 0;
+  padding: 4px 8px 8px;
+  font-size: var(--admin-text-sm);
+  font-weight: 500;
+  color: var(--admin-muted);
+}
+.root :where(input[type='checkbox']:not([role='switch']), input[type='radio']) {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex: none;
+  accent-color: var(--admin-action);
+  vertical-align: middle;
 }

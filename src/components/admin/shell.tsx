@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, ExternalLink } from 'lucide-react'
+import { Menu, Search, ExternalLink, UserRound, KeyRound } from 'lucide-react'
 import type { Principal } from '@/features/auth/types'
 import { Sidebar } from './sidebar'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
@@ -63,13 +63,18 @@ export function AdminShell({
   const account = (
     <DropdownMenu
       label="Menu akun"
+      triggerClassName={s.accountTrigger}
       items={[
-        { label: 'Profil saya', href: '/admin/profil' },
-        { label: 'Ganti password', href: '/admin/profil#keamanan' },
+        { label: 'Profil saya', href: '/admin/profil', icon: <UserRound size={16} aria-hidden /> },
+        {
+          label: 'Ganti password',
+          href: '/admin/profil#keamanan',
+          icon: <KeyRound size={16} aria-hidden />,
+        },
       ]}
       footer={logout}
     >
-      <Avatar name={principal.name} />
+      <Avatar name={principal.name} size={24} />
       <span className={s.accountName} title={principal.name}>
         {principal.name}
       </span>
@@ -97,7 +102,7 @@ export function AdminShell({
         <header className={s.topbar}>
           <div className={s.row}>
             <button
-              className={`${s.button} ${s.mobileTrigger}`}
+              className={`${s.button} ${s.iconButton} ${s.mobileTrigger}`}
               type="button"
               aria-label="Buka navigasi"
               aria-haspopup="dialog"
@@ -124,7 +129,7 @@ export function AdminShell({
           <div className={s.row}>
             {searchTrigger ?? (
               <button
-                className={`${s.button} ${s.searchTrigger}`}
+                className={`${s.button} ${s.iconButton} ${s.searchTrigger}`}
                 type="button"
                 disabled
                 title="Pencarian global belum tersedia"
@@ -135,7 +140,7 @@ export function AdminShell({
             )}
             <ThemeToggle
               labels={{ toDark: 'Ganti ke mode gelap', toLight: 'Ganti ke mode terang' }}
-              className={s.button}
+              className={`${s.button} ${s.iconButton}`}
             />
             <a
               href="/"

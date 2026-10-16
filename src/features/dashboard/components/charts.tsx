@@ -16,6 +16,7 @@ import {
 } from 'recharts'
 import { usePrefersReducedMotion } from '@/lib/motion/reduced-motion'
 import { EmptyState } from '@/components/admin/display'
+import { ChartNoAxesCombined, Table2 } from 'lucide-react'
 import s from '@/components/admin/admin.module.css'
 import c from './dashboard.module.css'
 
@@ -59,17 +60,23 @@ function ChartFrame({
   const id = useId()
   const [asTable, setAsTable] = useState(false)
   return (
-    <section className={`${s.panel} ${s.stack}`} aria-labelledby={`${id}-title`}>
-      <div className={s.sectionHeader}>
+    <section className={`${s.panel} ${s.stack} ${c.chartFrame}`} aria-labelledby={`${id}-title`}>
+      <div className={c.chartHeader}>
         <h2 id={`${id}-title`}>{title}</h2>
         {empty ? null : (
           <button
             type="button"
-            className={s.button}
+            className={`${s.button} ${s.iconButton}`}
+            aria-label={asTable ? 'Lihat sebagai grafik' : 'Lihat sebagai tabel'}
+            title={asTable ? 'Lihat sebagai grafik' : 'Lihat sebagai tabel'}
             aria-pressed={asTable}
             onClick={() => setAsTable((v) => !v)}
           >
-            {asTable ? 'Lihat sebagai grafik' : 'Lihat sebagai tabel'}
+            {asTable ? (
+              <ChartNoAxesCombined size={16} aria-hidden />
+            ) : (
+              <Table2 size={16} aria-hidden />
+            )}
           </button>
         )}
       </div>

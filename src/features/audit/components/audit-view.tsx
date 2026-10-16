@@ -60,9 +60,6 @@ export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAu
               defaultValue={result.actor}
               aria-describedby="audit-actor-help"
             />
-            <p className="muted" id="audit-actor-help">
-              Salin ID pelaku dari tabel untuk memfilter riwayatnya.
-            </p>
           </div>
           <div className="form-field">
             <label htmlFor="audit-entity">Entitas</label>
@@ -90,10 +87,13 @@ export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAu
           <button className="button-secondary" type="submit">
             Terapkan filter
           </button>
-          <Link className="text-link" href="/admin/audit">
+          <Link className="button-secondary" href="/admin/audit">
             Reset filter
           </Link>
         </form>
+        <p className="muted" id="audit-actor-help">
+          Salin ID pelaku dari tabel untuk memfilter riwayatnya.
+        </p>
         <div className="users-table-wrap">
           <table className="users-table">
             <caption className="sr-only">Riwayat perubahan admin</caption>

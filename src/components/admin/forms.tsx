@@ -277,7 +277,7 @@ export function MultiSelect({
             {options.find((o) => o.value === v)?.label ?? v}
             <button
               type="button"
-              className={s.button}
+              className={`${s.button} ${s.iconButton}`}
               aria-label={`Hapus ${options.find((o) => o.value === v)?.label ?? v}`}
               onClick={() => onChange(value.filter((x) => x !== v))}
             >

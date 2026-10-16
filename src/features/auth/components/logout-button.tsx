@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { LogOut } from 'lucide-react'
+import s from '@/components/admin/admin.module.css'
 
 export function LogoutButton() {
   const router = useRouter()
@@ -27,7 +29,8 @@ export function LogoutButton() {
   }
   return (
     <div>
-      <button className="button-secondary" type="button" onClick={logout} disabled={busy}>
+      <button className={s.menuAction} type="button" onClick={logout} disabled={busy}>
+        <LogOut size={16} aria-hidden />
         {busy ? 'Sedang keluar…' : 'Keluar'}
       </button>
       {error ? (

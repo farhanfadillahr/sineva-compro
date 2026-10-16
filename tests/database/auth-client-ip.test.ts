@@ -103,3 +103,18 @@ it('canonicalizes equivalent IPv6 /64 and IPv4-mapped spellings into shared buck
     }
   })
 })
+
+it('accepts framework-proxied Request objects while preserving the sanitized streaming body', async () => {
+  const identity = await ctx.create('editor')
+  await rolledBack(async (tx) => {
+    const request = ctx.request(identity.email, identity.password)
+    request.headers.set('cf-connecting-ip', ctx.ip())
+    const proxy = new Proxy(request, {
+      get(target, property) {
+        const value = Reflect.get(target, property, target)
+        return typeof value === 'function' ? value.bind(target) : value
+      },
+    })
+    expect((await createAuth(tx, config('cloudflare')).handler(proxy)).status).toBe(200)
+  })
+})

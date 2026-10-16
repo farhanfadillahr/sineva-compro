@@ -75,7 +75,16 @@ export function createAuth(
     headers.delete(AUTH_CLIENT_IP_HEADER)
     const ip = getClientIp(request.headers, env.clientIp)
     if (ip) headers.set(AUTH_CLIENT_IP_HEADER, ip)
-    return auth.handler(new Request(request, { headers }))
+    // Next.js proxies Request objects; copying the proxy itself breaks native
+    // Request private slots. Read its public accessors and retain the body stream.
+    const init: RequestInit & { duplex: 'half' } = {
+      method: request.method,
+      headers,
+      body: request.body,
+      signal: request.signal,
+      duplex: 'half',
+    }
+    return auth.handler(new Request(request.url, init))
   }
   return { ...auth, handler, fetch: handler }
 }

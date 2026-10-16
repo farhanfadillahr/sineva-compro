@@ -188,8 +188,9 @@ TEST_AUTH_URL=http://127.0.0.1:3068 CLIENT_IP_MODE=cloudflare \
 ```
 
 ```sh
-TEST_AUTH_URL=http://127.0.0.1:3068 CLIENT_IP_MODE=cloudflare \
-  CLOUDFLARE_ORIGIN_LOCKED=true PGOPTIONS='-c timezone=UTC' npm run test:integration
+TEST_AUTH_URL=http://127.0.0.1:3068 TEST_BASE_URL=http://127.0.0.1:3068 \
+  CLIENT_IP_MODE=cloudflare CLOUDFLARE_ORIGIN_LOCKED=true \
+  PGOPTIONS='-c timezone=UTC' npm run test:integration
 ```
 
 The CF HTTP test runs only with Cloudflare mode explicitly enabled. These loopback
@@ -208,3 +209,7 @@ fixtures simulate trusted ingress and are not production network evidence.
 - [Cloudflare origin allowlisting](https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/)
   and [official range lists](https://www.cloudflare.com/ips/).
 - [Authenticated Origin Pulls](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/).
+
+The HTTP suite also uses the existing `TEST_BASE_URL` override for legacy public-route tests. Set it to the same loopback origin as `TEST_AUTH_URL`. Framework-proxied Requests are rebuilt from their public URL/method/headers/body/signal rather than passed to the native copy constructor; a database regression test reproduces the Next.js private-slot failure and verifies the streaming body remains usable.
+
+The existing cross-IP HTTP account-lockout scenario runs with simulated Cloudflare ingress; direct-mode requests intentionally share one throttled bucket and cannot simulate distinct clients with forged XFF. Database lockout tests still run in both modes. Routing HTTP assertions check the rendered English heading and stable page structure rather than the retired placeholder headlines, so real page content and later database-backed content remain compatible.

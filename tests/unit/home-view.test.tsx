@@ -1,8 +1,11 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { HomeView, type HomeViewProps } from '@/components/pages/home/home-view'
 import { loadHomeModel, planHomeSections, type HomeModel } from '@/components/pages/home/home-model'
+import { createStaticContentSource } from '../../src/content/static'
 import { createFixtureContentSource } from '../../src/features/content/fixture-source'
 import { publicFixtures } from '../fixtures/public'
 import { installIntersectionObserver } from './motion-test-utils'
@@ -486,5 +489,43 @@ describe('Home sticky CTA bar', () => {
     unmount()
     render(<HomeView model={m} labels={{}} />)
     expect(bar()!.getAttribute('aria-label')).toBe(base.page.hero.primaryCtaLabel)
+  })
+})
+
+describe('Home with the static launch content', () => {
+  // jsdom replaces the global URL, so the path is built from the working directory instead.
+  const PUBLIC_DIR = join(process.cwd(), 'public')
+
+  // next/image rewrites a local src to /_next/image?url=<encoded path>; read the original back.
+  const originalSrc = (img: HTMLImageElement) => {
+    const src = img.getAttribute('src') ?? ''
+    return new URL(src, 'http://localhost').searchParams.get('url') ?? src
+  }
+
+  async function renderStatic() {
+    const model = (await loadHomeModel(createStaticContentSource(), 'en'))!
+    renderHome(model)
+    return model
+  }
+
+  it('uses the hero poster from the content as the one high priority image', async () => {
+    const model = await renderStatic()
+    const poster = model.page.hero.poster!
+    const high = document.querySelectorAll<HTMLImageElement>('img[fetchpriority="high"]')
+    expect(high).toHaveLength(1)
+    expect(originalSrc(high[0]!)).toBe(poster.url)
+    expect(high[0]!.getAttribute('width')).toBe(String(poster.width))
+    expect(high[0]!.getAttribute('height')).toBe(String(poster.height))
+    expect(high[0]!.getAttribute('alt')).toBe(poster.alt)
+  })
+
+  it('renders only local images, and every one of them exists in public/', async () => {
+    await renderStatic()
+    const sources = Array.from(document.querySelectorAll('img')).map(originalSrc)
+    expect(sources.length).toBeGreaterThan(5)
+    for (const src of sources) {
+      expect(src.startsWith('/'), src).toBe(true)
+      expect(existsSync(join(PUBLIC_DIR, src)), src).toBe(true)
+    }
   })
 })

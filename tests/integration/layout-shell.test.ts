@@ -20,7 +20,8 @@ describe('public layout shell over HTTP', () => {
       expect(page.indexOf('Skip to content')).toBeLessThan(page.indexOf('<header'))
       expect(page).toContain('<footer')
       expect(page).toContain('data-slot="floating-whatsapp"')
-      expect(page).toContain('id="main-content"')
+      // Exactly one skip-link target: the page's own <main>, not a layout wrapper as well.
+      expect(page.match(/id="main-content"/g)).toHaveLength(1)
     }
   })
 

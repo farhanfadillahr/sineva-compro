@@ -59,10 +59,7 @@ describe('proxy matcher', () => {
     '/manifest',
     '/manifest.webmanifest/extra',
     '/en/icon.svg',
-  ])(
-    'does not over-match the look-alike page path %s',
-    (pathname) => {
-      expect(handledByIntl(pathname)).toBe(true)
-    },
-  )
+  ])('does not over-match the look-alike page path %s', (pathname) => {
+    expect(handledByIntl(pathname)).toBe(true)
+  })
 })

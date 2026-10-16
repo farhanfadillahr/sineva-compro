@@ -18,5 +18,53 @@
   },
   "NotFound": {
     "title": "Page not found."
+  },
+  "Nav": {
+    "skipToContent": "Skip to content",
+    "homeLabel": "Sineva home",
+    "primaryLabel": "Main",
+    "product": "Product",
+    "services": "Services",
+    "work": "Work",
+    "blog": "Blog",
+    "about": "About",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "bookConsultation": "Book a free consultation",
+    "chatOnWhatsapp": "Chat on WhatsApp",
+    "language": "Language",
+    "productMenu": {
+      "items": {
+        "customerChat": {
+          "title": "Customer chat",
+          "description": "Draft answers to common questions."
+        },
+        "socialMedia": {
+          "title": "Social media",
+          "description": "Get post ideas and caption drafts."
+        },
+        "salesFollowUp": {
+          "title": "Sales follow-up",
+          "description": "Keep track of who asked and draft a reply."
+        },
+        "financeAdmin": {
+          "title": "Finance and admin",
+          "description": "Record simple transactions and see a summary."
+        },
+        "operations": {
+          "title": "Daily operations",
+          "description": "Get a short daily summary and reminders."
+        }
+      },
+      "promo": {
+        "eyebrow": "Early access",
+        "title": "Join the waitlist",
+        "description": "Be the first to try Sino when it is ready."
+      }
+    },
+    "servicesMenu": {
+      "seeAll": "See all services"
+    }
   }
 }

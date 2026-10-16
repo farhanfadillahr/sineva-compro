@@ -150,7 +150,8 @@ describe('mobile menu scroll lock', () => {
     await user.keyboard('{Escape}')
     expect(document.body.style.position).toBe('')
     expect(document.body.style.top).toBe('')
-    expect(scrollToSpy).toHaveBeenCalledWith(0, 120)
+    // 'instant' so a global `scroll-behavior: smooth` cannot animate the page back from the top.
+    expect(scrollToSpy).toHaveBeenCalledWith({ top: 120, left: 0, behavior: 'instant' })
   })
 
   it('releases the lock when unmounted while open', async () => {

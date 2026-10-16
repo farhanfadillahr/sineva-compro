@@ -348,7 +348,7 @@ describe('SiteHeader dropdowns', () => {
     const user = userEvent.setup()
     renderHeader()
     await user.click(trigger('Product'))
-    screen.getByRole('button', { name: 'outside' }).focus()
+    act(() => screen.getByRole('button', { name: 'outside' }).focus())
     expect(trigger('Product').getAttribute('aria-expanded')).toBe('false')
   })
 
@@ -390,11 +390,20 @@ describe('SiteHeader dropdowns', () => {
 describe('SiteHeader dropdown hover', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    // Testing Library only drains its own timers when it sees Jest's fake timers. Vitest's use the
+    // same clock, so exposing the one function it calls is enough; without it every awaited
+    // user-event call waits on a timer that never fires.
+    Object.assign(globalThis, { jest: { advanceTimersByTime: vi.advanceTimersByTime.bind(vi) } })
   })
 
-  const setup = () => userEvent.setup({ advanceTimers: (ms) => vi.advanceTimersByTime(ms) })
+  afterEach(() => {
+    Reflect.deleteProperty(globalThis, 'jest')
+  })
+
+  // delay: null makes user-event skip its own setTimeout waits, which fake timers would stall.
+  const setup = () => userEvent.setup({ delay: null })
   const advance = (ms: number) =>
-    act(async () => {
+    act(() => {
       vi.advanceTimersByTime(ms)
     })
 

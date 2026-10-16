@@ -12,6 +12,7 @@ import {
   faqEntriesFromDto,
 } from '@/components/sections'
 import type { ActionLinkComponent, SectionTone } from '@/components/ui'
+import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
 import { whatsappHrefFor } from '@/lib/whatsapp'
 import { BlogSection, SelectedWorkSection } from './card-sections'
 import type { HomeLabels } from './home-labels'
@@ -47,10 +48,6 @@ export type HomeViewProps = {
 // Anchors the sticky CTA bar observes. HeroSplit and FinalCta default to the same ids.
 const HERO_CTA_ID = 'hero-cta'
 const FINAL_CTA_ID = 'final-cta'
-
-// Skip-link target (src/components/layout/skip-link.tsx). The layout wrapper carries the same id
-// today; the page landmark is the one meant to keep it.
-const MAIN_ID = 'main-content'
 
 /**
  * The Home page body (page-patterns.md 2.1), composed from the shared section blocks. A pure
@@ -199,7 +196,7 @@ export function HomeView({
 
   return (
     <>
-      <main id={MAIN_ID}>
+      <main id={MAIN_CONTENT_ID} tabIndex={-1} className="outline-none">
         {planHomeSections(model).map(({ id, tone }) => (
           <div key={id} data-home-section={id} data-home-tone={tone}>
             {render[id](tone)}

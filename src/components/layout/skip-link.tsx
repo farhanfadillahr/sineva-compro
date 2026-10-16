@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { cx, focusRing } from '@/components/ui/cx'
 
-/** Must stay the first focusable element in the document; the target is set by the layout. */
+/** The skip link must stay the first focusable element. Its target is the page's own <main>. */
 export const MAIN_CONTENT_ID = 'main-content'
 
 export function SkipLink() {

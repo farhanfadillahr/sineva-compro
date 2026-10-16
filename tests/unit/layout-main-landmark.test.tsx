@@ -22,8 +22,8 @@ describe('skip-link target', () => {
 
   it('the public layout wrapper no longer carries the id', () => {
     const layout = read('src/app/(public)/[locale]/layout.tsx')
-    expect(layout).not.toMatch(/id=\{MAIN_CONTENT_ID\}/)
-    expect(layout).not.toContain('main-content')
+    expect(layout).not.toMatch(/\bid=(\{MAIN_CONTENT_ID\}|["']main-content["'])/)
+    expect(layout).not.toContain('MAIN_CONTENT_ID')
   })
 
   it('a placeholder page shell renders one main landmark with the id', async () => {

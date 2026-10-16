@@ -28,7 +28,7 @@ export function MeetSinoSection({
         <Reveal>
           <SinoStage className="max-w-sm">
             <PoseImage
-              pose="headshot"
+              pose="relaxed-mug"
               sizes="(min-width: 640px) 384px, 90vw"
               className="size-full object-contain"
             />

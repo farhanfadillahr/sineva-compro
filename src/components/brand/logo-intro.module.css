@@ -90,20 +90,20 @@
 
 /*
  * Sino. The clip is 3:4 (720 x 960) and she stands in it from about 21% to 96% of its height
- * (measured from the alpha channel), so her middle is at 59% of the box. The box is 76svh tall with
- * its top on the top of the screen: she is about 57svh tall and her middle is at 45svh, a little
- * above the middle of the screen. The box cannot be pushed down to centre her exactly: its top edge
- * is where she leaves the clip, and anywhere below the top of the screen that would cut her along a
- * line while she is still in view. At the top of the screen she simply flies out of it. The box is
- * out of flow and its sides spill past a narrow screen, which the overlay clips; her silhouette is
- * only 44% of the box width.
+ * (measured from the alpha channel), so her middle is at 59% of the box. The box is 54svh tall, so
+ * she is about 40svh tall (the owner found 57svh too big), and its top sits at 18svh so her middle is
+ * on the middle of the screen (50 - 0.59 x 54 = 18). Because the box top is now below the top of the
+ * screen, she would be cut along a line as she flies out of the clip; the video's top fifth fades to
+ * transparent instead, so she dissolves upward as the page opens under her. The box is out of flow;
+ * her silhouette is only 44% of its width.
  */
 .launch {
   position: absolute;
-  top: 0;
+  top: 18vh;
+  top: 18svh;
   left: 50%;
-  height: 76vh;
-  height: 76svh;
+  height: 54vh;
+  height: 54svh;
   aspect-ratio: 3 / 4;
   transform: translateX(-50%);
   pointer-events: none;
@@ -114,6 +114,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
 }
 
 /* The gate already refuses to mark the document under reduced motion; this is the second lock. */

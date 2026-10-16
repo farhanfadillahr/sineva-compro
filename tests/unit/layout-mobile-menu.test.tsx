@@ -165,7 +165,7 @@ describe('mobile menu scroll lock', () => {
     act(() => scrollTo(50))
     await user.click(burger())
     act(() => scrollTo(300))
-    expect(screen.getByRole('banner').getAttribute('data-hidden')).toBe('false')
+    expect(screen.getByRole('banner').getAttribute('data-mode')).toBe('floating-visible')
   })
 
   it('ignores the offset jump to 0 while locked and does not hide the header after unlock', async () => {
@@ -179,7 +179,7 @@ describe('mobile menu scroll lock', () => {
     act(() => scrollTo(0))
     await user.keyboard('{Escape}')
     act(() => scrollTo(110))
-    expect(screen.getByRole('banner').getAttribute('data-hidden')).toBe('false')
+    expect(screen.getByRole('banner').getAttribute('data-mode')).toBe('floating-visible')
   })
 })
 

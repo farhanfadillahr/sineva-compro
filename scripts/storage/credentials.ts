@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto'
+import { isDeepStrictEqual } from 'node:util'
 import { constants } from 'node:fs'
 import { lstat, mkdir, open, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -7,6 +8,18 @@ type Role = 'bootstrap' | 'app' | 'backup'
 const roles: Role[] = ['bootstrap', 'app', 'backup']
 type Credential = { accessKeyId: string; secretAccessKey: string }
 
+const actions = {
+  bootstrap: ['Admin:media-public', 'Admin:media-private', 'Admin:backups'],
+  app: [
+    'Read:media-public',
+    'Write:media-public',
+    'List:media-public',
+    'Read:media-private',
+    'Write:media-private',
+    'List:media-private',
+  ],
+  backup: ['Write:backups'],
+}
 async function checkDirectory(directory: string) {
   const stat = await lstat(directory)
   if (
@@ -47,21 +60,23 @@ export async function setupCredentials(directory: string): Promise<void> {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error
     await checkDirectory(directory)
-    for (const role of roles) await readCredentials(directory, role)
-    await readPrivateJson(join(directory, 's3.json'))
+    const expected = await Promise.all(
+      roles.map(async (role) => {
+        const credential = await readCredentials(directory, role)
+        return {
+          name: role,
+          credentials: [
+            { accessKey: credential.accessKeyId, secretKey: credential.secretAccessKey },
+          ],
+          actions: actions[role],
+        }
+      }),
+    )
+    const gateway = await readPrivateJson(join(directory, 's3.json'))
+    if (!isDeepStrictEqual(gateway, { identities: expected })) {
+      throw new Error('Storage gateway configuration does not match scoped credentials')
+    }
     return
-  }
-  const actions = {
-    bootstrap: ['Admin:media-public', 'Admin:media-private', 'Admin:backups'],
-    app: [
-      'Read:media-public',
-      'Write:media-public',
-      'List:media-public',
-      'Read:media-private',
-      'Write:media-private',
-      'List:media-private',
-    ],
-    backup: ['Write:backups'],
   }
   const identities = []
   for (const role of roles) {

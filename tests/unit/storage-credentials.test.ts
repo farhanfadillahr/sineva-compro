@@ -1,5 +1,5 @@
 import { afterEach, expect, it } from 'vitest'
-import { chmod, lstat, mkdtemp, readFile, rm, symlink } from 'node:fs/promises'
+import { chmod, lstat, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { setupCredentials, readCredentials } from '../../scripts/storage/credentials'
@@ -66,4 +66,13 @@ it('refuses symlinked credential directories', async () => {
   await setupCredentials(target)
   await symlink(target, dir)
   await expect(setupCredentials(dir)).rejects.toThrow(/directory/i)
+})
+
+it('refuses valid JSON whose gateway identities no longer match the scoped credentials', async () => {
+  const dir = await fixture()
+  await setupCredentials(dir)
+  const config = JSON.parse(await readFile(join(dir, 's3.json'), 'utf8'))
+  config.identities.push({ name: 'anonymous', actions: ['Read'] })
+  await writeFile(join(dir, 's3.json'), JSON.stringify(config))
+  await expect(setupCredentials(dir)).rejects.toThrow(/configuration/i)
 })

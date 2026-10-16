@@ -1,6 +1,6 @@
 # SeaweedFS local storage (CPR-67)
 
-Status, 16 October 2026: **local implementation only**. VPS and domain are unavailable. The real S3 matrix below passed against the official native SeaweedFS **4.48** darwin_arm64 binary. Compose configuration validates, but its containers, restart behavior and persistent-volume recovery have **not** run because the Docker daemon times out. No production acceptance is claimed.
+Status, 16 October 2026: **local implementation only**. VPS and domain are unavailable. The real S3 matrix below passed against the official native SeaweedFS **4.48** darwin_arm64 binary in the first session and was re-run against **Docker SeaweedFS 4.48** on 16 October. All four containers are healthy. The local container recreation check retains the exact object payload across `down` and `up` with named volumes retained. This does not prove VPS reboot or full volume restore behavior. No production acceptance is claimed.
 
 ## Setup and commands
 
@@ -11,7 +11,7 @@ export PATH=/Users/farhanfadillahr/.nvm/versions/node/v24.21.0/bin:$PATH
 npm run storage:setup
 ```
 
-Setup generates `.storage/secrets/{bootstrap,app,backup}.json` and `s3.json`, plus `.storage/compose.env` containing only host UID/GID. The directory is 0700, credential files are 0600 and all are gitignored. Keys use cryptographic randomness; commands never print credentials or signed URLs. Re-running setup preserves existing keys. Missing, malformed, symlinked or broadly readable credentials fail closed instead of being silently replaced. Run as the normal developer user, not root.
+Setup generates `.storage/secrets/{bootstrap,app,backup}.json` and `s3.json`, plus `.storage/compose.env` containing only host UID/GID. The directory is 0700, credential files are 0600 and all are gitignored. Keys use cryptographic randomness; commands never print credentials or signed URLs. Re-running setup preserves existing keys. Missing, malformed, symlinked or broadly readable credentials, and gateway identities that differ from the exact generated scoped role configuration, fail closed instead of being silently replaced. Run as the normal developer user, not root.
 
 With a working Docker daemon:
 
@@ -27,7 +27,7 @@ docker compose --env-file .storage/compose.env -f compose.storage.yaml down
 
 The second bootstrap reports `exists` for all three buckets. Bootstrap only creates missing buckets, never deletes objects/buckets or changes ACLs/policies. It does not treat authentication errors as missing buckets. `down` retains named volumes; do not add `-v`. Set a distinct `COMPOSE_PROJECT_NAME` before the commands when sharing a Docker host across worktrees or CI jobs.
 
-Every component uses `chrislusf/seaweedfs:4.48`, `unless-stopped`, health checks and the private `storage` Docker network. Only `127.0.0.1:8333:8333` is published. Master, volume, filer and gRPC ports have no host publication. Iceberg, Lance and the embedded IAM management API are disabled. S3 runs with the generated host UID/GID to read 0600 credentials; its entrypoint bypasses the image's UID 1000 switch. The other services mount the image-owned `/data` root so its normal ownership initialization works. Filer explicitly mounts our TOML configuration so metadata cannot fall back to an unpersisted directory.
+Every component uses `chrislusf/seaweedfs:4.48`, `unless-stopped`, health checks and the private `storage` Docker network. S3 also joins a separate `gateway` bridge to support the published host port; backend components stay exclusively on the internal network. Only `127.0.0.1:8333:8333` is published. Master, volume, filer and gRPC ports have no host publication. Iceberg, Lance and the embedded IAM management API are disabled. S3 runs with the generated host UID/GID to read 0600 credentials; its entrypoint bypasses the image's UID 1000 switch. The other services mount the image-owned `/data` root so its normal ownership initialization works. Filer explicitly mounts our TOML configuration so metadata cannot fall back to an unpersisted directory.
 
 ## Native fallback without Docker
 
@@ -37,7 +37,7 @@ Obtain the official archive from the [4.48 release](https://github.com/seaweedfs
 faa194e72a346755dc4404288b0561eb3c260351702901d8363024d5099bdd7d
 ```
 
-The parent verified this digest and supplied `/private/tmp/sineva-seaweedfs-4.48/weed`. The supervisor also checks the binary version. Do not download another archive when a verified one already exists.
+The original native verification used `/private/tmp/sineva-seaweedfs-4.48/weed`; temporary files may be removed between sessions. The supervisor also checks the binary version. Reuse a verified binary when available; otherwise obtain and verify the archive again.
 
 Terminal 1:
 
@@ -83,7 +83,7 @@ SDK calls have bounded connection/request timeouts and one attempt; unexpected b
 
 ## Compatibility evidence
 
-Executed 16 October 2026 against native 4.48 with AWS SDK `@aws-sdk/client-s3` and `@aws-sdk/s3-request-presigner`, both **3.1152.0**. The runner performs real network calls, not mocked SDK assertions. Exit code 1 indicates any failed check.
+Executed 16 October 2026 against native 4.48 and independently re-run against Compose 4.48 with AWS SDK `@aws-sdk/client-s3` and `@aws-sdk/s3-request-presigner`, both **3.1152.0**. The runner performs real network calls, not mocked SDK assertions. Exit code 1 indicates any failed check.
 
 | Operation | media-public | media-private | What was verified |
 | --- | --- | --- | --- |
@@ -119,7 +119,7 @@ Health checks query master `/cluster/status`, volume `/healthz`, filer `/`, and 
 
 For local key rotation, stop this stack, preserve the existing secrets in a separate owner-only directory outside Git, move `.storage/secrets` aside, and run setup to generate a replacement set. Recreate the S3 gateway (a mounted config file is not assumed to hot-reload), update only the consuming server-side app/backup credentials, and run the matrix. Validate access with the new keys and refusal of the retired keys before securely retiring the old configuration. The generator intentionally has no automatic overwrite/rotation switch. Production rotation should add replacement keys for a controlled overlap, update consumers, verify, revoke old keys and test revocation under a reviewed operational change.
 
-For disk growth, inspect free space and inode usage on the exact volume host first. Grow its filesystem or provision an additional explicitly owned volume path, then review SeaweedFS placement and maximum volume settings; do not move live chunk files by hand. For a local recovery rehearsal: stop writers and all storage components, take consistent snapshots/copies of all three owned data volumes plus protected config, restore into a **new isolated Compose project**, start master/volume/filer/S3 in order, bootstrap idempotently, and verify known object hashes and the matrix. Do not overwrite a live/shared volume. Neither disk growth nor full recovery has been executed here.
+For disk growth, inspect free space and inode usage on the exact volume host first. Grow its filesystem or provision an additional explicitly owned volume path, then review SeaweedFS placement and maximum volume settings; do not move live chunk files by hand. For a local recovery rehearsal: stop writers and all storage components, take consistent snapshots/copies of all three owned data volumes plus protected config, restore into a **new isolated Compose project**, start master/volume/filer/S3 in order, bootstrap idempotently, and verify known object hashes and the matrix. Do not overwrite a live/shared volume. Container recreation with retained named volumes passed locally; neither disk growth nor full backup recovery has been executed here.
 
 ## Production acceptance still open
 
@@ -129,7 +129,7 @@ For disk growth, inspect free space and inode usage on the exact volume host fir
 - Protected Coolify secrets, production rotation/revocation and capacity sizing.
 - Active and tested disk usage/inode alerts plus external media-host uptime monitoring (CPR-14).
 - Off-host database/media copies, agreed Q8 target, retention and successful restore from that target (CPR-13). Backups on this single host alone are insufficient.
-- Container runtime validation, restart/persistence/recovery rehearsal and any production ACL/CORS/CDN policy contract.
+- VPS reboot, full backup recovery rehearsal and production ACL/CORS/CDN policy contract. Local Docker health and retained-volume container recreation passed.
 
 CPR-23 owns the MediaStore adapter and upload UI. This ticket does not implement it, the backup scheduler, DB migrations, auth, UI or external deployment.
 
@@ -142,3 +142,7 @@ SeaweedFS 4.48 is **Apache-2.0**, verified from its [tagged LICENSE](https://git
 - [Pinned image entrypoint and privilege switching](https://github.com/seaweedfs/seaweedfs/blob/4.48/docker/entrypoint.sh), [image layout](https://github.com/seaweedfs/seaweedfs/blob/4.48/docker/Dockerfile.local).
 - [Official S3 API overview](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API); supported-API claims still require the matrix for this exact version.
 - [AWS SDK presigner contract](https://github.com/aws/aws-sdk-js-v3/tree/main/packages/s3-request-presigner), [SDK constructor/checksum options](https://github.com/aws/aws-sdk-js-v3/blob/main/supplemental-docs/CLIENTS.md), checked through Context7.
+
+## Integration verification after main synchronization
+
+Synced with main through PR #26. Storage tooling stays isolated from public pages. The Founder confirmed that editable content through the custom Next.js admin remains required; the current static content source is temporary until the database query adapters are ready. The Docker verification project is `sineva-cpr67-verify`; no user-owned volumes were changed. A regression test exposed gateway configuration drift, and setup now refuses extra identities or altered permissions rather than accepting arbitrary valid JSON. A second regression test captures the separate gateway network needed for host SDK access while backend networking stays internal.

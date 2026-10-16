@@ -12,12 +12,13 @@ it('exposes only S3 on a loopback host binding and keeps component networking in
     { ports?: string[]; networks: string[]; image: string; restart: string; healthcheck: unknown },
   ][]) {
     expect(service.ports ?? []).toEqual(name === 's3' ? ['127.0.0.1:8333:8333'] : [])
-    expect(service.networks).toEqual(['storage'])
+    expect(service.networks).toEqual(name === 's3' ? ['storage', 'gateway'] : ['storage'])
     expect(service.image).toBe('chrislusf/seaweedfs:4.48')
     expect(service.restart).toBe('unless-stopped')
     expect(service.healthcheck).toBeDefined()
   }
   expect(compose.networks?.storage?.internal).toBe(true)
+  expect(compose.networks?.gateway?.internal).toBe(false)
 })
 it('retains master, volume and filer state separately across container recreation', () => {
   expect(compose.services?.master?.volumes).toContain('master-data:/data')

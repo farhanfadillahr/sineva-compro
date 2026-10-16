@@ -124,7 +124,48 @@ Spec: 512×512 transparent, light isometric camera (30°/20° rotation), AVIF �
 | B1 | Default OG | 1200×630, Sino S1 on the right, left area empty for the HTML-to-image title (the title is rendered by `next/og`, not in the render) | P0 |
 | B2 | Blog cover kit | Sino poses S2-S13 on the brand gradient background ([tokens.md](tokens.md) `--gradient-cover-*`), 1600×900. The editor picks combinations in the admin, no per-article render | P1 |
 
-## 4. UI screen mockups (not 3D, but needed alongside scenes)
+### 3.8 3D device props: phone, laptop, chat cards (product owner request, 2026-10-16)
+
+The flat CSS phone frame in the Product hero and the capability cards looks static. These props become 3D so the site feels alive, without adding more realtime canvases (one realtime canvas per page stays the rule; the Home hero already uses it for Sino).
+
+**Approach: pre-rendered 3D frames + HTML screen + CSS 3D motion.**
+
+| Option | Verdict |
+|---|---|
+| Realtime three.js phone per section | Rejected: a second WebGL context per page, extra 150 KB+ JS, GPU cost on mobile, and conflicts with the one-canvas rule |
+| Pre-rendered device frame with a transparent screen hole, HTML screen inside, CSS `perspective` tilt on scroll and hover | **Chosen**: looks 3D (real lighting, bevels, reflections), screen text stays sharp and translatable, motion is transform-only |
+| Turntable image sequence (sprite) driven by scroll | Used only for the Product hero phone, where a scroll-linked rotation adds the most life |
+
+**Assets to produce (Blender, same look and lighting as Sino v005, AgX):**
+
+| ID | Asset | Views | Output | Budget | Priority |
+|---|---|---|---|---|---|
+| D1 | Phone frame (modern, rounded, aluminium in brand ink `#0B2A31` with subtle teal edge) | front, 3/4 left, 3/4 right | 1200 px AVIF/WebP with a fully transparent screen area; separate screen-mask PNG (exact screen corners, for clip-path) | 60 KB each | P0 |
+| D2 | Phone turntable | 24 frames from -18° to +18° yaw, slight pitch | one AVIF/WebP sprite sheet (6x4) + JSON with frame rects and screen-corner quad per frame | 350 KB total | P0 (Product hero) |
+| D3 | Laptop frame (light aluminium) | 3/4 left | same as D1 | 80 KB | P1 |
+| D4 | 3D chat bubble cards (rounded glossy cards, brand teal and white) | 3 sizes, front + slight tilt | transparent stills used as backgrounds for `ui-chip` and chat bubbles | 25 KB each | P1 |
+| D5 | Small 3D props for capability cards (calendar, coin stack, megaphone, chart): reuse I1-I8 from §3.6 | front 3/4 | same as §3.6 | 25 KB | P0 (shared with §3.6) |
+| D6 | Sino holding the phone (pose S2 rebuilt with D1 so the device matches) | 3/4 | same as poses | 120 KB | P1 |
+
+**Screen alignment:** each frame ships a 4-point screen quad in its JSON (pixel corners). The website maps the HTML screen onto it with CSS `matrix3d` computed from the quad, so the chat UI sits exactly in the glass at every angle (no baked screen content).
+
+**Motion in the website (spec for the implementation ticket):**
+
+| Trigger | Behaviour |
+|---|---|
+| Scroll through the section | Phone tilts from rotateY(-10deg) to rotateY(8deg) and rotateX(4deg) to 0 with CSS perspective 1200 px (D1 views) or steps through the D2 sprite frames; transform-only, rAF-throttled |
+| Hover (desktop) | Phone follows the pointer by up to 6 degrees (parallax tilt), glare highlight moves across the glass (CSS gradient overlay) |
+| In view | Chat bubbles inside the screen appear one by one (existing chat-bubble stagger), typing dots before each reply (Lottie L5 when available) |
+| Idle | Gentle float like AnimatedPose (6 px, 6 s) |
+| Reduced motion | Static D1 3/4 view, all bubbles visible |
+
+**Acceptance:**
+- [ ] D1, D2 (P0) delivered with screen quads; screen text aligned within 2 px at every frame
+- [ ] Product hero and capability cards use the 3D device; CLS 0; animation JS ≤ 4 KB beyond AnimatedPose
+- [ ] Looks consistent next to Sino (same lighting, AgX), approved by the product owner
+- [ ] Budget test extended to the new files
+
+## 4. UI screen mockups (HTML screens inside the 3D device frames)
 
 Sintra puts real product screenshots in phone/laptop mockups. For Sineva:
 - Screens are built as **HTML/SVG components** on top of a rendered device frame (the phone/laptop frame is rendered without a screen, the screen = a transparent area). The benefit: text stays translatable, sharp, and can be animated (chat bubbles appearing one by one).

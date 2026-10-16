@@ -19,7 +19,14 @@ else throw new Error('Test runtime mode must be prepare or server')
 
 const child = spawn(process.execPath, args, {
   stdio: 'inherit',
-  env: { ...process.env, DATABASE_URL: env.databaseUrl, BETTER_AUTH_URL: env.authUrl },
+  // ADMIN_ENABLED: production builds default the admin to off (phase 1 static deploy), but the
+  // HTTP suite exercises the admin, so the test server always runs with it on.
+  env: {
+    ...process.env,
+    DATABASE_URL: env.databaseUrl,
+    BETTER_AUTH_URL: env.authUrl,
+    ADMIN_ENABLED: 'true',
+  },
 })
 process.once('SIGINT', () => child.kill('SIGINT'))
 process.once('SIGTERM', () => child.kill('SIGTERM'))

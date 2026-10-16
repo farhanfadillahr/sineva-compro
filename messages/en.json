@@ -152,6 +152,37 @@
       "finalCtaBody": "Tell us what you want to improve. We will reply with next steps."
     }
   },
+  "Blog": {
+    "breadcrumbLabel": "Breadcrumb",
+    "categoryFilterLabel": "Filter articles by category",
+    "allCategories": "All",
+    "latestBadge": "Latest",
+    "readArticle": "Read article",
+    "paginationLabel": "Pagination",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageLink": "Page {page}",
+    "emptyTitle": "Nothing to read here yet",
+    "emptyCta": "Book a free consultation",
+    "article": {
+      "byAuthor": "By {name}",
+      "published": "Published",
+      "updated": "Updated",
+      "tocTitle": "On this page",
+      "tocLabel": "Table of contents",
+      "shareTitle": "Share this article",
+      "shareWhatsapp": "Share on WhatsApp",
+      "shareLinkedin": "Share on LinkedIn",
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied",
+      "copyFailed": "Could not copy the link. Copy it from the address bar instead.",
+      "relatedTitle": "Keep reading",
+      "finalCtaHeadline": "Want help with your first AI step?",
+      "finalCtaBody": "Tell us what you want to improve. We will reply with next steps.",
+      "finalCtaButton": "Book a free consultation",
+      "chatOnWhatsapp": "Chat on WhatsApp"
+    }
+  },
   "Contact": {
     "formHeading": "Your message",
     "requiredMarker": "(required)",

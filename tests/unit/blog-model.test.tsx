@@ -96,12 +96,17 @@ function sourceOf(
   { leakOtherLocales = false }: { leakOtherLocales?: boolean } = {},
 ): PublicContentSource {
   const base = createFixtureContentSource()
-  const summary = ({
-    body: _body,
-    updatedAt: _updatedAt,
-    seo: _seo,
-    ...rest
-  }: PostDetail): PostSummary => rest
+  const summary = (post: PostDetail): PostSummary => ({
+    slug: post.slug,
+    locale: post.locale,
+    title: post.title,
+    excerpt: post.excerpt,
+    cover: post.cover,
+    category: post.category,
+    author: post.author,
+    publishedAt: post.publishedAt,
+    readingMinutes: post.readingMinutes,
+  })
   return {
     ...base,
     async listCategories() {

@@ -18,6 +18,8 @@ import { waitlist } from '../waitlist/schema'
 
 /** Days are Asia/Jakarta calendar days; timestamps stay UTC in the database. */
 const TZ = 'Asia/Jakarta'
+// A literal, not a bind parameter: SELECT and GROUP BY must be the identical expression.
+const TZ_SQL = sql.raw(`'${TZ}'`)
 export const RANGES = [7, 30, 90] as const
 export type RangeDays = (typeof RANGES)[number]
 
@@ -48,7 +50,7 @@ const CONTENT_ENTITIES = [
 async function leadStats(days: RangeDays) {
   const start = jakartaDayStart(days - 1)
   const previousStart = jakartaDayStart(days * 2 - 1)
-  const day = sql<string>`to_char(${lead.createdAt} AT TIME ZONE ${TZ}, 'YYYY-MM-DD')`
+  const day = sql<string>`to_char(${lead.createdAt} AT TIME ZONE ${TZ_SQL}, 'YYYY-MM-DD')`
   const [
     current,
     previous,
@@ -98,7 +100,7 @@ async function leadStats(days: RangeDays) {
       .where(and(gte(waitlist.createdAt, previousStart), lt(waitlist.createdAt, start))),
     db
       .select({
-        day: sql<string>`to_char(${waitlist.createdAt} AT TIME ZONE ${TZ}, 'YYYY-MM-DD')`,
+        day: sql<string>`to_char(${waitlist.createdAt} AT TIME ZONE ${TZ_SQL}, 'YYYY-MM-DD')`,
         n: count(),
       })
       .from(waitlist)

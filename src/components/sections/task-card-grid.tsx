@@ -2,6 +2,7 @@ import { Card, Container, Section, SectionHeader, type SectionTone } from '@/com
 import type { CardTone } from '@/components/ui/card'
 import { cx } from '@/components/ui/cx'
 import { AnimatedPose } from '@/components/motion/animated-pose'
+import { Parallax } from '@/components/motion/Parallax'
 import { Reveal } from '@/components/motion/Reveal'
 import type { CapabilityTint, MediaAsset, ProductCapability } from '@/features/content/types'
 import { bentoColClass, bentoLayout, bentoRowClass } from './_internal/bento'
@@ -106,22 +107,31 @@ export function TaskCardGrid({
                       />
                     </div>
                   ) : mockupLines.length > 0 ? (
-                    <PhoneFrame
-                      chrome={phoneChrome}
-                      size={isFeaturedTile ? 'lg' : 'sm'}
+                    // The phone peeks out of the card bottom and is cut by a fixed-height window, so
+                    // the card is as tall as its text plus the top of the chat, not the whole phone.
+                    // The featured tile fills its two rows instead (flex-1).
+                    <div
                       className={cx(
-                        'mt-auto',
-                        isFeaturedTile ? '-mb-24 max-w-80 lg:max-w-96' : '-mb-20 max-w-64',
+                        'relative -mx-2 mt-auto -mb-6 overflow-hidden lg:-mb-8',
+                        isFeaturedTile ? 'h-80 md:h-96 lg:h-auto lg:min-h-0 lg:flex-1' : 'h-64',
                       )}
                     >
-                      <ChatBubbles
-                        bubbles={mockupLines.map((text, i) => ({
-                          // The request comes first, then Sino's reply, alternating.
-                          from: i % 2 === 0 ? ('user' as const) : ('sino' as const),
-                          text,
-                        }))}
-                      />
-                    </PhoneFrame>
+                      <Parallax className="absolute inset-x-0 top-0">
+                        <PhoneFrame
+                          chrome={phoneChrome}
+                          size={isFeaturedTile ? 'lg' : 'sm'}
+                          className={cx(isFeaturedTile ? 'max-w-80 lg:max-w-88' : 'max-w-60')}
+                        >
+                          <ChatBubbles
+                            bubbles={mockupLines.map((text, i) => ({
+                              // The request comes first, then Sino's reply, alternating.
+                              from: i % 2 === 0 ? ('user' as const) : ('sino' as const),
+                              text,
+                            }))}
+                          />
+                        </PhoneFrame>
+                      </Parallax>
+                    </div>
                   ) : null}
                 </Card>
               </Reveal>

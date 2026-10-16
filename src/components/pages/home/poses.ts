@@ -25,7 +25,7 @@ export const POSE_FILES: Readonly<Partial<Record<PoseKey, string>>> = {
 
 // Every still is a 1200 px square (the contract the static content also uses for poses), so the
 // box is reserved at 1:1 before the file arrives.
-const POSE_DIRECTORY = '/mascot/poses/v006'
+const POSE_DIRECTORY = '/mascot/poses/v008'
 const POSE_SIZE = 1200
 
 /**

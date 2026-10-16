@@ -5,6 +5,7 @@ import { adminAc, userAc } from 'better-auth/plugins/admin/access'
 import type { readServerEnv } from '../../env/server'
 import type { Database, DatabaseTransaction } from '../db/connection'
 import * as schema from '../db/schema'
+import { AUTH_CLIENT_IP_HEADER, getClientIp } from '../http/client-ip'
 
 export type AuthPolicy = { beforeCreateSession?: (userId: string) => Promise<void> }
 
@@ -13,7 +14,7 @@ export function createAuth(
   env: ReturnType<typeof readServerEnv>,
   policy?: AuthPolicy,
 ) {
-  return betterAuth({
+  const auth = betterAuth({
     appName: 'Sineva Tech',
     databaseHooks: policy?.beforeCreateSession
       ? {
@@ -46,7 +47,12 @@ export function createAuth(
       maxPasswordLength: 128,
     },
     session: { expiresIn: 8 * 60 * 60, updateAge: 60 * 60, cookieCache: { enabled: false } },
-    advanced: { cookiePrefix: 'sineva', disableOriginCheck: false, disableCSRFCheck: false },
+    advanced: {
+      cookiePrefix: 'sineva',
+      disableOriginCheck: false,
+      disableCSRFCheck: false,
+      ipAddress: { ipAddressHeaders: [AUTH_CLIENT_IP_HEADER] },
+    },
     rateLimit: {
       enabled: true,
       storage: 'database',
@@ -62,4 +68,14 @@ export function createAuth(
       }),
     ],
   })
+  // Better Auth's onRequest plugin hooks run AFTER rate limiting in 1.7.7.
+  // Sanitize before entering its handler, including its equivalent fetch alias.
+  const handler = (request: Request) => {
+    const headers = new Headers(request.headers)
+    headers.delete(AUTH_CLIENT_IP_HEADER)
+    const ip = getClientIp(request.headers, env.clientIp)
+    if (ip) headers.set(AUTH_CLIENT_IP_HEADER, ip)
+    return auth.handler(new Request(request, { headers }))
+  }
+  return { ...auth, handler, fetch: handler }
 }

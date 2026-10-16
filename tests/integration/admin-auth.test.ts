@@ -8,8 +8,8 @@ import { createDatabase } from '../../src/lib/db/connection'
 import { bootstrapAdmin } from '../../src/features/auth/bootstrap.server'
 import { session as authSession, user } from '../../src/features/auth/schema'
 
-const base = new URL(process.env.TEST_BASE_URL ?? 'http://127.0.0.1:3001')
 const testEnv = readTestEnv(process.env)
+const base = new URL(process.env.TEST_BASE_URL ?? testEnv.authUrl)
 if (!['127.0.0.1', 'localhost'].includes(base.hostname) || base.protocol !== 'http:') {
   throw new Error('HTTP auth tests require an isolated loopback server and application test DB')
 }

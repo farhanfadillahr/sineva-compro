@@ -18,7 +18,9 @@ export function JourneySteps({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <SectionHeader title={title} />
+        <Reveal>
+          <SectionHeader title={title} />
+        </Reveal>
         <ol data-slot="journey-steps" className="relative grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <li
             aria-hidden="true"

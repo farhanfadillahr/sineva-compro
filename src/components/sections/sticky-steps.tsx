@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Reveal } from '@/components/motion/Reveal'
 import { Container, Section, SectionHeader, type SectionTone } from '@/components/ui'
 import type { StepItem } from '@/features/content/types'
 import { StickyStepsStory } from './_internal/sticky-steps-story'
@@ -30,7 +31,11 @@ export function StickySteps({ eyebrow, title, intro, steps, tone = 'alt' }: Stic
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <SectionHeader eyebrow={eyebrow} title={title} lead={intro} />
+        {/* Only the header reveals: the story is `position: sticky` and scroll-driven, and a
+            transformed ancestor would break both. */}
+        <Reveal>
+          <SectionHeader eyebrow={eyebrow} title={title} lead={intro} />
+        </Reveal>
         <StickyStepsStory steps={steps} />
       </Container>
     </Section>

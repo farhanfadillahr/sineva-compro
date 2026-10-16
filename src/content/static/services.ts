@@ -50,7 +50,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'en',
     title: 'AI Build',
     summary:
-      'For businesses that know their problem. We build an AI solution that fits how your team already works.',
+      'For businesses that know their problem. We build an AI solution that fits how your team works and take it from prototype to production ready.',
     icon: 'puzzle-plug',
     pose: 'building-blocks',
     problems: [
@@ -60,8 +60,8 @@ export const serviceDetails: readonly ServiceDetail[] = [
       },
       { title: 'No time to build', body: 'Your team is busy running the business.' },
       {
-        title: 'Hard to trust',
-        body: 'You want to see it work on real tasks before you rely on it.',
+        title: 'Stuck at prototype',
+        body: 'You have a demo that works, but it is not ready for daily use yet.',
       },
       {
         title: 'Scattered systems',
@@ -72,13 +72,14 @@ export const serviceDetails: readonly ServiceDetail[] = [
       'A working AI solution for one clear task',
       'Testing on your real work',
       'A connection to the systems you already use, where it makes sense',
+      'A production-ready release your team can rely on every day',
       'Simple notes your team can follow',
     ],
     process: [
       step('Scope', 'We agree on one clear task and what a good result looks like.'),
       step('Build', 'We build a first version in small steps and show you as we go.'),
       step('Test', 'We try it on your real work and fix what we find.'),
-      step('Hand over', 'We give your team simple notes and stay available for questions.'),
+      step('Launch', 'We take it from prototype to production and hand over simple notes.'),
     ],
     tools: ['Language models', 'Workflow automation', 'Chat interfaces', 'Web apps'],
     ctaLabel: 'Plan my AI project',

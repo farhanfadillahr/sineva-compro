@@ -136,8 +136,9 @@ export function BlogPostView({ model, labels, siteUrl, linkComponent }: BlogPost
                 document={post.body}
                 reservedIds={BLOG_RESERVED_IDS}
                 linkComponent={linkComponent}
+                reveal
               />
-              <div
+              <Reveal
                 id={SHARE_ID}
                 className="mt-12 flex flex-col gap-4 pt-8 [border-top:var(--border-hairline)]"
               >
@@ -154,7 +155,7 @@ export function BlogPostView({ model, labels, siteUrl, linkComponent }: BlogPost
                     copyFailed: article.copyFailed,
                   }}
                 />
-              </div>
+              </Reveal>
             </div>
           </div>
         </Container>

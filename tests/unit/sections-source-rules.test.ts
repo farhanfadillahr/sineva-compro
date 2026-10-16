@@ -96,6 +96,8 @@ describe('section blocks are server components unless they need the browser', ()
   // allowed to opt in, and the public blocks themselves stay server components.
   const CLIENT_ALLOWED = new Set([
     'sections/_internal/hero-entrance.tsx',
+    // the phone chat plays as a live conversation while in view
+    'sections/_internal/chat-bubbles.tsx',
     'sections/_internal/faq-accordion.tsx',
     'sections/_internal/sticky-steps-story.tsx',
     'sections/sticky-cta-bar.tsx',

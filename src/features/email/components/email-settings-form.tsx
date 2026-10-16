@@ -111,6 +111,32 @@ export function EmailSettingsForm({
                   </label>
                 ))}
               </fieldset>
+              {!managed ? (
+                <div className={s.panel}>
+                  <button
+                    type="button"
+                    className={s.button}
+                    onClick={() =>
+                      setValue({
+                        ...current,
+                        mode: 'smtp',
+                        smtpHost: 'smtp.gmail.com',
+                        smtpPort: 465,
+                        smtpSecurity: 'tls',
+                        smtpUsername: current.smtpUsername || current.fromEmail,
+                      })
+                    }
+                  >
+                    Isi preset Gmail
+                  </button>
+                  <p className={s.muted}>
+                    Gmail: username adalah alamat Gmail lengkap, password adalah App Password Google
+                    (aktifkan Verifikasi 2 Langkah), email pengirim harus alamat Gmail itu atau
+                    alias &quot;Send mail as&quot;. Batas sekitar 500 email per hari (Workspace
+                    2.000).
+                  </p>
+                </div>
+              ) : null}
               {current.mode === 'smtp' ? (
                 <div className={s.panel}>
                   <div className={s.row}>

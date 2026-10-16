@@ -1,6 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { cx } from '@/components/ui/cx'
-import type { MockupBubble } from '@/features/content/types'
 
 type PhoneFrameSize = 'sm' | 'md' | 'lg'
 
@@ -53,9 +52,28 @@ export function PhoneFrame({ size = 'md', chrome, className, children, ...rest }
         data-slot="phone-screen"
         className="absolute top-[4.1%] right-[4.6%] bottom-[2.3%] left-[4.6%] flex flex-col overflow-hidden rounded-[9.6%/4.6%] bg-canvas-alt"
       >
+        {/* Status bar on both sides of the island, then the chat header right under it: the screen
+            reads as a real phone from the very top instead of a white strip above the chat. */}
+        <div
+          data-slot="status-bar"
+          className="flex items-center justify-between bg-surface px-[8cqw] pt-[4.2cqw] pb-[1.5cqw]"
+        >
+          <span className="flex items-end gap-[0.6cqw]">
+            {[1.4, 2, 2.6, 3.2].map((h) => (
+              <span
+                key={h}
+                className="w-[0.9cqw] rounded-[0.3cqw] bg-text"
+                style={{ height: `${h}cqw` }}
+              />
+            ))}
+          </span>
+          <span className="flex h-[3cqw] w-[6cqw] items-center rounded-[0.9cqw] border-[0.35cqw] border-text p-[0.4cqw]">
+            <span className="h-full w-[70%] rounded-[0.4cqw] bg-text" />
+          </span>
+        </div>
         <div
           data-slot="chat-header"
-          className="flex items-center gap-[2.6cqw] border-b border-border bg-surface px-[5cqw] pt-[11.5cqw] pb-[3cqw]"
+          className="flex items-center gap-[2.6cqw] border-b border-border bg-surface px-[5cqw] pt-[3cqw] pb-[2.6cqw]"
         >
           {/* The brand symbol as a CSS mask, not an <img>: the mockup must not add images to the
               cards that tests and readers count as content. */}
@@ -76,7 +94,7 @@ export function PhoneFrame({ size = 'md', chrome, className, children, ...rest }
         </div>
         <div
           data-slot="chat-messages"
-          className="flex min-h-0 flex-1 flex-col justify-start gap-[2.6cqw] px-[4.5cqw] py-[4.5cqw]"
+          className="flex min-h-0 flex-1 flex-col justify-start gap-[2.6cqw] px-[4.5cqw] pt-[3.4cqw] pb-[4cqw]"
         >
           {chrome ? (
             <span className="self-center rounded-full bg-surface px-[2.6cqw] py-[0.8cqw] text-[clamp(8px,2.6cqw,10px)] text-text-secondary">
@@ -84,19 +102,6 @@ export function PhoneFrame({ size = 'md', chrome, className, children, ...rest }
             </span>
           ) : null}
           {children}
-          {/* Sino is still typing: makes the screen read as a live chat rather than a static card. */}
-          <span
-            data-slot="chat-typing"
-            className="flex gap-[1cqw] self-start rounded-[4.5cqw] rounded-es-[1.2cqw] bg-surface px-[3.6cqw] py-[3cqw] shadow-xs"
-          >
-            {[0, 1, 2].map((dot) => (
-              <span
-                key={dot}
-                className="size-[1.6cqw] animate-pulse rounded-full bg-text-secondary/60"
-                style={{ animationDelay: `${dot * 180}ms` }}
-              />
-            ))}
-          </span>
         </div>
         <div
           data-slot="chat-composer"
@@ -123,29 +128,4 @@ export function PhoneFrame({ size = 'md', chrome, className, children, ...rest }
   )
 }
 
-type ChatBubblesProps = ComponentProps<'div'> & {
-  bubbles: readonly Pick<MockupBubble, 'from' | 'text'>[]
-}
-
-/** Chat bubbles for a phone screen: the user's request on the right, Sino's answer on the left. */
-export function ChatBubbles({ bubbles, className, ...rest }: ChatBubblesProps) {
-  return (
-    <div {...rest} className={cx('flex flex-col gap-[2.6cqw]', className)}>
-      {bubbles.map((bubble, index) => (
-        <div
-          key={index}
-          data-slot="chat-bubble"
-          data-from={bubble.from}
-          className={cx(
-            'max-w-[82%] rounded-[4.5cqw] px-[3.6cqw] py-[2.4cqw] text-[clamp(10px,3.5cqw,13px)] leading-snug shadow-xs',
-            bubble.from === 'user'
-              ? 'self-end rounded-ee-[1.2cqw] bg-action-primary text-text-inverse'
-              : 'self-start rounded-es-[1.2cqw] bg-surface text-text',
-          )}
-        >
-          {bubble.text}
-        </div>
-      ))}
-    </div>
-  )
-}
+export { ChatBubbles } from './chat-bubbles'

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Button, Container, Eyebrow, Section, Split } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
 import { AnimatedPose } from '@/components/motion/animated-pose'
+import { Parallax } from '@/components/motion/Parallax'
 import type { MediaAsset, MockupBubble } from '@/features/content/types'
 import { HeroEntrance } from './_internal/hero-entrance'
 import { MediaFrame } from './_internal/media-frame'
@@ -154,13 +155,20 @@ export function HeroSplit({
 
   const visualMotion = { 'data-hero-delay': 200, 'data-hero-from': 'scale' } as const
 
+  // Shared by the still hero and the canvas hero, which differ only in whether it drifts.
+  const poster = image ? (
+    <SectionImage image={image} priority sizes={SIZES} className="size-full object-contain" />
+  ) : null
+
   let visual: ReactNode
   if (variant === 'mockup') {
     visual = (
       <div {...visualMotion} className="relative mx-auto w-full max-w-md py-6">
-        <PhoneFrame chrome={mockup?.chrome}>
-          <ChatBubbles bubbles={mockup?.bubbles ?? []} />
-        </PhoneFrame>
+        <Parallax mode="top">
+          <PhoneFrame chrome={mockup?.chrome}>
+            <ChatBubbles bubbles={mockup?.bubbles ?? []} />
+          </PhoneFrame>
+        </Parallax>
         {(mockup?.chips ?? []).slice(0, CHIP_POSITIONS.length).map((chip, index) => (
           <UiChip
             key={index}
@@ -174,11 +182,20 @@ export function HeroSplit({
     )
   } else if (variant === 'scene') {
     visual = (
-      <MediaFrame {...visualMotion}>
-        {image ? (
-          <SectionImage image={image} priority={priority} sizes={SIZES} className="h-auto w-full" />
-        ) : null}
-      </MediaFrame>
+      // The whole frame drifts, not the image inside it: the frame clips, so a moving image
+      // would expose an empty strip at its edge.
+      <Parallax mode="top" {...visualMotion}>
+        <MediaFrame>
+          {image ? (
+            <SectionImage
+              image={image}
+              priority={priority}
+              sizes={SIZES}
+              className="h-auto w-full"
+            />
+          ) : null}
+        </MediaFrame>
+      </Parallax>
     )
   } else {
     // sino-still and sino-canvas share the stage; the canvas slot is the only difference.
@@ -192,12 +209,16 @@ export function HeroSplit({
           priority ? (
             // The LCP poster stays a plain priority image: a reveal would delay the paint the
             // metric measures. HeroEntrance already animates the whole visual in.
-            <SectionImage
-              image={image}
-              priority
-              sizes={SIZES}
-              className="size-full object-contain"
-            />
+            // The poster drifts with a transform only (no reveal, no delay), except under the live
+            // canvas: the rig has its own scroll motion and a drifting poster would disagree
+            // with it.
+            variant === 'sino-canvas' ? (
+              poster
+            ) : (
+              <Parallax mode="top" className="size-full">
+                {poster}
+              </Parallax>
+            )
           ) : (
             <AnimatedPose image={image} sizes={SIZES} fit="contain" className="size-full" />
           )

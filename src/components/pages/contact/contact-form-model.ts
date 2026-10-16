@@ -140,3 +140,19 @@ export function toContactFields(
     message: values.message.trim(),
   }
 }
+
+/** Message keys of the option labels. The stored value stays the builder's own constant. */
+export const SEGMENT_MESSAGE_KEYS = {
+  'Small business': 'smallBusiness',
+  Company: 'company',
+  Startup: 'startup',
+  Other: 'other',
+} as const satisfies Record<ContactSegment, string>
+
+export const INTEREST_MESSAGE_KEYS = {
+  'AI Discovery': 'aiDiscovery',
+  'AI Build': 'aiBuild',
+  'AI Enablement': 'aiEnablement',
+  'AI Agents product': 'aiAgents',
+  'Not sure yet': 'notSure',
+} as const satisfies Record<ContactInterest, string>

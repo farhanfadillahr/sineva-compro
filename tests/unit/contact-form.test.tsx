@@ -7,7 +7,7 @@ import {
   ContactFormWithPrefill,
   type ContactFormProps,
 } from '@/components/pages/contact/contact-form'
-import { siteSettings } from '../fixtures/public/site-settings'
+import { siteSettings } from '../../src/content/static/site-settings'
 import en from '../../messages/en.json'
 import { criticalAxeViolations } from './sections-test-utils'
 
@@ -335,7 +335,10 @@ describe('valid submit', () => {
     act(() => form.requestSubmit())
     act(() => form.requestSubmit())
     expect(open).toHaveBeenCalledTimes(1)
-    expect(submit().getAttribute('aria-busy')).toBe('true')
+    // While busy the name gains the hidden "Opening WhatsApp" note, so match by prefix.
+    const busy = screen.getByRole('button', { name: /^Send message/ })
+    expect(busy.getAttribute('aria-busy')).toBe('true')
+    expect((busy as HTMLButtonElement).disabled).toBe(true)
   })
 
   it('sends nothing to a server: no fetch, no form action, no stored answers', async () => {

@@ -84,7 +84,7 @@ describe('validateContactForm', () => {
     for (const budget of BUDGET_KEYS) {
       expect(validateContactForm(withValues({ budget })).budget).toBeUndefined()
     }
-    expect(validateContactForm(withValues({ budget: 'a lot' })).budget).toBe('invalid')
+    expect(validateContactForm(withValues({ budget: 'a lot' as never })).budget).toBe('invalid')
   })
 
   it('requires a message of at least 20 characters after trimming', () => {

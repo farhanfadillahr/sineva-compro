@@ -132,6 +132,29 @@ describe('markup and server render', () => {
   })
 })
 
+describe('media slot', () => {
+  it('draws the given media in the lift layer instead of the still, so it reveals and lifts with it', () => {
+    const { container, poseEl } = mount({ media: <video data-testid="loop" /> })
+    expect(container.querySelector('img')).toBeNull()
+    const video = container.querySelector('video')!
+    expect(poseEl.contains(video)).toBe(true)
+    // The lift layer is the one that carries --pose-lift (hover and focus).
+    expect(video.parentElement!.className).toMatch(/lift/)
+  })
+
+  it('still reveals on scroll and lifts on hover with media inside', () => {
+    const { hostEl, poseEl } = mount({ media: <video /> })
+    expect(poseEl.getAttribute('data-reveal')).toBe('hidden')
+    fireEvent.pointerEnter(hostEl, { pointerType: 'mouse' })
+    expect(poseEl.getAttribute('data-active')).toBe('true')
+  })
+
+  it('renders with media alone: a null still does not hide it', () => {
+    const { container } = render(<AnimatedPose image={null} media={<video />} sizes="50vw" />)
+    expect(container.querySelector('video')).not.toBeNull()
+  })
+})
+
 describe('reveal on scroll', () => {
   it('starts hidden below the fold, reveals when it enters the viewport, and plays only once', () => {
     const { poseEl } = mount()

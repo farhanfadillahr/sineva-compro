@@ -305,7 +305,9 @@ export function DesktopNav({
       }}
       onPointerLeave={onWrapperPointerLeave}
     >
-      <nav aria-label={t('primaryLabel')}>
+      {/* The nav, not the wrapper, takes the header's edge offset: the panel inside the wrapper
+          is positioned against the bar and must not move with it. */}
+      <nav aria-label={t('primaryLabel')} className={styles.edgeStart}>
         <ul className={cx(styles.navList, 'm-0 flex list-none items-center gap-1 p-0')}>
           {menuTriggers.map((id) => (
             <li

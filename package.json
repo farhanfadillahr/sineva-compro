@@ -26,9 +26,16 @@
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "test:prepare": "tsx scripts/test-runtime.ts prepare",
     "test:server": "tsx scripts/test-runtime.ts server",
-    "db:seed": "tsx scripts/seed/index.ts"
+    "db:seed": "tsx scripts/seed/index.ts",
+    "storage:setup": "tsx scripts/storage/cli.ts setup",
+    "storage:bootstrap": "tsx scripts/storage/cli.ts bootstrap",
+    "storage:check": "tsx scripts/storage/cli.ts check",
+    "storage:native": "tsx scripts/storage/native.ts",
+    "test:storage": "vitest run --config vitest.storage.config.mts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1152.0",
+    "@aws-sdk/s3-request-presigner": "3.1152.0",
     "@better-auth/drizzle-adapter": "1.7.7",
     "better-auth": "1.7.7",
     "dotenv": "16.6.1",

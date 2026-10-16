@@ -46,7 +46,9 @@ Structure (desktop ≥ 1024 px):
 
 - Height 72 px, container `--container-max` 1360, padding x 32.
 - Logo: stacked logo is too tall for the bar, use **symbol + wordmark horizontal lockup** (needs an export, see [README.md](README.md) open items) at 28 px height. Until it exists: symbol 28 px + "Sineva" set in Plus Jakarta Sans 600 20 px, tracking -0.02em, `--teal-900`.
-- Behaviour (transparent at top, hide on scroll down, blurred white when scrolled, morphing dropdown): [motion.md](motion.md) §5.
+- Two looks. At the top of the page (scrollY ≤ 8 px) it is the regular full-width bar described above, transparent. Below the top it becomes a floating pill: centred, 12 px from the top, max-width 1100 px (16 px gutters on mobile), radius `--radius-lg`, `--surface-nav` + `--blur-nav`, hairline border, `--shadow-md`, 60 px tall. The pill is hidden while scrolling down, shows on any upward scroll, and hides again after 2.5 s without scrolling, unless the pointer is over it, a dropdown or the mobile menu is open, or keyboard focus is inside. Returning to the top morphs it back into the regular bar. Full rules, timings and the state machine: [motion.md](motion.md) §5.
+- The 72 px height above is the slot the header reserves in the page flow (`--header-height`); the floating pill sits inside it, so it never moves page content. The burger stays inside the pill on mobile.
+- Dropdowns morph between triggers as before ([motion.md](motion.md) §5, desktop dropdown).
 - Dropdown panel: white, radius `--radius-lg`, border `--border-hairline`, shadow `--shadow-md`, padding 8. Item = 36 px icon tile (`--color-surface-tint`, radius 10, teal icon) + title (15 px 600) + description (13 px `--color-text-tertiary`). Item padding 12, radius 12, hover bg `--ink-50`.
 - Product panel: one item per capability group + promo card "Join the waitlist".
 - Services panel: AI Discovery, AI Build, AI Enablement + "See all services".

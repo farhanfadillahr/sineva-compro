@@ -6,7 +6,7 @@ import { FieldOptionsContext, SchemaField } from '@/components/admin/cms/schema-
 import { InlineBanner } from '@/components/admin/feedback'
 import { LocaleTabs } from '@/components/admin/forms'
 import { Badge } from '@/components/admin/primitives'
-import { emptyValue } from '../../cms/fields'
+import { canonicalJson, emptyValue } from '../../cms/fields'
 import {
   documentConfigs,
   documentSlugField,
@@ -28,7 +28,7 @@ export function documentStatus(local: DocumentItem['locales'][string]) {
   if (!local.published) return { label: 'Draf', tone: 'warning' as const }
   const changed =
     local.publishedSlug !== local.draftSlug ||
-    JSON.stringify(local.published) !== JSON.stringify(local.draft)
+    canonicalJson(local.published) !== canonicalJson(local.draft)
   return changed
     ? { label: 'Terbit, ada draf baru', tone: 'brand' as const }
     : { label: 'Terbit', tone: 'success' as const }

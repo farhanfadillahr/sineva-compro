@@ -37,6 +37,11 @@ export const auditFields = {
     'analytics',
     'verificationToken',
     'seo',
+    'brand',
+    'contact',
+    'leadRouting',
+    'features',
+    'verification',
   ],
   email_settings: [
     'mode',

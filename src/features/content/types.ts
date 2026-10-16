@@ -109,6 +109,8 @@ export type SiteSettingsDTO = Readonly<{
   locale: ContentLocale
   brand: Readonly<{
     siteName: string
+    /** Working product name (Q9), stored as data so a rename is one change. */
+    productName: string
     defaultOgImage: MediaAsset | null
     /** Organisation logo for JSON-LD. */
     logo: MediaAsset | null

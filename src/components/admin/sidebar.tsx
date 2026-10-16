@@ -15,7 +15,14 @@ import {
 } from 'lucide-react'
 import type { AdminRole } from '@/features/auth/types'
 import s from './admin.module.css'
-type Item = { label: string; href?: string; icon?: LucideIcon; children?: Item[] }
+type Item = {
+  label: string
+  href?: string
+  icon?: LucideIcon
+  children?: Item[]
+  /** Admin only, inside a group that Editors can see. */
+  admin?: boolean
+}
 const pages = [
   'Beranda',
   'Produk',
@@ -78,12 +85,12 @@ const groups: { label: string; admin?: boolean; items: Item[] }[] = [
   },
   {
     label: 'Pengaturan',
-    admin: true,
     items: [
+      // Editors edit contact, WhatsApp templates and social links (CPR-29).
       { label: 'Situs', href: '/admin/settings', icon: Settings },
-      { label: 'SEO', href: '/admin/settings/seo', icon: FileText },
-      { label: 'Email', href: '/admin/settings/email', icon: Inbox },
-      { label: 'Redirect', href: '/admin/redirects', icon: List },
+      { label: 'SEO', href: '/admin/settings/seo', icon: FileText, admin: true },
+      { label: 'Email', href: '/admin/settings/email', icon: Inbox, admin: true },
+      { label: 'Redirect', href: '/admin/redirects', icon: List, admin: true },
     ],
   },
   {
@@ -117,7 +124,9 @@ export function Sidebar({
   pathname: string
   onNavigate?: () => void
 }) {
-  const visible = groups.filter((g) => !g.admin || role === 'admin')
+  const visible = groups
+    .filter((g) => !g.admin || role === 'admin')
+    .map((g) => ({ ...g, items: g.items.filter((i) => !i.admin || role === 'admin') }))
   const trail = activeBranches(
     visible.flatMap((g) => g.items),
     pathname,

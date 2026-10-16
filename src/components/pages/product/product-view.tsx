@@ -133,12 +133,13 @@ export function ProductView({
         primaryCta={heroCta}
         ctaId={HERO_CTA_ID}
         extra={waitlistBlock}
-        mockup={page.hero.mockup}
+        mockup={{ ...page.hero.mockup, chrome: labels.phone }}
         linkComponent={comingSoon ? linkComponent : mainLinkComponent}
       />
     ),
     capabilities: (tone) => (
       <TaskCardGrid
+        phoneChrome={labels.phone}
         title={page.capabilities.title}
         intro={page.capabilities.intro}
         // These task cards show their request and reply on the shared 3D phone mockup. Sino's
@@ -160,7 +161,7 @@ export function ProductView({
             ...step,
             screen:
               bubbles.length > 0 ? (
-                <PhoneFrame size="md">
+                <PhoneFrame size="md" chrome={labels.phone}>
                   <ChatBubbles bubbles={bubbles} />
                 </PhoneFrame>
               ) : undefined,

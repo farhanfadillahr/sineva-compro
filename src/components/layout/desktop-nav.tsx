@@ -32,12 +32,6 @@ const HOVER_LEAVE_MS = 200
 const PANEL_ID = 'site-nav-panel'
 
 const menuTriggers: readonly MenuId[] = ['product', 'services']
-const plainLinks = [
-  { key: 'work', href: '/work' },
-  { key: 'blog', href: '/blog' },
-  { key: 'about', href: '/about' },
-] as const
-
 // Each panel has a fixed width so the morph can interpolate to it; only its height is measured.
 const contentWidth: Record<MenuId, string> = {
   product: 'w-[36rem]',
@@ -341,7 +335,7 @@ export function DesktopNav({
               </button>
             </li>
           ))}
-          {plainLinks.map(({ key, href }) => (
+          {model.plainLinks.map(({ key, href }) => (
             <li
               key={key}
               className={styles.navItem}

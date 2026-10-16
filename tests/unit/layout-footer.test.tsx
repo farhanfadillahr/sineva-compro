@@ -178,7 +178,7 @@ describe('SiteFooter site settings', () => {
   it('links the contact email and shows business hours only when set', () => {
     renderFooter()
     expect(
-      screen.getByRole('link', { name: fixtureSiteSettings.contact.email }).getAttribute('href'),
+      screen.getByRole('link', { name: fixtureSiteSettings.contact.email! }).getAttribute('href'),
     ).toBe(`mailto:${fixtureSiteSettings.contact.email}`)
     expect(screen.getByText(fixtureSiteSettings.contact.businessHours!)).toBeTruthy()
   })

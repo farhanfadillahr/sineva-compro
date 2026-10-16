@@ -43,15 +43,18 @@ const CLOSE_REDUCED_MS = 150
 export function SiteHeader({
   services,
   whatsapp,
+  showWork = true,
 }: {
   services: readonly NavService[]
   whatsapp: WhatsAppSettings | null
+  /** `false` hides the Work link (desktop and mobile) while there are no projects to list. */
+  showWork?: boolean
 }) {
   const t = useTranslations('Nav')
   const pathname = usePathname()
   const reduced = usePrefersReducedMotion()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
-  const model = useNavModel(services)
+  const model = useNavModel(services, { showWork })
   const whatsappHref = useWhatsAppHref(whatsapp, services)
 
   const [dropdownOpen, setDropdownOpen] = useState(false)

@@ -12,7 +12,11 @@ export type MenuLink = Readonly<{
   icon: IconKey
 }>
 
+/** Top-level links that are plain pages, in display order. Labels come from `Nav.<key>`. */
+export type PlainLink = Readonly<{ key: 'work' | 'blog' | 'about'; href: string }>
+
 export type NavModel = Readonly<{
+  plainLinks: readonly PlainLink[]
   product: Readonly<{
     items: readonly MenuLink[]
     promo: Readonly<{ href: string; eyebrow: string; title: string; description: string }>
@@ -28,6 +32,12 @@ export type NavModel = Readonly<{
 const PRODUCT_HREF = '/products/ai-agents'
 const SERVICES_HREF = '/services'
 
+const plainLinks = [
+  { key: 'work', href: '/work' },
+  { key: 'blog', href: '/blog' },
+  { key: 'about', href: '/about' },
+] as const satisfies readonly PlainLink[]
+
 const productItems = [
   { key: 'customerChat', icon: 'chat-bubble' },
   { key: 'socialMedia', icon: 'megaphone' },
@@ -39,11 +49,18 @@ const productItems = [
 /**
  * Navigation content for both the desktop dropdowns and the mobile accordions. Product items are
  * UI chrome from messages; the service entries come from the content source so a renamed or
- * added service shows up without a code change.
+ * added service shows up without a code change. The plain links are filtered here so the desktop
+ * nav and the mobile menu can never disagree about Work.
  */
-export function useNavModel(services: readonly NavService[]): NavModel {
+export function useNavModel(
+  services: readonly NavService[],
+  // Work is a link to a page that lists real projects. While there are none, the link and the page
+  // would only show an empty state, so the layout turns it off. Defaults to shown.
+  { showWork = true }: { showWork?: boolean } = {},
+): NavModel {
   const t = useTranslations('Nav')
   return {
+    plainLinks: plainLinks.filter((link) => showWork || link.key !== 'work'),
     product: {
       items: productItems.map(({ key, icon }) => ({
         key,

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, Search, ExternalLink } from 'lucide-react'
 import type { Principal } from '@/features/auth/types'
 import { Sidebar } from './sidebar'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Drawer, DropdownMenu } from './overlays'
 import { Avatar } from './display'
 import { Badge } from './primitives'
@@ -132,6 +133,10 @@ export function AdminShell({
                 <Search size={16} />
               </button>
             )}
+            <ThemeToggle
+              labels={{ toDark: 'Ganti ke mode gelap', toLight: 'Ganti ke mode terang' }}
+              className={s.button}
+            />
             <a
               href="/"
               target="_blank"

@@ -18,6 +18,7 @@ import { buildSiteJsonLd } from '@/lib/site-json-ld'
 import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
+import { ThemeScript } from '@/components/theme/theme-script'
 import '../../globals.css'
 
 // SITE_URL and SITE_INDEXABLE are read when this module's metadata is generated (at build for
@@ -80,6 +81,7 @@ export default async function PublicLayout({
       suppressHydrationWarning
     >
       <head>
+        <ThemeScript />
         <LogoIntroGateScript
           enabled={settings?.features.enableLogoIntro ?? false}
           force={process.env.LOGO_INTRO_FORCE === '1'}

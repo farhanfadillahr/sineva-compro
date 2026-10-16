@@ -28,6 +28,10 @@
     sans-serif;
   color-scheme: light;
 }
+:global(:root[data-theme='dark']) .root {
+  --admin-warning: #f7b267;
+  color-scheme: dark;
+}
 .root *,
 .root *::before,
 .root *::after {

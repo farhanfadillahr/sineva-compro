@@ -19,6 +19,7 @@
 | Rev. 2 | 14 October 2026 | Headless CMS removed; the Founder chose a custom admin inside Next.js |
 | Rev. 3 | 15 October 2026 | New positioning (AI consulting, two pillars), brand name "Sineva", English default and only launch locale (i18n-ready), light theme only, documented design system, SeaweedFS replaces Cloudflare R2, off-host backups, copy rules. See the changelog below |
 | Rev. 3.1 | 16 October 2026 | Phase 1 launches static: no CMS, no stored leads. See the [Rev. 3.1 note](#rev-31-note-phase-1-static-launch) |
+| Rev. 4 | 16 October 2026 | Founder decision: light **and dark** theme on the public site and the admin (first visit follows the system, toggle in the header), and Indonesian (`id`) enabled next to English. Replaces the light-only and English-only rules of Rev. 3 (FR-GLB-01, FR-GLB-05, D10; FR-I18N in the locale change) |
 
 ### Rev. 3 changelog
 
@@ -175,11 +176,11 @@ Primary navigation: Product, Services, Work, Blog, About, plus the CTA. Contact 
 Each requirement has an ID so it can be referenced from Linear tickets. Section order and patterns follow [page-patterns.md](../design/page-patterns.md); copy follows [copywriting.md](../design/copywriting.md).
 
 ### 7.1 Global elements
-- **FR-GLB-01: Header.** Logo, navigation (**Product, Services, Work, Blog, About**), and the CTA button **Book a free consultation** linking to the Contact page. There is **no theme toggle**. A language switcher slot exists but is **hidden while only one locale is enabled** (FR-I18N-03). At widths ≤ 1024 px the navigation becomes a mobile menu with a bottom action bar (primary CTA and WhatsApp). Scroll behaviour is specified in [motion.md](../design/motion.md) §5.
+- **FR-GLB-01: Header.** Logo, navigation (**Product, Services, Work, Blog, About**), and the CTA button **Book a free consultation** linking to the Contact page. A **theme toggle** (light/dark, Rev. 4) sits in the header and the mobile menu. A language switcher slot exists but is **hidden while only one locale is enabled** (FR-I18N-03). At widths ≤ 1024 px the navigation becomes a mobile menu with a bottom action bar (primary CTA and WhatsApp). Scroll behaviour is specified in [motion.md](../design/motion.md) §5.
 - **FR-GLB-02: Floating WhatsApp button** on all public pages. The prefilled message follows the originating page (§8.1). It sits above the sticky CTA bar (FR-GLB-08) when that bar is visible.
 - **FR-GLB-03: Footer.** Company summary, navigation, list of services, contact (email, WhatsApp, address), legal data, social media, Privacy Policy link, and copyright (`© 2026 Sineva`). Legal data and address are **hidden while their fields are empty in Site Settings**.
 - **FR-GLB-04: 404 page** in every enabled locale, with links to Home, Services, and Contact.
-- **FR-GLB-05: Light theme only in v1.** Tokens are split into primitive and semantic layers ([tokens.md](../design/tokens.md)) so dark mode can be added later by swapping semantic values only (post-launch backlog). There is no theme toggle and no `prefers-color-scheme` handling in v1. The admin (`/admin`) uses its own custom UI on the same tokens; admin theming is not a v1 requirement.
+- **FR-GLB-05: Light and dark theme (Rev. 4).** The first visit follows the operating system (`prefers-color-scheme`); the visitor's choice is stored on the device and wins afterwards. The theme is set before the first paint (no flash). Dark values swap only the semantic token layer ([tokens.md](../design/tokens.md) §1.5) and meet WCAG AA. The admin (`/admin`) follows the same theme with its own toggle in the top bar.
 - **FR-GLB-06: First-visit logo intro** (Lottie, [motion.md](../design/motion.md) §3.1):
   - Plays **once per session**, on the first page load only (sessionStorage flag wrapped in try/catch), never on client-side navigation.
   - Total duration **≤ 1.6 s**, **skippable** by any key press, scroll, or click, and never waits for the network.
@@ -441,7 +442,7 @@ The last two versions of Chrome, Safari (macOS and iOS), Firefox, Edge, and Chro
 
 ### 14.1 Stack
 - **Application:** Next.js (App Router) + TypeScript; the public website and the custom admin live in one modular monolith application. No headless CMS.
-- **Styling:** Tailwind CSS v4 with the design tokens and component specs in [docs/design/README.md](../design/README.md): Plus Jakarta Sans and Geist Mono through `next/font`, GSAP 3.15 + ScrollTrigger for scroll motion, lottie-web 5.13 (light build) for Lottie animations, and three 0.186 for the Sino mascot (loaded on demand). Light theme only in v1.
+- **Styling:** Tailwind CSS v4 with the design tokens and component specs in [docs/design/README.md](../design/README.md): Plus Jakarta Sans and Geist Mono through `next/font`, GSAP 3.15 + ScrollTrigger for scroll motion, lottie-web 5.13 (light build) for Lottie animations, and three 0.186 for the Sino mascot (loaded on demand). Light and dark theme (Rev. 4).
 - **i18n:** next-intl for routing (`localePrefix: 'as-needed'`) and interface text; content translations are stored per locale in the application database.
 - **Database:** PostgreSQL, with Drizzle ORM + node-postgres for data access and reviewed SQL migrations.
 - **Authentication:** Better Auth for password/session; Admin/Editor policy, operator bootstrap, and account lockout are implemented and tested by the application. Public signup is closed.
@@ -547,7 +548,7 @@ Ticket title format: **`CPR-{number} | [MODULE] Action`**. `CPR-{number}` is ass
 | D7 | Umami without cookies, no cookie banner | GA4 + cookie banner |
 | D8 (Rev. 2) | Layout fixed in code; content in the database and edited through the custom admin | page builder blocks; repo content files as the only editor |
 | D9 | Linear: one team per product (`CPR`, `CBT`) | one team with a prefix in the title |
-| D10 (Rev. 3) | Light theme only in v1 (Rev. 3); dark mode deferred | light + dark at launch (Rev. 1/2) |
+| D10 (Rev. 4) | Light and dark theme (Rev. 4, Founder 16 October 2026); first visit follows the system | light only in v1 (Rev. 3) |
 | D11 | Drizzle for data/migrations and Better Auth for authentication; domain policy and admin UI owned by the application | Writing hashing/sessions in-house; building a separate admin service for v1 |
 | D12 (Rev. 3) | Sineva is an AI consulting company with two pillars (Product and Services); Web Development is part of AI Build, not standalone; brand name "Sineva" | Services-only company; product-only SaaS; Web Development as a standalone service; keeping the old brand name |
 | D13 (Rev. 3) | Media in self-hosted SeaweedFS (S3-compatible); database backups to a SeaweedFS bucket plus an off-host copy | Cloudflare R2; backups only on the same VPS |

@@ -11,6 +11,7 @@ import { AppLink } from './app-link'
 import { DesktopNav } from './desktop-nav'
 import { MenuIcon, WhatsAppIcon } from './icons'
 import { LanguageSwitcher } from './language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import styles from './layout.module.css'
 import { Logo } from './logo'
 import { DESKTOP_QUERY } from './media-queries'
@@ -138,6 +139,13 @@ export function SiteHeader({
           />
 
           <div className={cx(styles.edgeEnd, 'ml-auto hidden items-center gap-2 lg:flex')}>
+            <ThemeToggle
+              labels={{ toDark: t('themeToDark'), toLight: t('themeToLight') }}
+              className={cx(
+                'flex size-11 items-center justify-center rounded-sm text-text hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+                focusRing,
+              )}
+            />
             <LanguageSwitcher />
             {whatsappHref ? (
               <Button

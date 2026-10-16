@@ -1,6 +1,6 @@
 ## Design system (Rev. 3)
 
-Before any public UI, copy, animation or mascot work, read [`docs/design/README.md`](docs/design/README.md) and follow its reading order. Brand name is "Sineva". Public site: English, light theme only, no em dash or en dash in copy.
+Before any public UI, copy, animation or mascot work, read [`docs/design/README.md`](docs/design/README.md) and follow its reading order. Brand name is "Sineva". Public site: light and dark theme (PRD Rev. 4), no em dash or en dash in copy.
 
 ## Arah produk aktif
 

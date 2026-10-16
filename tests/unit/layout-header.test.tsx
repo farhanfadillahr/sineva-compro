@@ -62,9 +62,9 @@ describe('SiteHeader structure', () => {
     ).toBe('/contact')
   })
 
-  it('has no theme toggle and no language switcher while there is one locale', () => {
+  it('offers a theme toggle and no language switcher while there is one locale', () => {
     renderHeader()
-    expect(screen.queryByRole('button', { name: /theme|dark mode|light mode/i })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy()
     expect(document.querySelector('[data-slot="language-switcher"]')).toBeNull()
   })
 

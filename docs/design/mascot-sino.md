@@ -150,3 +150,26 @@ Limit: **at most one "large" Sino per viewport.** More than that feels crowded a
 - [ ] Hovering the 3D model (raycast hit) plays the reaction within 100 ms, respects the 4 s cooldown, and keeps eye contact while the pointer stays on the model
 - [ ] Scrolling through the hero drives the rig rotation, parallax and head pitch smoothly (no jank at 60 fps on desktop), transform only, with zero CLS
 - [ ] Every pose still uses `AnimatedPose`: reveal, idle float, scroll parallax, hover lift and tilt; static under reduced motion
+
+## 9. Implementation notes (Home hero canvas)
+
+Code lives in `src/components/mascot/`. Pure logic has no three.js import, so it is unit tested in node (`tests/unit/mascot-*.test.ts(x)`).
+
+| File | Role |
+|---|---|
+| `sino-state-machine.ts` | Triggers to commands (§5): cooldowns, dwell timer, once-per-session greeting, pause on hero out. Emits `play`, `effect`, `render` commands |
+| `sino-gate.ts` | Loading gate (§3): `window.load` plus idle slot, then the pure `evaluateSinoGate` over plain data |
+| `sino-math.ts` | Frame-rate independent lerp, look-at limits, scroll mapping, FPS probe |
+| `sino-runtime.ts` | The lazy chunk: three.js, GLTF and Draco loaders, mixer, raycast, scroll rig, disposal |
+| `sino-hero.tsx` | Client component in the canvas slot. Runs the gate, then `import('./sino-runtime')`; the poster crossfade is driven from here |
+
+Decisions and gotchas:
+
+- **Chunk boundary.** The runtime is a plain dynamic `import()` inside an effect, not `next/dynamic`, because it is a module that needs a host element, not a React component. A failed gate downloads no 3D code.
+- **Look-at, scroll overlay and brows are applied after `mixer.update`** and undone at the start of the next frame, so an overlay on a property no clip keys cannot compound. The look-at rotation is converted from the rig's frame into each bone's parent space, so the Blender bone axes are never assumed.
+- **Hover reaction.** `wave_small` does not exist in the GLB, so the reaction is `greet_wave` at 1.25x (`SINO_TIMING.reactionTimeScale`); if a `wave_small` clip appears it is used automatically. A reaction wave that is already playing when the pointer leaves finishes (at most 1.6 s); a `listening` loop started by the dwell stops at once.
+- **Parallax is clamped to the free space under the feet.** The 0.85x lag pushes the rig down inside the canvas, and the canvas edge crops it flat. The push stops at the measured margin (about 3 percent of the canvas height with the current stage), so the effect is small until the canvas slot gets headroom below the stage (for example a taller slot with the same poster aspect).
+- **Poster crossfade** reaches the poster `img` through `[data-slot="sino-stage"]`, because `HeroSplit` owns that element. It animates opacity only.
+- **CSP.** In three 0.186.1 `DRACOLoader` creates its workers from a blob URL (`URL.createObjectURL`, then `new Worker`), so `worker-src blob:` is needed besides `'wasm-unsafe-eval'` (verified in `examples/jsm/loaders/DRACOLoader.js`). The loader's default decoder URLs make the bundler emit unused copies of the decoder as static assets; they are never requested because `setDecoderPath('/draco/')` replaces them.
+- **GLB cache.** `/mascot/sino.glb` has no hash in its name yet, so it cannot be served `immutable` safely.
+- **Not implemented here:** loop V1 video for devices that fail the gate (the asset is CPR-70), and the submit states (`thinking`, `happy_success` on form success): only form field focus drives `listening`.

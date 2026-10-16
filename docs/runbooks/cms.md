@@ -161,3 +161,13 @@ cache tags is in `src/features/cms/invalidation.ts` (unit tested). All locales a
 rename refreshes the old and new item, lists and the sitemap follow the entity, and settings
 refresh every page through the layout. A failed or rolled-back write never reaches the refresh.
 Drafts and previews are never cached, so they never need a refresh.
+
+## Preview of unsaved pages and services (CPR-88)
+
+"Pratinjau perubahan" in the page and service editors stores the current form state (validated
+like a draft) in `preview_state` for ten minutes and opens `/admin/preview/state?token=...`. The
+token is HMAC-signed with `BETTER_AUTH_SECRET` and expires with the row. The route needs an admin
+session and a valid token, sets a short-lived httpOnly cookie, enables Draft Mode and opens the
+real page, which renders the state through the normal DTO path (no cache, `noindex`). Previews
+never write content and never refresh caches. Expired rows are removed whenever a preview is
+created.

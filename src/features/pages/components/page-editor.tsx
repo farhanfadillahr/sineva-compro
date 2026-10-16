@@ -7,6 +7,7 @@ import { DescriptionList } from '@/components/admin/display'
 import type { PageKey } from '../../content/types'
 import { editorSections, pageSchemas } from '../fields'
 import { savePageAction } from '../actions'
+import { PreviewButton } from '../../preview/components/preview-button'
 import s from '@/components/admin/admin.module.css'
 
 type LocaleState = {
@@ -53,7 +54,7 @@ export function PageEditor({
           action={savePageAction}
           initialValue={{ locale, data: locales[locale].data }}
           hidden={{ pageKey }}
-          side={() => (
+          side={(value) => (
             <div className={s.panel}>
               <DescriptionList
                 items={[
@@ -71,6 +72,7 @@ export function PageEditor({
                 ]}
               />
               <p className={s.muted}>Halaman tersimpan langsung tampil di situs.</p>
+              <PreviewButton kind="page" target={pageKey} locale={locale} data={value.data} />
             </div>
           )}
         >

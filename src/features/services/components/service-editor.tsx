@@ -8,6 +8,7 @@ import { emptyValue } from '../../cms/fields'
 import { serviceGlobalSchema, serviceLocaleSchema, serviceSlugField } from '../fields'
 import { deleteServiceAction, saveServiceAction } from '../actions'
 import type { ServiceItem } from '../service.server'
+import { PreviewButton } from '../../preview/components/preview-button'
 import s from '@/components/admin/admin.module.css'
 
 type Local = Record<string, unknown> & { slug: string }
@@ -69,6 +70,17 @@ export function ServiceEditor({
               ? 'Layanan tampil di situs. Matikan lalu simpan untuk menyembunyikannya.'
               : 'Layanan belum tampil di situs.'}
           </p>
+          {value.locales[locale] ? (
+            <PreviewButton
+              kind="service"
+              target={item?.id ?? 'new'}
+              locale={locale}
+              data={(() => {
+                const { slug, ...local } = value.locales[locale]!
+                return { slug, global: value.global, local }
+              })()}
+            />
+          ) : null}
         </div>
       )}
       secondaryActions={() =>

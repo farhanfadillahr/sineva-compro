@@ -283,6 +283,29 @@ describe('start', () => {
     expect(played()).toEqual(['idle'])
   })
 
+  it('waves, not launches, on the first canvas even when the GLB still carries the jet clips', async () => {
+    const played = () =>
+      vi
+        .mocked(THREE.AnimationAction.prototype.play)
+        .mock.instances.map((a) => (a as unknown as { _clip: { name: string } })._clip.name)
+    vi.spyOn(THREE.AnimationAction.prototype, 'play')
+    for (const name of ['jet_launch', 'jet_hover', 'jet_land']) {
+      rig.animations.push(
+        new THREE.AnimationClip(name, 1, [
+          new THREE.QuaternionKeyframeTrack(
+            'DEF-head.quaternion',
+            [0, 1],
+            [0, 0, 0, 1, 0, 0, 0, 1],
+          ),
+        ]),
+      )
+    }
+    window.sessionStorage.clear()
+    await start()
+    pump(2)
+    expect(played()).toEqual(['greet_wave'])
+  })
+
   it('caps the pixel ratio at 1.5 on a 3x screen', async () => {
     await start()
     expect(renderer().setPixelRatio).toHaveBeenCalledWith(1.5)

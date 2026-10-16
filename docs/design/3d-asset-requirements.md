@@ -147,6 +147,8 @@ The flat CSS phone frame in the Product hero and the capability cards looks stat
 
 **Approach: pre-rendered 3D frames + HTML screen + CSS 3D motion.**
 
+The phone GLB is available at `assets/phone/sineva-phone-source.glb` (89 KB, Draco compressed). The deployed frame is rendered from this GLB at `public/phone/sineva-phone-frame.avif` (13 KB, below the 60 KB D1 per-view budget). Its metal frame surrounds the display; `PhoneFrame` overlays a readable, localizable screen in HTML. Cards share this static render, so each one adds no WebGL context.
+
 | Option | Verdict |
 |---|---|
 | Realtime three.js phone per section | Rejected: a second WebGL context per page, extra 150 KB+ JS, GPU cost on mobile, and conflicts with the one-canvas rule |

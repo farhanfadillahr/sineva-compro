@@ -30,6 +30,13 @@ export const INTRO_TIMING = {
    * slow hydration) there is not enough runway before the hand-off, so the shell just fades.
    */
   latestStartMs: 800,
+  /**
+   * Latest navigation-start time at which the jetpack launch video may start (splash-launch.ts).
+   * Same clock as everything above. The clip is 1.1 s and Sino has left its frame after about
+   * 0.8 s, so a start at 900 ms still gets her airborne before the 1.6 s cap; later than that the
+   * video is dropped, never shown late.
+   */
+  launchDeadlineMs: 900,
 } as const
 
 /**

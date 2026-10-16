@@ -16,7 +16,7 @@ export const faq: readonly FaqEntry[] = [
   entry(
     ['home', 'product'],
     'What is Sino?',
-    'Sino is the friendly face of Sineva AI Agents. You ask for a task in plain words, and Sino helps you get it done.',
+    'Sino is a friendly companion for everyday work. Ask for a task in plain words, and Sino helps you work through it.',
   ),
   entry(
     ['home', 'services'],

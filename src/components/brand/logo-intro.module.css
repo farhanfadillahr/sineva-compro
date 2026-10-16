@@ -80,3 +80,55 @@
   /* Promoted only for the one-off flight; the whole node is removed right after. */
   will-change: transform;
 }
+
+/*
+ * Jetpack launch slot (splash-launch.ts). Sino stands at the lower centre, about 40 vh tall, in an
+ * out-of-flow box: nothing is reserved or reflowed, so it cannot shift layout. The box is empty
+ * until the clip is ready and is only filled by script, so a clip that never arrives leaves no
+ * trace. The clip is 3:4 (720 x 960).
+ */
+.launch {
+  position: absolute;
+  left: 50%;
+  bottom: 2vh;
+  height: 40vh;
+  height: 40svh;
+  aspect-ratio: 3 / 4;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.launch video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/*
+ * In the clip Sino ignites and climbs out of the top of her frame, which on a plain canvas would
+ * read as her being sliced by an invisible line. Instead she dissolves while she climbs, timed from
+ * the first played frame (the script sets data-playing on that event). Opacity only. Sino stands
+ * from 0 to about 0.4 s of the 1.1 s clip and has left the frame by about 0.8 s. This also covers
+ * a late start that the 1.6 s cap would cut off: she is already almost gone by then.
+ */
+.launch[data-playing] {
+  animation: launch-dissolve var(--dur-sino-launch) linear forwards;
+}
+
+@keyframes launch-dissolve {
+  0%,
+  35% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The gate already refuses to mark the document under reduced motion; this is the second lock. */
+@media (prefers-reduced-motion: reduce) {
+  .launch {
+    display: none;
+  }
+}

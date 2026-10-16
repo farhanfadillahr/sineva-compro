@@ -43,6 +43,13 @@
       "when": 1792153368185,
       "tag": "0005_cpr82_page_content",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792153737840,
+      "tag": "0006_cpr83_product_catalog",
+      "breakpoints": true
     }
   ]
 }

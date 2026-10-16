@@ -1,14 +1,16 @@
 import type { ComponentProps, ReactNode } from 'react'
+import Image from 'next/image'
 import { cx } from '@/components/ui/cx'
 import type { MockupBubble } from '@/features/content/types'
 
 type PhoneFrameSize = 'sm' | 'md' | 'lg'
 
-// Screen heights. `sm` fits a half-height bento tile, `lg` fills a 2x2 featured tile.
-const SCREEN_HEIGHT: Record<PhoneFrameSize, string> = {
-  sm: 'min-h-56',
-  md: 'min-h-88',
-  lg: 'min-h-88 lg:min-h-144',
+// The transparent render comes from assets/phone/sineva-phone-source.glb. Keep the CSS screen
+// separate so all visible text remains sharp and can follow the page locale/content.
+const PHONE_WIDTH: Record<PhoneFrameSize, string> = {
+  sm: 'max-w-58',
+  md: 'max-w-70',
+  lg: 'max-w-80 lg:max-w-96',
 }
 
 type PhoneFrameProps = Omit<ComponentProps<'div'>, 'children'> & {
@@ -17,13 +19,9 @@ type PhoneFrameProps = Omit<ComponentProps<'div'>, 'children'> & {
 }
 
 /**
- * Phone frame placeholder with an HTML screen (`device-phone`, components.md section 10). The
- * pre-rendered frame asset is not available yet; this draws the same silhouette in CSS. Screens
- * are built as HTML so nothing that needs translation is baked into an image (page-patterns.md
- * section 4). The whole mockup is decorative: the card around it already says the same in text,
- * so it is hidden from assistive tech.
- *
- * Radii follow the nested radius rule (tokens.md section 4): outer 36 px, padding 8 px, inner 28 px.
+ * Pre-rendered 3D phone frame with an HTML screen. Rendering the GLB once keeps each card light
+ * and avoids adding more WebGL contexts; screen text stays live, sharp, and translatable.
+ * The mockup is decorative because its card already carries the same task in text.
  */
 export function PhoneFrame({ size = 'md', className, children, ...rest }: PhoneFrameProps) {
   return (
@@ -32,17 +30,20 @@ export function PhoneFrame({ size = 'md', className, children, ...rest }: PhoneF
       data-slot="phone-frame"
       aria-hidden="true"
       className={cx(
-        'relative mx-auto w-full max-w-70 rounded-2xl bg-action-dark p-2 shadow-lg',
+        'relative mx-auto aspect-[0.519] w-full overflow-visible drop-shadow-xl',
+        PHONE_WIDTH[size],
         className,
       )}
     >
-      <div
-        className={cx(
-          'flex flex-col gap-2 overflow-hidden rounded-xl bg-surface p-3',
-          SCREEN_HEIGHT[size],
-        )}
-      >
-        <span className="mx-auto mb-1 h-1.5 w-14 shrink-0 rounded-pill bg-border-strong" />
+      <Image
+        src="/phone/sineva-phone-frame.avif"
+        alt=""
+        fill
+        unoptimized
+        sizes="(min-width: 1024px) 28rem, 80vw"
+        className="pointer-events-none object-fill"
+      />
+      <div className="absolute inset-0 flex flex-col gap-2 overflow-hidden bg-surface/95 px-[9%] pb-[10%] pt-[13%] [clip-path:polygon(7%_9%,91%_6%,94%_93%,8%_96%)]">
         {children}
       </div>
     </div>

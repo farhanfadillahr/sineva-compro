@@ -25,7 +25,6 @@ import {
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
-import { createJetEffects } from './sino-jet-effects'
 import { SINO_LOOK } from './sino-look'
 import { claimSessionOnce } from '@/lib/motion/session'
 import { observeVisibility } from '@/lib/motion/in-view'
@@ -187,10 +186,6 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   rig.name = 'sino-rig'
   rig.add(model)
   scene.add(rig)
-  const jetEffects = createJetEffects(model, scene)
-  const rootBone = model.getObjectByName('DEF-root')
-  const rootPosition = new Vector3()
-  let rootOverlayApplied = false
 
   const camera = new PerspectiveCamera(HERO_CAMERA.verticalFovDeg, 1, 0.1, 20)
   camera.position.set(...HERO_CAMERA.position)
@@ -397,7 +392,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   }
 
   const onClick = (event: MouseEvent) => {
-    if (!machine.view(performance.now()).airborne && !castAt(event.clientX, event.clientY)) return
+    if (!castAt(event.clientX, event.clientY)) return
     machine.dispatch({ type: isTouch(event) ? 'tap' : 'clickModel' })
   }
 
@@ -590,15 +585,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     }
 
     restoreOverlay()
-    if (rootOverlayApplied && rootBone) rootBone.position.copy(rootPosition)
     mixer.update(dt)
-    rootOverlayApplied = Boolean(view.airborne && rootBone)
-    if (rootOverlayApplied && rootBone) {
-      rootPosition.copy(rootBone.position)
-      // Keep the authored arc inside the fixed stage without shifting the canvas box.
-      rootBone.position.multiplyScalar(0.45)
-    }
-    jetEffects?.update(frameSeconds)
 
     // Everything below must come after mixer.update: the clips key every bone every frame, so a
     // rotation applied before the mixer would be overwritten before it is ever drawn.
@@ -682,7 +669,6 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     for (const remove of listeners) remove()
     listeners.length = 0
     machine.dispose()
-    jetEffects?.dispose()
     mixer.stopAllAction()
     mixer.uncacheRoot(model)
     model.traverse((node) => {
@@ -722,7 +708,6 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     fallBack('context-lost')
   })
   listen(canvas, 'click', onClick)
-  listen(win, 'keydown', () => machine.dispatch({ type: 'skipFlight' }))
   listen(win, 'pointermove', onPointerMove, { passive: true })
   listen(document.documentElement, 'pointerleave', onPointerGone)
   listen(document, 'visibilitychange', onVisibility)

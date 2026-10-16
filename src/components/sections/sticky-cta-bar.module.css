@@ -1,0 +1,30 @@
+/*
+ * Slide-up bar (docs/design/motion.md section 4.5): yPercent 100 to 0 in 400 ms with GSAP's
+ * power2.out. The curve below is the cubic-bezier equivalent of power2.out (ease-out cubic), so
+ * the bar needs no animation library. Only transform animates; visibility flips at the end of
+ * the slide-down so a hidden bar is never focusable or clickable mid-animation.
+ */
+
+.bar {
+  transform: translateY(100%);
+  visibility: hidden;
+  transition:
+    transform 400ms cubic-bezier(0.215, 0.61, 0.355, 1),
+    visibility 0s linear 400ms;
+}
+
+.bar[data-visible='true'] {
+  transform: translateY(0);
+  visibility: visible;
+  transition:
+    transform 400ms cubic-bezier(0.215, 0.61, 0.355, 1),
+    visibility 0s linear 0s;
+}
+
+/* Reduced motion: the bar appears and disappears instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .bar[data-visible='true'] {
+    transition: none;
+  }
+}

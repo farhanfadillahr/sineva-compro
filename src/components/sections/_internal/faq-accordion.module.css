@@ -1,0 +1,57 @@
+/*
+ * FAQ accordion (docs/design/components.md section 7, motion.md section 6).
+ *
+ * Height 0 to auto uses the grid-template-rows 0fr to 1fr transition: it animates to the content's
+ * real height without measuring it in JavaScript, and the inner element's overflow hidden clips
+ * it. It only runs on a click (never on scroll), which is the case motion.md section 10 allows.
+ * A closed panel is also visibility hidden, so its content leaves the tab order and the
+ * accessibility tree even in a browser without the `inert` attribute.
+ */
+
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  /* Visibility flips after the collapse finishes, and at the start of an expand. */
+  transition:
+    grid-template-rows var(--dur-med) var(--ease-out),
+    visibility 0s linear var(--dur-med);
+}
+
+.panel[data-open='true'] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows var(--dur-med) var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.panelInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.icon {
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+.trigger[aria-expanded='true'] .icon {
+  transform: rotate(45deg);
+}
+
+/* Reduced motion keeps the open and close, minus the height and icon animation. */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel[data-open='true'],
+  .icon {
+    transition: none;
+  }
+}
+
+/* Without JavaScript nothing could open a closed answer, so every answer is shown. */
+@media (scripting: none) {
+  .panel {
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+}

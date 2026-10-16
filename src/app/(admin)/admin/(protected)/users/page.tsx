@@ -19,14 +19,14 @@ export default async function UsersPage({
   await requirePrincipal()
   const params = await searchParams
   const urlParams = new URLSearchParams()
-  for (const [key,value] of Object.entries(params)) {
-    if (typeof value === 'string') urlParams.set(key,value)
-    else if (Array.isArray(value) && value[0]) urlParams.set(key,value[0])
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') urlParams.set(key, value)
+    else if (Array.isArray(value) && value[0]) urlParams.set(key, value[0])
   }
   const state = readTableQuery(urlParams)
   // The existing service permits at most 50. Keep its policy unchanged.
   if (state.pageSize === 100) state.pageSize = 20
-  urlParams.set('pageSize',String(state.pageSize))
+  urlParams.set('pageSize', String(state.pageSize))
   const headersValue = await headers()
   const result = await readUsersPage(() =>
     listUsers(db, readServerEnv(process.env), headersValue, {
@@ -35,12 +35,25 @@ export default async function UsersPage({
       pageSize: state.pageSize,
     }),
   )
-  const canonical = lastPageRedirect('/admin/users', urlParams, result.total, result.page, result.pageSize)
+  const canonical = lastPageRedirect(
+    '/admin/users',
+    urlParams,
+    result.total,
+    result.page,
+    result.pageSize,
+  )
   if (canonical) redirect(canonical)
   return (
     <main>
-      <PageHeader title="Pengguna" description="Kelola akun Editor dan akses ke ruang kerja."
-        actions={<Link className={`${styles.button} ${styles.primary}`} href="/admin/users/new">Tambah Editor</Link>} />
+      <PageHeader
+        title="Pengguna"
+        description="Kelola akun Editor dan akses ke ruang kerja."
+        actions={
+          <Link className={`${styles.button} ${styles.primary}`} href="/admin/users/new">
+            Tambah Editor
+          </Link>
+        }
+      />
       <section className={styles.panel} aria-label="Daftar pengguna">
         <UsersTable result={result} query={urlParams.toString()} />
       </section>

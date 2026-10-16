@@ -30,7 +30,8 @@ export type HeroSplitProps = LinkProps & {
   /** A page has one h1. Pass `h2` only when the page already has one (the dev gallery). */
   headingAs?: 'h1' | 'h2'
   lead: string
-  primaryCta: CtaLink
+  /** Null when another element in the hero (for example an inline form) is the main action. */
+  primaryCta: CtaLink | null
   secondaryCta?: CtaLink | null
   /** Id of the CTA group, observed by StickyCtaBar to know when the hero CTA left the screen. */
   ctaId?: string
@@ -115,15 +116,17 @@ export function HeroSplit({
         data-hero-from="rise-12"
         className="flex w-full flex-col gap-3 min-[400px]:w-auto min-[400px]:flex-row min-[400px]:flex-wrap"
       >
-        <Button
-          href={primaryCta.href}
-          linkComponent={linkComponent}
-          size="xl"
-          withArrow
-          className="w-full min-[400px]:w-auto"
-        >
-          {primaryCta.label}
-        </Button>
+        {primaryCta ? (
+          <Button
+            href={primaryCta.href}
+            linkComponent={linkComponent}
+            size="xl"
+            withArrow
+            className="w-full min-[400px]:w-auto"
+          >
+            {primaryCta.label}
+          </Button>
+        ) : null}
         {secondaryCta ? (
           <Button
             href={secondaryCta.href}

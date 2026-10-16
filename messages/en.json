@@ -100,6 +100,29 @@
     "comingSoon": "Coming soon",
     "internalDemo": "Internal demo project"
   },
+  "Product": {
+    "comingSoon": "Coming soon",
+    "stickyBarLabel": "Get notified",
+    "tabsLabel": "Business type",
+    "waitlist": {
+      "formLabel": "Get notified about Sino",
+      "nameLabel": "Name (optional)",
+      "businessTypeLabel": "Business type (optional)",
+      "businessTypePlaceholder": "Choose one",
+      "consentBefore": "I agree that Sineva can use these details to contact me about Sino. Read the",
+      "consentLink": "privacy policy",
+      "consentAfter": ".",
+      "consentError": "Tick the box so we know you are happy to be contacted.",
+      "helper": "This opens WhatsApp with your message ready to send. Nothing is saved on this website.",
+      "emailButton": "Send by email instead",
+      "openedMessage": "WhatsApp should open in a new tab. If it did not, use this link.",
+      "openedLink": "Open WhatsApp",
+      "messageNotify": "Please let me know when Sino is ready.",
+      "messageName": "Name",
+      "messageBusinessType": "Business type",
+      "emailSubject": "Notify me when Sino is ready"
+    }
+  },
   "Whatsapp": {
     "label": "Chat with us",
     "ariaLabel": "Chat with us on WhatsApp"

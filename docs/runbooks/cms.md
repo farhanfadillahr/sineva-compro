@@ -181,3 +181,22 @@ counts toward the CPR-24 lockout; all other sessions are revoked in the same tra
 sessions (device, IP, last active; own sessions only, never tokens) and preferences (table density,
 sidebar default) stored per user. Revoking sessions needs the password again when the current
 session is older than 15 minutes. Every change is audited (`profile`).
+
+## Email settings (CPR-86)
+
+`/admin/settings/email` (Admin only): Resend API (recommended) or SMTP, sender, reply-to, the
+secret (SMTP password or Resend API key) and the templates per locale (lead notification, lead
+auto-reply, waitlist confirmation). "Kirim email uji" sends to the signed-in Admin and shows the
+provider response.
+
+- Secrets are encrypted with AES-256-GCM using `SETTINGS_ENCRYPTION_KEY` (32 bytes, base64 or 64
+  hex). They are write-only in the UI and never reach the client, logs or the audit log. Without
+  the key nothing is saved or sent (no plaintext fallback).
+- `RESEND_API_KEY`, or `SMTP_HOST` with `SMTP_PASSWORD` (plus `SMTP_PORT`, `SMTP_SECURITY`,
+  `SMTP_USERNAME`), override the stored connection; the page shows "Diatur oleh environment".
+- Template values are HTML-escaped inside a fixed branded layout; subjects are forced to one line.
+- Key rotation: set the new key, open the page, enter the secret again and save (the old ciphertext
+  cannot be read with the new key). Prefer environment secrets in production.
+- SMTP from a VPS is often blocked or marked as spam; use the Resend API in production. SPF, DKIM
+  and DMARC are needed either way (CPR-12). Sending the waitlist confirmation needs a product
+  decision first.

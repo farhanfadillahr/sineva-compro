@@ -64,7 +64,7 @@ export function proxy(request: NextRequest) {
 // Only files that live outside the localized tree and are served straight from public/ (or
 // Next.js itself) are excluded: /_next, /brand, /lottie, /mascot (poster, poses and the GLB),
 // /draco (self-hosted decoder), /phone, /og, and the root files browsers and crawlers request by name
-// (favicon, robots, sitemap, the web manifest and the Next.js app icons: `icon.svg`,
+// (favicon, robots, sitemap, the web manifest and the Next.js app icons: `icon.png`,
 // `apple-icon.png`, numbered variants like `icon1.png`, and the `-<6 chars>` suffix Next.js adds
 // to a metadata route that sits inside a route group).
 // Each folder is matched as `name(?:/|$)` so a page whose first segment only starts with the same

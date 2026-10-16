@@ -12,7 +12,11 @@ export default defineConfig([
     'node_modules/**',
     'coverage/**',
     'exports/**',
+    // vendored three.js draco decoder (minified third-party code, not ours to lint)
+    'public/draco/**',
     '.superpowers/**',
+    // local agent worktrees: full repo copies that would be linted twice
+    '.claude/worktrees/**',
     'next-env.d.ts',
   ]),
 ])

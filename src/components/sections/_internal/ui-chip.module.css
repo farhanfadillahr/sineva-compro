@@ -1,0 +1,28 @@
+/*
+ * Gentle float (components.md section 10): 6 px over 6 s, transform only. `.chip` floats a
+ * mini UI card around a mockup; `.float` does the same for a Sino pose (motion.md section 6).
+ * --chip-delay lets neighbouring chips drift out of phase.
+ */
+
+.chip,
+.float {
+  animation: float 6s var(--ease-in-out) infinite;
+  animation-delay: var(--chip-delay, 0s);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .float {
+    animation: none;
+  }
+}

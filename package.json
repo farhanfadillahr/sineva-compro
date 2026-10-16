@@ -52,6 +52,7 @@
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
     "auth": "1.7.7",
+    "axe-core": "4.14.0",
     "drizzle-kit": "0.31.11",
     "esbuild": "0.28.2",
     "eslint": "9.39.5",

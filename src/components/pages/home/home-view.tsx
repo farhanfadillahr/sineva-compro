@@ -1,12 +1,11 @@
+import { JourneySteps } from '@/components/sections/journey-steps'
 import type { ReactNode } from 'react'
 import {
   AudienceCards,
   FaqSection,
   FinalCta,
   HeroSplit,
-  SinoStage,
   StickyCtaBar,
-  StickySteps,
   TaskCardGrid,
   TwoPaths,
   faqEntriesFromDto,
@@ -25,8 +24,7 @@ import {
   type HomeSectionId,
 } from './home-model'
 import { MeetSinoSection } from './meet-sino-section'
-import { PoseImage } from './pose-image'
-import { HOW_WE_WORK_POSES, poseImage } from './poses'
+import { poseImage } from './poses'
 
 export type HomeViewProps = {
   model: HomeModel
@@ -106,11 +104,13 @@ export function HomeView({
           badge: productStatus === 'live' ? undefined : labels.comingSoon,
           cta: { label: page.twoPaths.product.ctaLabel, href: HOME_HREFS.product },
           image: poseImage(page.twoPaths.product.pose),
+          loop: 'L-phone',
         }}
         services={{
           ...page.twoPaths.services,
           cta: { label: page.twoPaths.services.ctaLabel, href: HOME_HREFS.services },
           image: poseImage(page.twoPaths.services.pose),
+          loop: 'L-build',
         }}
       />
     ),
@@ -127,28 +127,7 @@ export function HomeView({
       />
     ),
     howWeWork: (tone) => (
-      <StickySteps
-        title={page.howWeWork.title}
-        tone={tone}
-        steps={page.howWeWork.steps.map((step, index) => ({
-          ...step,
-          screen: (
-            // The stage glow spills past its box. The clip keeps it from widening the page; the
-            // narrower stage on phones leaves the room it needs inside the column.
-            <div className="overflow-x-clip">
-              <SinoStage className="max-w-xs sm:max-w-sm">
-                <PoseImage
-                  pose={HOW_WE_WORK_POSES[index % HOW_WE_WORK_POSES.length]!}
-                  index={index}
-                  sizes="(min-width: 1024px) 384px, 80vw"
-                  fit="contain"
-                  className="size-full"
-                />
-              </SinoStage>
-            </div>
-          ),
-        }))}
-      />
+      <JourneySteps title={page.howWeWork.title} steps={page.howWeWork.steps} tone={tone} />
     ),
     whoWeHelp: (tone) => (
       <AudienceCards title={page.whoWeHelp.title} items={page.whoWeHelp.cards} tone={tone} />
@@ -191,6 +170,7 @@ export function HomeView({
         secondaryCta={finalSecondary}
         whatsappCta={whatsappCta}
         image={poseImage('wave')}
+        loop="L-wave"
         linkComponent={linkComponent}
       />
     ),

@@ -115,6 +115,21 @@ Pre-rendered Sino poses (`/mascot/poses/*`) are not static either. Every pose im
 
 Implementation lives in one shared `AnimatedPose` wrapper (used by TwoPaths, TaskCardGrid, FinalCta, page heroes with stills, 404 and thank-you).
 
+#### SinoLoop (animated loops)
+
+Where a pose has a rendered loop (`L-wave`, `L-phone`, `L-build`, `L-thumbs`, `L-confused`, see [3d-asset-requirements.md](3d-asset-requirements.md) section 3.4), `SinoLoop` plays it. It is an `AnimatedPose` whose picture is a `<video>` (the pose's `media` slot), so reveal, float, parallax and hover lift are the pose's own and are not copied. The asset manifest is `src/components/motion/sino-loops.ts`: `id -> { webm, mov, poster, width, height, ready }`.
+
+| Rule | Behaviour |
+|---|---|
+| First paint | The poster. The server HTML and the first hydration render are the poster `<Image>`; the `<video>` (muted, `playsInline`, `loop`, `preload="none"`, `aria-hidden`, no controls) replaces it on the client. The box is reserved with width, height and aspect-ratio, so CLS is 0 |
+| Source | Chosen in JS by `pickLoopSource`: WebKit (Safari, every iOS browser) gets the HEVC alpha `.mov`; every other browser gets the VP9 alpha `.webm`. Never by `canPlayType` alone: Chrome can report HEVC support and still drop the alpha, which paints a black box. WebKit without HEVC gets the poster, not the WebM (its WebM alpha is unreliable) |
+| Playing | Only while intersecting (IntersectionObserver) and the tab is visible. Pauses when it leaves the screen and on `visibilitychange` hidden; resumes on return only if still in view. `play()` rejections are caught and the poster stays |
+| Reduced motion, Save-Data | `prefers-reduced-motion: reduce` or `navigator.connection.saveData`: the poster image only, no `<video>` element, no download of the video |
+| Accessibility | Decorative: empty poster alt, no controls, never focusable |
+| Not ready | While `ready` is `false` (files not delivered), the usage draws its still pose exactly as before. Flip `ready` in the same change that adds the three files; a test fails if a ready loop has a file missing |
+
+Placements: `L-wave` on Home "Meet Sino" and the final CTA, `L-phone` and `L-build` on the two TwoPaths cards, `L-thumbs` on the contact thank-you page, `L-confused` on the 404 page. The "one large Sino per viewport" limit of section 6 applies to loops too.
+
 ## 6. Where Sino appears per page
 
 | Page | Form | Asset |

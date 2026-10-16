@@ -1,7 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useId, type ComponentPropsWithoutRef, type CSSProperties } from 'react'
+import {
+  useEffect,
+  useId,
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import type { MediaAsset } from '../../features/content/types'
 import { observeVisibility } from '../../lib/motion/in-view'
 import { prefersReducedMotion, usePrefersReducedMotion } from '../../lib/motion/reduced-motion'
@@ -27,7 +33,10 @@ const FLOAT_PERIOD_S = 6
 const HOST_SELECTOR = '[data-pose-host], article, li, [data-slot="sino-stage"]'
 
 export type AnimatedPoseProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & {
-  /** The still. Renders nothing for `null`, so a pose without an exported file leaves no hole. */
+  /**
+   * The still. Renders nothing for `null` (unless `media` is given), so a pose without an exported
+   * file leaves no hole.
+   */
   image: MediaAsset | null
   sizes: string
   /** Position among siblings. Drives float phase, tilt direction and the reveal stagger. */
@@ -43,6 +52,13 @@ export type AnimatedPoseProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'
    * sized and fit the still inside it (stages, fixed-height covers).
    */
   fit?: 'natural' | 'contain'
+  /**
+   * Drawn in the lift layer in place of the still (SinoLoop's video). It gets the same reveal,
+   * float, parallax and hover lift, so a loop moves exactly like a pose without a second copy of
+   * this logic. The media owns its own box (width, height or aspect ratio) so it cannot shift the
+   * page.
+   */
+  media?: ReactNode
   /** Extra class on the `<img>`. Layout classes belong on `className` (the outer box). */
   imageClassName?: string
 }
@@ -73,6 +89,7 @@ export function AnimatedPose({
   tilt,
   delayMs,
   fit = 'natural',
+  media,
   imageClassName,
   className,
   style,
@@ -189,7 +206,7 @@ export function AnimatedPose({
     }
   }, [ref, reduced])
 
-  if (!image) return null
+  if (!image && !media) return null
 
   const rootStyle = {
     ...style,
@@ -197,6 +214,21 @@ export function AnimatedPose({
     '--pose-float-delay': `${resolvedPhase === 0 ? 0 : -FLOAT_PERIOD_S / 2}s`,
     '--pose-tilt': String(resolvedTilt),
   } as CSSProperties
+
+  const still = image ? (
+    <Image
+      src={image.url}
+      width={image.width}
+      height={image.height}
+      alt={image.alt}
+      sizes={sizes}
+      placeholder={image.blurDataUrl ? 'blur' : 'empty'}
+      blurDataURL={image.blurDataUrl ?? undefined}
+      className={[fit === 'contain' ? styles.imageContain : styles.imageNatural, imageClassName]
+        .filter(Boolean)
+        .join(' ')}
+    />
+  ) : null
 
   return (
     <div
@@ -213,23 +245,7 @@ export function AnimatedPose({
     >
       <div className={styles.parallax}>
         <div className={styles.float}>
-          <div className={styles.lift}>
-            <Image
-              src={image.url}
-              width={image.width}
-              height={image.height}
-              alt={image.alt}
-              sizes={sizes}
-              placeholder={image.blurDataUrl ? 'blur' : 'empty'}
-              blurDataURL={image.blurDataUrl ?? undefined}
-              className={[
-                fit === 'contain' ? styles.imageContain : styles.imageNatural,
-                imageClassName,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            />
-          </div>
+          <div className={styles.lift}>{media ?? still}</div>
         </div>
       </div>
     </div>

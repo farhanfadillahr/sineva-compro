@@ -71,7 +71,7 @@ describe('NotFoundView', () => {
     const img = pose.querySelector('img')!
     expect(img.getAttribute('alt')).toBe('')
     expect(decodeURIComponent(img.getAttribute('src')!)).toContain(
-      '/mascot/poses/v006/sino-confused',
+      '/mascot/loops/sino-loop-confused',
     )
   })
 

@@ -8,11 +8,15 @@ export function ThankYouFlight({ children }: { children: ReactNode }) {
   const [src, setSrc] = useState<string | null>(null)
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const pendingRef = useRef<string | null | undefined>(undefined)
   useEffect(() => {
-    let pending: string | null = null
+    let pending: string | null = pendingRef.current ?? null
     try {
-      pending = sessionStorage.getItem('sineva:contact-handoff')
-      sessionStorage.removeItem('sineva:contact-handoff')
+      if (pendingRef.current === undefined) {
+        pendingRef.current = sessionStorage.getItem('sineva:contact-handoff')
+        sessionStorage.removeItem('sineva:contact-handoff')
+      }
+      pending = pendingRef.current
     } catch {
       return
     }

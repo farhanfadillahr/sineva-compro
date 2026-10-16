@@ -193,7 +193,9 @@ export function HeroSplit({
   }
 
   return (
-    <Section tone="aurora" data-variant={variant}>
+    // The stage glow and orbit arcs extend past the stage box; clip them sideways so they never
+    // create a horizontal scrollbar on a phone.
+    <Section tone="aurora" data-variant={variant} className="overflow-x-clip">
       <Container size="wide">
         <HeroEntrance>
           <Split text={text} visual={visual} reverse={reverse} />

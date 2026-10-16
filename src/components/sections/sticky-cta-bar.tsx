@@ -97,18 +97,21 @@ function Bar({
       )}
     >
       <div className="mx-auto flex max-w-(--container-max) gap-3">
-        <Button href={primaryCta.href} size="md" className="flex-1">
+        <Button href={primaryCta.href} size="md" className="min-w-0 flex-1 px-3">
           {primaryCta.label}
         </Button>
         {whatsappCta ? (
+          // Buttons never wrap their label, and two full labels do not fit side by side on a
+          // 390 px phone. Below 480 px the WhatsApp button shrinks to the glyph (a 44 px square)
+          // and keeps its label for screen readers.
           <Button
             href={whatsappCta.href}
             variant="whatsapp"
             size="md"
             leadingIcon={<WhatsAppGlyph />}
-            className="flex-1"
+            className="shrink-0 px-3 min-[480px]:min-w-0 min-[480px]:flex-1"
           >
-            {whatsappCta.label}
+            <span className="sr-only min-[480px]:not-sr-only">{whatsappCta.label}</span>
           </Button>
         ) : null}
       </div>

@@ -103,7 +103,13 @@ export function TaskCardGrid({ eyebrow, title, intro, items, tone = 'canvas' }: 
                       />
                     </div>
                   ) : mockupLines.length > 0 ? (
-                    <PhoneFrame className="mt-auto -mb-16 max-w-64">
+                    <PhoneFrame
+                      size={isFeaturedTile ? 'lg' : 'sm'}
+                      className={cx(
+                        'mt-auto',
+                        isFeaturedTile ? '-mb-24 max-w-80 lg:max-w-96' : '-mb-20 max-w-64',
+                      )}
+                    >
                       <ChatBubbles
                         bubbles={mockupLines.map((text, i) => ({
                           // The request comes first, then Sino's reply, alternating.

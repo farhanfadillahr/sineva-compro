@@ -2,7 +2,19 @@ import type { ComponentProps, ReactNode } from 'react'
 import { cx } from '@/components/ui/cx'
 import type { MockupBubble } from '@/features/content/types'
 
-type PhoneFrameProps = Omit<ComponentProps<'div'>, 'children'> & { children: ReactNode }
+type PhoneFrameSize = 'sm' | 'md' | 'lg'
+
+// Screen heights. `sm` fits a half-height bento tile, `lg` fills a 2x2 featured tile.
+const SCREEN_HEIGHT: Record<PhoneFrameSize, string> = {
+  sm: 'min-h-56',
+  md: 'min-h-88',
+  lg: 'min-h-88 lg:min-h-144',
+}
+
+type PhoneFrameProps = Omit<ComponentProps<'div'>, 'children'> & {
+  children: ReactNode
+  size?: PhoneFrameSize
+}
 
 /**
  * Phone frame placeholder with an HTML screen (`device-phone`, components.md section 10). The
@@ -13,7 +25,7 @@ type PhoneFrameProps = Omit<ComponentProps<'div'>, 'children'> & { children: Rea
  *
  * Radii follow the nested radius rule (tokens.md section 4): outer 36 px, padding 8 px, inner 28 px.
  */
-export function PhoneFrame({ className, children, ...rest }: PhoneFrameProps) {
+export function PhoneFrame({ size = 'md', className, children, ...rest }: PhoneFrameProps) {
   return (
     <div
       {...rest}
@@ -24,7 +36,12 @@ export function PhoneFrame({ className, children, ...rest }: PhoneFrameProps) {
         className,
       )}
     >
-      <div className="flex min-h-88 flex-col gap-2 overflow-hidden rounded-xl bg-surface p-3">
+      <div
+        className={cx(
+          'flex flex-col gap-2 overflow-hidden rounded-xl bg-surface p-3',
+          SCREEN_HEIGHT[size],
+        )}
+      >
         <span className="mx-auto mb-1 h-1.5 w-14 shrink-0 rounded-pill bg-border-strong" />
         {children}
       </div>

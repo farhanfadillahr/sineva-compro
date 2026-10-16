@@ -84,7 +84,7 @@ describe('RichText elements', () => {
     )
     expect(container.querySelectorAll('strong')).toHaveLength(2)
     expect(container.querySelector('em')?.textContent).toBe('i')
-    expect(container.querySelector('p > code')?.textContent).toBe('c')
+    expect(container.querySelector('p code')?.textContent).toBe('c')
     expect(container.querySelector('s')?.textContent).toBe('x')
     expect(container.querySelector('br')).not.toBeNull()
     // An unknown mark never loses the text.
@@ -212,14 +212,7 @@ describe('RichText safety', () => {
   })
 
   it('sends internal links through the localised link component when given one', () => {
-    const Localised = ({
-      href,
-      children,
-      ...rest
-    }: {
-      href: never
-      children?: ReactNode
-    }) => (
+    const Localised = ({ href, children, ...rest }: { href: never; children?: ReactNode }) => (
       <a {...rest} href={href} data-localised="">
         {children}
       </a>

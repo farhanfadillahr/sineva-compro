@@ -40,6 +40,10 @@ describe('INTRO_TIMING', () => {
     expect(INTRO_TIMING.flipMs).toBe(500)
   })
 
+  it('refuses to start an intro that could not play long enough before the hand-off', () => {
+    expect(INTRO_TIMING.latestStartMs).toBeLessThan(INTRO_TIMING.handoffStartMs)
+  })
+
   it('finishes the flight no later than the cap', () => {
     expect(INTRO_TIMING.handoffStartMs + INTRO_TIMING.flipMs).toBeLessThanOrEqual(
       INTRO_TIMING.capMs,

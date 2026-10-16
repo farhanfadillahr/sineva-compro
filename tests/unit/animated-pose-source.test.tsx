@@ -209,6 +209,20 @@ describe('every pose on Home goes through AnimatedPose', () => {
     for (const file of users) expect(imports(file, /from\s+['"]\.\/pose-image['"]/)).toBe(true)
   })
 
+  it('Meet Sino and the loop-capable blocks go through SinoLoop, which is AnimatedPose with a video', () => {
+    expect(
+      imports(
+        join(HOME_DIR, 'meet-sino-section.tsx'),
+        /from\s+['"]@\/components\/motion\/sino-loop['"]/,
+      ),
+    ).toBe(true)
+    const sinoLoop = stripComments(read(join(MOTION_DIR, 'sino-loop.tsx')))
+    expect(sinoLoop).toMatch(/<AnimatedPose\b/)
+    expect(sinoLoop).toMatch(/media=/)
+    // It must compose the pose, not copy it: no second reveal, float or hover implementation.
+    expect(sinoLoop).not.toMatch(/useReveal|pointerenter|parallax|requestAnimationFrame/i)
+  })
+
   it('no longer hand-rolls the old per-pose hover nudge or float class', () => {
     for (const name of ['two-paths.tsx', 'task-card-grid.tsx', 'final-cta.tsx']) {
       const text = stripComments(read(join(SECTIONS_DIR, name)))

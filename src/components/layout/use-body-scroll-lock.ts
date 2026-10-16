@@ -10,7 +10,7 @@ import { useEffect } from 'react'
  * - restoring must be instant: `behavior: 'instant'` beats a global `scroll-behavior: smooth`
  *   (motion.md section 4), which would otherwise animate the page back from the top.
  * Gotcha: while locked, `window.scrollY` reads 0, so code that reacts to scroll offsets must
- * ignore events during the lock (see `useHeaderScroll({ frozen })`).
+ * ignore events during the lock (see `useHeaderMode({ frozen })`).
  */
 export function useBodyScrollLock(active: boolean) {
   useEffect(() => {

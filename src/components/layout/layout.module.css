@@ -6,7 +6,9 @@
  * Only transform, opacity and clip-path animate, plus the dropdown panel's width, height and
  * translate while it morphs between triggers. That is the one deliberate exception to "never
  * animate width or height" in motion.md section 10: the shared panel IS the morph, it only runs
- * on a click or hover (never on scroll) and the panel is a single small element.
+ * on a click or hover (never on scroll) and the panel is a single small element. The second
+ * exception is the header bar, which animates width, height and radius once when it enters or
+ * leaves floating mode (see Header below), never per scroll frame.
  *
  * The var() fallbacks repeat the documented token values so the file also works when the global
  * tokens are not loaded (isolated component tests, Storybook-like galleries).
@@ -14,26 +16,86 @@
 
 /* ---------- Header ---------- */
 
+/*
+ * Two layers, so the page never reflows (CLS 0):
+ * - .header is the sticky in-flow slot, always --header-height tall and click-through. Pages pull
+ *   themselves under it with -mt-(--header-height). It only ever moves with translate and opacity
+ *   (show and hide, 240 ms --ease-out).
+ * - .bar is the visible header: full-width and transparent at the top, a floating pill below it.
+ *   The morph (width, radius, inset, shadow) runs once per mode change, 360 ms --ease-out-expo,
+ *   never per scroll frame; the inset is a translate. The pill's height comes out of the slot
+ *   (12 px inset + 60 px pill = 72 px), so nothing grows past the slot.
+ */
 .header {
-  /* Background fades in 250 ms; hide and show take 500 ms (motion.md section 5). */
+  pointer-events: none;
   transition:
-    background-color 250ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
-    border-color 250ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
-    translate 500ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+    translate 240ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity 240ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.header[data-scrolled='true'] {
+.header[data-mode='floating-hidden'] {
+  translate: 0 -100%;
+  opacity: 0;
+}
+
+.bar {
+  pointer-events: auto;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-max-wide, 1360px);
+  height: var(--header-height, 4.5rem);
+  margin-inline: auto;
+  padding-inline: var(--gutter, 16px);
+  border: 1px solid transparent;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: 0 0 0 rgba(11, 42, 49, 0);
+  transition:
+    width 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    max-width 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    height 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    padding-inline 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    translate 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    border-radius 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    background-color 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+/* Floating: a centred pill, 12 px from the top, 16 px gutters on mobile. */
+.header[data-mode^='floating'] .bar {
+  width: calc(100% - 2rem);
+  max-width: 68.75rem;
+  height: calc(var(--header-height, 4.5rem) - 12px);
+  padding-inline: 1rem;
+  translate: 0 12px;
+  border-color: var(--color-border, rgba(11, 42, 49, 0.08));
+  border-radius: var(--radius-lg, 20px);
+  background-color: var(--surface-nav, rgba(255, 255, 255, 0.78));
+  box-shadow: var(
+    --shadow-md,
+    0 4px 12px rgba(11, 42, 49, 0.06),
+    0 12px 32px rgba(11, 42, 49, 0.08)
+  );
   -webkit-backdrop-filter: var(--blur-nav, saturate(180%) blur(14px));
   backdrop-filter: var(--blur-nav, saturate(180%) blur(14px));
 }
 
-.header[data-hidden='true'] {
-  translate: 0 -100%;
+@media (min-width: 768px) {
+  .header[data-mode^='floating'] .bar {
+    padding-inline: 1.25rem;
+  }
 }
 
-/* Hide and show are instant, never animated (motion.md section 9). */
+/* A hidden pill is off screen but its box still exists: it must not catch the pointer. */
+.header[data-mode='floating-hidden'] .bar {
+  pointer-events: none;
+}
+
+/* Every state change is instant, never animated (motion.md section 9). The idle hide still runs. */
 @media (prefers-reduced-motion: reduce) {
-  .header {
+  .header,
+  .bar {
     transition: none;
   }
 }

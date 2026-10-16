@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Container } from '@/components/ui/container'
 import { cx, focusRing } from '@/components/ui/cx'
 import { usePathname } from '@/i18n/navigation'
 import { usePrefersReducedMotion } from '@/lib/motion/reduced-motion'
@@ -18,7 +17,7 @@ import { DESKTOP_QUERY } from './media-queries'
 import { MOBILE_MENU_ID, MobileMenu } from './mobile-menu'
 import { ariaCurrentFor, useNavModel, type NavService } from './nav-model'
 import { useBodyScrollLock } from './use-body-scroll-lock'
-import { useHeaderScroll } from './header-scroll'
+import { useHeaderMode } from './header-scroll'
 import { useKeyboardFocusWithin } from './use-keyboard-focus-within'
 import { useMediaQuery } from './use-media-query'
 import { useWhatsAppHref } from './use-whatsapp-href'
@@ -32,13 +31,16 @@ const CLOSE_REDUCED_MS = 150
 /**
  * The public site header (components.md section 2, motion.md section 5).
  *
- * Visibility rules live in `useHeaderScroll`; this component decides when the header is LOCKED
- * visible: a dropdown or the mobile menu is open, or keyboard focus is inside it. A mouse click
- * does not count as focus (see useKeyboardFocusWithin).
+ * Modes (regular at the top, floating pill below it, shown or hidden) live in the state machine in
+ * `header-scroll.ts`; this component tells it when the header is HELD visible: a dropdown or the
+ * mobile menu is open, or keyboard focus is inside it. A mouse click does not count as focus (see
+ * useKeyboardFocusWithin). The pointer over the bar holds it too.
  *
- * Positioning: `sticky`, not `fixed`, so page content is never covered and pages that want the
- * hero gradient behind the transparent header pull themselves up with
- * `-mt-(--header-height)` and pad their top by the same amount.
+ * Positioning: the `<header>` is `sticky`, not `fixed`, and always `--header-height` tall, so it
+ * is the spacer that keeps CLS at 0: page content is never covered or pushed, and pages that want
+ * the hero gradient behind the transparent header pull themselves up with `-mt-(--header-height)`
+ * and pad their top by the same amount. The floating pill is a child (`header-bar`) drawn inside
+ * that slot, see layout.module.css.
  */
 export function SiteHeader({
   services,
@@ -62,8 +64,9 @@ export function SiteHeader({
   const burgerRef = useRef<HTMLButtonElement>(null)
   const focus = useKeyboardFocusWithin()
 
-  const scroll = useHeaderScroll({
-    locked: dropdownOpen || focus.inside || mobile !== 'closed',
+  const { mode, pointerHandlers } = useHeaderMode({
+    menuOpen: dropdownOpen || mobile !== 'closed',
+    keyboardFocus: focus.inside,
     frozen: mobile === 'open',
   })
   useBodyScrollLock(mobile === 'open')
@@ -106,21 +109,17 @@ export function SiteHeader({
   return (
     <>
       <header
-        data-scrolled={scroll.scrolled}
-        data-hidden={scroll.hidden}
+        data-mode={mode}
         data-motion={reduced ? 'reduced' : 'full'}
         onFocus={focus.handlers.onFocus}
         onBlur={focus.handlers.onBlur}
-        className={cx(
-          styles.header,
-          'sticky top-0 z-40 w-full border-b border-b-transparent bg-transparent',
-          'data-[scrolled=true]:border-b-border data-[scrolled=true]:bg-(--surface-nav)',
-        )}
+        className={cx(styles.header, 'sticky top-0 z-40 h-[var(--header-height,4.5rem)] w-full')}
       >
-        <Container
-          size="wide"
+        <div
+          data-slot="header-bar"
           data-nav-root=""
-          className="relative flex h-[var(--header-height,4.5rem)] items-center gap-6"
+          {...pointerHandlers}
+          className={cx(styles.bar, 'relative flex items-center gap-6')}
         >
           <AppLink
             href="/"
@@ -173,7 +172,7 @@ export function SiteHeader({
           >
             <MenuIcon />
           </button>
-        </Container>
+        </div>
       </header>
 
       {mobile !== 'closed' ? (

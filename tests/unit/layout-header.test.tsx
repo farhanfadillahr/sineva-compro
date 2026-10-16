@@ -221,6 +221,9 @@ describe('SiteHeader floating nav (modes)', () => {
     const user = userEvent.setup()
     renderHeader()
     await user.click(screen.getByRole('link', { name: 'Blog' }))
+    // The pointer over the nav is its own hold; move it away so only the focus is under test.
+    await user.unhover(screen.getByRole('link', { name: 'Blog' }))
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: 'Blog' }))
     act(() => scrollTo(300))
     expect(mode()).toBe('floating-hidden')
   })

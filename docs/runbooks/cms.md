@@ -239,3 +239,15 @@ and the follow-up form (status: Baru, Dihubungi, Berpotensi, Berhasil, Tidak lan
 notes). Editors and anonymous users are refused by the queries and actions, not only the menu.
 Audit entries name the changed fields (`status`, `notes`), never their values. Public input can
 only create a lead through `submitContact` (CPR-78).
+
+## Waitlist (CPR-48)
+
+`joinWaitlist(input, { locale })` (`src/features/waitlist/actions.ts`) is the public server action
+for the Product page form (CPR-79 wires it; the launch form still composes a message). It
+validates with `src/lib/leads/waitlist-schema.ts`, runs the anti-spam checks, and stores one row
+per normalised email. A repeated or concurrent signup for the same email gets exactly the same
+success (no probing whether an address is registered); any other database error is reported.
+
+`/admin/waitlist` (Admin only): filters, deletion on request (PRD 13.4 retention: until 12 months
+after launch or until deletion is requested) and "Unduh CSV" (`/admin/waitlist/export`,
+`no-store`, cells starting with `=`, `+`, `-`, `@`, tab or carriage return are neutralised).

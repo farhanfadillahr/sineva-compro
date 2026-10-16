@@ -17,6 +17,7 @@ export const SEED_MODULES = [
   'redirects',
   'email',
   'leads',
+  'waitlist',
 ] as const
 
 export type SeedOptions = { mode: 'base' | 'demo' | 'purge-demo'; module?: string }

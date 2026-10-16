@@ -127,6 +127,13 @@
       "when": 1792156017152,
       "tag": "0017_cpr49_intake_attempt",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792156253523,
+      "tag": "0018_cpr48_waitlist",
+      "breakpoints": true
     }
   ]
 }

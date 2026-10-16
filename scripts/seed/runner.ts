@@ -11,6 +11,7 @@ import { workSeed } from './work'
 import { redirectsSeed } from './redirects'
 import { emailSeed } from './email'
 import { leadsSeed } from './leads'
+import { waitlistSeed } from './waitlist'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
@@ -32,6 +33,7 @@ const modules: readonly SeedModule[] = [
   redirectsSeed,
   emailSeed,
   leadsSeed,
+  waitlistSeed,
 ]
 export async function runSeeds(
   database: Database,

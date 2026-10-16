@@ -206,7 +206,12 @@ export function SiteFooter({
               </ul>
             ) : null}
           </div>
-          <p className="m-0 font-mono text-xs text-text-tertiary">{t('copyright')}</p>
+          <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-text-tertiary">
+            <span data-slot="footer-tagline" className="text-text-secondary">
+              {t('tagline')}
+            </span>
+            <span>{t('copyright')}</span>
+          </p>
         </div>
       </Container>
 

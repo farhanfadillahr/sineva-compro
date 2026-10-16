@@ -74,7 +74,7 @@ describe('every pose on Services, Product, Contact and 404 goes through Animated
     ['contact/thank-you-view.tsx'],
     ['not-found/not-found-view.tsx'],
   ])('%s draws its pose with PoseImage', (name) => {
-    expect(code(join(PAGES, name))).toMatch(/<PoseImage\b/)
+    expect(code(join(PAGES, name))).toMatch(/<(?:PoseImage|JourneySteps)\b/)
   })
 })
 

@@ -3,10 +3,10 @@ import { seo, step } from './helpers'
 
 /** The four-step story shown on Home and the Services overview. */
 export const processSteps: readonly StepItem[] = [
-  step('Talk', 'Tell us what slows your team down.'),
-  step('Plan', 'We outline a small, clear first step.'),
-  step('Build', 'We build it with you and test it on real work.'),
-  step('Support', 'We stay with you after launch and help your team use it.'),
+  step('Talk it through', 'Tell us which part of the day you would like to make easier.'),
+  step('Make a plan', 'We choose one useful first step and agree on what good looks like.'),
+  step('Build it together', 'You try it on real work, and we improve it with your feedback.'),
+  step('Keep it useful', 'We help your team settle in and keep the work moving.'),
 ]
 
 export const serviceDetails: readonly ServiceDetail[] = [

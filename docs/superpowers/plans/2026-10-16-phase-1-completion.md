@@ -11,7 +11,7 @@ Date: 2026-10-16. This supersedes the unfinished-status tables in the earlier ch
 | Helpful public wording, metadata, robots/sitemap with blog URLs, structured data, Work noindex, environment examples and removal of public visual breadcrumbs | [44](https://github.com/farhanfadillahr/sineva-compro/pull/44) |
 | Illustrated How we work journey on Home and Services with four clear steps and Sino poses | [45](https://github.com/farhanfadillahr/sineva-compro/pull/45) |
 | All five P0 Sino loops, both alpha codecs, posters, loading and motion fallbacks | [46](https://github.com/farhanfadillahr/sineva-compro/pull/46) |
-| Jetpack v006, three one-shots, hero sequence/effects, primary CTA overlay, thank-you fly-by and corrected source poses | CPR-99 continuation branch; see [asset production notes](../../design/sino-v006-production.md) |
+| Jetpack v006, three one-shots, hero sequence/effects, primary CTA overlay, thank-you fly-by and corrected source poses | [47](https://github.com/farhanfadillahr/sineva-compro/pull/47); see [asset production notes](../../design/sino-v006-production.md) |
 
 The public introduction now leads with help for everyday tasks rather than the company category. There are no invented client claims, testimonials or results. The existing README handoff was already merged before these batches.
 
@@ -27,4 +27,4 @@ The public introduction now leads with help for everyday tasks rather than the c
 
 ## Validation
 
-Every merged batch passed formatting, lint, TypeScript, its unit suite and a production build. Public pages, metadata routes and icons were checked against local production servers. The final asset audits and budgets are preserved under `assets/mascot/v006/`; see the production notes for the exact scope and limits.
+Every merged batch passed formatting, lint, TypeScript, its unit suite and a production build. The final suite passes 2,517 tests. Public pages, metadata routes and icons were checked against local production servers. The final asset audits and budgets are preserved under `assets/mascot/v006/`; see the production notes for the exact scope and limits.

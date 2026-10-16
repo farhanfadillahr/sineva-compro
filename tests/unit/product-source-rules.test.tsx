@@ -1,6 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 import { POSE_FILES } from '@/components/pages/home/poses'
@@ -10,7 +9,8 @@ import { createStaticContentSource } from '../../src/content/static'
 // The Product page takes every word from the content source (or messages). Page code that holds a
 // sentence is a bug: it would ship untranslated and outside the admin. Parsed with the TypeScript
 // compiler so class names, comments and import paths do not count.
-const ROOT = fileURLToPath(new URL('../..', import.meta.url))
+// jsdom replaces the global URL, so the root comes from the working directory (the repo root).
+const ROOT = process.cwd()
 const PRODUCT_DIR = join(ROOT, 'src/components/pages/product')
 const PAGE_FILE = join(ROOT, 'src/app/(public)/[locale]/products/ai-agents/page.tsx')
 

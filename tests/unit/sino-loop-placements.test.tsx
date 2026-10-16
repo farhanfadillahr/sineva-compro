@@ -16,7 +16,7 @@ import {
 } from './motion-test-utils'
 import { image } from './sections-test-utils'
 
-// Where each loop lives (mascot-sino.md section 6): L-wave on Meet Sino and the final CTA, L-phone
+// Where each loop lives (mascot-sino.md section 6): L-wave on the final CTA, L-phone
 // and L-build on the two path cards, L-thumbs on the thank-you page, L-confused on the 404 page.
 // The real manifest has every loop at ready: false. These tests flip all of them on together to
 // prove each placement asks for the right loop, and leave them off to prove each placement still
@@ -73,15 +73,12 @@ const cta = { label: 'Go', href: '/x' }
 describe('Meet Sino', () => {
   const ui = <MeetSinoSection title="Meet Sino" body="Body" tone="canvas" />
 
-  it('shows L-wave once it is ready', () => {
+  // Meet Sino is the page's scroll-scrubbed scene now (motion.md 4.3), not a loop.
+  it('plays the scroll-scrubbed look-up instead of a loop', () => {
     state.ready = true
-    expect(videoSources(render(ui).container)).toEqual(['/mascot/loops/sino-loop-wave.webm'])
-  })
-
-  it('keeps the relaxed still until then', () => {
     const { container } = render(ui)
     expect(videoSources(container)).toEqual([])
-    expect(container.querySelector('img')!.getAttribute('src')).toContain('sino-relaxed')
+    expect(container.querySelector('[data-slot="scroll-scrub"]')).not.toBeNull()
   })
 })
 

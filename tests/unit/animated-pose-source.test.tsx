@@ -206,11 +206,12 @@ describe('every pose on Home goes through AnimatedPose', () => {
     for (const file of users) expect(imports(file, /from\s+['"]\.\/pose-image['"]/)).toBe(true)
   })
 
-  it('Meet Sino and the loop-capable blocks go through SinoLoop, which is AnimatedPose with a video', () => {
+  it('the loop-capable blocks go through SinoLoop, which is AnimatedPose with a video', () => {
+    // Meet Sino uses the scroll-scrubbed sequence instead (motion.md 4.3).
     expect(
       imports(
         join(HOME_DIR, 'meet-sino-section.tsx'),
-        /from\s+['"]@\/components\/motion\/sino-loop['"]/,
+        /from\s+['"]@\/components\/motion\/ScrollScrubSequence['"]/,
       ),
     ).toBe(true)
     const sinoLoop = stripComments(read(join(MOTION_DIR, 'sino-loop.tsx')))

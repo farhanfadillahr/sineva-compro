@@ -12,6 +12,8 @@ export default defineConfig([
     'node_modules/**',
     'coverage/**',
     'exports/**',
+    // vendored three.js draco decoder (minified third-party code, not ours to lint)
+    'public/draco/**',
     '.superpowers/**',
     'next-env.d.ts',
   ]),

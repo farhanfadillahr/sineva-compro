@@ -89,7 +89,7 @@ Hero (H1, lead, CTA "Plan my AI project" → `/contact?service={slug}`, pose), "
 
 ### 2.7 About `/about`
 
-Hero with scene C3, story, mission and values (cards), meet Sino (what the mascot stands for), team (toggle in Site Settings), final CTA.
+Hero with scene C3, story, mission and values (cards), meet Sino (the friendly companion and the tasks he can help with), team (toggle in Site Settings), final CTA.
 
 ### 2.8 Contact `/contact` (Sintra book-a-demo pattern, light)
 

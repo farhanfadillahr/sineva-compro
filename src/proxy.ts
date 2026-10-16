@@ -63,7 +63,7 @@ export function proxy(request: NextRequest) {
 
 // Only files that live outside the localized tree and are served straight from public/ (or
 // Next.js itself) are excluded: /_next, /brand, /lottie, /mascot (poster, poses and the GLB),
-// /draco (self-hosted decoder), /og, and the root files browsers and crawlers request by name
+// /draco (self-hosted decoder), /phone, /og, and the root files browsers and crawlers request by name
 // (favicon, robots, sitemap, the web manifest and the Next.js app icons: `icon.svg`,
 // `apple-icon.png`, numbered variants like `icon1.png`, and the `-<6 chars>` suffix Next.js adds
 // to a metadata route that sits inside a route group).
@@ -73,6 +73,6 @@ export function proxy(request: NextRequest) {
 // `decideRoute` keeps them out of next-intl.
 export const config = {
   matcher: [
-    '/((?!_next(?:/|$)|brand(?:/|$)|lottie(?:/|$)|mascot(?:/|$)|draco(?:/|$)|og(?:/|$)|(?:favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|(?:apple-)?icon\\d*(?:-[a-z0-9]{6})?\\.(?:ico|jpe?g|png|svg))$).*)',
+    '/((?!_next(?:/|$)|brand(?:/|$)|lottie(?:/|$)|mascot(?:/|$)|draco(?:/|$)|phone(?:/|$)|og(?:/|$)|(?:favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|(?:apple-)?icon\\d*(?:-[a-z0-9]{6})?\\.(?:ico|jpe?g|png|svg))$).*)',
   ],
 }

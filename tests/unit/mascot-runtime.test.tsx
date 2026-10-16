@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { installIntersectionObserver, setVisibility } from './motion-test-utils'
 
 // The runtime is the lazy chunk: it owns the WebGL renderer, the mixer and every listener. Here
@@ -15,6 +15,7 @@ const world = vi.hoisted(() => ({
     setSize: ReturnType<typeof vi.fn>
     dispose: ReturnType<typeof vi.fn>
     forceContextLoss: ReturnType<typeof vi.fn>
+    compileAsync: ReturnType<typeof vi.fn>
   }>,
   gltf: null as null | { scene: unknown; animations: unknown[] },
   loadError: null as null | Error,
@@ -34,6 +35,7 @@ vi.mock('three', async (importOriginal) => {
     setPixelRatio = vi.fn()
     setSize = vi.fn()
     setClearColor = vi.fn()
+    compileAsync = vi.fn(async () => {})
     dispose = vi.fn()
     forceContextLoss = vi.fn()
     constructor() {
@@ -78,7 +80,11 @@ vi.mock('three/examples/jsm/environments/RoomEnvironment.js', async () => {
   return { RoomEnvironment: class extends Scene {} }
 })
 
-import { startSinoRuntime, type SinoRuntime } from '@/components/mascot/sino-runtime'
+import {
+  startSinoRuntime,
+  type SinoFallbackReason,
+  type SinoRuntime,
+} from '@/components/mascot/sino-runtime'
 
 type Rig = ReturnType<typeof buildRig>
 
@@ -96,10 +102,10 @@ function buildRig() {
   scene.add(head)
 
   const map = new THREE.Texture()
-  const geometry = new THREE.BoxGeometry(1, 1, 1)
+  const geometry = new THREE.BoxGeometry(0.4, 1, 0.4)
   const material = new THREE.MeshStandardMaterial({ map })
   const body = new THREE.Mesh(geometry, material)
-  body.position.y = 0.5
+  body.position.y = 0.6
   body.name = 'GEO-body'
   scene.add(body)
 
@@ -138,7 +144,10 @@ let clock: number
 let rig: Rig
 let host: HTMLElement
 let runtime: SinoRuntime | null
-let callbacks: { onFirstFrame: ReturnType<typeof vi.fn>; onFallback: ReturnType<typeof vi.fn> }
+let callbacks: {
+  onFirstFrame: Mock<() => void>
+  onFallback: Mock<(reason: SinoFallbackReason) => void>
+}
 let observers: ReturnType<typeof installIntersectionObserver>
 let cancelSpy: ReturnType<typeof vi.fn>
 
@@ -205,25 +214,25 @@ beforeEach(() => {
   Object.defineProperty(window, 'scrollY', { value: 0, configurable: true, writable: true })
   Object.defineProperty(window, 'innerWidth', { value: 1200, configurable: true, writable: true })
   Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true, writable: true })
-  try {
-    window.sessionStorage.clear()
-  } catch {
-    /* storage can be blocked */
-  }
+  // Most tests start from a session that already saw the greeting, so the hover rules are not
+  // masked by the (uninterruptible) greeting wave.
+  window.sessionStorage.clear()
+  window.sessionStorage.setItem('sineva:once:sino-greet', '1')
 
   document.body.innerHTML = '<section id="hero"><div id="host"></div></section>'
   host = document.getElementById('host')!
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
     () =>
+      // Like a real element, the box moves up as the page scrolls down.
       ({
-        top: 0,
+        top: -window.scrollY,
         left: 0,
-        bottom: 500,
+        bottom: 500 - window.scrollY,
         right: 500,
         width: 500,
         height: 500,
         x: 0,
-        y: 0,
+        y: -window.scrollY,
       }) as DOMRect,
   )
   callbacks = { onFirstFrame: vi.fn(), onFallback: vi.fn() }
@@ -252,9 +261,41 @@ describe('start', () => {
     expect(world.loadedUrls).toEqual(['/mascot/sino.glb'])
   })
 
+  it('greets once per session: greet_wave on the first canvas, idle straight away on the next', async () => {
+    const played = () =>
+      vi
+        .mocked(THREE.AnimationAction.prototype.play)
+        .mock.instances.map((a) => (a as unknown as { _clip: { name: string } })._clip.name)
+    vi.spyOn(THREE.AnimationAction.prototype, 'play')
+    window.sessionStorage.clear()
+    const first = await start()
+    pump(2)
+    expect(played()).toEqual(['greet_wave'])
+    first.dispose()
+    vi.mocked(THREE.AnimationAction.prototype.play).mockClear()
+    rig = buildRig()
+    world.gltf = { scene: rig.scene, animations: rig.animations }
+    runtime = null
+    document.body.innerHTML = '<section><div id="host"></div></section>'
+    host = document.getElementById('host')!
+    runtime = await start()
+    pump(2)
+    expect(played()).toEqual(['idle'])
+  })
+
   it('caps the pixel ratio at 1.5 on a 3x screen', async () => {
     await start()
     expect(renderer().setPixelRatio).toHaveBeenCalledWith(1.5)
+  })
+
+  it('compiles the shaders off the main thread before the first frame', async () => {
+    await start()
+    expect(renderer().compileAsync).toHaveBeenCalledTimes(1)
+    const [scene, camera] = renderer().compileAsync.mock.calls[0] as unknown[]
+    expect(scene).toBeInstanceOf(THREE.Scene)
+    expect(camera).toBeInstanceOf(THREE.PerspectiveCamera)
+    // Nothing has been drawn yet: compiling is done by the time start() resolves.
+    expect(renderer().render).not.toHaveBeenCalled()
   })
 
   it('reveals the canvas and reports the first frame once, after it has drawn', async () => {
@@ -279,11 +320,11 @@ describe('start', () => {
     expect(camera.aspect).toBe(1)
   })
 
-  it('rejects, leaves no canvas and frees the renderer when the GLB request fails', async () => {
+  it('rejects before any WebGL context exists when the GLB request fails', async () => {
     world.loadError = new Error('GLB 404')
     await expect(start()).rejects.toThrow('GLB 404')
     expect(host.querySelector('canvas')).toBeNull()
-    expect(renderer().dispose).toHaveBeenCalled()
+    expect(world.renderers).toHaveLength(0)
     expect(world.dracoDispose).toHaveBeenCalled()
     expect(frameQueue.size).toBe(0)
   })
@@ -606,6 +647,29 @@ describe('scroll-linked rig', () => {
     window.dispatchEvent(new Event('scroll'))
     pump(300)
     expect(rigGroup().position.y).toBeLessThan(0)
+  })
+
+  it('never pushes the feet below the canvas: the parallax stops at the free space under them', async () => {
+    await start()
+    pump(2)
+    // At full scroll the 0.85x lag wants 75 px on this 500 px canvas, but the box's lowest corner
+    // leaves only about 30 px, and anything lower would be cropped flat by the canvas edge.
+    window.scrollY = 500
+    window.dispatchEvent(new Event('scroll'))
+    pump(400)
+    const camera = renderer().render.mock.calls.at(-1)![1] as THREE.PerspectiveCamera
+    // Real vertices of the (rotated) body, not its bounding box.
+    const positions = rig.body.geometry.getAttribute('position')
+    let bottomPx = 0
+    for (let i = 0; i < positions.count; i += 1) {
+      const ndc = new THREE.Vector3()
+        .fromBufferAttribute(positions, i)
+        .applyMatrix4(rig.body.matrixWorld)
+        .project(camera)
+      bottomPx = Math.max(bottomPx, ((1 - ndc.y) / 2) * 500)
+    }
+    expect(bottomPx).toBeLessThanOrEqual(500.5)
+    expect(rigGroup().position.y).toBeLessThan(-0.05)
   })
 
   it('tips the head 8 degrees at full scroll with no pointer', async () => {

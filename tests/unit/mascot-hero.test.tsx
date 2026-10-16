@@ -170,6 +170,12 @@ describe('gate outcomes', () => {
       await new Promise((resolve) => setTimeout(resolve, 20))
     })
     expect(runtime.start).not.toHaveBeenCalled()
+    // The page scrolled: the same element is now on screen when the gate asks again.
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: 100,
+      bottom: 600,
+      height: 500,
+    } as DOMRect)
     await act(async () => {
       observers.fire(host(), { isIntersecting: true, intersectionRatio: 1 })
     })

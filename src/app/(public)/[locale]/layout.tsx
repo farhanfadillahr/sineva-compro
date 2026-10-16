@@ -8,7 +8,7 @@ import { LogoIntroGateScript, LogoIntroShell } from '@/components/brand/logo-int
 import { FloatingWhatsApp } from '@/components/layout/floating-whatsapp'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteHeader } from '@/components/layout/site-header'
-import { MAIN_CONTENT_ID, SkipLink } from '@/components/layout/skip-link'
+import { SkipLink } from '@/components/layout/skip-link'
 import { routing } from '@/i18n/routing'
 import { getContentSource } from '@/lib/content-source'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
@@ -80,10 +80,8 @@ export default async function PublicLayout({
             whatsapp={settings?.whatsapp ?? null}
             showWork={showWork}
           />
-          {/* Skip-link target. Pages render their own <main>; this wrapper only receives focus. */}
-          <div id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 outline-none">
-            {children}
-          </div>
+          {/* Every page renders its own main landmark, which is the skip link's target. */}
+          <div className="flex-1">{children}</div>
           <SiteFooter settings={settings} services={navServices} showWork={showWork} />
           <FloatingWhatsApp whatsapp={settings?.whatsapp ?? null} services={navServices} />
           {/* Last in the tree so it never changes tab order; it renders nothing until it plays. */}

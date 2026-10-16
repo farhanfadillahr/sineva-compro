@@ -95,6 +95,11 @@
       "x": "Sineva on X"
     }
   },
+  "Home": {
+    "stickyBarLabel": "Next steps",
+    "comingSoon": "Coming soon",
+    "internalDemo": "Internal demo project"
+  },
   "Whatsapp": {
     "label": "Chat with us",
     "ariaLabel": "Chat with us on WhatsApp"

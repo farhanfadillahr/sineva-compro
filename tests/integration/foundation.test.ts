@@ -9,7 +9,8 @@ describe('custom-admin foundation HTTP boundary', () => {
   it('serves the English homepage at the public entry point without a redirect', async () => {
     const root = await fetch(base, { redirect: 'manual' })
     expect(root.status).toBe(200)
-    expect(await root.text()).toContain('<title>Sineva</title>')
+    // The Home page sets its own title from the page SEO fields; it still names the brand.
+    expect(await root.text()).toMatch(/<title>[^<]*Sineva[^<]*<\/title>/)
   })
   it('redirects anonymous protected admin requests to custom login', async () => {
     const result = await fetch(new URL('/admin', base), { redirect: 'manual' })

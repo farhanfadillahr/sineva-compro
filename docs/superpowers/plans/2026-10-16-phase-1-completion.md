@@ -23,7 +23,7 @@ The public introduction now leads with help for everyday tasks rather than the c
 - P1 card-specific loops, optional additional device props and Lottie L3 to L10 remain follow-ups from the checkpoint. The complete P0 loops and requested jetpack replace the immediate missing mascot media.
 - Real Safari/iOS and Android checks, Lighthouse comparison and timed navigation benchmark remain pending. Unit/build success is not device/performance certification.
 - Linear is behind its login screen in this session, so ticket statuses were not changed. PR references preserve the CPR mapping.
-- The final project API reports GitHub linked to `farhanfadillahr/sineva-compro` with production branch `main`. PR #47 preview is `BLOCKED`; successful automatic production deployment has not been verified. Use `npx vercel --prod` from the repository root if needed. The local checkout is linked to the existing Vercel project `sineva`.
+- The final project API reports GitHub linked to `farhanfadillahr/sineva-compro` with production branch `main`. PR #47 preview is `BLOCKED` with `TEAM_ACCESS_REQUIRED` because the commit author lacks deployment permission; successful automatic production deployment has not been verified. Use `npx vercel --prod` from the repository root if needed. The local checkout is linked to the existing Vercel project `sineva`.
 
 ## Validation
 

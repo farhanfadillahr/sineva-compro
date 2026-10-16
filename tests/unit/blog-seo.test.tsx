@@ -132,7 +132,7 @@ describe('BlogPosting JSON-LD', () => {
       ...settings,
       brand: {
         ...settings.brand,
-        defaultOgImage: { ...settings.brand.defaultOgImage!, url: '/og/default.png' },
+        defaultOgImage: { ...settings.brand.defaultOgImage!, url: '/og/default-v006.png' },
         logo: { ...settings.brand.logo!, url: '/brand/logo.png' },
       },
     }
@@ -141,7 +141,7 @@ describe('BlogPosting JSON-LD', () => {
       settings: relativeSettings,
       siteUrl: SITE,
     })
-    expect(data.image).toEqual(['https://sineva.example/og/default.png'])
+    expect(data.image).toEqual(['https://sineva.example/og/default-v006.png'])
     expect(data.publisher.logo).toEqual({
       '@type': 'ImageObject',
       url: 'https://sineva.example/brand/logo.png',

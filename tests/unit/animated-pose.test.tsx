@@ -20,7 +20,7 @@ import {
 
 const VIEWPORT = 800
 const IMAGE: MediaAsset = {
-  url: '/mascot/poses/sino-wave.webp',
+  url: '/mascot/poses/v006/sino-wave.webp',
   width: 1200,
   height: 1200,
   alt: '',

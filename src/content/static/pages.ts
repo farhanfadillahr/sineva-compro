@@ -50,7 +50,7 @@ export const pages: PageContentMap = {
       primaryCtaLabel: 'Book a free consultation',
       secondaryCtaLabel: 'Get notified about Sino',
       poster: asset(
-        '/mascot/poster/sino-hero.webp',
+        '/mascot/poster/v006/sino-hero.webp',
         1600,
         1600,
         'Sino, the friendly AI agent mascot, waving hello',
@@ -198,7 +198,7 @@ export const pages: PageContentMap = {
     hero: {
       title: 'More room for what matters',
       lead: 'You have a business to care for. We are here to help make the everyday work a little lighter.',
-      scene: asset('/mascot/poses/sino-relaxed.webp', 1200, 1200, 'Sino relaxing with a mug'),
+      scene: asset('/mascot/poses/v006/sino-relaxed.webp', 1200, 1200, 'Sino relaxing with a mug'),
     },
     // Story and mission are proposals from docs/design/brand-positioning.md. The Founder has not
     // approved a company story, so nothing here states a founding date, a number or a history.

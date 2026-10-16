@@ -10,10 +10,10 @@ const handledByIntl = (pathname: string) => matcher.test(pathname)
 describe('proxy matcher', () => {
   it.each([
     '/mascot/sino.glb',
-    '/mascot/poses/sino-wave.webp',
-    '/mascot/poster/sino-hero.avif',
+    '/mascot/poses/v006/sino-wave.webp',
+    '/mascot/poster/v006/sino-hero.avif',
     '/draco/draco_decoder.wasm',
-    '/og/default.png',
+    '/og/default-v006.png',
     '/brand/logo.svg',
     '/lottie/intro.json',
     '/favicon.ico',

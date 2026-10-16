@@ -1,0 +1,38 @@
+{
+  "model": {
+    "rawBytes": 1174076,
+    "brotliBytes": 367332,
+    "triangles": 56233,
+    "primitives": 22,
+    "validator": {
+      "errors": 0,
+      "warnings": 0,
+      "hints": 0
+    }
+  },
+  "videos": {
+    "mascot/launch/sino-launch.webm": 391436,
+    "mascot/launch/sino-flyby-mail.webm": 217728,
+    "mascot/launch/sino-flyby.webm": 213977,
+    "mascot/launch/sino-flyby-mail.mov": 151624,
+    "mascot/launch/sino-launch.mov": 210869,
+    "mascot/launch/sino-flyby.mov": 149384,
+    "mascot/loops/sino-loop-phone.webm": 669683,
+    "mascot/loops/sino-loop-build.mov": 469755,
+    "mascot/loops/sino-loop-build.webm": 542459,
+    "mascot/loops/sino-loop-confused.webm": 739695,
+    "mascot/loops/sino-loop-thumbs.webm": 861305,
+    "mascot/loops/sino-loop-thumbs.mov": 819512,
+    "mascot/loops/sino-loop-phone.mov": 570314,
+    "mascot/loops/sino-loop-wave.webm": 807569,
+    "mascot/loops/sino-loop-confused.mov": 611698,
+    "mascot/loops/sino-loop-wave.mov": 654368
+  },
+  "auditScope": "Deformed hand and forearm surfaces against torso/head; props against torso/head/legs. Joint seams and intentional finger grips excluded. Additional laptop hand/screen check. All 10 GLB clips, 72 frames of every loop, 13 stills and all one-shot frames checked.",
+  "deviceChecksPending": [
+    "Safari/iOS playback",
+    "Android FPS",
+    "Lighthouse comparison",
+    "click latency benchmark"
+  ]
+}

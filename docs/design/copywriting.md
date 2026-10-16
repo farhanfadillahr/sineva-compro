@@ -2,6 +2,10 @@
 
 Applies to all public text: pages, buttons, forms, error messages, emails, metadata, alt text, and WhatsApp templates. Copy language for v1: **English**. Copy examples in this document are in English.
 
+## Public voice update (2026-10-16)
+
+Lead with the help a visitor wants: a task made easier, a useful first step, or support for their team. Keep the company category as internal positioning. Avoid opening with "Sineva is an AI consulting company". Prefer "A little help with the tasks that fill your day" and "Let us find where AI can make things easier for you". Keep claims modest, concrete and human.
+
 ## 1. Hard rules (checked in review and by the content lint)
 
 1. **No em-dash (`—`) or en-dash (`–`) in public copy.** Split into two sentences, or use a period, comma, colon, or parentheses. Number ranges are written `10 to 50` or `10-50` (plain hyphen).

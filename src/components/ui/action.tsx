@@ -1,3 +1,4 @@
+import type { LaunchKind } from '@/components/mascot/sino-launch/launch-bus'
 import type { AnchorHTMLAttributes, ComponentType, MouseEvent, ReactNode, Ref } from 'react'
 
 // A link component such as next-intl's `Link` from '@/i18n/navigation'. It is passed in rather than
@@ -20,6 +21,7 @@ export type ActionLinkComponent = ComponentType<
 
 export type ActionElementProps = {
   href?: string
+  launch?: LaunchKind
   linkComponent?: ActionLinkComponent
   // Native disabled for buttons; aria-disabled and an inert href-less anchor for links.
   disabled?: boolean
@@ -41,6 +43,7 @@ export type ActionElementProps = {
 // external links and localised links.
 export function ActionElement({
   href,
+  launch,
   linkComponent: LinkComponent,
   disabled,
   busy,
@@ -53,6 +56,7 @@ export function ActionElement({
   ref,
   ...rest
 }: ActionElementProps) {
+  rest['data-sino-launch'] = launch
   const inert = Boolean(disabled || busy)
   const ariaState = {
     'aria-disabled': inert ? true : undefined,

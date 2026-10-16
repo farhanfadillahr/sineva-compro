@@ -1,5 +1,7 @@
 # Phase 1 landing site: checkpoint and next steps
 
+> Historical checkpoint. See [the completion report](2026-10-16-phase-1-completion.md) for the continued work, merged PRs, asset budgets and remaining owner/device checks.
+
 | | |
 |---|---|
 | Date | 2026-10-16 |

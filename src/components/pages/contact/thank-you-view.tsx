@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { WhatsAppIcon } from '@/components/layout/icons'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
+import { ThankYouFlight } from '@/components/mascot/sino-launch/thank-you-flight'
 import { SinoLoop } from '@/components/motion/sino-loop'
 import { poseImage } from '@/components/pages/home/poses'
 import { Button, Container, Section, type ActionLinkComponent } from '@/components/ui'
@@ -44,12 +45,14 @@ export function ThankYouView({ model, linkComponent }: ThankYouViewProps) {
       <Section tone="canvas">
         <Container size="text" className="flex flex-col items-center gap-6 text-center">
           <div className="relative size-48 sm:size-56">
-            <SinoLoop
-              loop="L-thumbs"
-              still={poseImage('thumbs-up')}
-              sizes="(min-width: 640px) 224px, 192px"
-              className="size-full object-contain"
-            />
+            <ThankYouFlight>
+              <SinoLoop
+                loop="L-thumbs"
+                still={poseImage('thumbs-up')}
+                sizes="(min-width: 640px) 224px, 192px"
+                className="size-full object-contain"
+              />
+            </ThankYouFlight>
             <span
               data-slot="check-icon"
               aria-hidden="true"

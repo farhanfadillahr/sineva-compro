@@ -350,7 +350,10 @@ describe('valid submit', () => {
     await fillValid(user)
     await user.click(submit())
     expect(fetchSpy).not.toHaveBeenCalled()
-    expect(setItem).not.toHaveBeenCalled()
+    expect(setItem).toHaveBeenCalledExactlyOnceWith(
+      'sineva:contact-handoff',
+      expect.stringMatching(/^\d+$/),
+    )
     const form = container.querySelector('form')!
     expect(form.hasAttribute('action')).toBe(false)
     expect(form.hasAttribute('method')).toBe(false)

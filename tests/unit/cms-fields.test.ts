@@ -178,3 +178,9 @@ describe('parseRichText', () => {
     expect(parseRichText(input).ok).toBe(false)
   })
 })
+
+describe('canonicalJson', () => {
+  it('ignores object key order, as PostgreSQL jsonb reorders keys', () => {
+    expect(changedKeys({ a: { x: 1, y: 2 } }, { a: { y: 2, x: 1 } })).toEqual([])
+  })
+})

@@ -68,7 +68,7 @@ export function ContactView({ model, form }: ContactViewProps) {
             <div className="flex flex-col gap-10 lg:col-span-5">
               <ol aria-label={t('side.stepsLabel')} className="flex flex-col gap-6">
                 {page.steps.map((step, index) => (
-                  <Reveal as="li" index={index} key={step.title}>
+                  <Reveal as="li" variant="depth" key={step.title}>
                     <Card variant="step">
                       <span
                         aria-hidden="true"
@@ -86,7 +86,7 @@ export function ContactView({ model, form }: ContactViewProps) {
               </ol>
 
               {whatsappHref || details.length > 0 || page.responseTimeText ? (
-                <Reveal delayMs={150}>
+                <Reveal variant="depth" delayMs={150}>
                   <Card tone="surface" className="flex flex-col gap-5">
                     {whatsappHref ? (
                       <div className="flex flex-col items-start gap-3">
@@ -137,6 +137,7 @@ export function ContactView({ model, form }: ContactViewProps) {
             {/* Not `Card`: components.md section 6 asks for radius-xl, padding 32 and shadow-md
                 here, and Card's base variant fixes radius-card and shadow-sm. */}
             <Reveal
+              variant="depth"
               data-slot="form-card"
               delayMs={100}
               className="rounded-xl bg-surface p-6 shadow-md [border:var(--border-hairline)] sm:p-8 lg:col-span-7"

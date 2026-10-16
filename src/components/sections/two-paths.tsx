@@ -48,7 +48,7 @@ export function TwoPaths({ product, services, locale, linkComponent }: TwoPathsP
       <Container size="wide">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {cards.map(([key, card], index) => (
-            <Reveal key={key} index={index}>
+            <Reveal key={key} variant="depth">
               <Card
                 as="article"
                 variant="path"

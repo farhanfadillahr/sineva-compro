@@ -40,7 +40,7 @@ export function FaqSection({
     <Section tone={tone}>
       <Container>
         <div className="grid grid-cols-1 gap-x-8 gap-y-12 lg:grid-cols-12">
-          <Reveal className="lg:col-span-5">
+          <Reveal variant="lines" className="lg:col-span-5">
             <SectionHeader
               align="start"
               eyebrow={eyebrow}

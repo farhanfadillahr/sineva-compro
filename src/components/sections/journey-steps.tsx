@@ -18,7 +18,7 @@ export function JourneySteps({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ol data-slot="journey-steps" className="relative grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -44,8 +44,8 @@ export function JourneySteps({
           {steps.map((step, index) => (
             <Reveal
               as="li"
+              variant="depth"
               key={step.title}
-              index={index}
               className="relative flex flex-col items-center gap-5 rounded-xl bg-surface p-6 text-center shadow-sm [border:var(--border-hairline)]"
             >
               <div className="relative size-40 rounded-full bg-surface-tint">

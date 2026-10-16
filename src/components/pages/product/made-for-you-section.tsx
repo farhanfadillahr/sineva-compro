@@ -28,7 +28,7 @@ export function MadeForYouSection({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} lead={intro} />
         </Reveal>
         <Reveal delayMs={80}>

@@ -33,14 +33,14 @@ export function AudienceCards({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader eyebrow={eyebrow} title={title} lead={intro} />
         </Reveal>
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {items.map((item, index) => {
+          {items.map((item) => {
             const icon = icons?.[item.icon]
             return (
-              <Reveal as="li" key={`${item.icon}-${item.title}`} index={index} className="flex">
+              <Reveal as="li" variant="depth" key={`${item.icon}-${item.title}`} className="flex">
                 <Card variant="feature" className="w-full">
                   {icon ? (
                     <span

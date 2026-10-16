@@ -153,13 +153,11 @@ describe('TaskCardGrid', () => {
     expect(screen.getByAltText('Sino pose')).toBeTruthy()
   })
 
-  it('staggers the reveal 50 ms per card', () => {
+  it('reveals every card with the depth preset (staggered by arrival, see motion-reveal-variants)', () => {
     const { container } = render(<TaskCardGrid {...props} />)
-    const wrappers = [...container.querySelectorAll<HTMLElement>('[data-reveal]')]
-    const delays = wrappers
-      .filter((w) => w.querySelector('[data-variant="task"]'))
-      .map((w) => w.style.getPropertyValue('--reveal-delay'))
-    expect(delays.slice(0, 4)).toEqual(['', '50ms', '100ms', '150ms'])
+    const wrappers = [...container.querySelectorAll<HTMLElement>('li[data-reveal]')]
+    expect(wrappers.length).toBeGreaterThan(1)
+    for (const w of wrappers) expect(w.getAttribute('data-reveal-variant')).toBe('depth')
   })
 
   it('lays the cards out as a bento on desktop with the featured card larger', () => {

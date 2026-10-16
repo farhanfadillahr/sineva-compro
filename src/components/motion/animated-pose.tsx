@@ -77,6 +77,8 @@ export type AnimatedPoseProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'
  * - The server HTML carries no motion attribute: with JavaScript off, or under reduced motion, the
  *   pose is the plain final image. Only reveal can ever hide it, and only on the client, before
  *   first paint (useReveal).
+ * - Inside a `Reveal` (a card, the final CTA panel) the pose skips its own reveal and rides in with
+ *   its parent, so there is never a double animation.
  * - Do not use this for the LCP image. Reveal would delay it; the hero poster stays a plain
  *   priority image.
  * - `pointer-events: none` on the pose's own box is fine: hover is read from the card, not the pose.
@@ -102,7 +104,17 @@ export function AnimatedPose({
   const resolvedPhase = phase ?? phaseForIndex(position)
   const resolvedTilt = tilt ?? tiltForIndex(position)
 
-  const { ref, state, props: reveal } = useReveal<HTMLDivElement>({ index, delayMs })
+  const {
+    ref,
+    state,
+    props: reveal,
+  } = useReveal<HTMLDivElement>({
+    index,
+    delayMs,
+    // A pose inside a revealed card rides in with the card: its own rise on top would be a second,
+    // competing motion (the float, parallax and hover lift are unaffected).
+    nested: true,
+  })
 
   useEffect(() => {
     const root = ref.current

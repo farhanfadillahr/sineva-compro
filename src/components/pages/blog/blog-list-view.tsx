@@ -44,7 +44,7 @@ export function BlogListView({ model, labels, linkComponent }: BlogListViewProps
       <Section tone="canvas" data-blog-section="listing" className="pt-10 lg:pt-12">
         <Container className="flex flex-col gap-10">
           {featured ? (
-            <Reveal>
+            <Reveal variant="depth">
               <FeaturedPost
                 post={featured}
                 locale={locale}
@@ -77,8 +77,8 @@ export function BlogListView({ model, labels, linkComponent }: BlogListViewProps
 
           {posts.length > 0 ? (
             <ul data-blog-grid="" className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post, index) => (
-                <Reveal as="li" key={post.slug} index={index} className="flex">
+              {posts.map((post) => (
+                <Reveal as="li" variant="depth" key={post.slug} className="flex">
                   <PostCard post={post} locale={locale} linkComponent={linkComponent} />
                 </Reveal>
               ))}

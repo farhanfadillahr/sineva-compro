@@ -54,6 +54,7 @@ export function FinalCta({
       <Container size="wide">
         {/* The panel is the Reveal element itself (same attributes, no extra wrapper). */}
         <Reveal
+          variant="rise-scale"
           data-tone={FINAL_CTA_TONE}
           className="relative isolate overflow-hidden rounded-2xl bg-surface-inverse text-text-inverse"
         >

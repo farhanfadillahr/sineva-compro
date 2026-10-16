@@ -29,12 +29,12 @@ export function ProblemsSection({ title, items, tone }: Common & { items: readon
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ul className={`grid grid-cols-1 gap-4 ${columns}`}>
-          {items.map((item, index) => (
-            <Reveal as="li" key={item.title} index={index} className="flex">
+          {items.map((item) => (
+            <Reveal as="li" variant="depth" key={item.title} className="flex">
               <Card variant="feature" className="w-full">
                 <h3 className="text-h4 text-text">{item.title}</h3>
                 <p className="text-body-sm text-pretty text-text-secondary">{item.body}</p>
@@ -53,7 +53,7 @@ export function DeliverablesSection({ title, items, tone }: Common & { items: re
   return (
     <Section tone={tone}>
       <Container className="grid grid-cols-1 items-start gap-x-8 gap-y-10 lg:grid-cols-12">
-        <Reveal className="lg:col-span-5">
+        <Reveal variant="lines" className="lg:col-span-5">
           <SectionHeader align="start" title={title} />
         </Reveal>
         <Reveal className="lg:col-span-7" delayMs={80}>
@@ -87,12 +87,12 @@ export function ProcessSection({ title, steps, tone }: Common & { steps: readonl
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ol className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
-            <Reveal as="li" key={step.title} index={index} className="flex">
+            <Reveal as="li" variant="depth" key={step.title} className="flex">
               <Card variant="feature" tone="surface" className="w-full">
                 <span aria-hidden="true" className="font-mono text-eyebrow text-text-brand">
                   {String(index + 1).padStart(2, '0')}
@@ -117,7 +117,7 @@ export function ToolsSection({ title, tools, tone }: Common & { tools: readonly 
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-10">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <Reveal delayMs={80}>

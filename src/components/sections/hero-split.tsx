@@ -5,7 +5,7 @@ import { AnimatedPose } from '@/components/motion/animated-pose'
 import type { MediaAsset, MockupBubble } from '@/features/content/types'
 import { HeroEntrance } from './_internal/hero-entrance'
 import { MediaFrame } from './_internal/media-frame'
-import { ChatBubbles, PhoneFrame } from './_internal/phone-frame'
+import { ChatBubbles, PhoneFrame, type PhoneChrome } from './_internal/phone-frame'
 import { SectionImage } from './_internal/section-image'
 import { SinoStage } from './_internal/sino-stage'
 import type { CtaLink, LinkProps } from './_internal/types'
@@ -17,6 +17,8 @@ export type HeroMockup = Readonly<{
   bubbles: readonly Pick<MockupBubble, 'from' | 'text'>[]
   /** Floating `ui-chip` texts, up to four. They must describe real product behaviour. */
   chips: readonly string[]
+  /** Words in the phone's chat chrome (name, status, day). */
+  chrome?: PhoneChrome
 }>
 
 export type HeroSplitProps = LinkProps & {
@@ -156,7 +158,7 @@ export function HeroSplit({
   if (variant === 'mockup') {
     visual = (
       <div {...visualMotion} className="relative mx-auto w-full max-w-md py-6">
-        <PhoneFrame>
+        <PhoneFrame chrome={mockup?.chrome}>
           <ChatBubbles bubbles={mockup?.bubbles ?? []} />
         </PhoneFrame>
         {(mockup?.chips ?? []).slice(0, CHIP_POSITIONS.length).map((chip, index) => (

@@ -233,7 +233,7 @@ describe('About team', () => {
   })
 
   it('disappears when the page toggle is off', () => {
-    renderAbout(withTeam(withoutTeam(base)))
+    renderAbout(withoutTeam(withTeam(base)))
     expect(sectionIds()).not.toContain('team')
   })
 
@@ -270,12 +270,25 @@ describe('About final CTA', () => {
     ).toBe('/contact')
   })
 
-  it('shows a second CTA only when the content has a label for it', () => {
-    renderAbout(base)
-    expect(within(section('finalCta')).getAllByRole('link').length).toBeLessThanOrEqual(2)
+  it('shows a second CTA to the product page only when the content has a label for it', () => {
+    const { unmount } = renderAbout(base)
     expect(
       within(section('finalCta')).queryByRole('link', { name: 'Join the waitlist' }),
     ).toBeNull()
+    unmount()
+
+    renderAbout({
+      ...base,
+      page: {
+        ...base.page,
+        finalCta: { ...base.page.finalCta, secondaryCtaLabel: 'Join the waitlist' },
+      },
+    })
+    expect(
+      within(section('finalCta'))
+        .getByRole('link', { name: 'Join the waitlist' })
+        .getAttribute('href'),
+    ).toBe('/products/ai-agents')
   })
 
   it('adds the WhatsApp action from the settings and drops it without a usable number', () => {

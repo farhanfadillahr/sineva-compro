@@ -21,7 +21,7 @@ Tabel `media`, `media_translation`, `media_usage` dan `media_delivery` memiliki 
 
 ## Lifecycle
 
-Upload menulis object privat dengan UUID dan content hash. Bila transaksi metadata/audit gagal, object baru dibersihkan. Metadata dan audit memakai transaksi yang sama. Penggantian mempertahankan ID media, membuat key baru, dan menyalin versi baru ke publik bila media pernah diterbitkan. Versi publik lama dipertahankan untuk URL immutable yang mungkin masih ada pada halaman/cache lama; penghapusan fisik arsip publik menunggu kebijakan retensi, bukan dilakukan diam-diam.
+Upload menulis object privat dengan UUID dan content hash. Bila transaksi metadata/audit gagal, object baru dibersihkan. Metadata dan audit memakai transaksi yang sama. Penggantian mempertahankan ID media, membuat key baru, dan menyalin versi baru ke publik bila media masih dipakai konten terbit. Versi publik lama dipertahankan untuk URL immutable yang mungkin masih ada pada halaman/cache lama; penghapusan fisik arsip publik menunggu kebijakan retensi, bukan dilakukan diam-diam.
 
 `withMediaReferences` menjadi pembungkus transaksi bagi tiket konten berikutnya: kunci owner dan media dalam urutan tetap, validasi alt semua locale aktif, salin privat ke publik secara idempotent, simpan usage dan jalankan callback penulisan dokumen pada transaksi yang sama. Kegagalan copy/metadata/audit/callback membatalkan publikasi dan membersihkan object publik baru. Melepas referensi dan menghapus media memakai kunci baris yang sama agar tidak berlomba. Media yang masih dipakai ditolak dengan daftar lokasi pemakaian. Delete dari pustaka bersifat soft-delete; cleanup privat dilakukan setelah commit agar kegagalan audit tidak merusak file yang masih dirujuk.
 

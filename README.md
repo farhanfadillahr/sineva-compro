@@ -40,7 +40,7 @@ The public site does not need PostgreSQL to run `dev` or `build`. Public content
 
 ### Optional: admin and database
 
-The admin (`/admin`) needs PostgreSQL, migrations and a bootstrap Admin account. Follow the [admin and database runbook](docs/runbooks/admin-and-database.md). Media storage is covered in the [SeaweedFS runbook](docs/runbooks/seaweedfs.md). Audit events and guarded demo seeds are documented in the [audit runbook](docs/architecture/audit-log-runbook.md); reusable admin components in the [admin UI kit guide](docs/runbooks/admin-ui-kit.md). Farhan ticket branches follow the [development staging workflow](docs/architecture/decisions/2026-10-16-development-staging.md).
+The admin (`/admin`) needs PostgreSQL, migrations and a bootstrap Admin account. Follow the [admin and database runbook](docs/runbooks/admin-and-database.md). Media storage is covered in the [SeaweedFS runbook](docs/runbooks/seaweedfs.md). Library setup, upload limits and publication integration are in the [media admin guide](docs/runbooks/media.md). Audit events and guarded demo seeds are documented in the [audit runbook](docs/architecture/audit-log-runbook.md); reusable admin components in the [admin UI kit guide](docs/runbooks/admin-ui-kit.md). Farhan ticket branches follow the [development staging workflow](docs/architecture/decisions/2026-10-16-development-staging.md).
 
 ### Quality gate
 

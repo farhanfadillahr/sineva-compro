@@ -37,17 +37,15 @@ async function demo(tx: DatabaseTransaction) {
   await tx.insert(user).values(identity)
   // The marker and actor are created together. The actor has no credentials and
   // is banned; it cannot authenticate. This marker is the purge ownership proof.
-  await tx
-    .insert(auditLog)
-    .values({
-      id: auditDemoId,
-      actorId: auditDemoActorId,
-      entity: 'users',
-      entityId,
-      action: 'create',
-      changedFields: ['active', 'name', 'role'],
-      isDemo: true,
-    })
+  await tx.insert(auditLog).values({
+    id: auditDemoId,
+    actorId: auditDemoActorId,
+    entity: 'users',
+    entityId,
+    action: 'create',
+    changedFields: ['active', 'name', 'role'],
+    isDemo: true,
+  })
 }
 async function purgeDemo(tx: DatabaseTransaction) {
   const marker = await ownedMarker(tx)
@@ -75,6 +73,9 @@ async function purgeDemo(tx: DatabaseTransaction) {
     actor.email === identity.email &&
     actor.role === identity.role &&
     actor.banned === true &&
+    actor.banReason === null &&
+    actor.banExpires === null &&
+    actor.createdAt.getTime() === actor.updatedAt.getTime() &&
     !actor.image &&
     !actor.emailVerified &&
     !otherLogs.length &&

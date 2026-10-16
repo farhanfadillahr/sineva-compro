@@ -43,7 +43,9 @@ it('runs base and demo twice idempotently, then purges only ticket-owned demo da
     const [before] = await ctx.connection.db.select({ total: count() }).from(auditLog)
     await run([])
     await run([])
-    expect((await ctx.connection.db.select({ total: count() }).from(auditLog))[0].total).toBe(before.total)
+    expect((await ctx.connection.db.select({ total: count() }).from(auditLog))[0].total).toBe(
+      before.total,
+    )
     await run(['--demo'])
     await run(['--demo'])
     expect(
@@ -77,23 +79,26 @@ it('runs base and demo twice idempotently, then purges only ticket-owned demo da
 
 it('preserves a demo actor changed by an operator even when the main identity still matches', async () => {
   await run(['--demo'])
-  await ctx.connection.db.update(user).set({ banReason: 'Operator managed account' }).where(eq(user.id, auditDemoActorId))
+  await ctx.connection.db
+    .update(user)
+    .set({ banReason: 'Operator managed account' })
+    .where(eq(user.id, auditDemoActorId))
   try {
     await run(['--purge-demo'])
-    expect(await ctx.connection.db.select().from(user).where(eq(user.id, auditDemoActorId))).toMatchObject([{ banReason: 'Operator managed account' }])
+    expect(
+      await ctx.connection.db.select().from(user).where(eq(user.id, auditDemoActorId)),
+    ).toMatchObject([{ banReason: 'Operator managed account' }])
   } finally {
     await ctx.connection.db.delete(user).where(eq(user.id, auditDemoActorId))
   }
 })
 
 it('never adopts or deletes a pre-existing actor with a reserved demo identifier', async () => {
-  await ctx.connection.db
-    .insert(user)
-    .values({
-      id: auditDemoActorId,
-      name: 'Existing actor',
-      email: `existing-${randomUUID()}@example.com`,
-    })
+  await ctx.connection.db.insert(user).values({
+    id: auditDemoActorId,
+    name: 'Existing actor',
+    email: `existing-${randomUUID()}@example.com`,
+  })
   try {
     await expect(run(['--demo'])).rejects.toThrow()
     await run(['--purge-demo'])
@@ -111,16 +116,14 @@ it('never adopts or deletes a pre-existing actor with a reserved demo identifier
 it('preserves demo actors adopted by real application records', async () => {
   await run(['--demo'])
   const realId = randomUUID()
-  await ctx.connection.db
-    .insert(auditLog)
-    .values({
-      id: realId,
-      actorId: auditDemoActorId,
-      entity: 'pages',
-      entityId: 'real-record',
-      action: 'update',
-      changedFields: ['data'],
-    })
+  await ctx.connection.db.insert(auditLog).values({
+    id: realId,
+    actorId: auditDemoActorId,
+    entity: 'pages',
+    entityId: 'real-record',
+    action: 'update',
+    changedFields: ['data'],
+  })
   try {
     await run(['--purge-demo'])
     expect(

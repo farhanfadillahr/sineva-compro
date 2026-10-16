@@ -49,7 +49,7 @@ npm run db:seed -- --module=audit --purge-demo
 
 `--purge-demo` memakai guard yang sama dengan `--demo`. Keduanya ditolak untuk target non-loopback atau `NODE_ENV=production` kecuali operator memberikan **kedua** opsi `--confirm-database=<nama>` dan `--allow-demo-on-remote`. Tidak ada URL atau kredensial dalam output CLI. Base tetap dapat dijalankan pada target remote/production tanpa override demo.
 
-Purge hanya menghapus marker audit milik CPR-87 yang terbukti demo. Actor dihapus hanya bila marker membuktikan ia dibuat oleh seed ini, identitasnya masih cocok, dan tidak memiliki credential, session atau log lain. Actor/record yang sudah ada pada ID cadangan tidak diadopsi atau dihapus. Konflik menolak transaksi. Actor demo yang kemudian dipakai oleh catatan nyata atau diubah dibiarkan tetap ada; operator harus meninjau konflik ID secara manual sebelum menjalankan demo lagi. Tidak ada opsi force-delete. Baris demo milik modul/tiket lain tidak disentuh.
+Purge hanya menghapus marker audit milik CPR-87 yang terbukti demo. Actor dihapus hanya bila marker membuktikan ia dibuat oleh seed ini, identitasnya masih cocok, metadata ban tetap kosong, waktu pembaruan sama dengan waktu pembuatan, dan tidak memiliki credential, session atau log lain. Actor/record yang sudah ada pada ID cadangan tidak diadopsi atau dihapus. Konflik menolak transaksi. Actor demo yang kemudian dipakai oleh catatan nyata atau diubah dibiarkan tetap ada; operator harus meninjau konflik ID secara manual sebelum menjalankan demo lagi. Tidak ada opsi force-delete. Baris demo milik modul/tiket lain tidak disentuh.
 
 Untuk tabel CMS berikutnya, tambahkan modul `SeedModule` dengan `base`, `demo`, `purgeDemo` ke registry `scripts/seed/runner.ts` dan nama modul ke parser opsi. Gunakan ID/key stabil, penanda demo, transaksi dan pemeriksaan kepemilikan. Jangan membuat credential default atau menghapus actor/record yang mungkin sudah dipakai tabel lain. Sebelum menambah FK ke akun demo, perluas pemeriksaan referensi purge agar tidak ada data domain yang berubah akibat penghapusan akun.
 
@@ -81,3 +81,9 @@ Cluster native yang diinisialisasi dengan timezone host dapat memakai `Asia/Jaka
 ## Kebijakan retensi: menunggu keputusan owner
 
 Log berisi identitas staf dan ID internal yang dapat dikaitkan dengan akun. Periode retensi, akses operasional, penanganan penghapusan akun, arsip/backup dan dasar kebijakan privasi belum ditetapkan owner. CPR-87 tidak menetapkan durasi hukum, tidak mengklaim kepatuhan UU PDP, tidak menjadwalkan purge produksi, dan tidak menyediakan penghapusan massal log. `--purge-demo` hanya mengelola fixture demo, bukan kebijakan retensi. Keputusan owner harus dicatat sebelum menambahkan pekerjaan retensi yang destruktif.
+
+## Bukti verifikasi 16 Oktober 2026
+
+Setelah sinkronisasi main sampai PR #30: 1.786 unit test (102 file), 51 database test (13 file), dan 60 HTTP test production lokal (8 file) lulus. Lint, typecheck, format, pemeriksaan migration dan build lulus. Pengujian HTTP memverifikasi daftar Admin, filter dan redirect halaman di luar rentang, penolakan Editor/anonim, serta pengecualian email/password/cookie dari HTML.
+
+Regression seed sempat gagal ketika actor demo yang metadata bannya diubah operator masih terhapus. Purge sekarang mewajibkan metadata ban tetap kosong dan waktu pembaruan sama dengan waktu pembuatan, selain pemeriksaan identitas, credential, session dan referensi. Tes gagal lalu lulus setelah perbaikan. Retensi produksi tetap memerlukan keputusan owner; verifikasi lokal bukan keputusan kebijakan privasi atau deployment.

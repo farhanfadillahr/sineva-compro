@@ -188,3 +188,7 @@ export const SITE_FORM_GLOBAL_GROUPS = [
   'verification',
 ] as const
 export const SITE_FORM_LOCALE_GROUPS = ['contact', 'whatsapp'] as const
+
+/** Groups the SEO settings page edits (Admin only, CPR-85). */
+export const SEO_FORM_GLOBAL_GROUPS = ['seo', 'verification'] as const
+export const SEO_FORM_LOCALE_GROUPS = ['seo'] as const

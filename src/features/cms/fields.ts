@@ -99,6 +99,8 @@ export type ObjectField = Readonly<{
   adminOnly?: boolean
   /** Optional section: the form shows the `visible` toggle of the value as the section switch. */
   collapsible?: boolean
+  /** Extra preview rendered under the fields (the SEO snippet and card). */
+  preview?: 'seo'
 }>
 export type FieldSchema =
   | TextField

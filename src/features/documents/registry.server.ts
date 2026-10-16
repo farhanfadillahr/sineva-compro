@@ -9,6 +9,9 @@ import { category, teamMember } from '../collections/tables'
 import type { DocumentName } from './configs'
 import { portfolioTables, postTables, type DocumentTables } from './tables'
 import { serviceTranslation } from '../services/schema'
+import { localizedPath } from '../cms/paths'
+import { recordSlugChange } from '../redirects/service.server'
+import { documentConfigs } from './configs'
 
 type Entry = Readonly<{
   tables: DocumentTables
@@ -35,6 +38,20 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const slugTags = (slugs: readonly (string | null)[], build: (slug: string) => string) =>
   [...new Set(slugs)].filter((s): s is string => !!s && SLUG.test(s)).map(build)
 
+/** A published slug that changes gets a 301 from the old path, in the publish transaction. */
+function redirectOnSlugChange(name: DocumentName): Entry['afterPublish'] {
+  return async (tx, actor, { locale, oldSlug, newSlug }) => {
+    if (!oldSlug || oldSlug === newSlug) return
+    const prefix = documentConfigs[name].publicPrefix
+    await recordSlugChange(
+      tx,
+      actor,
+      localizedPath(locale, `${prefix}${oldSlug}`),
+      localizedPath(locale, `${prefix}${newSlug}`),
+    )
+  }
+}
+
 const postAudit: Record<string, string> = {
   categorySlug: 'category',
   authorId: 'author',
@@ -54,6 +71,7 @@ export const documentRegistry: Record<DocumentName, Entry> = {
       ]
     },
     auditFields: (keys) => [...new Set(keys.map((key) => postAudit[key] ?? key))],
+    afterPublish: redirectOnSlugChange('posts'),
     async validateRefs(tx, data) {
       const errors: Record<string, string> = {}
       if (typeof data.categorySlug === 'string') {
@@ -87,6 +105,7 @@ export const documentRegistry: Record<DocumentName, Entry> = {
     auditFields: (keys) => [
       ...new Set(keys.map((key) => (key === 'serviceSlug' ? 'relatedService' : key))),
     ],
+    afterPublish: redirectOnSlugChange('work'),
     async validateRefs(tx, data, locale) {
       if (typeof data.serviceSlug !== 'string') return
       const [row] = await tx

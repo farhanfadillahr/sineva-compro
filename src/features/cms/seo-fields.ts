@@ -20,5 +20,5 @@ export const seoSchema = f.object(
     }),
     noindex: { ...f.boolean('Jangan indeks halaman ini'), adminOnly: true },
   },
-  { label: 'SEO' },
+  { label: 'SEO', preview: 'seo' },
 )

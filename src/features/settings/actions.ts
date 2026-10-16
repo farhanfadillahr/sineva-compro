@@ -2,7 +2,12 @@
 import { headers } from 'next/headers'
 import { readPayload, toCmsActionState, type CmsActionState } from '../cms/errors'
 import { revalidateAdmin } from '../cms/revalidate.server'
-import { SITE_FORM_GLOBAL_GROUPS, SITE_FORM_LOCALE_GROUPS } from './fields'
+import {
+  SEO_FORM_GLOBAL_GROUPS,
+  SEO_FORM_LOCALE_GROUPS,
+  SITE_FORM_GLOBAL_GROUPS,
+  SITE_FORM_LOCALE_GROUPS,
+} from './fields'
 import { saveSiteSettings } from './service.server'
 
 export async function saveSiteSettingsAction(
@@ -17,6 +22,23 @@ export async function saveSiteSettingsAction(
     })
     revalidateAdmin('/admin/settings')
     return { status: 'success', message: 'Pengaturan situs disimpan.', savedAt: Date.now() }
+  } catch (error) {
+    return toCmsActionState(error)
+  }
+}
+
+export async function saveSeoSettingsAction(
+  previous: CmsActionState,
+  form: FormData,
+): Promise<CmsActionState> {
+  void previous
+  try {
+    await saveSiteSettings(await headers(), readPayload(form), {
+      global: SEO_FORM_GLOBAL_GROUPS,
+      locale: SEO_FORM_LOCALE_GROUPS,
+    })
+    revalidateAdmin('/admin/settings/seo')
+    return { status: 'success', message: 'Pengaturan SEO disimpan.', savedAt: Date.now() }
   } catch (error) {
     return toCmsActionState(error)
   }

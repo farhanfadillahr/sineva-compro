@@ -137,3 +137,19 @@ database; "Work" in the UI and URLs). Project type is required; internal demos c
 `internal-demo`, which the page shows as "Internal demo project". The form reminds editors to write
 only real, verified results. The Work link, page and Selected work sections switch on by themselves
 once a work item is published. Demo seed: three flagged `[Demo]` internal projects (noindex).
+
+## SEO and redirects (CPR-85)
+
+- Per-document SEO (pages, services, posts, work): title (60) and description (160) with live
+  counters, OG image (empty uses the generated card), and a snippet and card preview using the
+  site title template. Canonical override and noindex are Admin only; the server keeps the stored
+  values for an Editor.
+- `/admin/settings/seo` (Admin): title template (must contain `{title}`), default description,
+  the site-wide index switch and the Search Console token. Organization JSON-LD uses the Brand
+  name and logo and the social links. Indexing also needs `SITE_INDEXABLE=true` in production;
+  previews stay noindex.
+- `/admin/redirects` (Admin): manual 301/308 redirects. Duplicate sources, loops and chains longer
+  than 5 hops are refused. A published slug change (service, post, work) creates a 301 from the old
+  path in the same transaction as the change, re-points older redirects at the new path and removes
+  a redirect away from the new path. The proxy resolves redirects only with
+  `CONTENT_SOURCE=database`, never for `/admin` or `/api`, from a 30-second in-memory cache.

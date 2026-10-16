@@ -219,3 +219,18 @@ function prefixed(errors: Record<string, string>, prefix: string) {
     Object.entries(errors).map(([key, value]) => [`${prefix}${key}`, value]),
   )
 }
+
+/** Title template, site name and origin for the admin SEO snippet preview. */
+export async function seoPreviewSettings() {
+  const fallback = defaultSettings()
+  // The preview is a convenience: an unreachable or unmigrated table falls back to launch values.
+  const stored = await readStoredSettings(db, [routing.defaultLocale]).catch(() => ({
+    global: null,
+    locales: {} as Record<string, SettingsLocale>,
+  }))
+  return {
+    titleTemplate: (stored.locales[routing.defaultLocale] ?? fallback.local).seo.titleTemplate,
+    siteName: (stored.global ?? fallback.global).brand.siteName,
+    origin: process.env.SITE_URL ?? 'http://127.0.0.1:3000',
+  }
+}

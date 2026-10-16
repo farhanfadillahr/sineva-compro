@@ -129,3 +129,11 @@ Authors are team members; without one, the byline name is shown (launch articles
 session, resolves the public path from the database and enables Next.js Draft Mode for that
 browser. The public page then reads drafts only while the session is valid, bypasses every cache
 and is sent with `X-Robots-Tag: noindex, nofollow`. End it with a POST to `/admin/preview/exit`.
+
+## Work (CPR-30)
+
+`/admin/work` uses the same draft and publish flow as posts (entity `portfolio` in code and
+database; "Work" in the UI and URLs). Project type is required; internal demos carry
+`internal-demo`, which the page shows as "Internal demo project". The form reminds editors to write
+only real, verified results. The Work link, page and Selected work sections switch on by themselves
+once a work item is published. Demo seed: three flagged `[Demo]` internal projects (noindex).

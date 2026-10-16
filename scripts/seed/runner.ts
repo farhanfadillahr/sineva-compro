@@ -7,6 +7,7 @@ import { pagesSeed } from './pages'
 import { collectionSeed } from './collections'
 import { servicesSeed } from './services'
 import { postsSeed } from './posts'
+import { workSeed } from './work'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
@@ -24,6 +25,7 @@ const modules: readonly SeedModule[] = [
   collectionSeed('categories', 'categories'),
   servicesSeed,
   postsSeed,
+  workSeed,
 ]
 export async function runSeeds(
   database: Database,

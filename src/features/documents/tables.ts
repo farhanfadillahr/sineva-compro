@@ -70,8 +70,12 @@ function documentTables(name: string) {
 }
 
 export const postTables = documentTables('post')
+/** The data entity stays `Portfolio`; only UI strings and URLs say "Work". */
+export const portfolioTables = documentTables('portfolio')
 
 export const post = postTables.items
 export const postTranslation = postTables.translations
+export const portfolio = portfolioTables.items
+export const portfolioTranslation = portfolioTables.translations
 
 export type DocumentTables = ReturnType<typeof documentTables>

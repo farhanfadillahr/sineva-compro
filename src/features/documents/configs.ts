@@ -8,7 +8,7 @@ import { f, type ObjectField } from '../cms/fields'
 import { seoSchema } from '../cms/seo-fields'
 import type { MediaOwner } from '../media/types'
 
-export type DocumentName = 'posts'
+export type DocumentName = 'posts' | 'work'
 
 export type DocumentConfig = Readonly<{
   name: DocumentName
@@ -102,7 +102,49 @@ export const postsConfig: DocumentConfig = {
   }),
 }
 
-export const documentConfigs = { posts: postsConfig } as const satisfies Record<
+export const workConfig: DocumentConfig = {
+  name: 'work',
+  adminPath: '/admin/work',
+  publicPrefix: '/work/',
+  title: 'Karya',
+  itemLabel: 'Karya',
+  description: 'Proyek demo internal dan proyek klien. Draf tersimpan terpisah dari versi terbit.',
+  formHint:
+    'Tulis hanya hasil yang nyata dan sudah terverifikasi. Jangan mengarang angka, klien atau testimoni.',
+  audit: 'portfolio',
+  mediaEntity: 'portfolio',
+  schema: f.object({
+    title: f.required('Judul', 120),
+    projectType: f.select(
+      'Jenis proyek',
+      [
+        { value: 'internal-demo', label: 'Proyek demo internal' },
+        { value: 'client', label: 'Proyek klien' },
+      ],
+      { hint: 'Proyek demo internal tampil dengan label "Internal demo project".' },
+    ),
+    summary: f.required('Ringkasan', 300, { multiline: true }),
+    cover: f.media('Sampul'),
+    challenge: f.required('Tantangan', 1200, { multiline: true }),
+    solution: f.required('Solusi', 1200, { multiline: true }),
+    result: f.required('Hasil', 1200, {
+      multiline: true,
+      hint: 'Hanya hasil nyata yang sudah terverifikasi.',
+    }),
+    stack: f.list('Teknologi', f.required('Teknologi', 40), 12, { itemLabel: 'Teknologi' }),
+    gallery: f.list('Galeri', f.media('Gambar'), 8, { itemLabel: 'Gambar' }),
+    demoUrl: f.optional('URL demo', 300, { format: 'url', publicCopy: false }),
+    serviceSlug: f.select('Layanan terkait', [], {
+      nullable: true,
+      optionsKey: 'services',
+      pattern: SLUG_PATTERN,
+    }),
+    featured: f.boolean('Tampilkan di "Selected work" Beranda'),
+    seo: seoSchema,
+  }),
+}
+
+export const documentConfigs = { posts: postsConfig, work: workConfig } as const satisfies Record<
   DocumentName,
   DocumentConfig
 >

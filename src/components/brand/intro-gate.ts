@@ -2,31 +2,42 @@
 // React and the DOM so the policy can be read, and tested, in one place.
 
 /**
- * Milliseconds, measured from the moment the overlay becomes visible.
+ * Milliseconds since navigation start (`performance.now()`), not since React mounted: the
+ * server-rendered shell and its CSS safety timers start at first paint, so the client timeline has
+ * to share that clock or the two would drift apart.
  *
  * The hand-off has to start while the Lottie is still finishing: 1100 ms + the 500 ms flight lands
  * exactly on the 1600 ms cap. Starting it after the Lottie ends (1.5 s) would push the page past
  * the cap, and the cap is a hard rule (it protects conversion and Core Web Vitals).
  */
 export const INTRO_TIMING = {
-  /** The overlay is always gone by now, whatever else happens. */
+  /** The client layer is always gone by now, whatever else happens. */
   capMs: 1600,
-  /** After this the overlay no longer intercepts the pointer. */
+  /** The shell stops intercepting the pointer after this (pure CSS, see logo-intro.module.css). */
   interactiveUntilMs: 1200,
-  /** Overlay background fade during the hand-off. */
+  /** Shell fade during the hand-off. Pure CSS transition, mirrored here for the tests. */
   fadeMs: 200,
   /** Logo flight to the navbar slot. */
   flipMs: 500,
   handoffStartMs: 1100,
   /**
-   * How long the overlay may stay invisible while the player and the JSON load. The intro never
-   * waits for the network: past this the page simply carries on without it.
+   * How long the client may wait for the player and the JSON. The intro never waits for the
+   * network: past this the marker is removed and the shell fades.
    */
   readyDeadlineMs: 500,
+  /**
+   * Latest navigation-start time at which the client still starts the Lottie. Later (slow device,
+   * slow hydration) there is not enough runway before the hand-off, so the shell just fades.
+   */
+  latestStartMs: 800,
 } as const
 
-/** Session-storage slot, namespaced by `claimSessionOnce`. */
-export const INTRO_SESSION_KEY = 'logo-intro'
+/**
+ * The document-level marker: `<html data-logo-intro="pending">`. The gate script sets it before
+ * first paint, CSS shows the shell while it is present, and the client removes it when the intro
+ * ends for any reason. It is the only channel between the three parts.
+ */
+export const INTRO_MARKER_PENDING = 'pending'
 
 export const INTRO_LOTTIE_SRC = '/lottie/sineva-logo-intro.json'
 export const SYMBOL_LOTTIE_SRC = '/lottie/sineva-symbol-intro.json'

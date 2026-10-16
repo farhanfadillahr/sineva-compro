@@ -10,7 +10,9 @@ export const SEED_MODULES = [
   'business-types',
   'faq',
   'team',
+  'categories',
   'services',
+  'posts',
 ] as const
 
 export type SeedOptions = { mode: 'base' | 'demo' | 'purge-demo'; module?: string }

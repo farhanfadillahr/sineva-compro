@@ -19,6 +19,7 @@ const routeLabels: Record<string, string> = {
   product: 'Produk',
   capabilities: 'Kemampuan',
   'business-types': 'Jenis bisnis',
+  preview: 'Pratinjau',
   work: 'Karya',
   blog: 'Artikel',
   categories: 'Kategori',

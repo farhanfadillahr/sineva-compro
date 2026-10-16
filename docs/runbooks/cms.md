@@ -109,3 +109,23 @@ role and bio are per locale. Only members with "show on About" appear on the Abo
 when the About team section and the site setting `showTeam` are on. Any member can be an article
 author; the article keeps pointing at the member's stable id when the profile changes. The launch
 has no members until someone agrees to be listed.
+
+## Blog (CPR-31) and publishable documents
+
+Posts (and Work, CPR-30) keep a draft and a published snapshot per locale. "Simpan draf" never
+changes the site; "Terbitkan" copies the saved draft, fully validated, to the snapshot in one
+transaction; "Batalkan publikasi" removes the snapshot and keeps the draft. Drafts may be
+incomplete, but formats, limits, the copy rule and the rich text node list apply on every save.
+Slugs are unique per locale for drafts and published snapshots (database constraints). An article
+only appears in a locale where it is published; there is no cross-locale fallback.
+
+Categories (`/admin/blog/categories`) use the collection engine; the key is the slug used by
+`/blog?category=<slug>`. A category or team member still used by an article cannot be deleted.
+Authors are team members; without one, the byline name is shown (launch articles: "Sineva team").
+
+### Preview
+
+"Pratinjau draf" opens `/admin/preview?kind=posts&id=<id>&locale=<locale>`. It needs an admin
+session, resolves the public path from the database and enables Next.js Draft Mode for that
+browser. The public page then reads drafts only while the session is valid, bypasses every cache
+and is sent with `X-Robots-Tag: noindex, nofollow`. End it with a POST to `/admin/preview/exit`.

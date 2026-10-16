@@ -58,7 +58,11 @@ export function proxy(request: NextRequest) {
   // admin shell exists, and the localized not-found page needs the whole public layout.
   if (route === 'not-found') return new NextResponse(null, { status: 404 })
   if (route === 'pass') return NextResponse.next()
-  return localize(request)
+  const response = localize(request)
+  // Draft Mode (authorised preview) pages must never be indexed, even if a link leaks.
+  if (request.cookies.has('__prerender_bypass'))
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  return response
 }
 
 // Only files that live outside the localized tree and are served straight from public/ (or

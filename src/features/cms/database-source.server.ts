@@ -3,6 +3,7 @@ import { createStaticContentSource } from '../../content/static'
 import type { PublicContentSource } from '../content/public'
 import { faqReads } from '../faq/public.server'
 import { pageReads } from '../pages/public.server'
+import { postReads } from '../posts/public.server'
 import { productReads } from '../product/public.server'
 import { serviceReads } from '../services/public.server'
 import { teamReads } from '../team/public.server'
@@ -22,5 +23,6 @@ export function createDatabaseContentSource(): PublicContentSource {
     ...faqReads,
     ...serviceReads,
     ...teamReads,
+    ...postReads,
   }
 }

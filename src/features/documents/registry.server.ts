@@ -1,5 +1,5 @@
 import 'server-only'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { routing } from '../../i18n/routing'
 import { cacheTags } from '../../lib/cache/tags'
 import type { DatabaseTransaction } from '../../lib/db/connection'
@@ -7,7 +7,8 @@ import type { Principal } from '../auth/types'
 import { CmsError } from '../cms/errors'
 import { category, teamMember } from '../collections/tables'
 import type { DocumentName } from './configs'
-import { postTables, type DocumentTables } from './tables'
+import { portfolioTables, postTables, type DocumentTables } from './tables'
+import { serviceTranslation } from '../services/schema'
 
 type Entry = Readonly<{
   tables: DocumentTables
@@ -71,6 +72,33 @@ export const documentRegistry: Record<DocumentName, Entry> = {
       }
       if (Object.keys(errors).length)
         throw new CmsError('INVALID', 'Periksa kembali isian yang ditandai.', errors)
+    },
+  },
+  work: {
+    tables: portfolioTables,
+    tags: (locale, slugs) => {
+      const l = locale as (typeof routing.locales)[number]
+      return [
+        cacheTags.work(l),
+        cacheTags.sitemap,
+        ...slugTags(slugs, (slug) => cacheTags.workItem(slug, l)),
+      ]
+    },
+    auditFields: (keys) => [
+      ...new Set(keys.map((key) => (key === 'serviceSlug' ? 'relatedService' : key))),
+    ],
+    async validateRefs(tx, data, locale) {
+      if (typeof data.serviceSlug !== 'string') return
+      const [row] = await tx
+        .select({ id: serviceTranslation.serviceId })
+        .from(serviceTranslation)
+        .where(
+          and(eq(serviceTranslation.locale, locale), eq(serviceTranslation.slug, data.serviceSlug)),
+        )
+      if (!row)
+        throw new CmsError('INVALID', 'Periksa kembali isian yang ditandai.', {
+          'data.serviceSlug': 'Layanan tidak ditemukan.',
+        })
     },
   },
 }

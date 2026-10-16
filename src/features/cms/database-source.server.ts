@@ -7,6 +7,7 @@ import { postReads } from '../posts/public.server'
 import { productReads } from '../product/public.server'
 import { serviceReads } from '../services/public.server'
 import { teamReads } from '../team/public.server'
+import { workReads } from '../work/public.server'
 import { settingsReads } from '../settings/public.server'
 
 /**
@@ -24,5 +25,6 @@ export function createDatabaseContentSource(): PublicContentSource {
     ...serviceReads,
     ...teamReads,
     ...postReads,
+    ...workReads,
   }
 }

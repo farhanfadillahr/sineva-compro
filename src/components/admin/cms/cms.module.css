@@ -1,0 +1,113 @@
+.group {
+  display: grid;
+  gap: var(--admin-gap);
+  padding: 20px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-panel-radius);
+  min-width: 0;
+}
+.group > legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  padding: 0 4px;
+}
+.adminTag {
+  font-size: var(--admin-text-sm);
+  font-weight: 500;
+  color: var(--admin-muted);
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  padding: 0 8px;
+}
+.list {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+.list > legend {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.items {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.item {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  min-width: 0;
+}
+.itemHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.itemHead strong {
+  overflow-wrap: anywhere;
+}
+.mediaField {
+  display: grid;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.mediaField > legend {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.mediaPreview {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+.mediaPreview img {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  flex: none;
+}
+.mediaPreview p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  background: var(--admin-canvas);
+  border-top: 1px solid var(--admin-border);
+}
+.preview {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: var(--admin-radius);
+  background: var(--admin-tint);
+  border: 1px dashed var(--admin-border);
+  font-size: var(--admin-text-sm);
+  overflow-wrap: anywhere;
+}

@@ -1,5 +1,8 @@
 import { readDatabaseUrl } from '../../src/env/database-url'
 
+/** Registered seed modules, in run order. Keep in sync with `runner.ts`. */
+export const SEED_MODULES = ['audit', 'media', 'settings'] as const
+
 export type SeedOptions = { mode: 'base' | 'demo' | 'purge-demo'; module?: string }
 export function parseSeedOptions(
   args: string[],
@@ -29,7 +32,7 @@ export function parseSeedOptions(
   const moduleName = args.find((arg) => arg.startsWith('--module='))?.slice('--module='.length)
   if (
     (seen.has('--module') && !moduleName) ||
-    (moduleName && !['audit', 'media'].includes(moduleName))
+    (moduleName && !(SEED_MODULES as readonly string[]).includes(moduleName))
   )
     throw new Error('Unknown seed module')
   const mode = seen.has('--demo') ? 'demo' : seen.has('--purge-demo') ? 'purge-demo' : 'base'

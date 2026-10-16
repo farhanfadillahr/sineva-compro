@@ -25,7 +25,7 @@ export function AboutMeetSinoSection({
     // add a horizontal scrollbar on a phone.
     <Section tone={tone} className="overflow-x-clip">
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} lead={body} />
         </Reveal>
         <Reveal>

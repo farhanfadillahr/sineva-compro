@@ -119,12 +119,9 @@ export function ProductView({
     </Card>
   ) : null
 
-  // HeroSplit always draws a primary CTA. While the form is the main action, that slot carries
-  // the consultation instead (the label comes from the final CTA content), so the two actions of
-  // the page both sit in the hero.
-  const heroCta = comingSoon
-    ? (consultation ?? { label: page.hero.primaryCtaLabel, href: PRODUCT_HREFS.contact })
-    : { label: page.hero.primaryCtaLabel, href: mainHref }
+  // While coming soon the inline waitlist form is the only hero action: a second primary button
+  // above it split attention. The consultation stays in the final CTA.
+  const heroCta = comingSoon ? null : { label: page.hero.primaryCtaLabel, href: mainHref }
 
   const render: Record<ProductSectionId, (tone: SectionTone) => ReactNode> = {
     hero: () => (

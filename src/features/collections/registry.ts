@@ -1,8 +1,6 @@
 import { or, sql } from 'drizzle-orm'
-import { cacheTags } from '../../lib/cache/tags'
 import type { DatabaseTransaction } from '../../lib/db/connection'
 import { postTranslation } from '../documents/tables'
-import type { ContentLocale } from '../content/types'
 import { collectionConfigs, type CollectionName } from './configs'
 import {
   businessTypeTables,
@@ -33,27 +31,26 @@ export const collectionRegistry: Record<
   CollectionName,
   {
     tables: CollectionTables
-    tags: (locale: ContentLocale) => string[]
+    /** Invalidation entity (`invalidation.ts`). */
+    entity: 'capabilities' | 'industries' | 'faq' | 'team' | 'categories'
     /** A message when the item is still referenced and must not be deleted. */
     inUse?: (tx: DatabaseTransaction, item: { id: string; key: string }) => Promise<string | null>
   }
 > = {
-  capabilities: { tables: productCapabilityTables, tags: (l) => [cacheTags.capabilities(l)] },
-  businessTypes: { tables: businessTypeTables, tags: (l) => [cacheTags.industries(l)] },
-  faq: { tables: faqItemTables, tags: (l) => [cacheTags.faq(l)] },
-  // Author names and photos appear on articles, so a team change refreshes the posts too.
+  capabilities: { tables: productCapabilityTables, entity: 'capabilities' },
+  businessTypes: { tables: businessTypeTables, entity: 'industries' },
+  faq: { tables: faqItemTables, entity: 'faq' },
   team: {
     tables: teamMemberTables,
-    tags: (l) => [cacheTags.team(l), cacheTags.posts(l)],
+    entity: 'team',
     inUse: async (tx, item) =>
       (await postsUsing(tx, 'authorId', item.id))
         ? 'Anggota ini masih menjadi penulis artikel. Ganti penulis artikel tersebut lebih dulu.'
         : null,
   },
-  // Category names appear on post cards, so a rename refreshes the posts too.
   categories: {
     tables: categoryTables,
-    tags: (l) => [cacheTags.categories(l), cacheTags.posts(l)],
+    entity: 'categories',
     inUse: async (tx, item) =>
       (await postsUsing(tx, 'categorySlug', item.key))
         ? 'Kategori masih dipakai artikel. Pindahkan artikel tersebut lebih dulu.'

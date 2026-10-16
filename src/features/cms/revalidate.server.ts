@@ -1,5 +1,6 @@
 import 'server-only'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { invalidationTags, type ContentChange } from './invalidation'
 
 /**
  * Invalidates public caches after a committed change. Called only after the transaction returns,
@@ -13,4 +14,9 @@ export function revalidateContent(tags: readonly string[]): void {
 /** For admin list pages rendered on the server. */
 export function revalidateAdmin(...paths: string[]): void {
   for (const path of paths) revalidatePath(path)
+}
+
+/** Refreshes everything a committed change affects (`invalidation.ts`). */
+export function revalidateChange(change: ContentChange): void {
+  revalidateContent(invalidationTags(change))
 }

@@ -9,7 +9,7 @@ import type { ContentLocale } from '../content/types'
 import { CmsError } from '../cms/errors'
 import { changedKeys, collectMedia, parseFields, type FieldErrors } from '../cms/fields'
 import { cmsMutation, cmsReader } from '../cms/mutation.server'
-import { revalidateContent } from '../cms/revalidate.server'
+import { revalidateChange } from '../cms/revalidate.server'
 import { documentConfigs, documentSlugField, type DocumentItem, type DocumentName } from './configs'
 import { documentRegistry } from './registry.server'
 
@@ -309,7 +309,7 @@ export async function publishDocument(
       },
     }),
   )
-  revalidateContent(documentRegistry[name].tags(locale, [oldSlug, preview.draftSlug]))
+  revalidateChange({ entity: documentRegistry[name].entity, slugs: [oldSlug, preview.draftSlug] })
 }
 
 export async function unpublishDocument(
@@ -347,7 +347,7 @@ export async function unpublishDocument(
       })
     },
   })
-  revalidateContent(documentRegistry[name].tags(locale, [slug]))
+  revalidateChange({ entity: documentRegistry[name].entity, slugs: [slug] })
 }
 
 /** Deletes a document that has no published locale. */

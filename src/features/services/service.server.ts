@@ -4,13 +4,12 @@ import { and, asc, eq, inArray, max, ne, sql } from 'drizzle-orm'
 import { routing } from '../../i18n/routing'
 import { db } from '../../lib/db/client.server'
 import type { Database, DatabaseTransaction } from '../../lib/db/connection'
-import { cacheTags } from '../../lib/cache/tags'
 import { writeAudit } from '../audit/service.server'
 import type { ContentLocale } from '../content/types'
 import { CmsError } from '../cms/errors'
 import { changedKeys, collectMedia, parseFields, type FieldErrors } from '../cms/fields'
 import { cmsMutation, cmsReader } from '../cms/mutation.server'
-import { revalidateContent } from '../cms/revalidate.server'
+import { revalidateChange } from '../cms/revalidate.server'
 import { localizedPath } from '../cms/paths'
 import { recordSlugChange } from '../redirects/service.server'
 import { serviceGlobalSchema, serviceLocaleSchema, serviceSlugField } from './fields'
@@ -119,13 +118,6 @@ function parseService(input: unknown, isAdmin: boolean, previous?: ServiceItem) 
 function isUniqueViolation(error: unknown) {
   const cause = (error as { cause?: { code?: string } })?.cause
   return (error as { code?: string })?.code === '23505' || cause?.code === '23505'
-}
-
-function tagsFor(slugs: Iterable<string>) {
-  return routing.locales.flatMap((locale) => [
-    cacheTags.services(locale),
-    ...[...slugs].map((slug) => cacheTags.service(slug, locale)),
-  ])
 }
 
 /** Creates (no `id`) or updates a service. Returns its id. */
@@ -263,7 +255,7 @@ export async function saveService(headers: Headers, payload: unknown): Promise<s
       })
     throw error
   }
-  revalidateContent([...tagsFor(slugs), cacheTags.sitemap, cacheTags.settings])
+  revalidateChange({ entity: 'service', slugs: [...slugs] })
   return id
 }
 
@@ -307,7 +299,7 @@ export async function reorderServices(headers: Headers, ids: unknown) {
       })
     },
   })
-  revalidateContent([...tagsFor([]), cacheTags.settings])
+  revalidateChange({ entity: 'service', slugs: [] })
 }
 
 /** Removes an unpublished service. A published one must be unpublished first. */
@@ -336,7 +328,7 @@ export async function deleteService(headers: Headers, id: string) {
       })
     },
   })
-  revalidateContent([...tagsFor(slugs), cacheTags.sitemap, cacheTags.settings])
+  revalidateChange({ entity: 'service', slugs: [...slugs] })
 }
 
 /** Published services with a translation for the locale, in order. */

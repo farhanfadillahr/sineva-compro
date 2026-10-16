@@ -1,7 +1,5 @@
 import 'server-only'
 import { and, eq } from 'drizzle-orm'
-import { routing } from '../../i18n/routing'
-import { cacheTags } from '../../lib/cache/tags'
 import type { DatabaseTransaction } from '../../lib/db/connection'
 import type { Principal } from '../auth/types'
 import { CmsError } from '../cms/errors'
@@ -15,8 +13,8 @@ import { documentConfigs } from './configs'
 
 type Entry = Readonly<{
   tables: DocumentTables
-  /** Public cache tags to refresh for a locale and the slugs involved. */
-  tags: (locale: string, slugs: readonly (string | null)[]) => string[]
+  /** Invalidation entity (`invalidation.ts`). */
+  entity: 'post' | 'work'
   /** Audit field names for changed snapshot keys. */
   auditFields: (keys: readonly string[]) => string[]
   /** Checks that referenced records exist (category, author, service). */
@@ -33,10 +31,6 @@ type Entry = Readonly<{
     change: { locale: string; oldSlug: string | null; newSlug: string },
   ) => Promise<void>
 }>
-
-const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-const slugTags = (slugs: readonly (string | null)[], build: (slug: string) => string) =>
-  [...new Set(slugs)].filter((s): s is string => !!s && SLUG.test(s)).map(build)
 
 /** A published slug that changes gets a 301 from the old path, in the publish transaction. */
 function redirectOnSlugChange(name: DocumentName): Entry['afterPublish'] {
@@ -62,14 +56,7 @@ const postAudit: Record<string, string> = {
 export const documentRegistry: Record<DocumentName, Entry> = {
   posts: {
     tables: postTables,
-    tags: (locale, slugs) => {
-      const l = locale as (typeof routing.locales)[number]
-      return [
-        cacheTags.posts(l),
-        cacheTags.sitemap,
-        ...slugTags(slugs, (slug) => cacheTags.post(slug, l)),
-      ]
-    },
+    entity: 'post',
     auditFields: (keys) => [...new Set(keys.map((key) => postAudit[key] ?? key))],
     afterPublish: redirectOnSlugChange('posts'),
     async validateRefs(tx, data) {
@@ -94,14 +81,7 @@ export const documentRegistry: Record<DocumentName, Entry> = {
   },
   work: {
     tables: portfolioTables,
-    tags: (locale, slugs) => {
-      const l = locale as (typeof routing.locales)[number]
-      return [
-        cacheTags.work(l),
-        cacheTags.sitemap,
-        ...slugTags(slugs, (slug) => cacheTags.workItem(slug, l)),
-      ]
-    },
+    entity: 'work',
     auditFields: (keys) => [
       ...new Set(keys.map((key) => (key === 'serviceSlug' ? 'relatedService' : key))),
     ],

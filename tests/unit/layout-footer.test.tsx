@@ -106,6 +106,18 @@ describe('SiteFooter columns', () => {
     expect(watermark?.getAttribute('aria-hidden')).toBe('true')
     expect(watermark?.textContent).toBe('Sineva')
   })
+
+  it('layers the wordmark behind the navigation instead of below it', () => {
+    renderFooter()
+    const watermark = document.querySelector('[data-slot="footer-watermark"]') as HTMLElement
+    const content = document.querySelector('[data-slot="footer-content"]') as HTMLElement
+    // Out of flow and underneath: the footer's height comes from the navigation alone, and the
+    // navigation (with the bottom bar) stays the last thing in the flow.
+    expect(watermark.className).toMatch(/\babsolute\b/)
+    expect(watermark.className).toMatch(/\bz-0\b/)
+    expect(content.className).toMatch(/\brelative\b/)
+    expect(content.className).toMatch(/\bz-10\b/)
+  })
 })
 
 describe('SiteFooter site settings', () => {

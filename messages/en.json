@@ -239,6 +239,7 @@
       "copyFailed": "Copying did not work. Select the text you wrote and copy it by hand."
     },
     "side": {
+      "highlightsLabel": "Highlights",
       "stepsLabel": "How it works",
       "whatsappTitle": "Prefer to chat now?",
       "whatsappBody": "Message us on WhatsApp and we will pick it up from there.",

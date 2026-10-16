@@ -31,7 +31,10 @@ describe('Services labels in messages/en.json', () => {
   it('fails loudly on a missing label instead of showing a raw key', () => {
     expect(() => servicesLabelsFromMessages({})).toThrow(/Services/)
     expect(() => servicesLabelsFromMessages({ Pages: en.Pages, Services: {} })).toThrow(
-      /breadcrumbLabel/,
+      /Missing message "Services\./,
     )
+    expect(() =>
+      servicesLabelsFromMessages({ ...en, Services: { ...en.Services, detail: {} } }),
+    ).toThrow(/Services\.detail\./)
   })
 })

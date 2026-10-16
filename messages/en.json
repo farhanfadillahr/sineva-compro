@@ -103,5 +103,23 @@
   "Whatsapp": {
     "label": "Chat with us",
     "ariaLabel": "Chat with us on WhatsApp"
+  },
+  "Services": {
+    "breadcrumbLabel": "Breadcrumb",
+    "stickyBarLabel": "Next steps",
+    "cardCta": "Explore {name}",
+    "chatOnWhatsapp": "Chat on WhatsApp",
+    "internalDemo": "Internal demo project",
+    "detail": {
+      "eyebrow": "Service",
+      "problemsTitle": "Problems we solve",
+      "deliverablesTitle": "What you get",
+      "processTitle": "How it works",
+      "toolsTitle": "Tools we use",
+      "relatedWorkTitle": "Related work",
+      "faqTitle": "Questions, answered",
+      "finalCtaHeadline": "Ready to plan your AI project?",
+      "finalCtaBody": "Tell us what you want to improve. We will reply with next steps."
+    }
   }
 }

@@ -11,6 +11,7 @@ import {
   type ServiceDetailModel,
   type ServicesListModel,
 } from '@/components/pages/services/services-model'
+import type { ServicesOverviewPageContent } from '@/features/content/types'
 import { createStaticContentSource } from '../../src/content/static'
 import { createFixtureContentSource } from '../../src/features/content/fixture-source'
 import { publicFixtures } from '../fixtures/public'
@@ -59,17 +60,25 @@ describe('loadServicesListModel', () => {
     )
   })
 
-  it('does not query work while the page content toggle is off', async () => {
+  // The site setting is forced on, so only the page toggle decides in these two cases.
+  async function loadWithToggle(visible: boolean) {
     const base = createFixtureContentSource()
     let called = false
     const model = await loadServicesListModel(
       {
         ...base,
+        getSiteSettings: async (locale) => {
+          const settings = await base.getSiteSettings(locale)
+          return { ...settings!, features: { ...settings!.features, showSelectedWork: true } }
+        },
         getPage: async (key, locale) => {
           const page = await base.getPage(key, locale)
-          return key === 'servicesOverview'
-            ? ({ ...page, selectedWork: { ...page!.selectedWork, visible: false } } as never)
-            : page
+          if (key !== 'servicesOverview') return page
+          const overview = page as ServicesOverviewPageContent
+          return {
+            ...overview,
+            selectedWork: { ...overview.selectedWork, visible },
+          } as never
         },
         listWork: (input) => {
           called = true
@@ -78,8 +87,19 @@ describe('loadServicesListModel', () => {
       },
       'en',
     )
+    return { called, model: model! }
+  }
+
+  it('does not query work while the page content toggle is off', async () => {
+    const { called, model } = await loadWithToggle(false)
     expect(called).toBe(false)
-    expect(model!.work).toEqual([])
+    expect(model.work).toEqual([])
+  })
+
+  it('queries work when the page toggle and the site setting are both on', async () => {
+    const { called, model } = await loadWithToggle(true)
+    expect(called).toBe(true)
+    expect(model.work.length).toBeGreaterThan(0)
   })
 
   it('caps the work cards at the limit', async () => {

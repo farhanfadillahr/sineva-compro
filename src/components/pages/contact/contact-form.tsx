@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState, type FormEvent, type MouseEvent } from 'react'
+import { markContactHandoff } from '@/components/mascot/sino-launch/launch-bus'
 import { WhatsAppIcon } from '@/components/layout/icons'
 import { Button, Checkbox, Field, Input, Select, Textarea } from '@/components/ui'
 import type { ConsentLabel, SiteSettingsDTO } from '@/features/content/types'
@@ -192,6 +193,7 @@ export function ContactForm({
     locked.current = true
     setFallback(null)
     setSending(true)
+    markContactHandoff()
     router.push(THANK_YOU_PATH)
   }
 
@@ -222,6 +224,7 @@ export function ContactForm({
     // The link itself opens WhatsApp; this tab follows to the thank-you page like the main path.
     locked.current = true
     setSending(true)
+    markContactHandoff()
     router.push(THANK_YOU_PATH)
   }
 

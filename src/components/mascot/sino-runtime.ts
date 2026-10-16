@@ -25,6 +25,7 @@ import {
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { createJetEffects } from './sino-jet-effects'
 import { SINO_LOOK } from './sino-look'
 import { claimSessionOnce } from '@/lib/motion/session'
 import { observeVisibility } from '@/lib/motion/in-view'
@@ -69,7 +70,7 @@ export type SinoRuntimeOptions = {
 
 export type SinoRuntime = { dispose: () => void }
 
-const DEFAULT_GLB = '/mascot/sino.glb'
+const DEFAULT_GLB = '/mascot/sino-v006.glb'
 const DEFAULT_DRACO = '/draco/'
 // Both hero CTAs: components.md renders them inside the element HeroSplit gives the id `hero-cta`.
 const DEFAULT_CTA = '#hero-cta a, #hero-cta button'
@@ -186,6 +187,10 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   rig.name = 'sino-rig'
   rig.add(model)
   scene.add(rig)
+  const jetEffects = createJetEffects(model, scene)
+  const rootBone = model.getObjectByName('DEF-root')
+  const rootPosition = new Vector3()
+  let rootOverlayApplied = false
 
   const camera = new PerspectiveCamera(HERO_CAMERA.verticalFovDeg, 1, 0.1, 20)
   camera.position.set(...HERO_CAMERA.position)
@@ -230,6 +235,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   let running = true
   let disposed = false
   let firstFrameDone = false
+  let firstShown = false
   let rafId: number | null = null
   const effectStart = { reaction: -Infinity, whoa: -Infinity }
 
@@ -385,7 +391,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   }
 
   const onClick = (event: MouseEvent) => {
-    if (!castAt(event.clientX, event.clientY)) return
+    if (!machine.view(performance.now()).airborne && !castAt(event.clientX, event.clientY)) return
     machine.dispatch({ type: isTouch(event) ? 'tap' : 'clickModel' })
   }
 
@@ -550,7 +556,10 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     // Reads first, writes after: the layout reads happen before this frame touches the DOM.
     if (timestamp - lastMeasureAt > REMEASURE_MS) measureNow(timestamp)
 
-    if (!firstFrameDone) machine.dispatch({ type: 'firstShown' })
+    if (!firstShown && document.documentElement.dataset.logoIntro !== 'pending') {
+      firstShown = true
+      machine.dispatch({ type: 'firstShown' })
+    }
 
     // Scroll: progress and velocity come from scrollY polled here, not from scroll events, so the
     // loop has one source of truth and no listener to leak.
@@ -575,7 +584,15 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     }
 
     restoreOverlay()
+    if (rootOverlayApplied && rootBone) rootBone.position.copy(rootPosition)
     mixer.update(dt)
+    rootOverlayApplied = Boolean(view.airborne && rootBone)
+    if (rootOverlayApplied && rootBone) {
+      rootPosition.copy(rootBone.position)
+      // Keep the authored arc inside the fixed stage without shifting the canvas box.
+      rootBone.position.multiplyScalar(0.45)
+    }
+    jetEffects?.update(frameSeconds)
 
     // Everything below must come after mixer.update: the clips key every bone every frame, so a
     // rotation applied before the mixer would be overwritten before it is ever drawn.
@@ -659,6 +676,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     for (const remove of listeners) remove()
     listeners.length = 0
     machine.dispose()
+    jetEffects?.dispose()
     mixer.stopAllAction()
     mixer.uncacheRoot(model)
     model.traverse((node) => {
@@ -698,6 +716,7 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     fallBack('context-lost')
   })
   listen(canvas, 'click', onClick)
+  listen(win, 'keydown', () => machine.dispatch({ type: 'skipFlight' }))
   listen(win, 'pointermove', onPointerMove, { passive: true })
   listen(document.documentElement, 'pointerleave', onPointerGone)
   listen(document, 'visibilitychange', onVisibility)

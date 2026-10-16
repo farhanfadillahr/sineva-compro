@@ -68,6 +68,13 @@ export function FinalCta({
               <div className="flex w-full flex-col gap-3 min-[400px]:w-auto min-[400px]:flex-row min-[400px]:flex-wrap">
                 <Button
                   href={primaryCta.href}
+                  launch={
+                    primaryCta.href.startsWith('/contact')
+                      ? 'booking'
+                      : primaryCta.href.includes('wa.me')
+                        ? 'waitlist'
+                        : undefined
+                  }
                   linkComponent={linkComponent}
                   variant="secondary"
                   size="xl"
@@ -90,6 +97,7 @@ export function FinalCta({
                 {whatsappCta ? (
                   <Button
                     href={whatsappCta.href}
+                    launch={'whatsapp'}
                     variant="whatsapp"
                     size="xl"
                     leadingIcon={<WhatsAppGlyph />}

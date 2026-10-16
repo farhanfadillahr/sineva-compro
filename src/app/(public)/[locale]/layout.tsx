@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { SinoLaunchOverlay } from '@/components/mascot/sino-launch/sino-launch-overlay'
 import { LogoIntro } from '@/components/brand/logo-intro'
 import { LogoIntroGateScript, LogoIntroShell } from '@/components/brand/logo-intro-server'
 import { FloatingWhatsApp } from '@/components/layout/floating-whatsapp'
@@ -107,6 +108,7 @@ export default async function PublicLayout({
           <FloatingWhatsApp whatsapp={settings?.whatsapp ?? null} services={navServices} />
           {/* Last in the tree so it never changes tab order; it renders nothing until it plays. */}
           <LogoIntro />
+          <SinoLaunchOverlay />
         </NextIntlClientProvider>
       </body>
     </html>

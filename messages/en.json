@@ -143,5 +143,113 @@
       "finalCtaHeadline": "Ready to plan your AI project?",
       "finalCtaBody": "Tell us what you want to improve. We will reply with next steps."
     }
+  },
+  "Contact": {
+    "formHeading": "Your message",
+    "requiredMarker": "(required)",
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "company": {
+        "label": "Company (optional)"
+      },
+      "segment": {
+        "label": "Business type",
+        "placeholder": "Choose one"
+      },
+      "interest": {
+        "label": "What do you need help with",
+        "placeholder": "Choose one"
+      },
+      "budget": {
+        "label": "Budget range (optional)",
+        "placeholder": "Choose a range",
+        "helper": "A rough range helps us suggest a fit."
+      },
+      "message": {
+        "label": "Message",
+        "helper": "Tell us your goal in a few sentences."
+      }
+    },
+    "segments": {
+      "smallBusiness": "Small business",
+      "company": "Company",
+      "startup": "Startup",
+      "other": "Other"
+    },
+    "interests": {
+      "aiDiscovery": "AI Discovery",
+      "aiBuild": "AI Build",
+      "aiEnablement": "AI Enablement",
+      "aiAgents": "AI Agents product",
+      "notSure": "Not sure yet"
+    },
+    "budgets": {
+      "under10m": "Under IDR 10M",
+      "10to50m": "IDR 10M to 50M",
+      "50to150m": "IDR 50M to 150M",
+      "over150m": "Over IDR 150M",
+      "notSure": "Not sure yet"
+    },
+    "errors": {
+      "name": {
+        "required": "Enter your name.",
+        "tooShort": "Enter at least 2 characters.",
+        "tooLong": "Use 80 characters or fewer."
+      },
+      "company": {
+        "tooLong": "Use 120 characters or fewer."
+      },
+      "segment": {
+        "required": "Choose your business type.",
+        "invalid": "Choose one of the listed business types."
+      },
+      "interest": {
+        "required": "Choose what you need help with.",
+        "invalid": "Choose one of the listed options."
+      },
+      "budget": {
+        "invalid": "Choose one of the listed ranges."
+      },
+      "message": {
+        "required": "Write a few words about what you need.",
+        "tooShort": "Write at least 20 characters so we understand your goal.",
+        "tooLong": "Use 1000 characters or fewer."
+      },
+      "consent": {
+        "required": "Tick the box to continue."
+      }
+    },
+    "summary": {
+      "title": "Please fix these fields"
+    },
+    "submit": {
+      "label": "Send message",
+      "sending": "Opening WhatsApp",
+      "emailInstead": "Send by email instead"
+    },
+    "fallback": {
+      "title": "We could not open WhatsApp",
+      "blocked": "Your browser blocked the new tab. Open WhatsApp again, or copy your message and send it to us yourself.",
+      "noLink": "WhatsApp is not available right now. Copy your message and send it to us another way.",
+      "open": "Open WhatsApp",
+      "copy": "Copy message",
+      "copied": "Message copied",
+      "copyFailed": "Copying did not work. Select the text you wrote and copy it by hand."
+    },
+    "side": {
+      "highlightsLabel": "Highlights",
+      "stepsLabel": "How it works",
+      "whatsappTitle": "Prefer to chat now?",
+      "whatsappBody": "Message us on WhatsApp and we will pick it up from there.",
+      "whatsappCta": "Chat on WhatsApp",
+      "emailLabel": "Email",
+      "hoursLabel": "Opening hours",
+      "addressLabel": "Address"
+    },
+    "thankYou": {
+      "moreLabel": "While you wait"
+    }
   }
 }

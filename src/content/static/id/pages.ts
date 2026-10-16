@@ -42,13 +42,13 @@ export const pages: PageContentMap = {
     key: 'home',
     locale: 'id',
     seo: seo(
-      'Sedikit bantuan untuk kerja sehari-hari | Sineva',
-      'Lebih banyak ruang untuk pekerjaan yang penting. Temukan bantuan AI yang praktis untuk bisnis Anda, dan ngobrol dengan kami soal langkah awal.',
+      'Jalankan bisnis lebih cerdas dengan AI | Sineva',
+      'Hemat waktu untuk tugas sehari-hari dengan AI yang cocok untuk bisnis Anda. Kenalan dengan Sino dan jadwalkan konsultasi gratis.',
     ),
     hero: {
       eyebrow: null,
       headline: 'AI untuk bisnis Anda, tanpa ribet',
-      lead: 'Sedikit bantuan untuk tugas yang memenuhi hari Anda. Mari temukan bagian yang bisa dibuat lebih mudah dengan AI.',
+      lead: 'Kami membuat AI mudah dijangkau semua orang. Mari temukan bagian yang bisa membuat hari Anda lebih mudah.',
       primaryCtaLabel: consultation,
       secondaryCtaLabel: 'Kabari saya soal Sino',
       poster: asset(
@@ -85,7 +85,7 @@ export const pages: PageContentMap = {
     howWeWork: { title: 'Cara kami bekerja', steps: processSteps },
     whoWeHelp: { title: 'Siapa yang kami bantu', cards: audienceCards },
     selectedWork: { ...pagesEn.home.selectedWork, title: 'Karya pilihan' },
-    fromBlog: { ...pagesEn.home.fromBlog, title: 'Dari blog' },
+    fromBlog: { ...pagesEn.home.fromBlog, title: 'Wawasan untuk mulai melangkah' },
     faq: {
       title: 'Pertanyaan yang sering muncul',
       intro: 'Jawaban singkat soal Sino dan layanan kami.',
@@ -103,8 +103,8 @@ export const pages: PageContentMap = {
     key: 'product',
     locale: 'id',
     seo: seo(
-      'Sineva AI Agents: kenalan dengan Sino | Sineva',
-      'Kenalan dengan Sino, AI agent untuk tugas bisnis sehari-hari. Sino belum tersedia. Minta dikabari saat sudah siap.',
+      'Serahkan pekerjaan rutin ke Sino AI | Sineva',
+      'Kenalan dengan Sino AI, asisten untuk tugas bisnis sehari-hari. Segera hadir: dapatkan kabar begitu Sino siap.',
     ),
     productStatus: pagesEn.product.productStatus,
     hero: {
@@ -172,7 +172,7 @@ export const pages: PageContentMap = {
     hero: {
       eyebrow: null,
       headline: 'Bantuan AI yang cocok untuk bisnis Anda',
-      lead: 'Ceritakan bagian pekerjaan yang terasa ruwet. Kami bantu temukan langkah awal yang berguna dan membangun dari sana.',
+      lead: 'AI seharusnya bisa dijangkau setiap bisnis. Ceritakan bagian pekerjaan yang terasa ruwet, dan kami bantu temukan langkah awalnya.',
       primaryCtaLabel: consultation,
     },
     servicesIntro: {
@@ -195,12 +195,12 @@ export const pages: PageContentMap = {
     key: 'about',
     locale: 'id',
     seo: seo(
-      'Tentang Sineva | Sineva',
-      'Setiap hari bisnis membawa banyak hal untuk diurus. Sineva membantu pekerjaan sehari-hari terasa lebih ringan, dengan dukungan praktis untuk Anda dan tim.',
+      'Lihat cara Sineva membuat AI sederhana | Sineva',
+      'Sineva membuat AI mudah dijangkau semua orang, dengan dukungan yang praktis dan aman untuk bisnis dan tim Anda. Lihat cara kami bekerja.',
     ),
     hero: {
       title: 'Lebih banyak ruang untuk yang penting',
-      lead: 'Anda punya bisnis untuk diurus. Kami hadir untuk membuat pekerjaan sehari-hari sedikit lebih ringan.',
+      lead: 'Misi kami adalah membuat AI mudah dijangkau semua orang, sehingga pekerjaan sehari-hari menjalankan bisnis terasa lebih ringan.',
       scene: asset(
         '/mascot/poses/v008/sino-relaxed.webp',
         1200,
@@ -223,7 +223,7 @@ export const pages: PageContentMap = {
     ),
     mission: {
       title: 'Mengapa kami ada',
-      body: 'Kami membantu orang memberi ruang untuk pekerjaan, orang, dan rencana yang penting bagi mereka.',
+      body: 'Membuat AI mudah dijangkau semua orang. Kami membantu orang memberi ruang untuk pekerjaan, orang, dan rencana yang penting bagi mereka.',
     },
     values: {
       title: 'Yang kami pegang',
@@ -259,7 +259,7 @@ export const pages: PageContentMap = {
     key: 'contact',
     locale: 'id',
     seo: seo(
-      'Hubungi kami | Sineva',
+      'Jadwalkan konsultasi AI gratis | Sineva',
       'Ceritakan proyek Anda dan dapatkan konsultasi gratis. Kirim pesan lewat WhatsApp dan kami balas dengan langkah berikutnya.',
     ),
     metaChips: ['Konsultasi gratis', 'Bahasa sederhana, tanpa jargon'],
@@ -338,8 +338,8 @@ export const pages: PageContentMap = {
     key: 'blogIndex',
     locale: 'id',
     seo: seo(
-      'Blog | Sineva',
-      'Catatan praktis soal memakai AI dalam pekerjaan sehari-hari dari tim Sineva. Baca artikelnya, atau ngobrol dengan kami soal proyek Anda.',
+      'Wawasan AI praktis untuk bisnis Anda | Sineva',
+      'Panduan singkat dan praktis soal memakai AI dalam pekerjaan sehari-hari. Baca wawasan terbaru, lalu ngobrol dengan kami soal proyek Anda.',
     ),
     title: 'Blog',
     intro: 'Catatan praktis soal memakai AI dalam pekerjaan sehari-hari.',

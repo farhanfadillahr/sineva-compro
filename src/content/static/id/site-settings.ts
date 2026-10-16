@@ -33,6 +33,6 @@ export const siteSettings: SiteSettingsDTO = {
   seo: {
     ...siteSettingsEn.seo,
     defaultDescription:
-      'Sedikit bantuan untuk pekerjaan sehari-hari. Temukan bantuan AI yang cocok untuk bisnis Anda, kenali Sino, dan ceritakan apa yang ingin Anda permudah.',
+      'Jalankan bisnis lebih cerdas dengan AI. Kenalan dengan Sino, lihat apa yang bisa dilakukan AI untuk Anda, dan jadwalkan konsultasi gratis.',
   },
 }

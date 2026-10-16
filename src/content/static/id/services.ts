@@ -65,7 +65,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'id',
     title: 'AI Build',
     summary:
-      'Untuk bisnis yang sudah tahu masalahnya. Kami membangun solusi AI yang cocok dengan cara kerja tim Anda, dari prototipe sampai siap dipakai.',
+      'Untuk bisnis yang sudah tahu masalahnya. Kami membangun solusi AI yang cocok dengan cara kerja tim Anda, dari prototipe sampai siap dipakai, dengan aman.',
     icon: 'puzzle-plug',
     pose: 'building-blocks',
     problems: [
@@ -88,6 +88,8 @@ export const serviceDetails: readonly ServiceDetail[] = [
       'Pengujian pada pekerjaan nyata Anda',
       'Sambungan ke sistem yang sudah Anda pakai, bila masuk akal',
       'Rilis siap pakai yang bisa diandalkan tim setiap hari',
+      'Keamanan sejak awal: akses terbatas, data terlindungi, dan catatan atas apa yang dikerjakan AI',
+      'Aturan jelas soal apa yang boleh dan tidak boleh dilakukan AI, dan siapa yang memeriksa hasilnya',
       'Catatan sederhana yang mudah diikuti tim Anda',
     ],
     process: [
@@ -99,7 +101,10 @@ export const serviceDetails: readonly ServiceDetail[] = [
         'Bangun',
         'Kami bangun versi pertama dalam langkah kecil dan menunjukkannya sambil jalan.',
       ),
-      step('Uji', 'Kami coba pada pekerjaan nyata Anda dan memperbaiki temuan.'),
+      step(
+        'Uji',
+        'Kami coba pada pekerjaan nyata Anda, memeriksa risiko keamanan dan privasinya, lalu memperbaiki temuan.',
+      ),
       step(
         'Luncurkan',
         'Kami bawa dari prototipe ke tahap siap pakai dan serahkan catatan sederhana.',
@@ -117,7 +122,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'id',
     title: 'AI Enablement',
     summary:
-      'Untuk tim yang baru mulai memakai AI. Kami bantu tim Anda belajar memakai AI dengan baik dalam pekerjaan sehari-hari.',
+      'Untuk tim yang baru mulai memakai AI. Kami bantu tim Anda belajar memakai AI dengan baik dan aman dalam pekerjaan sehari-hari.',
     icon: 'chart-rising',
     pose: 'whiteboard',
     problems: [
@@ -136,7 +141,8 @@ export const serviceDetails: readonly ServiceDetail[] = [
     ],
     deliverables: [
       'Sesi praktik yang disusun dari tugas Anda sendiri',
-      'Panduan bersama untuk pemakaian sehari-hari',
+      'Panduan bersama untuk pemakaian sehari-hari, termasuk apa yang aman dibagikan ke AI',
+      'Cara sederhana untuk menyetujui alat dan pemakaian AI baru, agar tidak ada yang berjalan tanpa diperiksa',
       'Latihan dan contoh prompt',
       'Pendampingan lanjutan setelah sesi',
     ],

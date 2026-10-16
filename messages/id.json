@@ -86,7 +86,7 @@
       "legal": "Legal"
     },
     "links": {
-      "aiAgents": "AI Agents",
+      "aiAgents": "Sino AI",
       "joinWaitlist": "Gabung daftar tunggu",
       "allServices": "Semua layanan",
       "about": "Tentang",
@@ -104,7 +104,8 @@
       "tiktok": "Sineva di TikTok",
       "youtube": "Sineva di YouTube",
       "x": "Sineva di X"
-    }
+    },
+    "tagline": "Membuat AI mudah dijangkau semua orang."
   },
   "Home": {
     "stickyBarLabel": "Langkah berikutnya",

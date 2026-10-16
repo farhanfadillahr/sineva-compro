@@ -184,3 +184,16 @@ describe('canonicalJson', () => {
     expect(changedKeys({ a: { x: 1, y: 2 } }, { a: { y: 2, x: 1 } })).toEqual([])
   })
 })
+
+describe('Admin-only fields on a new document', () => {
+  it('gives a non-Admin the default instead of the submitted value', () => {
+    const schema = f.object({
+      title: f.required('Judul', 20),
+      noindex: { ...f.boolean('Noindex'), adminOnly: true },
+    })
+    expect(parseFields(schema, { title: 'New', noindex: true }, { isAdmin: false })).toEqual({
+      ok: true,
+      value: { title: 'New', noindex: false },
+    })
+  })
+})

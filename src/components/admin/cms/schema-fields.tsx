@@ -128,6 +128,7 @@ function itemTitle(schema: FieldSchema, item: unknown, index: number, label: str
 /** Renders any field descriptor as a controlled input. Paths match the server's error keys. */
 export function SchemaField(props: Props): ReactNode {
   const { schema, value, onChange, path, errors, extras } = props
+  if ('adminOnly' in schema && schema.adminOnly && !props.isAdmin) return null
   const error = errors[path]
   const extra = extras?.[path]?.(value)
   let control: ReactNode

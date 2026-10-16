@@ -23,9 +23,19 @@ export type TextField = Readonly<{
   /** Defaults to true: public copy rejects em and en dashes. */
   publicCopy?: boolean
   format?: TextFormat
+  /** Word limit from docs/design/copywriting.md (headlines, CTA labels). */
+  maxWords?: number
+  /** Keep leading and trailing spaces (text joined to a link, for example). */
+  keepSpaces?: boolean
   hint?: string
+  adminOnly?: boolean
 }>
-export type BooleanField = Readonly<{ kind: 'boolean'; label: string; hint?: string }>
+export type BooleanField = Readonly<{
+  kind: 'boolean'
+  label: string
+  hint?: string
+  adminOnly?: boolean
+}>
 export type SelectField = Readonly<{
   kind: 'select'
   label: string
@@ -33,7 +43,12 @@ export type SelectField = Readonly<{
   nullable?: boolean
   hint?: string
 }>
-export type MediaField = Readonly<{ kind: 'media'; label: string; hint?: string }>
+export type MediaField = Readonly<{
+  kind: 'media'
+  label: string
+  hint?: string
+  adminOnly?: boolean
+}>
 export type RichTextField = Readonly<{ kind: 'richText'; label: string; hint?: string }>
 export type ListField = Readonly<{
   kind: 'list'
@@ -178,15 +193,17 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
     case 'text': {
       if (input !== null && input !== undefined && typeof input !== 'string')
         return fail('Nilai tidak valid.')
-      const value = (input ?? '').trim()
-      if (!value) {
+      const value = schema.keepSpaces ? (input ?? '') : (input ?? '').trim()
+      if (!value.trim()) {
         if (schema.required) return fail(`${schema.label} wajib diisi.`)
-        return schema.nullable ? null : ''
+        return schema.nullable ? null : schema.keepSpaces ? value : ''
       }
       if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value))
         return fail('Teks memuat karakter kontrol.')
       if (!schema.multiline && /[\r\n]/.test(value)) return fail('Gunakan satu baris saja.')
       if (Array.from(value).length > schema.max) return fail(`Maksimal ${schema.max} karakter.`)
+      if (schema.maxWords && value.split(/\s+/).length > schema.maxWords)
+        return fail(`Maksimal ${schema.maxWords} kata.`)
       if (schema.publicCopy !== false && findForbiddenDashes(value).length)
         return fail(FORBIDDEN_DASH_MESSAGE)
       if (schema.format) {
@@ -226,13 +243,10 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       const output: Record<string, unknown> = {}
       for (const [key, field] of Object.entries(schema.fields)) {
         const child = { ...ctx, previous: previous?.[key] }
-        if (field.kind === 'object' && field.adminOnly && !ctx.isAdmin) {
-          // A non-Admin keeps the stored value whatever the form sent.
-          if (previous && key in previous) {
-            output[key] = previous[key]
-            continue
-          }
-          ctx.errors[join(path, key)] = 'Bagian ini hanya dapat diubah Admin.'
+        if ('adminOnly' in field && field.adminOnly && !ctx.isAdmin) {
+          // A non-Admin keeps the stored value whatever the form sent; a new document gets the
+          // field's default, never the submitted value.
+          output[key] = previous && key in previous ? previous[key] : emptyValue(field)
           continue
         }
         output[key] = parseField(field, input[key], join(path, key), child)
@@ -297,6 +311,30 @@ export function collectMedia(
       collectMedia(field, value[key], join(path, key)),
     )
   return []
+}
+
+/**
+ * Stored form of a public DTO: every `MediaAsset` at a media field becomes a static media value.
+ * Used to seed the tables from the static launch content.
+ */
+export function storedFromDto(schema: FieldSchema, value: unknown): unknown {
+  if (schema.kind === 'media') {
+    if (!isRecord(value)) return null
+    return {
+      kind: 'static',
+      url: value.url,
+      width: value.width,
+      height: value.height,
+      alt: value.alt,
+    }
+  }
+  if (schema.kind === 'list' && Array.isArray(value))
+    return value.map((item) => storedFromDto(schema.item, item))
+  if (schema.kind === 'object' && isRecord(value))
+    return Object.fromEntries(
+      Object.entries(schema.fields).map(([key, field]) => [key, storedFromDto(field, value[key])]),
+    )
+  return value
 }
 
 /** A blank value for a descriptor, used when an editor adds a list item. */

@@ -258,7 +258,7 @@ describe('start', () => {
   it('loads the GLB through DRACOLoader pointed at the self-hosted /draco/ folder', async () => {
     await start()
     expect(world.dracoPaths).toEqual(['/draco/'])
-    expect(world.loadedUrls).toEqual(['/mascot/sino.glb'])
+    expect(world.loadedUrls).toEqual(['/mascot/sino-v006.glb'])
   })
 
   it('greets once per session: greet_wave on the first canvas, idle straight away on the next', async () => {

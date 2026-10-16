@@ -1,7 +1,8 @@
 import { Reveal } from '@/components/motion/Reveal'
+import { SinoLoop } from '@/components/motion/sino-loop'
 import { SinoStage } from '@/components/sections'
 import { Container, Section, SectionHeader, type SectionTone } from '@/components/ui'
-import { PoseImage } from './pose-image'
+import { poseImage } from './poses'
 
 /**
  * "Meet Sino" (page-patterns.md 2.1 row 3): a centred intro and a still of Sino on his stage.
@@ -27,8 +28,9 @@ export function MeetSinoSection({
         </Reveal>
         <Reveal>
           <SinoStage className="max-w-sm">
-            <PoseImage
-              pose="relaxed-mug"
+            <SinoLoop
+              loop="L-wave"
+              still={poseImage('relaxed-mug')}
               sizes="(min-width: 640px) 384px, 90vw"
               fit="contain"
               className="size-full"

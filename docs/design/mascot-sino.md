@@ -2,7 +2,13 @@
 
 Sino is Sineva's mascot and also the "face" of the AI agent product. This document defines **where, how, and when** Sino appears on the website, along with the performance budget. Source assets: `../sino-3d-mascot/export/web/` (separate project). New asset requirements: [3d-asset-requirements.md](3d-asset-requirements.md).
 
-## 1. Current asset facts (`sino.glb` v004)
+## Current delivery (v006, 2026-10-16)
+
+The website loads `/mascot/sino-v006.glb`: 1,174,076 bytes raw, 367,332 bytes Brotli, 56,233 triangles and 22 primitives. Ten clips retain the seven original names and add `jet_launch`, `jet_hover`, `jet_land`. Arm animation in the original clips was corrected to avoid torso intersections, and the redundant cornea shell was removed to clear closed eyelids. Nozzles retract at rest. Corrected stills and hero poster use `/mascot/poses/v006/` and `/mascot/poster/v006/` to avoid old immutable caches.
+
+The first hero sequence runs after the logo intro. It hops inside the stage, lands, waves, and idles. Pointer reactions queue during flight; a click or key skips to landing. Reduced motion, Save-Data and webdriver keep the poster. Five loop videos and three one-shots ship with VP9 and HEVC alpha. CTA one-shots warm on focus/hover and skip if not ready, without delaying navigation. See [production notes](sino-v006-production.md) for source files, audits, budgets and pending device checks.
+
+## 1. Historical asset facts (`sino.glb` v004)
 
 Inspected with `gltf-transform inspect` and a three.js 0.170 parse on 15 October 2026.
 
@@ -114,6 +120,21 @@ Pre-rendered Sino poses (`/mascot/poses/*`) are not static either. Every pose im
 | `prefers-reduced-motion` | Static, no float, no parallax |
 
 Implementation lives in one shared `AnimatedPose` wrapper (used by TwoPaths, TaskCardGrid, FinalCta, page heroes with stills, 404 and thank-you).
+
+#### SinoLoop (animated loops)
+
+Where a pose has a rendered loop (`L-wave`, `L-phone`, `L-build`, `L-thumbs`, `L-confused`, see [3d-asset-requirements.md](3d-asset-requirements.md) section 3.4), `SinoLoop` plays it. It is an `AnimatedPose` whose picture is a `<video>` (the pose's `media` slot), so reveal, float, parallax and hover lift are the pose's own and are not copied. The asset manifest is `src/components/motion/sino-loops.ts`: `id -> { webm, mov, poster, width, height, ready }`.
+
+| Rule | Behaviour |
+|---|---|
+| First paint | The poster. The server HTML and the first hydration render are the poster `<Image>`; the `<video>` (muted, `playsInline`, `loop`, `preload="none"`, `aria-hidden`, no controls) replaces it on the client. The box is reserved with width, height and aspect-ratio, so CLS is 0 |
+| Source | Chosen in JS by `pickLoopSource`: WebKit (Safari, every iOS browser) gets the HEVC alpha `.mov`; every other browser gets the VP9 alpha `.webm`. Never by `canPlayType` alone: Chrome can report HEVC support and still drop the alpha, which paints a black box. WebKit without HEVC gets the poster, not the WebM (its WebM alpha is unreliable) |
+| Playing | Only while intersecting (IntersectionObserver) and the tab is visible. Pauses when it leaves the screen and on `visibilitychange` hidden; resumes on return only if still in view. `play()` rejections are caught and the poster stays |
+| Reduced motion, Save-Data | `prefers-reduced-motion: reduce` or `navigator.connection.saveData`: the poster image only, no `<video>` element, no download of the video |
+| Accessibility | Decorative: empty poster alt, no controls, never focusable |
+| Not ready | While `ready` is `false` (files not delivered), the usage draws its still pose exactly as before. Flip `ready` in the same change that adds the three files; a test fails if a ready loop has a file missing |
+
+Placements: `L-wave` on Home "Meet Sino" and the final CTA, `L-phone` and `L-build` on the two TwoPaths cards, `L-thumbs` on the contact thank-you page, `L-confused` on the 404 page. The "one large Sino per viewport" limit of section 6 applies to loops too.
 
 ## 6. Where Sino appears per page
 

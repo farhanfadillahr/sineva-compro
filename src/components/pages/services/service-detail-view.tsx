@@ -12,7 +12,6 @@ import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
 import { whatsappHrefFor } from '@/lib/whatsapp'
 import { SelectedWorkSection } from '../home/card-sections'
 import { poseImage } from '../home/poses'
-import { Breadcrumb } from './breadcrumb'
 import {
   DeliverablesSection,
   ProblemsSection,
@@ -153,15 +152,6 @@ export function ServiceDetailView({
   return (
     <>
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className="outline-none">
-        <Breadcrumb
-          label={labels.breadcrumbLabel}
-          items={[
-            { label: labels.homeCrumb, href: SERVICES_HREFS.home },
-            { label: labels.servicesCrumb, href: SERVICES_HREFS.services },
-          ]}
-          current={service.title}
-          linkComponent={linkComponent}
-        />
         {planServiceDetailSections(model).map(({ id, tone }) => (
           <div key={id} data-services-section={id} data-services-tone={tone}>
             {render[id](tone)}

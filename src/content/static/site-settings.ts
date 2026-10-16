@@ -13,7 +13,7 @@ export const siteSettings: SiteSettingsDTO = {
   brand: {
     siteName: 'Sineva',
     defaultOgImage: asset(
-      '/og/default.png',
+      '/og/default-v006.png',
       1200,
       630,
       'Sineva and Sino, the friendly AI agent mascot',
@@ -69,7 +69,7 @@ export const siteSettings: SiteSettingsDTO = {
   seo: {
     titleTemplate: '{title} | Sineva',
     defaultDescription:
-      'Sineva helps businesses use AI, with consulting services and an AI agent named Sino on the way. Talk to us about your first step.',
+      'A little help with everyday work. Explore AI support that fits your business, meet Sino, and tell us what would make your day easier.',
     indexable: true,
   },
   verification: { googleSearchConsoleToken: null },

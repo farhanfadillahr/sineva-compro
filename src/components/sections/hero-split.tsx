@@ -119,6 +119,13 @@ export function HeroSplit({
         {primaryCta ? (
           <Button
             href={primaryCta.href}
+            launch={
+              primaryCta.href.startsWith('/contact')
+                ? 'booking'
+                : primaryCta.href.includes('wa.me')
+                  ? 'waitlist'
+                  : undefined
+            }
             linkComponent={linkComponent}
             size="xl"
             withArrow

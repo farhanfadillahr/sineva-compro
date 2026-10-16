@@ -46,5 +46,12 @@ export function buildNotFoundMetadata(page: NotFoundPageContent): Metadata {
     title: { absolute: page.seo.metaTitle },
     description: page.seo.metaDescription,
     robots: { index: false, follow: false },
+    // No canonical on purpose: it would name one URL for every missing path. The layout's image
+    // and site name are lost when a page sets `openGraph`, but a noindex page is rarely shared.
+    openGraph: {
+      type: 'website',
+      title: page.seo.metaTitle,
+      description: page.seo.metaDescription,
+    },
   }
 }

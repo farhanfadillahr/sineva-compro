@@ -29,6 +29,8 @@ Primary navigation: Product, Services, Work, Blog, About + CTA. Contact is reach
 
 ## 2. Page compositions
 
+Public pages omit visual breadcrumbs, including Home, service detail and articles. Context comes from the main navigation and page headings.
+
 Legend: **[A]** aurora gradient bg, **[T]** tint, **[W]** warm, **[I]** inverse (dark), **[C]** canvas, **[ALT]** canvas-alt. Each row is one `Section`.
 
 ### 2.1 Home `/`
@@ -73,7 +75,7 @@ Legend: **[A]** aurora gradient bg, **[T]** tint, **[W]** warm, **[I]** inverse 
 
 ### 2.4 Service detail `/services/[slug]`
 
-Breadcrumb, hero (H1, lead, CTA "Plan my AI project" → `/contact?service={slug}`, pose), "Problems we solve" (3-4 cards), "What you get" (deliverables list with check icons), process (4 steps, compact), tools we use (logo-free text chips), related work, FAQ (+ `FAQPage` JSON-LD), final CTA. Sticky CTA bar on mobile.
+Hero (H1, lead, CTA "Plan my AI project" → `/contact?service={slug}`, pose), "Problems we solve" (3-4 cards), "What you get" (deliverables list with check icons), process (4 steps, compact), tools we use (logo-free text chips), related work, FAQ (+ `FAQPage` JSON-LD), final CTA. Sticky CTA bar on mobile.
 
 ### 2.5 Work `/work` and `/work/[slug]`
 
@@ -83,7 +85,7 @@ Breadcrumb, hero (H1, lead, CTA "Plan my AI project" → `/contact?service={slug
 ### 2.6 Blog `/blog` and `/blog/[slug]`
 
 - List (Sintra light blog pattern): featured latest post as a wide split card (cover left, category + title + excerpt + date right), `chip-filter` row for categories, grid of `card-post` (3 columns, 9 per page), pagination.
-- Article: breadcrumb, H1 left + cover right on desktop, author + dates + read time, **sticky table of contents** in a left column (desktop ≥ 1024), body 720 px max, share buttons (WhatsApp, LinkedIn, copy link with L3 Lottie), 3 related posts, final CTA.
+- Article: H1 left + cover right on desktop, author + dates + read time, **sticky table of contents** in a left column (desktop ≥ 1024), body 720 px max, share buttons (WhatsApp, LinkedIn, copy link with L3 Lottie), 3 related posts, final CTA.
 
 ### 2.7 About `/about`
 

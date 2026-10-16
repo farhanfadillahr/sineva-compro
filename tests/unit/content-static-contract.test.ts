@@ -99,7 +99,7 @@ describe('static content source: site settings', () => {
   it('points the default OG image at the assets lane path', async () => {
     const settings = await source.getSiteSettings('en')
     expect(settings?.brand.defaultOgImage).toMatchObject({
-      url: '/og/default.png',
+      url: '/og/default-v006.png',
       width: 1200,
       height: 630,
     })
@@ -162,7 +162,7 @@ describe('static content source: pages', () => {
   it('serves the home hero poster from the assets lane path', async () => {
     const home = await source.getPage('home', 'en')
     expect(home?.hero.poster).toMatchObject({
-      url: '/mascot/poster/sino-hero.webp',
+      url: '/mascot/poster/v006/sino-hero.webp',
       width: 1600,
       height: 1600,
     })
@@ -290,7 +290,7 @@ function textOf(node: unknown): string {
 }
 
 describe('static content source: blog', () => {
-  it('has three starter posts, newest first, written by the Sineva team', async () => {
+  it('has three launch articles, newest first, written by the Sineva team', async () => {
     const page = await source.listPosts({ locale: 'en', page: 1, pageSize: 10 })
     expect(page.total).toBe(3)
     const dates = page.posts.map((post) => post.publishedAt)
@@ -308,8 +308,8 @@ describe('static content source: blog', () => {
       const detail = await source.getPost(summary.slug, 'en')
       expect(detail).toMatchObject(summary)
       const words = textOf(detail!.body).trim().split(/\s+/).length
-      expect(words, summary.slug).toBeGreaterThanOrEqual(450)
-      expect(words, summary.slug).toBeLessThanOrEqual(900)
+      expect(words, summary.slug).toBeGreaterThanOrEqual(600)
+      expect(words, summary.slug).toBeLessThanOrEqual(1000)
       expect(summary.readingMinutes).toBeGreaterThanOrEqual(2)
     }
   })
@@ -390,10 +390,10 @@ describe('static content source: references', () => {
       'sino-relaxed',
     ]
     const allowed = new Map<string, [number, number]>([
-      ['/mascot/poster/sino-hero.webp', [1600, 1600]],
-      ['/og/default.png', [1200, 630]],
+      ['/mascot/poster/v006/sino-hero.webp', [1600, 1600]],
+      ['/og/default-v006.png', [1200, 630]],
     ])
-    for (const name of poseFiles) allowed.set(`/mascot/poses/${name}.webp`, [1200, 1200])
+    for (const name of poseFiles) allowed.set(`/mascot/poses/v006/${name}.webp`, [1200, 1200])
 
     const media = [...walkObjectsWithKey(staticContent, 'url')] as {
       url: string

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, type FormEvent } from 'react'
+import { signalLaunch } from '@/components/mascot/sino-launch/launch-bus'
 import { Button, Checkbox, Field, Input, Select } from '@/components/ui'
 import { focusRing } from '@/components/ui/cx'
 import type { ProductLabels } from './product-labels'
@@ -79,6 +80,8 @@ export function WaitlistForm({
       const url = buildWaitlistWhatsAppUrl(fields, copy, channels)
       if (!url) return
       window.open(url, '_blank', 'noopener,noreferrer')
+      const trigger = consentRef.current?.form?.querySelector<HTMLElement>('[data-sino-launch]')
+      if (trigger) signalLaunch('waitlist', trigger)
       setOpenedUrl(url)
       return
     }
@@ -153,7 +156,7 @@ export function WaitlistForm({
       />
       <div className="flex flex-col gap-3 min-[400px]:flex-row min-[400px]:flex-wrap">
         {hasWhatsApp ? (
-          <Button type="submit" size="lg" className="w-full min-[400px]:w-auto">
+          <Button launch="waitlist" type="submit" size="lg" className="w-full min-[400px]:w-auto">
             {submitLabel}
           </Button>
         ) : null}

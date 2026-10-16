@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState, type FormEvent, type MouseEvent } from 'react'
+import { markContactHandoff } from '@/components/mascot/sino-launch/launch-bus'
 import { WhatsAppIcon } from '@/components/layout/icons'
 import { Button, Checkbox, Field, Input, Select, Textarea } from '@/components/ui'
 import type { ConsentLabel, SiteSettingsDTO } from '@/features/content/types'
@@ -34,7 +35,7 @@ import {
 
 // The form of /contact for the static launch. There is no backend: a valid submit composes a
 // message from the answers and opens it in WhatsApp (or the visitor's mail app), in a new tab,
-// then moves this tab to the thank-you page. Nothing is posted, stored or logged here, so the form
+// then moves this tab to the thank-you page. No answers are posted, stored or logged here, so the form
 // has no `action`, no fetch, and gives no control a `name`: if the script ever failed to load, a
 // native submit would otherwise put the visitor's answers into the address bar.
 
@@ -192,6 +193,7 @@ export function ContactForm({
     locked.current = true
     setFallback(null)
     setSending(true)
+    markContactHandoff()
     router.push(THANK_YOU_PATH)
   }
 
@@ -222,6 +224,7 @@ export function ContactForm({
     // The link itself opens WhatsApp; this tab follows to the thank-you page like the main path.
     locked.current = true
     setSending(true)
+    markContactHandoff()
     router.push(THANK_YOU_PATH)
   }
 

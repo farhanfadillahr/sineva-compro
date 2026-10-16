@@ -9,12 +9,13 @@ export type GateEnvironment = {
   webgl2: boolean
   reducedMotion: boolean
   saveData: boolean
+  webdriver?: boolean
   /** `navigator.deviceMemory` in GB (capped at 8 by browsers), or null when not reported. */
   deviceMemoryGb: number | null
 }
 
 export type GateReason =
-  'disabled' | 'reduced-motion' | 'save-data' | 'low-memory' | 'out-of-view' | 'no-webgl2'
+  'disabled' | 'bot' | 'reduced-motion' | 'save-data' | 'low-memory' | 'out-of-view' | 'no-webgl2'
 
 export type GateDecision = { pass: true } | { pass: false; reason: GateReason }
 
@@ -27,6 +28,7 @@ const MIN_MEMORY_GB = 4
  */
 export function evaluateSinoGate(env: GateEnvironment): GateDecision {
   if (!env.enabled) return { pass: false, reason: 'disabled' }
+  if (env.webdriver) return { pass: false, reason: 'bot' }
   if (env.reducedMotion) return { pass: false, reason: 'reduced-motion' }
   if (env.saveData) return { pass: false, reason: 'save-data' }
   if (env.deviceMemoryGb !== null && env.deviceMemoryGb < MIN_MEMORY_GB) {
@@ -79,12 +81,14 @@ export function readGateEnvironment(
 
   const mayProbe =
     enabled &&
+    !win.navigator.webdriver &&
     !reducedMotion &&
     !saveData &&
     (deviceMemoryGb === null || deviceMemoryGb >= MIN_MEMORY_GB) &&
     inViewport
   return {
     enabled,
+    webdriver: win.navigator.webdriver === true,
     inViewport,
     webgl2: mayProbe ? hasWebgl2(win) : false,
     reducedMotion,

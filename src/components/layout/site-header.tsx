@@ -151,7 +151,7 @@ export function SiteHeader({
                 {t('chatOnWhatsapp')}
               </Button>
             ) : null}
-            <Button href="/contact" linkComponent={AppLink} variant="dark">
+            <Button href="/contact" launch="booking" linkComponent={AppLink} variant="dark">
               {t('bookConsultation')}
             </Button>
           </div>

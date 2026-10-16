@@ -46,7 +46,7 @@ describe('SiteFooter columns', () => {
       within(footer).getByRole('heading', { name }).closest('section') as HTMLElement
 
     const product = within(column('Product'))
-    expect(product.getByRole('link', { name: 'AI Agents' }).getAttribute('href')).toBe(
+    expect(product.getByRole('link', { name: 'Sino AI' }).getAttribute('href')).toBe(
       '/products/ai-agents',
     )
     expect(product.getByRole('link', { name: 'Join the waitlist' })).toBeTruthy()
@@ -89,7 +89,7 @@ describe('SiteFooter columns', () => {
   it('shows the copyright line in the mono font', () => {
     renderFooter()
     const line = screen.getByText('© 2026 Sineva')
-    expect(line.classList.contains('font-mono')).toBe(true)
+    expect(line.closest('.font-mono')).not.toBeNull()
   })
 
   it('shows the symbol logo as a link home', () => {
@@ -98,6 +98,13 @@ describe('SiteFooter columns', () => {
     expect(home.getAttribute('href')).toBe('/')
     // Symbol only: the wordmark text lives in the watermark, not next to the symbol.
     expect(within(home).queryByText('Sineva')).toBeNull()
+  })
+
+  it('states the mission in the bottom bar', () => {
+    renderFooter()
+    expect(document.querySelector('[data-slot="footer-tagline"]')?.textContent).toBe(
+      'Making AI accessible for everyone.',
+    )
   })
 
   it('has a decorative wordmark watermark hidden from assistive technology', () => {

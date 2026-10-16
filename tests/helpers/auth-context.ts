@@ -2,13 +2,23 @@ import 'dotenv/config'
 import { randomUUID } from 'node:crypto'
 import { inArray } from 'drizzle-orm'
 import { readTestEnv } from '../../src/env/test'
+import { readServerEnv } from '../../src/env/server'
 import { createDatabase } from '../../src/lib/db/connection'
 import { createAuth } from '../../src/lib/auth/options'
 import { user } from '../../src/features/auth/schema'
 
 export type TestIdentity = { id: string; name: string; email: string; password: string }
 export async function createAuthTestContext() {
-  const env = readTestEnv(process.env)
+  const testEnv = readTestEnv(process.env)
+  // In-process fixtures simulate an already secured Cloudflare ingress. Each
+  // test gets an independent address; public header trust is tested separately.
+  const env = readServerEnv({
+    DATABASE_URL: testEnv.databaseUrl,
+    BETTER_AUTH_URL: testEnv.authUrl,
+    BETTER_AUTH_SECRET: testEnv.authSecret,
+    CLIENT_IP_MODE: 'cloudflare',
+    CLOUDFLARE_ORIGIN_LOCKED: 'true',
+  })
   const connection = createDatabase(env.databaseUrl)
   const auth = createAuth(connection.db, env)
   const ownedIds: string[] = []
@@ -20,7 +30,7 @@ export async function createAuthTestContext() {
       headers: {
         origin: env.authUrl,
         'content-type': 'application/json',
-        'x-forwarded-for': address,
+        'cf-connecting-ip': address,
       },
       body: JSON.stringify({ email, password }),
     })

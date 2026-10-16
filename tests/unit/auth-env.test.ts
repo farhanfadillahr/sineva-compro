@@ -13,6 +13,7 @@ describe('custom-admin environment', () => {
       databaseUrl: valid.DATABASE_URL,
       authSecret: valid.BETTER_AUTH_SECRET,
       authUrl: 'http://127.0.0.1:3000',
+      clientIp: { mode: 'direct' },
     })
   })
 

@@ -9,6 +9,7 @@ export const SEED_MODULES = [
   'capabilities',
   'business-types',
   'faq',
+  'team',
   'services',
 ] as const
 

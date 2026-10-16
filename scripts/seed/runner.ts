@@ -19,6 +19,7 @@ const modules: readonly SeedModule[] = [
   collectionSeed('capabilities', 'capabilities'),
   collectionSeed('businessTypes', 'business-types'),
   collectionSeed('faq', 'faq'),
+  collectionSeed('team', 'team'),
   servicesSeed,
 ]
 export async function runSeeds(

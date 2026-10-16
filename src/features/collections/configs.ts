@@ -20,7 +20,7 @@ export type CollectionItem = {
 
 export type CollectionConfig = Readonly<{
   /** Registry name, also the table prefix. */
-  name: 'capabilities' | 'businessTypes' | 'faq'
+  name: 'capabilities' | 'businessTypes' | 'faq' | 'team'
   /** Admin URL of the list, for redirects and revalidation. */
   adminPath: string
   title: string
@@ -34,7 +34,7 @@ export type CollectionConfig = Readonly<{
   mediaEntity: MediaOwner['entity']
   globalSchema: ObjectField
   localeSchema: ObjectField
-  /** Field shown as the item title in lists. */
+  /** Field shown as the item title in lists (locale data first, then language-independent). */
   titleField: string
   /** Map from a descriptor key to its audit field name, when they differ. */
   auditNames?: Readonly<Record<string, string>>
@@ -122,10 +122,36 @@ export const faqConfig: CollectionConfig = {
   }),
 }
 
+export const teamConfig: CollectionConfig = {
+  name: 'team',
+  adminPath: '/admin/team',
+  title: 'Tim dan penulis',
+  itemLabel: 'Anggota tim',
+  description:
+    'Anggota tampil di halaman Tentang bila diaktifkan, dan dapat dipilih sebagai penulis artikel.',
+  formHint: 'Tampilkan anggota di situs hanya setelah orang tersebut setuju.',
+  keyLabel: 'Kunci',
+  audit: 'team',
+  mediaEntity: 'team',
+  titleField: 'name',
+  auditNames: { socialUrl: 'social' },
+  globalSchema: f.object({
+    name: f.required('Nama', 80),
+    photo: f.media('Foto', 'Persegi, minimal 400 × 400 px.'),
+    socialUrl: f.optional('Tautan sosial', 300, { format: 'url', publicCopy: false }),
+    showOnAbout: f.boolean('Tampilkan di halaman Tentang'),
+  }),
+  localeSchema: f.object({
+    role: f.required('Jabatan', 80),
+    bio: f.optional('Bio singkat', 300, { multiline: true }),
+  }),
+}
+
 export const collectionConfigs = {
   capabilities: capabilitiesConfig,
   businessTypes: businessTypesConfig,
   faq: faqConfig,
+  team: teamConfig,
 } as const satisfies Record<CollectionConfig['name'], CollectionConfig>
 
 export type CollectionName = keyof typeof collectionConfigs

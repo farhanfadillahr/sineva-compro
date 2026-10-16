@@ -1,9 +1,10 @@
 /*
- * First-visit logo intro (docs/design/motion.md section 3.1). Two layers:
+ * First-load splash (docs/design/motion.md section 3.1). Two layers, both in the canvas colour:
  *  - .shell: server-rendered, shown by CSS alone while <html data-logo-intro="pending">, so it
  *    covers the page from first paint. Everything time-based about it is CSS, so it needs no
  *    JavaScript to get out of the way.
- *  - .root/.stage: client-rendered Lottie on top of the shell, never intercepts input.
+ *  - .root: the client overlay. It takes over as the cover (<html data-logo-intro-live> hides the
+ *    shell), plays Sino and wipes the page open from the bottom with clip-path.
  */
 
 /* Hidden and inert by default: without the gate's marker it can never show or catch a click. */
@@ -16,8 +17,7 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  /* Removing the marker (hand-off, skip, failure) fades it out in 200 ms, then takes it out of the
-     hit-test and paint tree. */
+  /* Removing the marker (the end of the wipe, a skip, a failure) hides it at once. */
   transition:
     opacity 200ms linear,
     visibility 0s linear 200ms;
@@ -26,15 +26,25 @@
 :global(html[data-logo-intro='pending']) .shell {
   opacity: 1;
   visibility: visible;
-  /* The shell catches input until 1.2 s so a click cannot reach controls half hidden by the
-     intro, and a click skips it. */
+  /* The shell catches input, so a click cannot reach controls half hidden by the splash. */
   pointer-events: auto;
   transition: none;
-  /* Safety net that needs no JavaScript: inert after 1.2 s, fully gone by 1.8 s, even if the
-     client never takes over. The client's own hand-off (1.1 s) normally gets there first. */
+  /* Safety net that needs no JavaScript, and the only thing that frees the page if the client
+     never takes over: inert from 4.8 s, fully gone at 5 s. The client's own hard stop is 5 s too;
+     every normal path ends far earlier. */
   animation:
-    shell-inert 0s linear 1200ms forwards,
-    shell-safety 200ms linear 1600ms forwards;
+    shell-inert 0s linear 4800ms forwards,
+    shell-safety 200ms linear 4800ms forwards;
+}
+
+/* The overlay is the cover while it is mounted. The shell must not stay in front of the page the
+   wipe is revealing, and it must not fade back in when the overlay's own animation ends. */
+:global(html[data-logo-intro='pending'][data-logo-intro-live]) .shell {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  animation: none;
+  transition: none;
 }
 
 @keyframes shell-inert {
@@ -54,45 +64,46 @@
   }
 }
 
-/* The gate already refuses to mark the document under reduced motion; this is the second lock. */
-@media (prefers-reduced-motion: reduce) {
-  .shell {
-    display: none;
-  }
-}
-
-/* Client layer: centres the stage over the shell. */
+/*
+ * The overlay. Starts fully covering (the same shape wipeClipPath(0) gives, with the curved edge
+ * parked below the bottom of the screen) and is opened by a Web Animation of clip-path only, which
+ * never touches layout. It catches input until it is gone, and carries its own CSS stop at 5 s in
+ * case the script that should remove it never gets to run.
+ */
 .root {
   position: fixed;
   inset: 0;
   z-index: 71;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
+  overflow: hidden;
+  background: var(--color-canvas, #fff);
+  pointer-events: auto;
+  clip-path: inset(0px 0px calc(0% - 10svh) 0px round 0px 0px 50% 50% / 0px 0px 10svh 10svh);
+  animation: root-safety 0s linear 5000ms forwards;
 }
 
-/* The flying box: a square sized for the stacked logo, centred in the viewport. */
-.stage {
-  position: relative;
-  width: min(60vw, 20rem);
-  aspect-ratio: 1;
-  pointer-events: none;
-  /* Promoted only for the one-off flight; the whole node is removed right after. */
-  will-change: transform;
+@keyframes root-safety {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 /*
- * Jetpack launch slot (splash-launch.ts). Sino stands at the lower centre, about 40 vh tall, in an
- * out-of-flow box: nothing is reserved or reflowed, so it cannot shift layout. The box is empty
- * until the clip is ready and is only filled by script, so a clip that never arrives leaves no
- * trace. The clip is 3:4 (720 x 960).
+ * Sino. The clip is 3:4 (720 x 960) and she stands in it from about 21% to 96% of its height
+ * (measured from the alpha channel), so her middle is at 59% of the box. The box is 76svh tall with
+ * its top on the top of the screen: she is about 57svh tall and her middle is at 45svh, a little
+ * above the middle of the screen. The box cannot be pushed down to centre her exactly: its top edge
+ * is where she leaves the clip, and anywhere below the top of the screen that would cut her along a
+ * line while she is still in view. At the top of the screen she simply flies out of it. The box is
+ * out of flow and its sides spill past a narrow screen, which the overlay clips; her silhouette is
+ * only 44% of the box width.
  */
 .launch {
   position: absolute;
+  top: 0;
   left: 50%;
-  bottom: 2vh;
-  height: 40vh;
-  height: 40svh;
+  height: 76vh;
+  height: 76svh;
   aspect-ratio: 3 / 4;
   transform: translateX(-50%);
   pointer-events: none;
@@ -105,30 +116,10 @@
   object-fit: contain;
 }
 
-/*
- * In the clip Sino ignites and climbs out of the top of her frame, which on a plain canvas would
- * read as her being sliced by an invisible line. Instead she dissolves while she climbs, timed from
- * the first played frame (the script sets data-playing on that event). Opacity only. Sino stands
- * from 0 to about 0.4 s of the 1.1 s clip and has left the frame by about 0.8 s. This also covers
- * a late start that the 1.6 s cap would cut off: she is already almost gone by then.
- */
-.launch[data-playing] {
-  animation: launch-dissolve var(--dur-sino-launch) linear forwards;
-}
-
-@keyframes launch-dissolve {
-  0%,
-  35% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
 /* The gate already refuses to mark the document under reduced motion; this is the second lock. */
 @media (prefers-reduced-motion: reduce) {
-  .launch {
+  .shell,
+  .root {
     display: none;
   }
 }

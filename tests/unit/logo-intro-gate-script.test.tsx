@@ -3,9 +3,10 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { shouldPlayIntro } from '../../src/components/brand/intro-gate'
+import { INTRO_LIVE_ATTRIBUTE, shouldPlayIntro } from '../../src/components/brand/intro-gate'
 import { INTRO_GATE_SCRIPT } from '../../src/components/brand/intro-gate-script'
 import { LogoIntroGateScript, LogoIntroShell } from '../../src/components/brand/logo-intro-server'
+import { SPLASH_TIMING, wipeClipPath } from '../../src/components/brand/splash-sequence'
 import { installMatchMedia, REDUCED_MOTION_QUERY, removeMatchMedia } from './layout-test-utils'
 
 const read = (relative: string) =>
@@ -167,20 +168,100 @@ describe('shell CSS', () => {
     expect(css).toMatch(/var\(--color-canvas/)
   })
 
-  it('turns inert after 1.2 s and fades out by 1.8 s with CSS alone, even if JS never runs', () => {
-    expect(css).toMatch(/animation:[^;]*1200ms/)
-    expect(css).toMatch(/animation:[^;]*1600ms/)
-    expect(css).toMatch(/@keyframes[^{]+\{[^}]*pointer-events:\s*none/s)
-    expect(css).toMatch(/@keyframes[^{]+\{[\s\S]*visibility:\s*hidden/)
+  it('stops covering the page by 5 s with CSS alone, even if JS never runs: inert at 4.8 s, gone at 5 s', () => {
+    const pending = css.match(/html\[data-logo-intro='pending'\]\)\s+\.shell\s*\{([^}]*)\}/)![1]
+    expect(pending).toMatch(/shell-inert 0s linear 4800ms forwards/)
+    expect(pending).toMatch(/shell-safety 200ms linear 4800ms forwards/)
+    // 4800 ms delay + 200 ms fade = 5000 ms, the hard stop of SPLASH_TIMING
+    expect(4800 + 200).toBe(SPLASH_TIMING.hardStopMs)
+    expect(css).toMatch(/@keyframes shell-inert\s*\{[^}]*pointer-events:\s*none/s)
+    expect(css).toMatch(/@keyframes shell-safety\s*\{[\s\S]*visibility:\s*hidden/)
   })
 
-  it('never intercepts input from the client-side stage: only the shell does, and only until 1.2 s', () => {
-    const stage = css.match(/\.stage\s*\{([^}]*)\}/)![1]
-    expect(stage).toMatch(/pointer-events:\s*none/)
+  it('no longer carries the old 1.2 s and 1.8 s timers', () => {
+    expect(css).not.toMatch(/\b1200ms\b|\b1600ms\b/)
   })
 
-  it('fades out over 200 ms when JavaScript removes the marker', () => {
-    const base = css.match(/\.shell\s*\{([^}]*)\}/)![1]
-    expect(base).toMatch(/transition:[^;]*opacity 200ms/)
+  it('is hidden at once, and stays hidden, while the client overlay is the cover', () => {
+    const live = css.match(
+      /html\[data-logo-intro='pending'\]\[data-logo-intro-live\]\)\s+\.shell\s*\{([^}]*)\}/,
+    )![1]
+    expect(live).toMatch(/opacity:\s*0/)
+    expect(live).toMatch(/visibility:\s*hidden/)
+    expect(live).toMatch(/pointer-events:\s*none/)
+    expect(live).toMatch(/animation:\s*none/)
+    expect(live).toMatch(/transition:\s*none/)
+  })
+
+  it('names the live attribute the overlay sets', () => {
+    expect(INTRO_LIVE_ATTRIBUTE).toBe('data-logo-intro-live')
+  })
+})
+
+describe('overlay CSS', () => {
+  const css = read('../../src/components/brand/logo-intro.module.css')
+  const root = css.match(/\.root\s*\{([^}]*)\}/)![1]
+  const launch = css.match(/\.launch\s*\{([^}]*)\}/)![1]
+
+  it('is a full-screen layer above the shell, in the canvas colour', () => {
+    expect(root).toMatch(/position:\s*fixed/)
+    expect(root).toMatch(/inset:\s*0/)
+    expect(root).toMatch(/z-index:\s*71/)
+    expect(root).toMatch(/var\(--color-canvas/)
+  })
+
+  it('blocks input until it is gone', () => {
+    expect(root).toMatch(/pointer-events:\s*auto/)
+  })
+
+  it('starts fully covering, with the very clip-path the sequence animates from', () => {
+    expect(root).toContain(`clip-path: ${wipeClipPath(0)};`)
+  })
+
+  it('carries its own CSS stop at 5 s in case the script never gets to remove it', () => {
+    expect(root).toMatch(/animation:\s*root-safety 0s linear 5000ms forwards/)
+    expect(css).toMatch(
+      /@keyframes root-safety\s*\{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s,
+    )
+    expect(5000).toBe(SPLASH_TIMING.hardStopMs)
+  })
+
+  it('centres Sino: a 3:4 box whose top is the top of the screen, out of flow', () => {
+    expect(launch).toMatch(/position:\s*absolute/)
+    expect(launch).toMatch(/top:\s*0/)
+    expect(launch).toMatch(/height:\s*76svh/)
+    expect(launch).toMatch(/aspect-ratio:\s*3\s*\/\s*4/)
+    expect(launch).toMatch(/pointer-events:\s*none/)
+  })
+
+  it('sizes and places her from the measured silhouette: about 55svh tall, near the middle', () => {
+    // Per-frame alpha bounding box of the standing pose (ffmpeg cropdetect, limit 0.03): the
+    // silhouette spans y 204..924 of the 960 px frame.
+    const top = 204 / 960
+    const bottom = 924 / 960
+    const boxHeightSvh = Number(launch.match(/height:\s*(\d+)svh/)![1])
+    const heightSvh = (bottom - top) * boxHeightSvh
+    const middleSvh = ((top + bottom) / 2) * boxHeightSvh
+    expect(heightSvh).toBeGreaterThan(52)
+    expect(heightSvh).toBeLessThan(60)
+    // The box cannot move down: its top edge has to stay on the top of the screen, or she would be
+    // cut along a line across the screen while flying out of it. That leaves her a little high.
+    expect(Math.abs(middleSvh - 50)).toBeLessThan(7)
+  })
+
+  it('moves nothing but clip-path: no layout properties and no dissolve', () => {
+    expect(css).not.toMatch(/launch-dissolve/)
+    const keyframes = [...css.matchAll(/@keyframes\s+[\w-]+\s*\{[\s\S]*?\n\}/g)].map((m) => m[0])
+    for (const frame of keyframes) {
+      expect(frame).not.toMatch(/\b(width|height|top|left|right|bottom|margin|box-shadow)\s*:/)
+    }
+  })
+
+  it('has a CSS lock for reduced motion on top of the gate', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^@]*\.root/)
+  })
+
+  it('has no Lottie stage', () => {
+    expect(css).not.toMatch(/\.stage\b/)
   })
 })

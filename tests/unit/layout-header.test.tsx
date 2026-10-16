@@ -169,17 +169,6 @@ describe('SiteHeader floating nav (modes)', () => {
     expect(classes).not.toContain('fixed')
   })
 
-  it('keeps the logo intro landing slot exactly once, inside the bar, in every mode', () => {
-    renderHeader()
-    const slot = () => document.querySelectorAll('[data-logo-intro-target]')
-    expect(slot()).toHaveLength(1)
-    expect(bar().contains(slot()[0])).toBe(true)
-    act(() => scrollTo(300))
-    expect(slot()).toHaveLength(1)
-    act(() => scrollTo(290))
-    expect(slot()).toHaveLength(1)
-  })
-
   it('never hides while a dropdown is open', async () => {
     const user = userEvent.setup()
     renderHeader()

@@ -9,7 +9,7 @@ import type { ContentLocale } from '../content/types'
 import { CmsError } from '../cms/errors'
 import { changedKeys, collectMedia, parseFields, type FieldErrors } from '../cms/fields'
 import { cmsMutation, cmsReader } from '../cms/mutation.server'
-import { revalidateContent } from '../cms/revalidate.server'
+import { revalidateChange } from '../cms/revalidate.server'
 import { collectionConfigs, keyField, type CollectionItem, type CollectionName } from './configs'
 import { collectionRegistry } from './registry'
 
@@ -237,7 +237,7 @@ export async function saveCollectionItem(
       })
     },
   })
-  revalidateContent(routing.locales.flatMap((l) => collectionRegistry[name].tags(l)))
+  revalidateChange({ entity: collectionRegistry[name].entity })
   return id
 }
 
@@ -265,7 +265,7 @@ export async function deleteCollectionItem(headers: Headers, name: CollectionNam
       })
     },
   })
-  revalidateContent(routing.locales.flatMap((l) => collectionRegistry[name].tags(l)))
+  revalidateChange({ entity: collectionRegistry[name].entity })
 }
 
 /** Sets the display order to the given id order. The list must contain every item exactly once. */
@@ -301,7 +301,7 @@ export async function reorderCollection(headers: Headers, name: CollectionName, 
       })
     },
   })
-  revalidateContent(routing.locales.flatMap((l) => collectionRegistry[name].tags(l)))
+  revalidateChange({ entity: collectionRegistry[name].entity })
 }
 
 /** Public rows for one locale: items with a valid translation, in order. */

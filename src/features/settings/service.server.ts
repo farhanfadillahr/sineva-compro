@@ -3,7 +3,6 @@ import { eq, inArray } from 'drizzle-orm'
 import { routing } from '../../i18n/routing'
 import { db } from '../../lib/db/client.server'
 import type { Database, DatabaseTransaction } from '../../lib/db/connection'
-import { cacheTags } from '../../lib/cache/tags'
 import { staticContent } from '../../content/static/source'
 import { writeAudit } from '../audit/service.server'
 import type { Principal } from '../auth/types'
@@ -11,7 +10,7 @@ import type { ContentLocale } from '../content/types'
 import { CmsError } from '../cms/errors'
 import { changedKeys, collectMedia, parseFields } from '../cms/fields'
 import { cmsMutation, cmsReader } from '../cms/mutation.server'
-import { revalidateContent } from '../cms/revalidate.server'
+import { revalidateChange } from '../cms/revalidate.server'
 import {
   settingsGlobalSchema,
   settingsLocaleSchema,
@@ -156,10 +155,7 @@ export async function saveSiteSettings(
       await persist(tx, actor, next)
     },
   })
-  revalidateContent([
-    cacheTags.settings,
-    ...routing.locales.flatMap((locale) => [cacheTags.services(locale)]),
-  ])
+  revalidateChange({ entity: 'settings' })
 }
 
 async function persist(

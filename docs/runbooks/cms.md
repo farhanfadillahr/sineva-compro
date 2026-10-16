@@ -153,3 +153,11 @@ once a work item is published. Demo seed: three flagged `[Demo]` internal projec
   path in the same transaction as the change, re-points older redirects at the new path and removes
   a redirect away from the new path. The proxy resolves redirects only with
   `CONTENT_SOURCE=database`, never for `/admin` or `/api`, from a 30-second in-memory cache.
+
+## Cache refresh (CPR-33)
+
+Every CMS write calls `revalidateChange` after its transaction commits; the mapping from a change to
+cache tags is in `src/features/cms/invalidation.ts` (unit tested). All locales are refreshed, a slug
+rename refreshes the old and new item, lists and the sitemap follow the entity, and settings
+refresh every page through the layout. A failed or rolled-back write never reaches the refresh.
+Drafts and previews are never cached, so they never need a refresh.

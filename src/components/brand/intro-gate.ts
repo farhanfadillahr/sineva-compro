@@ -68,7 +68,7 @@ export function shouldPlayIntro({
  * which puts the stacked artwork at roughly the lockup's visual size. Tuned by eye; not
  * load-bearing, because the overlay unmounts on the frame it lands on.
  */
-const STAGE_TO_LOCKUP_HEIGHT = 2.2
+const STAGE_TO_LOCKUP_HEIGHT = 3.4
 
 /**
  * Transform that moves the stage's centre onto the target's centre while shrinking it to navbar

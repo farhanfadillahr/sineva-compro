@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
+import { Reveal } from '@/components/motion/Reveal'
 import { SinoLoop } from '@/components/motion/sino-loop'
 import { poseImage } from '@/components/pages/home/poses'
 import { SinoStage } from '@/components/sections/_internal/sino-stage'
@@ -54,7 +55,7 @@ export function NotFoundView({ page, linkComponent }: NotFoundViewProps) {
           <h1 className="text-h1 text-balance text-text">{page.headline}</h1>
           <p className="max-w-[52ch] text-lead text-pretty text-text-secondary">{page.body}</p>
           {page.links.length > 0 ? (
-            <nav aria-label={t('linksLabel')}>
+            <Reveal as="nav" aria-label={t('linksLabel')}>
               <ul className="flex flex-wrap justify-center gap-3">
                 {page.links.map((link, index) => (
                   <li key={link.target}>
@@ -69,7 +70,7 @@ export function NotFoundView({ page, linkComponent }: NotFoundViewProps) {
                   </li>
                 ))}
               </ul>
-            </nav>
+            </Reveal>
           ) : null}
         </Container>
       </Section>

@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion/Reveal'
 import { Button, type ActionLinkComponent } from '@/components/ui'
 import { PoseImage } from '../home/pose-image'
 
@@ -20,7 +21,7 @@ export function BlogEmptyState({
   linkComponent?: ActionLinkComponent
 }) {
   return (
-    <div
+    <Reveal
       data-blog-empty=""
       className="flex flex-col items-center gap-4 rounded-xl bg-canvas-alt px-6 py-12 text-center"
     >
@@ -30,6 +31,6 @@ export function BlogEmptyState({
       <Button href={ctaHref} linkComponent={linkComponent} withArrow className="mt-2">
         {ctaLabel}
       </Button>
-    </div>
+    </Reveal>
   )
 }

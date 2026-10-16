@@ -52,3 +52,14 @@ receives final messages.
 
 Unknown placeholders are rejected on save. The WhatsApp number is stored in E.164 (`+62...`); the
 `wa.me` link uses digits only.
+
+## Page content (CPR-82)
+
+`/admin/pages` lists the ten fixed pages with their status per locale; `/admin/pages/<id>` edits
+one page section by section, in page order. Sections live in code (no page builder); optional
+sections have a "Tampilkan bagian ini" switch. Pages save as published (v1).
+
+Each page document is stored in `page_content` with a `version`. To change a page shape, append a
+migration to `src/features/pages/migrations.ts` and update the descriptor in
+`src/features/pages/fields.ts` and the static content together; older rows are migrated on read.
+A unit test runs every page's launch content through its descriptor, so drift fails the suite.

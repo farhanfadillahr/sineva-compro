@@ -1,7 +1,7 @@
 import { readDatabaseUrl } from '../../src/env/database-url'
 
 /** Registered seed modules, in run order. Keep in sync with `runner.ts`. */
-export const SEED_MODULES = ['audit', 'media', 'settings'] as const
+export const SEED_MODULES = ['audit', 'media', 'settings', 'pages'] as const
 
 export type SeedOptions = { mode: 'base' | 'demo' | 'purge-demo'; module?: string }
 export function parseSeedOptions(

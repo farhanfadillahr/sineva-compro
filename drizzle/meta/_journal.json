@@ -36,6 +36,13 @@
       "when": 1792152863430,
       "tag": "0004_cpr29_site_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792153368185,
+      "tag": "0005_cpr82_page_content",
+      "breakpoints": true
     }
   ]
 }

@@ -18,9 +18,6 @@ export type SinoClip =
   | 'greet_wave'
   | 'happy_success'
   | 'wave_small'
-  | 'jet_launch'
-  | 'jet_hover'
-  | 'jet_land'
 
 export const SINO_TIMING = {
   /** `AnimationAction.crossFadeTo` duration between any two clips. */
@@ -49,7 +46,6 @@ export type SinoEvent =
   | { type: 'pointerLeaveModel' }
   | { type: 'clickModel' }
   | { type: 'tap' }
-  | { type: 'skipFlight' }
   | { type: 'ctaHover'; active: boolean }
   | { type: 'formFocus'; active: boolean }
   | { type: 'scrollProgress'; progress: number }
@@ -64,7 +60,6 @@ export type SinoCommand =
   | { type: 'render'; active: boolean }
 
 export type SinoView = {
-  airborne: boolean
   /** 1 follows the pointer fully, 0 is the front pose. The runtime eases toward this value. */
   lookWeightTarget: number
   /** Scroll-driven rig targets; the runtime smooths them. */
@@ -83,7 +78,7 @@ export type SinoMachineOptions = {
 
 // What kind of one-shot clip is playing decides who may interrupt it. The greeting and the
 // celebration are the "moments" and are never cut by a hover; a reaction can be replaced.
-type OneShot = 'greet' | 'reaction' | 'celebrate' | 'jet'
+type OneShot = 'greet' | 'reaction' | 'celebrate'
 
 export function createSinoMachine(options: SinoMachineOptions) {
   const {
@@ -94,12 +89,6 @@ export function createSinoMachine(options: SinoMachineOptions) {
     hasClip = () => false,
   } = options
 
-  let flightTimer: ReturnType<typeof setTimeout> | null = null
-  const queued = new Map<string, SinoEvent>()
-  function clearFlightTimer() {
-    if (flightTimer !== null) clearTimeout(flightTimer)
-    flightTimer = null
-  }
   let clip: SinoClip | null = null
   let oneShot: OneShot | null = null
   let idleVariant: 'idle' | 'idle_b' = 'idle'
@@ -157,38 +146,21 @@ export function createSinoMachine(options: SinoMachineOptions) {
     dwellTimer = null
   }
 
-  const isMoment = () => oneShot === 'greet' || oneShot === 'celebrate' || oneShot === 'jet'
+  const isMoment = () => oneShot === 'greet' || oneShot === 'celebrate'
 
   function handle(event: SinoEvent) {
     // Paused (hero out of view): the only way back is heroIn. Triggers that arrive meanwhile
     // describe a pointer the user can no longer see acting on a model that is not rendering.
     if (paused && event.type !== 'heroIn') return
 
-    if (oneShot === 'jet') {
-      if (event.type === 'clickModel' || event.type === 'tap' || event.type === 'skipFlight') {
-        clearFlightTimer()
-        if (event.type !== 'skipFlight') queued.set(event.type, event)
-        play('jet_land', 'jet', 2)
-        return
-      }
-      if (event.type === 'pointerEnterModel' || event.type === 'scrollVelocitySpike') {
-        queued.set(event.type, event)
-        return
-      }
-      if (event.type === 'pointerLeaveModel') queued.delete('pointerEnterModel')
-    }
     switch (event.type) {
       case 'firstShown': {
         if (greeted) return
         greeted = true
-        if (claimGreeting()) {
-          if (['jet_launch', 'jet_hover', 'jet_land'].every(hasClip)) play('jet_launch', 'jet', 1.1)
-          else play('greet_wave', 'greet')
-        } else play(baseClip(), null)
+        if (claimGreeting()) play('greet_wave', 'greet')
+        else play(baseClip(), null)
         return
       }
-      case 'skipFlight':
-        return
       case 'idleCycle': {
         if (oneShot !== null || (clip !== 'idle' && clip !== 'idle_b')) return
         idleCycles += 1
@@ -202,24 +174,8 @@ export function createSinoMachine(options: SinoMachineOptions) {
       case 'clipFinished': {
         // The mixer reports every finished one-shot; one that was already replaced is stale.
         if (event.clip !== clip || oneShot === null) return
-        if (oneShot === 'jet') {
-          if (clip === 'jet_launch') {
-            play('jet_hover', 'jet')
-            flightTimer = setTimeout(() => {
-              flightTimer = null
-              play('jet_land', 'jet')
-            }, 350)
-          } else if (clip === 'jet_land') {
-            clearFlightTimer()
-            play('greet_wave', 'greet')
-          }
-          return
-        }
         oneShot = null
         settle()
-        const pending = [...queued.values()]
-        queued.clear()
-        for (const next of pending) handle(next)
         return
       }
       case 'pointerMove':
@@ -283,8 +239,6 @@ export function createSinoMachine(options: SinoMachineOptions) {
       }
       case 'heroOut':
         paused = true
-        clearFlightTimer()
-        queued.clear()
         clearDwell()
         send({ type: 'render', active: false })
         return
@@ -316,17 +270,14 @@ export function createSinoMachine(options: SinoMachineOptions) {
     view(nowMs: number): SinoView {
       const looking = onModel || nowMs - lastMoveAt < SINO_TIMING.stillReturnMs
       return {
-        airborne: oneShot === 'jet',
-        lookWeightTarget: oneShot === 'jet' ? 0 : looking ? 1 : 0,
+        lookWeightTarget: looking ? 1 : 0,
         scroll: {
-          rotationRad: oneShot === 'jet' ? 0 : SCROLL_LIMITS.rotationRad * scrollProgress,
-          headPitchRad: oneShot === 'jet' ? 0 : SCROLL_LIMITS.headPitchRad * scrollProgress,
+          rotationRad: SCROLL_LIMITS.rotationRad * scrollProgress,
+          headPitchRad: SCROLL_LIMITS.headPitchRad * scrollProgress,
         },
       }
     },
     dispose() {
-      clearFlightTimer()
-      queued.clear()
       clearDwell()
       paused = true
     },

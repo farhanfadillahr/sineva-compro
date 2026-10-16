@@ -10,7 +10,6 @@ import { AgXToneMapping } from 'three'
 export const SINO_LOOK = {
   toneMapping: AgXToneMapping,
   exposure: 1.1,
-  jet: { plasma: 0x00949b, core: 0x2fe0d8, smoke: 0x6cc6c9 },
   environmentIntensity: 0.9,
   key: { color: 0xffffff, intensity: 2.6, position: [-2, 3, 2.5] as const },
   rim: { color: 0x80d2d2, intensity: 1.1, position: [2.5, 1.5, -2] as const },

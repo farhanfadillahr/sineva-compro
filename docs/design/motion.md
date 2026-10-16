@@ -49,20 +49,46 @@ Choreography (≤ 1.6 s total):
 3. 0.6-1.0 s: a soft light sweep crosses the symbol.
 4. 0.7-1.3 s: the "Sineva" wordmark letters rise in one by one.
 5. Hand-off (code, not Lottie): the overlay fades out (200 ms) while the logo shrinks and flies to the navbar logo position (FLIP, 500 ms `--ease-out-expo`), then the hero entrance (§3.2) starts.
+6. Alongside 1-5, when its clip is ready in time: Sino launches with the jetpack from the lower centre of the viewport (see "Jetpack launch" below). It adds no time to the 1.6 s and does not change the hand-off.
 
 Rules (these protect conversion and Core Web Vitals; do not relax them without re-measuring):
 - **Once per session**, only on the first page load (sessionStorage flag, wrapped in try/catch). Never on client-side navigation.
 - **Hard cap 1.6 s** from first paint to page usable. The overlay never waits for network (no "loading" semantics). The page underneath renders and hydrates normally.
 - The overlay is `pointer-events: none` after 1.2 s. Any key press, scroll, or click skips it immediately.
 - The page content, including the hero headline, is server-rendered underneath, so the LCP element exists from first paint. The overlay is a solid canvas-colored layer with the Lottie at the centre. **Verify with Lighthouse** that LCP is not delayed by more than 100 ms versus no intro. If it is, switch to the fallback: play the symbol-only Lottie inside the navbar logo slot instead of a full-screen overlay.
-- `prefers-reduced-motion`: no overlay, logo is static.
+- `prefers-reduced-motion`: no overlay, logo is static, no launch video.
 - Lottie player loaded with `next/dynamic` only on the first visit.
-- Bots and Lighthouse-like agents get no overlay (`navigator.webdriver` or no JS: nothing renders).
+- Bots and Lighthouse-like agents get no overlay (`navigator.webdriver` or no JS: nothing renders). The launch video additionally never renders under `navigator.webdriver`, even in a `LOGO_INTRO_FORCE=1` build, so a forced Lighthouse run measures the logo intro without the video.
 
 Implementation note (three parts, `src/components/brand/`):
 - **Gate** (`intro-gate-script.ts`, rendered by `logo-intro-server.tsx` in `<head>`): a blocking inline script decides before first paint. A client-only decision lets the page paint at about 44 ms and covers it at about 388 ms, a visible flash. It plays when the toggle is on, the session flag is unset, the visitor does not prefer reduced motion and `navigator.webdriver` is false (or the test-only `LOGO_INTRO_FORCE=1` build flag is set). It then claims the session flag and sets `<html data-logo-intro="pending">`. Its truth table is tested against `shouldPlayIntro` for every input combination.
 - **Shell** (`LogoIntroShell`, first in `<body>`): a canvas-coloured full-screen layer in the server HTML, shown by CSS only while the marker is present. Pure CSS makes it inert after 1.2 s and fades it out by 1.8 s even if JavaScript never runs.
-- **Takeover** (`logo-intro.tsx`, `logo-intro-overlay.tsx`): the client plays the Lottie on top of the shell, runs the FLIP at 1.1 s and removes the marker, which fades the shell. The marker is also removed on skip input, reduced motion, a Lottie that fails or is not ready within 500 ms, and a mount later than 800 ms. Its clock is `performance.now()`, the same clock as the shell's CSS timers.
+- **Takeover** (`logo-intro.tsx`, `logo-intro-overlay.tsx`, `splash-launch.ts`): the client plays the Lottie on top of the shell, runs the FLIP at 1.1 s and removes the marker, which fades the shell. It also starts the jetpack launch clip (below). The marker is also removed on skip input, reduced motion, a Lottie that fails or is not ready within 500 ms, and a mount later than 800 ms. Its clock is `performance.now()`, the same clock as the shell's CSS timers.
+
+### Jetpack launch (splash)
+
+Product owner decision (2026-10-16): the jetpack launch belongs to the first-visit splash, not the hero. In the hero Sino only waves ([mascot-sino.md](mascot-sino.md) and §3.2 row 5). The launch is the pre-rendered one-shot `public/mascot/launch/sino-launch.{webm,mov}` (720 x 960, 1.1 s, transparent, Sino ignites the jetpack and flies up out of frame), not the realtime canvas, which would need three.js, a 1.1 MB GLB and a shader compile inside a 1.6 s budget.
+
+Rules, all of them hard:
+- Plays inside the existing overlay only, so it has the intro's gate: first visit per session, no reduced motion, no webdriver. It also never plays under Save-Data (`navigator.connection.saveData`), which the gate script does not check; the logo itself still plays then.
+- Placement: lower centre, `height: 40svh` (3:4 box, `bottom: 2vh`), out of flow and `pointer-events: none`, so no layout shift. The slot is behind the logo stage in the DOM, so the logo paints over Sino where they overlap, and it is empty until the clip plays.
+- It never waits for the network and never extends the intro: the intro still ends within the 1.6 s cap and the FLIP hand-off is unchanged.
+- If the clip is not ready (`canplaythrough`) by **900 ms after navigation start** (`INTRO_TIMING.launchDeadlineMs`, same clock as the rest of the intro), it is skipped: the download is cancelled and the element removed, never shown late. 900 ms is the owner's "about 0.9 s"; it is measured from navigation start, not from when React mounts the overlay, because everything in the intro (shell timers, hand-off, cap) shares that clock. A clip that starts at 900 ms gets Sino airborne before the cap.
+- Source through `pickLoopSource`: the HEVC alpha `.mov` for Safari and every iOS browser, the VP9 alpha `.webm` elsewhere, nothing for a browser that can play neither. `muted`, `playsinline`, no `autoplay` attribute (played from JS, a rejected `play()` drops the clip), `aria-hidden`, `tabindex=-1`, no controls, no loop.
+- Any input that ends the intro (key, click, touch, wheel), reduced motion turning on, the 1.6 s cap, or a failed logo Lottie also ends the clip: it is paused, its `src` is emptied (which cancels an in-flight download) and the element is removed with the overlay.
+- In the clip Sino climbs out of the top of her frame, which on a plain canvas would look like a slice along an invisible line. The slot instead dissolves (`opacity` only, `launch-dissolve`, timed from the `playing` event), from about 0.4 s to the end of the clip. Late starts that the cap would cut off are almost invisible by then.
+
+Loading approach (code: `src/components/brand/splash-launch.ts`, `logo-intro.tsx`, `logo-intro-overlay.tsx`):
+- The server-rendered shell does **not** carry the `<video>`, and there is no `<link rel="preload">`. Whether the intro plays is decided in the browser (sessionStorage), so a `preload="auto"` video in the shell would send about 390 KB to every visitor, including those who never see the intro. The file also depends on the engine, which only script can tell (Chrome reports HEVC support but discards its alpha channel). The shell stays plain markup, with no image or video that could become an LCP candidate.
+- The gate script is unchanged: it is byte-stable (338 bytes, one CSP hash), runs in `<head>` before `<body>` exists, and so cannot start a download for a specific file.
+- The takeover (`LogoIntro`, in the main bundle, mounted right after hydration) calls `prepareSplashLaunch()` the moment it sees the gate's marker. That creates a detached `<video preload="auto">`, sets `src` and calls `load()`, so the download starts before the overlay chunk and the Lottie JSON are even requested and the three fetches overlap. The overlay adopts the element once it is ready. If the overlay never mounts, the same 900 ms deadline in `splash-launch.ts` cancels the download.
+- "Ready" is `canplaythrough`, not `canplay`. A Sino frozen mid-flight is worse than no Sino, and the files are small.
+- It is never requested at all for a visit the intro will not play, and not when the page is already past `latestStartMs` (800 ms) when the takeover mounts.
+
+Measurement. What was measured offline (production build, `next start`, `curl` on 2026-10-16), and what was not:
+- Files: `sino-launch.webm` 391,436 bytes (`video/webm`), `sino-launch.mov` 210,869 bytes (`video/quicktime`), both `Cache-Control: public, max-age=31536000, immutable` with range requests. Repeat visitors in a new session get them from the HTTP cache, which makes them ready as soon as the takeover mounts.
+- Transfer time of the whole file at a throttled rate (`curl --limit-rate`): webm 0.24 s at 1.5 MB/s, 0.61 s at 600 KB/s, 1.11 s at 300 KB/s, 2.21 s at 150 KB/s; mov 0.09 s, 0.28 s, 0.44 s, 1.09 s at the same rates. The download starts at hydration (not measured here, no browser was used), so the clip is on time only if hydration plus transfer is under 900 ms: with hydration assumed at 0.3 to 0.6 s, webm needs roughly 1 to 2 MB/s (8 to 16 Mbps) and mov (Safari) roughly 0.4 to 0.7 MB/s. Good broadband and Wi-Fi pass; a slow mobile connection skips the clip and gets the logo alone, by design.
+- Not measured: browser-side time to `canplaythrough`, hydration time, behaviour on iOS Safari (which may not preload media before a gesture; then the clip is simply skipped at the deadline), and the Lighthouse LCP delta. The clip is a `<video>` without a poster; recalling, not verified: Chrome's LCP lists a video as a candidate only through its poster. Run the Lighthouse comparison required above with the intro enabled. To measure real readiness, open DevTools > Performance > Timings, or run `performance.getEntriesByType('mark')`: `splash-launch:ready` (clip reached `canplaythrough`), `splash-launch:play` (`play()` called) and `splash-launch:skipped` (dropped without playing), each with `detail.ms` as milliseconds since navigation start. Compare `ready` with the 900 ms deadline across devices and decide whether to move the deadline.
 
 CSP (CPR-53): the gate is an inline script, so a CSP needs its hash or a nonce. The text is byte-stable (its settings are data attributes on the script element), so one hash covers every build. `tests/unit/logo-intro-gate-script.test.tsx` fails if this value goes stale. The exact script (338 bytes):
 
@@ -82,7 +108,7 @@ After the intro (or immediately on later visits):
 | 2 | Lead paragraph | Fade + rise 12 px | 180 ms |
 | 3 | CTA group | Fade + rise 12 px | 260 ms |
 | 4 | Sino stage (glow, orbit ring) | Scale 0.92 to 1 with `--ease-bounce`, fade | 200 ms |
-| 5 | Sino | `greet_wave` once per session, then `idle` ([mascot-sino.md](mascot-sino.md)) | when the canvas is ready |
+| 5 | Sino | `greet_wave` once per session, then `idle` ([mascot-sino.md](mascot-sino.md)). The hero Sino only waves; the jetpack launch is on the splash (§3.1) | when the canvas is ready, after the logo intro |
 
 Implementation detail: the server-rendered state is the **final** state. Animations run from a `from` state applied by JS before first paint of the client tree, so users without JS see everything. Never hide content with CSS that only JS can reveal.
 

@@ -15,6 +15,8 @@ export type ProductLabels = Readonly<{
   stickyBarLabel: string
   /** Accessible name of the business type tab list. */
   tabsLabel: string
+  /** Chat chrome on the phone mockups: assistant name, status and the day chip. */
+  phone: Readonly<{ name: string; status: string; day: string }>
   waitlist: Readonly<{
     formLabel: string
     nameLabel: string
@@ -86,6 +88,11 @@ export function productLabelsFromMessages(messages: unknown): ProductLabels {
   const product = record(record(messages, 'messages').Product, 'Product')
   return {
     ...pick(product, TOP_KEYS, 'Product'),
+    phone: pick(
+      record(product.phone, 'Product.phone'),
+      ['name', 'status', 'day'] as const,
+      'Product.phone',
+    ),
     waitlist: pick(record(product.waitlist, 'Product.waitlist'), WAITLIST_KEYS, 'Product.waitlist'),
   }
 }

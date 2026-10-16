@@ -15,7 +15,7 @@ export { TwoPaths, type TwoPathsCard, type TwoPathsProps } from './two-paths'
 
 // Local primitives pages need to build mockup screens and stages.
 export { MediaFrame } from './_internal/media-frame'
-export { ChatBubbles, PhoneFrame } from './_internal/phone-frame'
+export { ChatBubbles, PhoneFrame, type PhoneChrome } from './_internal/phone-frame'
 export { SinoStage } from './_internal/sino-stage'
 export { UiChip } from './_internal/ui-chip'
 

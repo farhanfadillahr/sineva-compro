@@ -244,12 +244,9 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       for (const [key, field] of Object.entries(schema.fields)) {
         const child = { ...ctx, previous: previous?.[key] }
         if ('adminOnly' in field && field.adminOnly && !ctx.isAdmin) {
-          // A non-Admin keeps the stored value whatever the form sent.
-          if (previous && key in previous) {
-            output[key] = previous[key]
-            continue
-          }
-          ctx.errors[join(path, key)] = 'Bagian ini hanya dapat diubah Admin.'
+          // A non-Admin keeps the stored value whatever the form sent; a new document gets the
+          // field's default, never the submitted value.
+          output[key] = previous && key in previous ? previous[key] : emptyValue(field)
           continue
         }
         output[key] = parseField(field, input[key], join(path, key), child)

@@ -12,16 +12,26 @@ import { SkipLink } from '@/components/layout/skip-link'
 import { routing } from '@/i18n/routing'
 import { getContentSource } from '@/lib/content-source'
 import { getRobots } from '@/lib/robots-policy'
+import { buildRootMetadata } from '@/lib/site-metadata'
+import { buildSiteJsonLd } from '@/lib/site-json-ld'
+import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import '../../globals.css'
 
-// Both values are read once when the layout module is evaluated (at build for prerendered pages),
-// so changing SITE_URL or SITE_INDEXABLE takes a new deployment to show up.
-export const metadata: Metadata = {
-  metadataBase: getSiteUrl(),
-  title: 'Sineva',
-  robots: getRobots(),
+// SITE_URL and SITE_INDEXABLE are read when this module's metadata is generated (at build for
+// prerendered pages), so changing either takes a new deployment to show up. An unsupported
+// locale gets the brand defaults: the layout itself answers 404 for it.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const settings = hasLocale(routing.locales, locale)
+    ? await getContentSource().getSiteSettings(locale)
+    : null
+  return buildRootMetadata({ settings, siteUrl: getSiteUrl(), robots: getRobots() })
 }
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -78,6 +88,12 @@ export default async function PublicLayout({
       <body className="flex min-h-svh flex-col bg-canvas text-text">
         {/* First in <body>: covers the page from the first paint when the gate marked the document. */}
         <LogoIntroShell />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(buildSiteJsonLd(getSiteUrl(), settings)),
+          }}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkipLink />
           <SiteHeader

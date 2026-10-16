@@ -26,6 +26,12 @@ function metadataFor(
     alternates: { canonical: seo.canonicalUrl ?? path },
     // Robots are otherwise left to the layout (the whole site stays noindex until launch).
     ...(noindex ? { robots: { index: false, follow: false } } : {}),
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: ogImage ? [ogImage.url] : undefined,
+    },
     openGraph: {
       type: 'website',
       title: seo.metaTitle,

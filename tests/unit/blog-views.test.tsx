@@ -223,16 +223,9 @@ describe('BlogPostView', () => {
     expect(main.getAttribute('tabindex')).toBe('-1')
   })
 
-  it('has a breadcrumb of Home, Blog and the article', async () => {
-    const model = await article()
-    renderPost(model)
-    const nav = screen.getByRole('navigation', { name: labels.breadcrumbLabel })
-    const links = within(nav).getAllByRole('link')
-    expect(links.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-      [labels.homeCrumb, '/'],
-      [labels.blogCrumb, '/blog'],
-    ])
-    expect(within(nav).getByText(model.post.title).getAttribute('aria-current')).toBe('page')
+  it('does not render visual breadcrumbs', async () => {
+    renderPost(await article())
+    expect(screen.queryByRole('navigation', { name: /breadcrumb/i })).toBeNull()
   })
 
   it('shows the cover, category, author, published date and read time', async () => {

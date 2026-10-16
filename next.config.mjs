@@ -1,4 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin'
+import { securityHeaders as buildSecurityHeaders } from './src/lib/security/headers.mjs'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
@@ -7,16 +8,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 // social crawlers keep the old copy until the cache expires.
 const immutableFolders = ['mascot', 'draco', 'lottie', 'og']
 
-// No Content-Security-Policy here: a CSP that does not break the inline logo-intro gate script,
-// the Lottie runtime and the 3D viewer needs its own pass.
-const securityHeaders = [
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  // Nothing embeds this site; revisit if a frame use case appears (and then prefer CSP
-  // `frame-ancestors`).
-  { key: 'X-Frame-Options', value: 'DENY' },
-]
+// Security headers, including the Content-Security-Policy (report-only unless CSP_MODE=enforce).
+// See src/lib/security/headers.mjs for why the policy is hash/nonce free.
+const securityHeaders = buildSecurityHeaders(process.env)
 
 /** @type {import('next').NextConfig} */
 const mediaOrigin = process.env.MEDIA_PUBLIC_ORIGIN

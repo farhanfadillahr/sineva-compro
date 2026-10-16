@@ -275,3 +275,22 @@ is enabled) and recent activity; Editors see content activity only and never lea
 numbers (those queries do not run for them). Days are Asia/Jakarta days; all aggregation is SQL.
 Charts use Recharts 3.10.1 with brand tokens, have a text summary and a table view, and do not
 animate with reduced motion.
+
+## Security headers (CPR-53)
+
+`src/lib/security/headers.mjs` builds the headers for every response (via `next.config.mjs`):
+CSP, HSTS (production), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`,
+`X-Frame-Options` and `Cross-Origin-Opener-Policy`.
+
+- The CSP keeps pages static: no nonces, so scripts allow `'unsafe-inline'` (Next bootstrap and
+  the logo-intro gate) but never `'unsafe-eval'`. `'wasm-unsafe-eval'` and `worker-src blob:`
+  serve the self-hosted draco decoder of the 3D mascot. Next's experimental SRI could later replace
+  `'unsafe-inline'`.
+- Allowed hosts come from the environment: `MEDIA_PUBLIC_ORIGIN` (images, video loops, model
+  fetch), `STORAGE_ENDPOINT` (admin previews), `UMAMI_HOST`, `SENTRY_INGEST_ORIGIN`, plus
+  Cloudflare Turnstile. No wildcard hosts.
+- Rollout: `CSP_MODE=report-only` (default) on preview; violations go to `/api/csp-report` and
+  are logged as directive plus blocked origin. Switch to `CSP_MODE=enforce` in production once a
+  preview pass over Home (mascot), the logo intro, a Lottie animation, a Turnstile form and an
+  article with media shows no violations. Every new third-party host needs an entry here and in
+  the release checklist.

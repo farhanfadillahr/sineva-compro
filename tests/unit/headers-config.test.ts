@@ -28,13 +28,19 @@ describe('next.config headers', () => {
     expect(valueFor('/:path*', 'X-Content-Type-Options')).toBe('nosniff')
     expect(valueFor('/:path*', 'Referrer-Policy')).toBe('strict-origin-when-cross-origin')
     expect(valueFor('/:path*', 'Permissions-Policy')).toBe(
-      'camera=(), microphone=(), geolocation=()',
+      'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
     )
     expect(valueFor('/:path*', 'X-Frame-Options')).toBe('DENY')
   })
 
-  it('leaves the CSP to its own change', () => {
+  it('ships the CSP in report-only mode unless CSP_MODE=enforce (CPR-53)', () => {
     const keys = rules.flatMap((r) => r.headers.map((h) => h.key.toLowerCase()))
-    expect(keys).not.toContain('content-security-policy')
+    const expected =
+      process.env.CSP_MODE === 'enforce'
+        ? 'content-security-policy'
+        : process.env.CSP_MODE === 'off'
+          ? null
+          : 'content-security-policy-report-only'
+    if (expected) expect(keys).toContain(expected)
   })
 })

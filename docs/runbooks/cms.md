@@ -251,3 +251,16 @@ success (no probing whether an address is registered); any other database error 
 `/admin/waitlist` (Admin only): filters, deletion on request (PRD 13.4 retention: until 12 months
 after launch or until deletion is requested) and "Unduh CSV" (`/admin/waitlist/export`,
 `no-store`, cells starting with `=`, `+`, `-`, `@`, tab or carriage return are neutralised).
+
+## Lead emails (CPR-50)
+
+After a lead is committed, `sendLeadEmails` runs outside the visitor's response (`after()`): a
+notification to every inbox in Site settings > Penerusan lead (reply-to: the prospect) and an
+auto-reply to the prospect in the lead's locale (reply-to: the sender settings). Templates come
+from Pengaturan email or the code default; values are escaped and subjects stay on one line. A new
+waitlist signup sends an internal notice when "Kirim notifikasi waitlist" is on.
+
+Delivery is real only with `EMAIL_DELIVERY=live` (set it on preview and production). Locally and in
+CI messages go to an in-memory mock outbox. Failures never affect the lead; they are reported by
+`reportError` with a category and the lead id only (no names, addresses or messages), which is
+where Sentry plugs in (CPR-14). A promised response time in the auto-reply needs Founder approval.

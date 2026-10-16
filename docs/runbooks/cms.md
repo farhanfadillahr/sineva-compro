@@ -264,3 +264,14 @@ Delivery is real only with `EMAIL_DELIVERY=live` (set it on preview and producti
 CI messages go to an in-memory mock outbox. Failures never affect the lead; they are reported by
 `reportError` with a category and the lead id only (no names, addresses or messages), which is
 where Sentry plugs in (CPR-14). A promised response time in the auto-reply needs Founder approval.
+
+## Dashboard (CPR-89)
+
+`/admin` shows, for Admins: new leads and waitlist signups for 7, 30 or 90 days with the change
+against the previous period and a sparkline, leads per day (gradient area with the previous period
+dashed), per service, per business type and per status (legend chips open the filtered lead list),
+and the latest leads. Everyone sees drafts waiting, missing translations (only when a second locale
+is enabled) and recent activity; Editors see content activity only and never lead or waitlist
+numbers (those queries do not run for them). Days are Asia/Jakarta days; all aggregation is SQL.
+Charts use Recharts 3.10.1 with brand tokens, have a text summary and a table view, and do not
+animate with reduced motion.

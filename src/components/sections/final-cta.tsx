@@ -1,10 +1,9 @@
 import { Button, Container, Section, type SectionTone } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
+import { AnimatedPose } from '@/components/motion/animated-pose'
 import type { MediaAsset } from '@/features/content/types'
 import { WhatsAppGlyph } from './_internal/icons'
-import { SectionImage } from './_internal/section-image'
 import type { CtaLink, LinkProps } from './_internal/types'
-import floatStyles from './_internal/ui-chip.module.css'
 
 /**
  * The tone this block contributes to a page, for `checkSectionTones`. The rounded panel is the
@@ -103,13 +102,11 @@ export function FinalCta({
             </div>
             {image ? (
               <div className="flex justify-center lg:col-span-5 lg:justify-end">
-                <div className={cx('w-3/4 max-w-sm', floatStyles.float)}>
-                  <SectionImage
-                    image={image}
-                    sizes="(min-width: 1024px) 30vw, 60vw"
-                    className="h-auto w-full"
-                  />
-                </div>
+                <AnimatedPose
+                  image={image}
+                  sizes="(min-width: 1024px) 30vw, 60vw"
+                  className="w-3/4 max-w-sm"
+                />
               </div>
             ) : null}
           </div>

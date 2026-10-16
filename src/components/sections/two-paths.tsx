@@ -1,8 +1,8 @@
 import { Badge, Button, Card, Container, Eyebrow, Section } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
+import { AnimatedPose } from '@/components/motion/animated-pose'
 import { Reveal } from '@/components/motion/Reveal'
 import type { MediaAsset } from '@/features/content/types'
-import { SectionImage } from './_internal/section-image'
 import type { CtaLink, LinkProps } from './_internal/types'
 
 export type TwoPathsCard = Readonly<{
@@ -87,20 +87,20 @@ export function TwoPaths({ product, services, locale, linkComponent }: TwoPathsP
                   </Button>
                 </div>
                 {card.image ? (
-                  // Stacks under the text on phones; bleeds off the bottom right edge from sm up.
+                  // Stacks under the text on phones; bleeds off the bottom right edge from sm up. This
+                  // box only positions the pose: the lift on hover and focus, the float and the
+                  // parallax all live in AnimatedPose, which finds the card by itself.
                   <div
                     data-slot="path-pose"
                     className={cx(
                       'pointer-events-none relative z-0 mt-6 ms-auto w-2/3 max-w-72',
                       'sm:absolute sm:-bottom-4 sm:end-4 sm:mt-0 sm:w-[42%]',
-                      'transition-transform duration-(--dur-med) ease-out motion-reduce:transition-none',
-                      'group-hover/path:-translate-y-1.5 group-focus-within/path:-translate-y-1.5',
                     )}
                   >
-                    <SectionImage
+                    <AnimatedPose
                       image={card.image}
+                      index={index}
                       sizes="(min-width: 1024px) 24vw, 60vw"
-                      className="h-auto w-full"
                     />
                   </div>
                 ) : null}

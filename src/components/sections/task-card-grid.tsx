@@ -1,11 +1,11 @@
 import { Card, Container, Section, SectionHeader, type SectionTone } from '@/components/ui'
 import type { CardTone } from '@/components/ui/card'
 import { cx } from '@/components/ui/cx'
+import { AnimatedPose } from '@/components/motion/animated-pose'
 import { Reveal } from '@/components/motion/Reveal'
 import type { CapabilityTint, MediaAsset, ProductCapability } from '@/features/content/types'
 import { bentoColClass, bentoLayout, bentoRowClass } from './_internal/bento'
 import { ChatBubbles, PhoneFrame } from './_internal/phone-frame'
-import { SectionImage } from './_internal/section-image'
 
 // `ProductCapability` from the content layer fits as is; the page adds the resolved pose image.
 export type TaskCardItem = Pick<ProductCapability, 'key' | 'title' | 'body' | 'tint' | 'featured'> &
@@ -86,20 +86,14 @@ export function TaskCardGrid({ eyebrow, title, intro, items, tone = 'canvas' }: 
                     <p className="text-body-sm text-pretty text-text-secondary">{item.body}</p>
                   </div>
                   {item.image ? (
-                    // Tilt alternates by position (motion.md section 6, Sintra's rotate(+-2deg)).
-                    <div
-                      className={cx(
-                        'pointer-events-none mt-auto -mb-6 flex justify-center lg:-mb-8',
-                        'transition-transform duration-(--dur-med) ease-out motion-reduce:transition-none',
-                        index % 2 === 0
-                          ? 'group-hover/task:rotate-2'
-                          : 'group-hover/task:-rotate-2',
-                      )}
-                    >
-                      <SectionImage
+                    // The tilt direction alternates by position (motion.md section 6, Sintra's
+                    // rotate(+-2deg)); AnimatedPose derives it from `index`.
+                    <div className="pointer-events-none mt-auto -mb-6 flex justify-center lg:-mb-8">
+                      <AnimatedPose
                         image={item.image}
+                        index={index}
                         sizes="(min-width: 1024px) 30vw, 90vw"
-                        className="h-auto w-full max-w-72"
+                        className="w-full max-w-72"
                       />
                     </div>
                   ) : mockupLines.length > 0 ? (

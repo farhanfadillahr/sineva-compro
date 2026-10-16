@@ -68,11 +68,19 @@ describe('TwoPaths', () => {
     expect(services.getAttribute('data-umami-event-path')).toBe('services')
   })
 
-  it('gives the pose a hover nudge that reduced motion switches off', () => {
+  it('draws each pose through AnimatedPose, which owns the hover lift and its reduced-motion rule', () => {
     const { container } = render(<TwoPaths {...props} />)
-    const pose = container.querySelector('[data-slot="path-pose"]') as HTMLElement
-    expect(pose.className).toContain('group-hover/path:-translate-y-1.5')
-    expect(pose.className).toContain('motion-reduce:transition-none')
+    const slots = container.querySelectorAll<HTMLElement>('[data-slot="path-pose"]')
+    expect(slots).toHaveLength(2)
+    // The slot only positions the pose; the card (an article) is what AnimatedPose listens to.
+    slots.forEach((slot) => {
+      expect(slot.querySelector('[data-animated-pose]')).toBeTruthy()
+      expect(slot.closest('article')).toBeTruthy()
+    })
+    // Neighbouring cards float out of phase and tilt in opposite directions.
+    const poses = container.querySelectorAll<HTMLElement>('[data-animated-pose]')
+    expect([...poses].map((p) => p.getAttribute('data-phase'))).toEqual(['0', '1'])
+    expect([...poses].map((p) => p.style.getPropertyValue('--pose-tilt'))).toEqual(['1', '-1'])
   })
 
   it('renders without an image or badge', () => {

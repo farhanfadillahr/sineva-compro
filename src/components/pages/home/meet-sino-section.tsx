@@ -30,7 +30,8 @@ export function MeetSinoSection({
             <PoseImage
               pose="relaxed-mug"
               sizes="(min-width: 640px) 384px, 90vw"
-              className="size-full object-contain"
+              fit="contain"
+              className="size-full"
             />
           </SinoStage>
         </Reveal>

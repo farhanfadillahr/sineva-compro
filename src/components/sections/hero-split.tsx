@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Button, Container, Eyebrow, Section, Split } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
+import { AnimatedPose } from '@/components/motion/animated-pose'
 import type { MediaAsset, MockupBubble } from '@/features/content/types'
 import { HeroEntrance } from './_internal/hero-entrance'
 import { MediaFrame } from './_internal/media-frame'
@@ -176,12 +177,18 @@ export function HeroSplit({
         className="max-w-xl"
       >
         {image ? (
-          <SectionImage
-            image={image}
-            priority={priority}
-            sizes={SIZES}
-            className="size-full object-contain"
-          />
+          priority ? (
+            // The LCP poster stays a plain priority image: a reveal would delay the paint the
+            // metric measures. HeroEntrance already animates the whole visual in.
+            <SectionImage
+              image={image}
+              priority
+              sizes={SIZES}
+              className="size-full object-contain"
+            />
+          ) : (
+            <AnimatedPose image={image} sizes={SIZES} fit="contain" className="size-full" />
+          )
         ) : null}
         {variant === 'sino-canvas' && canvas ? (
           <div data-slot="sino-canvas" aria-hidden="true" className="absolute inset-0 z-20">

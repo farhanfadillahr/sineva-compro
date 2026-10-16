@@ -139,15 +139,13 @@ describe('parallax on the hero visuals', () => {
     expect(heroOf().querySelector('[data-parallax]')).not.toBeNull()
   })
 
-  it('Product hero phone mockup moves', async () => {
+  it('phone mockups do not move: a drifting phone slid under the card captions', async () => {
     const model = (await loadProductModel(FIXTURE, 'en'))!
     render(<ProductView model={model} labels={productLabelsFromMessages(en)} />)
-    const hero = document.querySelector('[data-product-section="hero"]')!
-    const moving = hero.querySelector('[data-parallax]')
-    expect(moving).not.toBeNull()
-    expect(
-      moving!.querySelector('[data-slot="phone-frame"], [data-slot="chat-bubble"]'),
-    ).not.toBeNull()
+    for (const phone of document.querySelectorAll('[data-slot="phone-frame"]')) {
+      expect(phone.closest('[data-parallax]')).toBeNull()
+    }
+    expect(document.querySelectorAll('[data-slot="phone-frame"]').length).toBeGreaterThan(0)
   })
 
   it('the Sino canvas hero keeps its own rig parallax: the poster underneath does not move', () => {

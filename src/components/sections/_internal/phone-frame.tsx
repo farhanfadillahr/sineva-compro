@@ -45,18 +45,20 @@ export function PhoneFrame({ size = 'md', chrome, className, children, ...rest }
         className,
       )}
     >
-      {/* Screen hole measured on the render: x 48 to 851, y 83 to 1796 (px of 900 x 1847). The
-          screen extends about 7 px under the bezel on every side, and its corner radius matches the
-          hole's (75 px) plus that overlap, so no transparent corner shows. */}
+      {/* Screen hole measured on the render (900 x 1847 px): x 48 to 851, y 50 to 1796, corner
+          radius about 130 px (measured away from the island and the corner curve; reading the top
+          edge inside a corner put it 33 px too low and left a strip of page showing above the
+          screen). The screen extends about 7 px under the bezel on every side, and its radius is
+          the hole's plus that overlap, so no transparent edge or corner shows. */}
       <div
         data-slot="phone-screen"
-        className="absolute top-[4.1%] right-[4.6%] bottom-[2.3%] left-[4.6%] flex flex-col overflow-hidden rounded-[9.6%/4.6%] bg-canvas-alt"
+        className="absolute top-[2.3%] right-[4.6%] bottom-[2.3%] left-[4.6%] flex flex-col overflow-hidden rounded-[16.5%/7.6%] bg-canvas-alt"
       >
         {/* Status bar on both sides of the island, then the chat header right under it: the screen
             reads as a real phone from the very top instead of a white strip above the chat. */}
         <div
           data-slot="status-bar"
-          className="flex items-center justify-between bg-surface px-[8cqw] pt-[4.2cqw] pb-[1.5cqw]"
+          className="flex items-center justify-between bg-surface px-[9cqw] pt-[6.3cqw] pb-[3.2cqw]"
         >
           <span className="flex items-end gap-[0.6cqw]">
             {[1.4, 2, 2.6, 3.2].map((h) => (

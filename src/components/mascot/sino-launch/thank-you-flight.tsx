@@ -16,7 +16,14 @@ export function ThankYouFlight({ children }: { children: ReactNode }) {
     } catch {
       return
     }
-    if (!pending || Date.now() - Number(pending) > 60000 || !canLaunch(readLaunchEnvironment()))
+    const age = Date.now() - Number(pending)
+    if (
+      !pending ||
+      !Number.isFinite(age) ||
+      age < 0 ||
+      age > 60000 ||
+      !canLaunch(readLaunchEnvironment())
+    )
       return
     const env = readLoopEnv()
     const kind = env && pickLoopSource(env)
@@ -27,7 +34,10 @@ export function ThankYouFlight({ children }: { children: ReactNode }) {
       setPlaying(false)
     }, 1500)
     // A deferred state update avoids changing the server-rendered layout during hydration.
-    queueMicrotask(() => setSrc(`/mascot/launch/sino-flyby-mail.${kind}`))
+    let cancelled = false
+    queueMicrotask(() => {
+      if (!cancelled) setSrc(`/mascot/launch/sino-flyby-mail.${kind}`)
+    })
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const stop = () => {
       if (motion.matches || document.hidden) {
@@ -37,16 +47,21 @@ export function ThankYouFlight({ children }: { children: ReactNode }) {
     }
     motion.addEventListener('change', stop)
     document.addEventListener('visibilitychange', stop)
-    const video = videoRef.current
     return () => {
+      cancelled = true
       clearTimeout(timer)
       motion.removeEventListener('change', stop)
       document.removeEventListener('visibilitychange', stop)
+    }
+  }, [])
+  useEffect(() => {
+    const video = videoRef.current
+    return () => {
       video?.pause()
       video?.removeAttribute('src')
       video?.load()
     }
-  }, [])
+  }, [src])
   return (
     <>
       <div className="size-full" style={{ opacity: playing ? 0 : 1 }}>

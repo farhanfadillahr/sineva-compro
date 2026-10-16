@@ -13,12 +13,17 @@ import {
   Vector3,
   type Object3D,
 } from 'three'
+import { SINO_LOOK } from './sino-look'
 
 /** Five extra draw calls, preallocated particles, no extra lights or postprocessing. */
 export function createJetEffects(model: Object3D, parent: Object3D) {
   const sockets = ['FX-jet_L', 'FX-jet_R'].map((name) => model.getObjectByName(name))
   if (sockets.some((socket) => !socket)) return null
-  const uniforms = { time: { value: 0 }, color: { value: new Color(0x00949b) } }
+  const uniforms = {
+    core: { value: new Color(SINO_LOOK.jet.core) },
+    time: { value: 0 },
+    color: { value: new Color(SINO_LOOK.jet.plasma) },
+  }
   const flameMaterial = new ShaderMaterial({
     uniforms,
     transparent: true,
@@ -26,10 +31,10 @@ export function createJetEffects(model: Object3D, parent: Object3D) {
     blending: NormalBlending,
     vertexShader:
       'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader: `varying vec2 vUv;uniform float time;uniform vec3 color;
+    fragmentShader: `varying vec2 vUv;uniform float time;uniform vec3 color;uniform vec3 core;
       void main(){float n=.85+.15*sin(vUv.y*18.-time*6.28);
       float a=smoothstep(0.,.25,vUv.y)*(.5+.15*sin(time*12.56))*n;
-      gl_FragColor=vec4(mix(color,vec3(.35,1.,.92),vUv.y),a);}`,
+      gl_FragColor=vec4(mix(color,core,vUv.y),a);}`,
   })
   const coreMaterial = flameMaterial.clone()
   coreMaterial.blending = AdditiveBlending
@@ -55,15 +60,15 @@ export function createJetEffects(model: Object3D, parent: Object3D) {
   const births = new Float32Array(24).fill(-100)
   smokeGeometry.setAttribute('born', new InstancedBufferAttribute(births, 1))
   const smokeMaterial = new ShaderMaterial({
-    uniforms: { time: uniforms.time },
+    uniforms: { time: uniforms.time, color: { value: new Color(SINO_LOOK.jet.smoke) } },
     transparent: true,
     depthWrite: false,
     vertexShader: `attribute float born;varying float age;varying vec2 vUv;uniform float time;
       void main(){age=time-born;vUv=uv;vec4 p=instanceMatrix*vec4(position,1.);
       p.y+=max(0.,age)*.06;gl_Position=projectionMatrix*modelViewMatrix*p;}`,
-    fragmentShader: `varying float age;varying vec2 vUv;void main(){
+    fragmentShader: `uniform vec3 color;varying float age;varying vec2 vUv;void main(){
       float a=(1.-smoothstep(.1,.5,length(vUv-.5)))*max(0.,1.-age/.8)*.22;
-      if(age<0.||age>.8)discard;gl_FragColor=vec4(.42,.78,.79,a);}`,
+      if(age<0.||age>.8)discard;gl_FragColor=vec4(color,a);}`,
   })
   const smoke = new InstancedMesh(smokeGeometry, smokeMaterial, 24)
   smoke.frustumCulled = false

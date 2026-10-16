@@ -34,7 +34,12 @@ describe('static content: copywriting hard rules', () => {
   it('has no empty strings and no placeholder text', () => {
     expect(leaves.filter(({ value }) => value.trim() === '')).toEqual([])
     expect(
-      leaves.filter(({ value }) => /lorem ipsum|\b(todo|tbd|fixme)\b|\{[a-z ]+\}/i.test(value)),
+      leaves.filter(
+        // `{title}` in the SEO title template is the one intentional placeholder.
+        ({ path, value }) =>
+          path !== 'siteSettings.seo.titleTemplate' &&
+          /lorem ipsum|\b(todo|tbd|fixme)\b|\{[a-z ]+\}/i.test(value),
+      ),
     ).toEqual([])
   })
 

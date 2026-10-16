@@ -42,14 +42,24 @@ describe('static content source: site settings', () => {
       address: null,
       legalEntity: null,
     })
+    // Instagram is the only confirmed social account.
     expect(settings?.social).toEqual({
-      instagram: null,
+      instagram: 'https://www.instagram.com/sineva.tech/',
       linkedin: null,
       tiktok: null,
       youtube: null,
       x: null,
     })
     expect(settings?.verification.googleSearchConsoleToken).toBeNull()
+  })
+
+  it('stores the confirmed WhatsApp number as E.164 and the Instagram profile URL', async () => {
+    const settings = await source.getSiteSettings('en')
+    // The Founder gave 085199368510, the national form: drop the 0, prefix the country code 62.
+    expect(settings?.whatsapp.number).toBe('+6285199368510')
+    expect(settings?.whatsapp.number).toMatch(/^\+[1-9]\d{7,14}$/)
+    expect(settings?.social.instagram).toBe('https://www.instagram.com/sineva.tech/')
+    expect(new URL(settings!.social.instagram!).hostname).toBe('www.instagram.com')
   })
 
   it('sets the launch feature flags', async () => {
@@ -142,10 +152,10 @@ describe('static content source: pages', () => {
     expect(contact?.steps).toHaveLength(3)
   })
 
-  it('marks only the thank-you and 404 pages noindex', async () => {
+  it('marks the thank-you, 404 and (empty) work pages noindex, and every other page indexable', async () => {
     for (const key of PAGE_KEYS) {
       const page = await source.getPage(key, 'en')
-      expect(page?.seo.noindex, key).toBe(key === 'thankYou' || key === 'notFound')
+      expect(page?.seo.noindex, key).toBe(['thankYou', 'notFound', 'workIndex'].includes(key))
     }
   })
 

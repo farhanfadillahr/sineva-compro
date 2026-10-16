@@ -8,23 +8,19 @@
 // docs/design/motion.md section 3.1). tests/unit/logo-intro-gate-script.test.tsx keeps it honest
 // by running it against `shouldPlayIntro` for every input combination.
 
-/** Same slot `claimSessionOnce('logo-intro')` uses (prefix `sineva:once:`). */
-export const INTRO_SESSION_STORAGE_KEY = 'sineva:once:logo-intro'
-
 // Reads its settings from its own element, so the text never changes between builds:
 //   <script data-enabled="1|0" data-force="1|0">
-// Rules, in the order of shouldPlayIntro: toggle off, session already claimed, automation (unless
-// the test-only force flag is on), reduced motion. Gotchas:
+// Rules, in the order of shouldPlayIntro: toggle off, automation (unless the test-only force flag
+// is on), reduced motion. The splash plays on every full page load, refresh included (owner's
+// decision, 2026-10-16); client-side navigation never re-runs this script, so moving between pages
+// inside the site never shows it. No storage is read or written, so a blocked or full storage can
+// never hide it. Gotchas:
 // - `matchMedia` is called as a bare global: calling it off `window` into a local loses the
 //   receiver and throws "Illegal invocation".
-// - The flag is claimed here, at the moment of deciding to play, so a reload during the intro does
-//   not replay it. If reading or writing storage throws, nothing is marked: with no memory the
-//   intro would replay on every load.
 // - Everything is in one try/catch: a failure here must never break the page, it only means no
 //   intro.
 export const INTRO_GATE_SCRIPT =
-  '!function(){try{var s=document.currentScript.dataset,' +
-  `k="${INTRO_SESSION_STORAGE_KEY}",t=sessionStorage;` +
-  'if(s.enabled!=="1"||t.getItem(k)!==null||navigator.webdriver&&s.force!=="1"' +
+  '!function(){try{var s=document.currentScript.dataset;' +
+  'if(s.enabled!=="1"||navigator.webdriver&&s.force!=="1"' +
   '||window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;' +
-  't.setItem(k,"1");document.documentElement.dataset.logoIntro="pending"}catch(e){}}()'
+  'document.documentElement.dataset.logoIntro="pending"}catch(e){}}()'

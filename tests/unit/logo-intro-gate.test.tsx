@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { flipTransform, INTRO_TIMING, shouldPlayIntro } from '../../src/components/brand/intro-gate'
 
-const base = { enabled: true, visited: false, reducedMotion: false, webdriver: false }
+const base = { enabled: true, reducedMotion: false, webdriver: false }
 
 describe('shouldPlayIntro', () => {
-  it('plays on a first visit with the toggle on, motion allowed and a human browser', () => {
+  it('plays on every full page load with the toggle on, motion allowed and a human browser', () => {
     expect(shouldPlayIntro(base)).toBe(true)
   })
 
   it.each([
     ['the site toggle is off', { enabled: false }],
-    ['the session already saw it', { visited: true }],
     ['the visitor prefers reduced motion', { reducedMotion: true }],
     ['the browser is automated', { webdriver: true }],
   ])('does not play when %s', (_label, override) => {
@@ -24,7 +23,6 @@ describe('shouldPlayIntro', () => {
 
     it.each([
       ['the toggle is off', { enabled: false }],
-      ['the session already saw it', { visited: true }],
       ['the visitor prefers reduced motion', { reducedMotion: true }],
     ])('never overrides a real user rule: %s', (_label, override) => {
       expect(shouldPlayIntro({ ...base, webdriver: true, force: true, ...override })).toBe(false)

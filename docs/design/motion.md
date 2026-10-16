@@ -52,7 +52,7 @@ Choreography (≤ 1.6 s total):
 6. Alongside 1-5, when its clip is ready in time: Sino launches with the jetpack from the lower centre of the viewport (see "Jetpack launch" below). It adds no time to the 1.6 s and does not change the hand-off.
 
 Rules (these protect conversion and Core Web Vitals; do not relax them without re-measuring):
-- **Once per session**, only on the first page load (sessionStorage flag, wrapped in try/catch). Never on client-side navigation.
+- **On every full page load**, refresh included (owner's decision, 2026-10-16). Never on client-side navigation, because the gate only runs with the document. No storage flag.
 - **Hard cap 1.6 s** from first paint to page usable. The overlay never waits for network (no "loading" semantics). The page underneath renders and hydrates normally.
 - The overlay is `pointer-events: none` after 1.2 s. Any key press, scroll, or click skips it immediately.
 - The page content, including the hero headline, is server-rendered underneath, so the LCP element exists from first paint. The overlay is a solid canvas-colored layer with the Lottie at the centre. **Verify with Lighthouse** that LCP is not delayed by more than 100 ms versus no intro. If it is, switch to the fallback: play the symbol-only Lottie inside the navbar logo slot instead of a full-screen overlay.
@@ -90,13 +90,13 @@ Measurement. What was measured offline (production build, `next start`, `curl` o
 - Transfer time of the whole file at a throttled rate (`curl --limit-rate`): webm 0.24 s at 1.5 MB/s, 0.61 s at 600 KB/s, 1.11 s at 300 KB/s, 2.21 s at 150 KB/s; mov 0.09 s, 0.28 s, 0.44 s, 1.09 s at the same rates. The download starts at hydration (not measured here, no browser was used), so the clip is on time only if hydration plus transfer is under 900 ms: with hydration assumed at 0.3 to 0.6 s, webm needs roughly 1 to 2 MB/s (8 to 16 Mbps) and mov (Safari) roughly 0.4 to 0.7 MB/s. Good broadband and Wi-Fi pass; a slow mobile connection skips the clip and gets the logo alone, by design.
 - Not measured: browser-side time to `canplaythrough`, hydration time, behaviour on iOS Safari (which may not preload media before a gesture; then the clip is simply skipped at the deadline), and the Lighthouse LCP delta. The clip is a `<video>` without a poster; recalling, not verified: Chrome's LCP lists a video as a candidate only through its poster. Run the Lighthouse comparison required above with the intro enabled. To measure real readiness, open DevTools > Performance > Timings, or run `performance.getEntriesByType('mark')`: `splash-launch:ready` (clip reached `canplaythrough`), `splash-launch:play` (`play()` called) and `splash-launch:skipped` (dropped without playing), each with `detail.ms` as milliseconds since navigation start. Compare `ready` with the 900 ms deadline across devices and decide whether to move the deadline.
 
-CSP (CPR-53): the gate is an inline script, so a CSP needs its hash or a nonce. The text is byte-stable (its settings are data attributes on the script element), so one hash covers every build. `tests/unit/logo-intro-gate-script.test.tsx` fails if this value goes stale. The exact script (338 bytes):
+CSP (CPR-53): the gate is an inline script, so a CSP needs its hash or a nonce. The text is byte-stable (its settings are data attributes on the script element), so one hash covers every build. `tests/unit/logo-intro-gate-script.test.tsx` fails if this value goes stale. The exact script (256 bytes):
 
 ```js
-!function(){try{var s=document.currentScript.dataset,k="sineva:once:logo-intro",t=sessionStorage;if(s.enabled!=="1"||t.getItem(k)!==null||navigator.webdriver&&s.force!=="1"||window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;t.setItem(k,"1");document.documentElement.dataset.logoIntro="pending"}catch(e){}}()
+!function(){try{var s=document.currentScript.dataset;if(s.enabled!=="1"||navigator.webdriver&&s.force!=="1"||window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;document.documentElement.dataset.logoIntro="pending"}catch(e){}}()
 ```
 
-`script-src 'sha256-Q+sYKFt+3ar9/MWCokEfS+mDbusO2z9vGjpMphGvrmQ='` (header form; the test looks for the `sha256-` token).
+`script-src 'sha256-3/slXI18DknKrY9Rlt2igQvVfP9TqzcOLglT3LO5m3M='` (header form; the test looks for the `sha256-` token).
 
 ### 3.2 Hero entrance (every load)
 

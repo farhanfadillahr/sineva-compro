@@ -4,12 +4,8 @@ import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { shouldPlayIntro } from '../../src/components/brand/intro-gate'
-import {
-  INTRO_GATE_SCRIPT,
-  INTRO_SESSION_STORAGE_KEY,
-} from '../../src/components/brand/intro-gate-script'
+import { INTRO_GATE_SCRIPT } from '../../src/components/brand/intro-gate-script'
 import { LogoIntroGateScript, LogoIntroShell } from '../../src/components/brand/logo-intro-server'
-import { claimSessionOnce } from '../../src/lib/motion/session'
 import { installMatchMedia, REDUCED_MOTION_QUERY, removeMatchMedia } from './layout-test-utils'
 
 const read = (relative: string) =>
@@ -49,66 +45,44 @@ afterEach(() => {
 })
 
 describe('intro gate script', () => {
-  it('plays on a first visit and marks the document before first paint', () => {
+  it('plays on a full page load and marks the document before first paint', () => {
     expect(runGate({ enabled: true, force: false })).toBe(true)
   })
 
-  it('claims the session flag when it plays, so a reload during the intro does not replay it', () => {
+  it('plays again on a reload: the splash shows on every full page load', () => {
     runGate({ enabled: true, force: false })
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).not.toBeNull()
     delete document.documentElement.dataset.logoIntro
-    expect(runGate({ enabled: true, force: false })).toBe(false)
+    expect(runGate({ enabled: true, force: false })).toBe(true)
   })
 
-  it('uses the same storage slot as claimSessionOnce, the app-wide once-per-session helper', () => {
-    expect(claimSessionOnce('logo-intro')).toBe(true)
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).not.toBeNull()
-    expect(runGate({ enabled: true, force: false })).toBe(false)
-  })
-
-  it('leaves the flag alone when it does not play', () => {
-    runGate({ enabled: false, force: false })
-    expect(window.sessionStorage.getItem(INTRO_SESSION_STORAGE_KEY)).toBeNull()
+  it('does not touch sessionStorage, so a blocked storage can never hide the splash', () => {
+    const get = vi.spyOn(Storage.prototype, 'getItem')
+    const set = vi.spyOn(Storage.prototype, 'setItem')
+    expect(runGate({ enabled: true, force: false })).toBe(true)
+    expect(get).not.toHaveBeenCalled()
+    expect(set).not.toHaveBeenCalled()
   })
 
   // The script is hand-minified ES5 and cannot import intro-gate.ts, so this table is what keeps
-  // the two in lockstep: every combination of the five inputs must give the same answer.
+  // the two in lockstep: every combination of the four inputs must give the same answer.
   describe('agrees with shouldPlayIntro for every input combination', () => {
     const bools = [false, true]
     const cases = bools.flatMap((enabled) =>
-      bools.flatMap((visited) =>
-        bools.flatMap((reducedMotion) =>
-          bools.flatMap((webdriver) =>
-            bools.map((force) => ({ enabled, visited, reducedMotion, webdriver, force })),
-          ),
+      bools.flatMap((reducedMotion) =>
+        bools.flatMap((webdriver) =>
+          bools.map((force) => ({ enabled, reducedMotion, webdriver, force })),
         ),
       ),
     )
     it.each(cases)(
-      'enabled=$enabled visited=$visited reduced=$reducedMotion webdriver=$webdriver force=$force',
+      'enabled=$enabled reduced=$reducedMotion webdriver=$webdriver force=$force',
       (input) => {
-        window.sessionStorage.clear()
-        if (input.visited) window.sessionStorage.setItem(INTRO_SESSION_STORAGE_KEY, '1')
         installMatchMedia({ [REDUCED_MOTION_QUERY]: input.reducedMotion })
         setWebdriver(input.webdriver)
         delete document.documentElement.dataset.logoIntro
         expect(runGate({ enabled: input.enabled, force: input.force })).toBe(shouldPlayIntro(input))
       },
     )
-  })
-
-  it('does not play, and does not throw, when reading sessionStorage throws', () => {
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
-      throw new DOMException('denied', 'SecurityError')
-    })
-    expect(runGate({ enabled: true, force: false })).toBe(false)
-  })
-
-  it('does not play when the flag cannot be stored (it would replay on every load)', () => {
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new DOMException('quota', 'QuotaExceededError')
-    })
-    expect(runGate({ enabled: true, force: false })).toBe(false)
   })
 
   it('plays when matchMedia is missing, like prefersReducedMotion()', () => {

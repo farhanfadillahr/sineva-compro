@@ -55,8 +55,6 @@ export const INTRO_TARGET_ATTRIBUTE = 'data-logo-intro-target'
 export type IntroGateInput = {
   /** Site setting `features.enableLogoIntro`. */
   enabled: boolean
-  /** The session already saw the intro (or storage could not say). */
-  visited: boolean
   reducedMotion: boolean
   /** `navigator.webdriver`: Lighthouse, Playwright, uptime bots. */
   webdriver: boolean
@@ -70,12 +68,11 @@ export type IntroGateInput = {
 
 export function shouldPlayIntro({
   enabled,
-  visited,
   reducedMotion,
   webdriver,
   force = false,
 }: IntroGateInput): boolean {
-  if (!enabled || visited || reducedMotion) return false
+  if (!enabled || reducedMotion) return false
   if (webdriver && !force) return false
   return true
 }

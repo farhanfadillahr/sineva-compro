@@ -66,6 +66,9 @@ Phases are ordered by dependency. Ticket IDs refer to the [Linear alignment](202
 5. `CPR-32` (re-scoped): header with hide-on-scroll and morphing dropdown, mobile wipe menu, footer, floating WhatsApp, sticky CTA bar.
 
 ### Phase 2: Infra for content (parallel with Phase 1)
+
+> **Hosting note (2026-10-16, CPR-94).** The phase 1 static site is deployed on Vercel, with the admin switched off (`ADMIN_ENABLED`) and no database; see [`docs/deploy/vercel.md`](../../deploy/vercel.md). The VPS + Coolify items below are for the CMS phase.
+
 1. `CPR-8` VPS + Coolify, now also running SeaweedFS.
 2. `NEW-seaweedfs` (CPR-67): SeaweedFS deployment (master, volume, filer, S3 gateway), buckets `media-public`, `media-private`, `backups`, access keys, CDN hostname, health checks.
 3. `CPR-23` (re-scoped): media upload to SeaweedFS through `MediaStore`, integration tests against a SeaweedFS container in Compose.

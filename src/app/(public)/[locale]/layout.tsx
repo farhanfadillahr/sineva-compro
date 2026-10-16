@@ -11,12 +11,17 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { SkipLink } from '@/components/layout/skip-link'
 import { routing } from '@/i18n/routing'
 import { getContentSource } from '@/lib/content-source'
+import { getRobots } from '@/lib/robots-policy'
+import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import '../../globals.css'
 
+// Both values are read once when the layout module is evaluated (at build for prerendered pages),
+// so changing SITE_URL or SITE_INDEXABLE takes a new deployment to show up.
 export const metadata: Metadata = {
+  metadataBase: getSiteUrl(),
   title: 'Sineva',
-  robots: { index: false, follow: false },
+  robots: getRobots(),
 }
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))

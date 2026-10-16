@@ -1,13 +1,22 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { render } from '@testing-library/react'
+import { NextIntlClientProvider } from 'next-intl'
 import { describe, expect, it, vi } from 'vitest'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
 import { PublicPageShell } from '@/components/public/page-shell'
+import en from '../../messages/en.json'
 
 // Keys come back as their own text; the landmark is what matters here.
 vi.mock('next-intl/server', () => ({
   getTranslations: async () => (key: string) => key,
+  getLocale: async () => 'en',
+}))
+
+// The 404 page links through next-intl's Link, which needs the Next.js router at import time.
+// A plain anchor is enough: this file checks the landmark, not the navigation.
+vi.mock('@/components/layout/app-link', () => ({
+  AppLink: ({ href, ...rest }: { href: string }) => <a href={href} {...rest} />,
 }))
 
 // jsdom replaces the global URL, so paths are built from the working directory.
@@ -41,7 +50,11 @@ describe('skip-link target', () => {
 
   it('the 404 page is a target too', async () => {
     const { default: NotFound } = await import('../../src/app/(public)/[locale]/not-found')
-    const { container } = render(await NotFound())
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        {await NotFound()}
+      </NextIntlClientProvider>,
+    )
     expect(container.querySelector('main')!.id).toBe(MAIN_CONTENT_ID)
   })
 })

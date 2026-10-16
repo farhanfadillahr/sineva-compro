@@ -17,7 +17,15 @@
     "pending": "This page is being prepared."
   },
   "NotFound": {
-    "title": "Page not found."
+    "title": "Page not found.",
+    "body": "Let's get you back on track.",
+    "home": "Go to home",
+    "linksLabel": "Ways back to the site"
+  },
+  "Privacy": {
+    "title": "Privacy policy",
+    "lastUpdated": "Last updated",
+    "tocLabel": "On this page"
   },
   "Nav": {
     "skipToContent": "Skip to content",

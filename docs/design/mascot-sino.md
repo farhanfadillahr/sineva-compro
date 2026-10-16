@@ -2,9 +2,9 @@
 
 Sino is Sineva's mascot and also the "face" of the AI agent product. This document defines **where, how, and when** Sino appears on the website, along with the performance budget. Source assets: `../sino-3d-mascot/export/web/` (separate project). New asset requirements: [3d-asset-requirements.md](3d-asset-requirements.md).
 
-## Current delivery (v006, 2026-10-16)
+## Current delivery (v008, 2026-10-16)
 
-The website loads `/mascot/sino-v006.glb`: 1,174,076 bytes raw, 367,332 bytes Brotli, 56,233 triangles and 22 primitives. Ten clips retain the seven original names and add `jet_launch`, `jet_hover`, `jet_land`. Arm animation in the original clips was corrected to avoid torso intersections, and the redundant cornea shell was removed to clear closed eyelids. Nozzles retract at rest. Corrected stills and hero poster use `/mascot/poses/v006/` and `/mascot/poster/v006/` to avoid old immutable caches.
+The website loads `/mascot/sino-v008.glb`: 1,222,960 bytes raw, 388,478 bytes Brotli, 24 primitives. Ten clips keep the v006 names (`idle`, `idle_b`, `greet_wave`, `listening`, `thinking`, `speaking`, `happy_success`, `jet_launch`, `jet_hover`, `jet_land`). v008 re-skins the limbs as hinges, makes every ring, trim and strap follow the surface it sits on, and rebuilds the arm animation with the elbows behind the body so hands never cross the helmet, neck ring or torso (fingers keep the glove's rest shape; no finger motion in the hero); see [the v008 rig repair notes](sino-v008-rig-repair.md). The jetpack, the thrust sockets and the removed cornea shell come from v006 ([production notes](sino-v006-production.md)). Stills, poster, loops and one-shots are rendered from v008 and use `/mascot/poses/v008/`, `/mascot/poster/v008/` and `/og/default-v008.png` to avoid old immutable caches.
 
 The first hero sequence runs after the logo intro. It hops inside the stage, lands, waves, and idles. Pointer reactions queue during flight; a click or key skips to landing. Reduced motion, Save-Data and webdriver keep the poster. Five loop videos and three one-shots ship with VP9 and HEVC alpha. CTA one-shots warm on focus/hover and skip if not ready, without delaying navigation. See [production notes](sino-v006-production.md) for source files, audits, budgets and pending device checks.
 

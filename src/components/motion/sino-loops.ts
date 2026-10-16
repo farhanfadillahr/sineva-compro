@@ -2,7 +2,7 @@ import type { MediaAsset } from '../../features/content/types'
 
 // The animated Sino loops (3d-asset-requirements.md section 3.4). Each loop ships as three files
 // under public/mascot/loops: a VP9 alpha WebM, an HEVC alpha MOV and a WebP poster that doubles as
-// the first paint. All five loops ship with the corrected v006 geometry. A test checks that every
+// the first paint. All five loops ship with the corrected v008 geometry. A test checks that every
 // ready entry has its two videos and poster on disk.
 //
 // Width and height are the reserved box, not the master resolution: they give the video and the

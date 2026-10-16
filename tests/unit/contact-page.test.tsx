@@ -238,7 +238,7 @@ describe('Thank-you page', () => {
     const img = container.querySelector('img')!
     expect(decodeURIComponent(img.getAttribute('src')!)).toContain('/mascot/loops/sino-loop-thumbs')
     expect(img.getAttribute('alt')).toBe('')
-    expect(existsSync(join(root, 'public/mascot/poses/v006/sino-thumbs-up.webp'))).toBe(true)
+    expect(existsSync(join(root, 'public/mascot/poses/v008/sino-thumbs-up.webp'))).toBe(true)
     const check = container.querySelector('[data-slot="check-icon"]')!
     expect(check.getAttribute('aria-hidden')).toBe('true')
     // The animated check (Lottie L3) is deferred: nothing here may load the player.

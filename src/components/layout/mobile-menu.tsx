@@ -16,6 +16,7 @@ import { AppLink } from './app-link'
 import { Collapse } from './collapse'
 import { ChevronDownIcon, CloseIcon, WhatsAppIcon } from './icons'
 import { LanguageSwitcher } from './language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import styles from './layout.module.css'
 import { Logo } from './logo'
 import { MenuLinkItem } from './menu-link'
@@ -124,19 +125,28 @@ export function MobileMenu({
         >
           <Logo />
         </AppLink>
-        <button
-          ref={closeRef}
-          type="button"
-          aria-label={t('closeMenu')}
-          onClick={onClose}
-          className={cx(
-            'flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light',
-            'transition-transform duration-(--dur-fast) ease-out active:scale-[0.96] motion-reduce:transition-none',
-            focusRing,
-          )}
-        >
-          <CloseIcon />
-        </button>
+        <span className="flex items-center gap-2">
+          <ThemeToggle
+            labels={{ toDark: t('themeToDark'), toLight: t('themeToLight') }}
+            className={cx(
+              'flex size-11 items-center justify-center rounded-sm text-text hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+              focusRing,
+            )}
+          />
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label={t('closeMenu')}
+            onClick={onClose}
+            className={cx(
+              'flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light',
+              'transition-transform duration-(--dur-fast) ease-out active:scale-[0.96] motion-reduce:transition-none',
+              focusRing,
+            )}
+          >
+            <CloseIcon />
+          </button>
+        </span>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-(--gutter) pb-6">

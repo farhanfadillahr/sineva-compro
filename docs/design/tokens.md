@@ -76,6 +76,43 @@ PRD Rev. 2 mentions ±`#009EA6`. The SVG value is more accurate and is the refer
 | `--color-danger` | `--red-700` | 6.57:1 white, 6.05:1 on `--red-50` |
 | `--color-success` | `--green-700` | 5.69:1 white, 5.40:1 on `--green-50` |
 
+### 1.5 Dark theme (CPR-65, PRD Rev. 4)
+
+The dark theme swaps only the semantic layer, in `src/styles/theme-dark.css`, keyed on
+`<html data-theme="dark">`. The first visit follows the operating system; the visitor's choice is
+stored on the device. Primitives keep their values. Ratios are WCAG contrast on `--color-canvas`
+(dark) unless stated; `tests/unit/ui-tokens.test.ts` checks the file against this table.
+
+| Token | Dark value | Contrast |
+|---|---|---|
+| `--color-canvas` (dark) | `#08181C` | page background |
+| `--color-canvas-alt` (dark) | `#0C2227` | alternate sections |
+| `--color-surface` (dark) | `#0F272D` | cards |
+| `--color-surface-tint` (dark) | `#0E3236` | tinted cards |
+| `--color-surface-warm` (dark) | `#2B2215` | warm cards |
+| `--color-surface-inverse` (dark) | `#123A42` | white text 12.28:1 |
+| `--color-text` (dark) | `#EEF4F5` | 16.32:1 |
+| `--color-text-secondary` (dark) | `#BCCBCE` | 10.86:1 |
+| `--color-text-tertiary` (dark) | `#93A7AB` | 7.22:1, 5.47:1 on tint |
+| `--color-text-inverse` (dark) | `#FFFFFF` | on buttons and inverse surfaces |
+| `--color-text-brand` (dark) | `#6CC6C9` | 9.12:1, 6.91:1 on tint |
+| `--color-link` (dark) | `#6CC6C9` | same as brand text |
+| `--color-action-primary` (dark) | `#00686D` | white text 6.56:1 |
+| `--color-action-primary-hover` (dark) | `#007A80` | white text 5.13:1 |
+| `--color-action-dark` (dark) | `#245560` | white text 8.26:1 |
+| `--color-border` (dark) | `#1C3A40` | dividers |
+| `--color-border-strong` (dark) | `#29494F` | strong dividers |
+| `--color-border-input` (dark) | `#5F7D83` | 4.10:1 |
+| `--color-focus` (dark) | `#2FB0B5` | 6.91:1 |
+| `--color-danger` (dark) | `#FF8A80` | 7.95:1 |
+| `--color-success` (dark) | `#4AD295` | 9.45:1 |
+| `--color-danger-surface` (dark) | `#3A1714` | danger text 7.01:1 |
+| `--color-success-surface` (dark) | `#0C2E20` | success text 7.67:1 |
+| `--color-wordmark` (dark) | `#EAF6F6` | logo wordmark, 16.42:1 |
+
+Layer 3 values that also change: the nav surface, the hairline border, the mint card surface,
+aurora, text and glow gradients, the card sheen and the shadows (darker, black based).
+
 ### 1.4 Gradients
 
 Sintra uses saturated purple/blue gradients on a black background. Sineva's light version: **a soft "aurora" gradient on white** + one strong brand gradient for key moments.

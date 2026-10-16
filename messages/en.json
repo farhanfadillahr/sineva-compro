@@ -42,6 +42,8 @@
     "bookConsultation": "Book a free consultation",
     "chatOnWhatsapp": "Chat on WhatsApp",
     "language": "Language",
+    "themeToDark": "Switch to dark mode",
+    "themeToLight": "Switch to light mode",
     "productMenu": {
       "items": {
         "customerChat": {

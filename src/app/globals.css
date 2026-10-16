@@ -1,16 +1,19 @@
 @import 'tailwindcss';
+@import '../styles/theme-dark.css';
 
 /*
  * Design tokens. Source of truth: docs/design/tokens.md and docs/design/motion.md section 2.
  * tests/unit/ui-tokens.test.ts parses those tables and fails when a value here drifts.
  *
- * Three layers, so dark mode could later be added by swapping only layer 2:
+ * Three layers, so the dark theme (src/styles/theme-dark.css) swaps only layer 2 and a few layer 3
+ * values:
  *   1. Primitives (:root)        raw palette, never used by components
  *   2. Semantic (@theme static)  --color-* names that components and utilities consume
  *   3. Everything else that Tailwind has no utility namespace for (spacing, gradients, motion
  *      durations, surface effects) lives in :root and is read with var() or `bg-(image:--x)`.
  *
- * Light theme only. Do not add prefers-color-scheme or .dark rules.
+ * Light and dark (CPR-65): dark values live only in src/styles/theme-dark.css, keyed on
+ * `<html data-theme='dark'>`. Components keep using the semantic names.
  */
 
 /* 1. Primitives and non-utility tokens */
@@ -107,6 +110,10 @@
    * utility would recolour every admin link. Use `text-text-brand` or `text-(--color-link)`.
    */
   --color-link: var(--teal-700);
+  /* The logo wordmark (tokens.md 1.2: --teal-900); light text in the dark theme. */
+  --color-wordmark: var(--teal-900);
+  /* Mint card surface (no tokens.md entry): a light mint mix into white. */
+  --surface-mint: color-mix(in srgb, var(--mint-200) 30%, var(--white));
 }
 
 @media (min-width: 640px) {

@@ -75,3 +75,18 @@
     transition: none;
   }
 }
+
+/* Dark theme: a deeper glow and a black contact shadow, so Sino does not sit in a bright halo. */
+:global(:root[data-theme='dark']) .glow {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--teal-600) 32%, transparent),
+    transparent
+  );
+}
+:global(:root[data-theme='dark']) .arc {
+  stroke: var(--teal-700);
+}
+:global(:root[data-theme='dark']) .shadow {
+  background: color-mix(in srgb, var(--ink-950) 85%, transparent);
+}

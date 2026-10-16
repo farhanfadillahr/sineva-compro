@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  gap: var(--admin-gap);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.wide {
+  display: grid;
+  gap: var(--admin-gap);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.chart {
+  width: 100%;
+  min-width: 0;
+}
+.donut {
+  position: relative;
+}
+.donutTotal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.sparkline {
+  margin-top: 8px;
+}

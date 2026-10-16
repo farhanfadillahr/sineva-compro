@@ -230,3 +230,12 @@ Every public submission (contact, waitlist) goes through `checkSpam` before anyt
    `TURNSTILE_SECRET_KEY`. Outside production Cloudflare's always-pass test secret is used;
    production refuses submissions until the real secret is set. The form needs
    `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (test site key `1x00000000000000000000AA` locally).
+
+## Leads (CPR-46)
+
+`/admin/leads` (Admin only): filters by status, need, business type and date (URL parameters),
+paginated, newest first. The detail page shows the submission, copy buttons, a WhatsApp reply link
+and the follow-up form (status: Baru, Dihubungi, Berpotensi, Berhasil, Tidak lanjut; internal
+notes). Editors and anonymous users are refused by the queries and actions, not only the menu.
+Audit entries name the changed fields (`status`, `notes`), never their values. Public input can
+only create a lead through `submitContact` (CPR-78).

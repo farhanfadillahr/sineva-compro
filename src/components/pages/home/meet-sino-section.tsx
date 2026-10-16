@@ -18,7 +18,9 @@ export function MeetSinoSection({
   tone: SectionTone
 }) {
   return (
-    <Section tone={tone}>
+    // The stage glow and orbit arcs extend past the stage box; clip them sideways so they never
+    // add a horizontal scrollbar on a phone (the hero does the same).
+    <Section tone={tone} className="overflow-x-clip">
       <Container className="flex flex-col gap-12">
         <Reveal>
           <SectionHeader title={title} lead={body} />

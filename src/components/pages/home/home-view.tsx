@@ -136,13 +136,17 @@ export function HomeView({
         steps={page.howWeWork.steps.map((step, index) => ({
           ...step,
           screen: (
-            <SinoStage className="max-w-sm">
-              <PoseImage
-                pose={HOW_WE_WORK_POSES[index % HOW_WE_WORK_POSES.length]!}
-                sizes="(min-width: 1024px) 384px, 80vw"
-                className="size-full object-contain"
-              />
-            </SinoStage>
+            // The stage glow spills past its box. The clip keeps it from widening the page; the
+            // narrower stage on phones leaves the room it needs inside the column.
+            <div className="overflow-x-clip">
+              <SinoStage className="max-w-xs sm:max-w-sm">
+                <PoseImage
+                  pose={HOW_WE_WORK_POSES[index % HOW_WE_WORK_POSES.length]!}
+                  sizes="(min-width: 1024px) 384px, 80vw"
+                  className="size-full object-contain"
+                />
+              </SinoStage>
+            </div>
           ),
         }))}
       />

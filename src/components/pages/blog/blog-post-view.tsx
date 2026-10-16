@@ -9,7 +9,6 @@ import { sectionToneClasses } from '@/components/ui/section'
 import { whatsappHrefFor } from '@/lib/whatsapp'
 import { poseImage } from '../home/poses'
 import { PostCard } from '../home/post-card'
-import { Breadcrumb } from '../services/breadcrumb'
 import { buildBreadcrumbJsonLd } from '../services/services-json-ld'
 import { formatDate, formatMinutes } from './blog-format'
 import { buildBlogPostingJsonLd } from './blog-json-ld'
@@ -63,16 +62,6 @@ export function BlogPostView({ model, labels, siteUrl, linkComponent }: BlogPost
 
   return (
     <main id={MAIN_CONTENT_ID} tabIndex={-1} className="outline-none">
-      <Breadcrumb
-        label={labels.breadcrumbLabel}
-        items={[
-          { label: labels.homeCrumb, href: BLOG_HREFS.home },
-          { label: labels.blogCrumb, href: BLOG_HREFS.blog },
-        ]}
-        current={post.title}
-        linkComponent={linkComponent}
-      />
-
       <div
         data-blog-header=""
         data-tone="aurora"

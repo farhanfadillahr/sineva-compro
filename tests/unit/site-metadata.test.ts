@@ -9,7 +9,7 @@ const noindex = { index: false, follow: false }
 describe('buildRootMetadata', () => {
   it('resolves every relative URL against the site origin', () => {
     const meta = buildRootMetadata({ settings, siteUrl, robots: noindex })
-    expect(meta.metadataBase?.href).toBe('https://sinevaai.vercel.app/')
+    expect(String(meta.metadataBase)).toBe('https://sinevaai.vercel.app/')
   })
 
   it('uses the brand as the default title and a "%s | Sineva" template', () => {

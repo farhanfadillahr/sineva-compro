@@ -40,13 +40,13 @@ export const pages: PageContentMap = {
     key: 'home',
     locale: 'en',
     seo: seo(
-      'AI consulting and AI agents | Sineva',
-      'Sineva helps small businesses and teams use AI, with consulting services and an AI agent named Sino on the way. Book a free consultation.',
+      'A little help with everyday work | Sineva',
+      'More room for the work that matters. Explore practical AI help for your business, and talk to us about a first step.',
     ),
     hero: {
       eyebrow: null,
       headline: 'AI for your business, without the hassle',
-      lead: 'Ready-to-use AI agents for everyday tasks, and consulting to find, build, and run AI that fits how you work.',
+      lead: 'A little help with the tasks that fill your day. Let us find where AI can make things easier for you.',
       primaryCtaLabel: 'Book a free consultation',
       secondaryCtaLabel: 'Get notified about Sino',
       poster: asset(
@@ -67,7 +67,7 @@ export const pages: PageContentMap = {
       services: {
         eyebrow: 'Services',
         title: 'Let us build it with you',
-        body: 'AI Discovery, AI Build, and AI Enablement help you find, build, and run AI that fits your business.',
+        body: 'Not sure where to start, or ready to try an idea? We will work through the next step with you.',
         ctaLabel: 'Explore services',
         pose: 'building-blocks',
       },
@@ -163,18 +163,18 @@ export const pages: PageContentMap = {
     key: 'servicesOverview',
     locale: 'en',
     seo: seo(
-      'AI consulting services | Sineva',
+      'Find your next step with AI | Sineva',
       'Find, build, and run AI that fits your business with AI Discovery, AI Build, and AI Enablement. Book a free consultation.',
     ),
     hero: {
       eyebrow: null,
       headline: 'AI help that fits your business',
-      lead: 'We help you find, build, and run AI. You get a clear plan and plain words at every step.',
+      lead: 'Tell us where the work gets tangled. We will help you find a useful first step and build from there.',
       primaryCtaLabel: 'Book a free consultation',
     },
     servicesIntro: {
       title: 'Three ways we can help',
-      body: 'Start where you are. Each service works on its own, and you can combine them.',
+      body: 'A fresh pair of eyes, a working solution, or a hand getting comfortable with AI. Start with what you need.',
     },
     howWeWork: { title: 'How we work', steps: processSteps },
     whoWeHelp: { title: 'Who we help', cards: audienceCards },
@@ -193,11 +193,11 @@ export const pages: PageContentMap = {
     locale: 'en',
     seo: seo(
       'About Sineva | Sineva',
-      'Sineva is an AI consulting company that also builds AI agents. Learn how we work, and meet Sino. Talk to us about your goals.',
+      'You know your business. We are here to help with the work around it. Meet Sineva and Sino, and tell us what would make your day easier.',
     ),
     hero: {
-      title: 'We help you use AI without the hassle',
-      lead: 'Sineva is an AI consulting company that also builds AI agents for small businesses.',
+      title: 'More room for what matters',
+      lead: 'You have a business to care for. We are here to help make the everyday work a little lighter.',
       scene: asset('/mascot/poses/sino-relaxed.webp', 1200, 1200, 'Sino relaxing with a mug'),
     },
     // Story and mission are proposals from docs/design/brand-positioning.md. The Founder has not
@@ -205,18 +205,18 @@ export const pages: PageContentMap = {
     story: doc(
       heading('Our story'),
       paragraph(
-        'Sineva is an AI consulting company. We believe AI should be useful for people who run businesses, not only for engineers.',
+        'Running a business means keeping a lot of things moving. Customer questions, unfinished tasks, and plans that need your attention. We want to help you make room for the work you care about.',
       ),
       paragraph(
-        'We work in two ways. We are building Sino, an AI agent you will be able to use yourself. Or you can work with us to find, build, and run AI that fits how your business already works.',
+        'Sometimes that starts with one task you would like to hand over. Sometimes you need a hand finding the right first step. We can work through it together, using the tools and habits your team already knows.',
       ),
       paragraph(
-        'We keep things simple and honest. We tell you what AI can do, and what it cannot.',
+        'We are also building Sino, a friendly AI helper for everyday tasks. While Sino is on the way, you can talk to us about what would make your day easier.',
       ),
     ),
     mission: {
-      title: 'Our mission',
-      body: 'Help businesses use AI in simple, honest ways that fit how they already work.',
+      title: 'Why we are here',
+      body: 'To make everyday work a little easier, so you have more time for the people and plans that matter.',
     },
     values: {
       title: 'What we value',

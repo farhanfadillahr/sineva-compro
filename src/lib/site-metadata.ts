@@ -6,7 +6,7 @@ type Robots = { index: boolean; follow: boolean }
 const BRAND = 'Sineva'
 const DEFAULT_TITLE_TEMPLATE = `%s | ${BRAND}`
 const DEFAULT_DESCRIPTION =
-  'Sineva helps businesses use AI, with consulting services and an AI agent named Sino on the way. Talk to us about your first step.'
+  'A little help with everyday work. Explore AI support that fits your business, meet Sino, and tell us what would make your day easier.'
 // Same file and size as `brand.defaultOgImage` in the static site settings. Used only when a
 // locale has no settings at all, so social cards never go out without an image.
 const FALLBACK_OG_IMAGE = { url: '/og/default.png', width: 1200, height: 630 } as const

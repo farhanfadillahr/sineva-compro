@@ -19,6 +19,12 @@ export function buildPrivacyMetadata(
     alternates: { canonical: seo.canonicalUrl ?? PRIVACY_PATH },
     // Robots are otherwise left to the layout (the whole site stays noindex until launch).
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: ogImage ? [ogImage.url] : undefined,
+    },
     openGraph: {
       type: 'website',
       title: seo.metaTitle,

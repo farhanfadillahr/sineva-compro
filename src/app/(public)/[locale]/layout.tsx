@@ -13,6 +13,8 @@ import { routing } from '@/i18n/routing'
 import { getContentSource } from '@/lib/content-source'
 import { getRobots } from '@/lib/robots-policy'
 import { buildRootMetadata } from '@/lib/site-metadata'
+import { buildSiteJsonLd } from '@/lib/site-json-ld'
+import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import '../../globals.css'
@@ -86,6 +88,12 @@ export default async function PublicLayout({
       <body className="flex min-h-svh flex-col bg-canvas text-text">
         {/* First in <body>: covers the page from the first paint when the gate marked the document. */}
         <LogoIntroShell />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(buildSiteJsonLd(getSiteUrl(), settings)),
+          }}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkipLink />
           <SiteHeader

@@ -34,6 +34,12 @@ export function buildBlogListMetadata(
     description: seo.metaDescription,
     alternates: { canonical },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: ogImage ? [ogImage.url] : undefined,
+    },
     openGraph: {
       type: 'website',
       title: seo.metaTitle,
@@ -61,11 +67,18 @@ export function buildBlogPostMetadata(
 ): Metadata {
   const { seo } = post
   const canonical = seo.canonicalUrl ?? blogPostHref(post.slug)
+  const ogImage = postShareImage(post, settings)
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
     alternates: { canonical },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: ogImage ? [ogImage.url] : undefined,
+    },
     openGraph: {
       type: 'article',
       title: seo.metaTitle,

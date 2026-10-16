@@ -44,7 +44,9 @@ const servicesSource: SitemapSource = async ({ content, locale }) => {
   const summaries = await content.listServices(locale)
   const services = await Promise.all(summaries.map(({ slug }) => content.getService(slug, locale)))
   return services
-    .filter((service) => service !== null && !service.seo.noindex)
+    .filter(
+      (service): service is NonNullable<typeof service> => service !== null && !service.seo.noindex,
+    )
     .map((service) => ({
       path:
         service.seo.canonicalUrl ??
@@ -83,4 +85,24 @@ export async function collectSitemapEntries({
   )
   const urls = perLocale.flat().map(({ path }) => new URL(path, siteUrl).href)
   return [...new Set(urls)].map((url) => ({ url }))
+}
+
+/** All published article URLs, including later pages when the static source becomes a CMS. */
+export const blogSitemapSource: SitemapSource = async ({ content, locale }) => {
+  const index = await content.getPage('blogIndex', locale)
+  if (!index || index.seo.noindex) return []
+  const entries: SitemapPage[] = [{ path: index.seo.canonicalUrl ?? '/blog' }]
+  let page = 1
+  while (true) {
+    const result = await content.listPosts({ locale, page, pageSize: 100 })
+    for (const summary of result.posts) {
+      const post = await content.getPost(summary.slug, locale)
+      if (post && !post.seo.noindex) {
+        entries.push({ path: post.seo.canonicalUrl ?? `/blog/${post.slug}` })
+      }
+    }
+    if (result.posts.length === 0 || page * result.pageSize >= result.total) break
+    page += 1
+  }
+  return entries
 }

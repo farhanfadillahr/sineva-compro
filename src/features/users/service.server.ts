@@ -6,6 +6,8 @@ import { createAuth } from '../../lib/auth/options'
 import { user } from '../auth/schema'
 import { assertCapability, loadPrincipal } from '../auth/access.server'
 import { AccessDeniedError } from '../auth/access-errors'
+import type { Principal } from '../auth/types'
+import { writeAudit } from '../audit/service.server'
 import {
   parseCreateEditor,
   parseUpdateEditor,
@@ -21,7 +23,11 @@ async function mutation<T>(
   env: Env,
   headers: Headers,
   targetId: string | undefined,
-  run: (tx: DatabaseTransaction, auth: ReturnType<typeof createAuth>) => Promise<T>,
+  run: (
+    tx: DatabaseTransaction,
+    auth: ReturnType<typeof createAuth>,
+    actor: Principal,
+  ) => Promise<T>,
 ): Promise<T> {
   try {
     return await database.transaction(async (tx) => {
@@ -42,7 +48,7 @@ async function mutation<T>(
         if (targetId === actor.id || target.role !== 'editor')
           throw new AccessDeniedError('FORBIDDEN')
       }
-      return run(tx, createAuth(tx, env))
+      return run(tx, createAuth(tx, env), latest)
     })
   } catch (error) {
     throw safeUsersError(error)
@@ -63,8 +69,14 @@ export async function createEditor(
 ): Promise<UserSummary> {
   await authenticate(database, env, headers)
   const data = parseCreateEditor(input)
-  return mutation(database, env, headers, undefined, async (tx, auth) => {
+  return mutation(database, env, headers, undefined, async (tx, auth, actor) => {
     const created = await auth.api.createUser({ headers, body: { ...data, role: 'editor' } })
+    await writeAudit(tx, actor, {
+      entity: 'users',
+      entityId: created.user.id,
+      action: 'create',
+      changedFields: ['name', 'email', 'role', 'active', 'password'],
+    })
     return summary(tx, created.user.id)
   })
 }
@@ -76,9 +88,9 @@ export async function updateEditor(
 ): Promise<UserSummary> {
   await authenticate(database, env, headers)
   const data = parseUpdateEditor(input)
-  return mutation(database, env, headers, data.userId, async (tx, auth) => {
+  return mutation(database, env, headers, data.userId, async (tx, auth, actor) => {
     const [before] = await tx
-      .select({ email: user.email })
+      .select({ email: user.email, name: user.name })
       .from(user)
       .where(eq(user.id, data.userId))
     await auth.api.adminUpdateUser({
@@ -87,6 +99,17 @@ export async function updateEditor(
     })
     if (before.email !== data.email)
       await auth.api.revokeUserSessions({ headers, body: { userId: data.userId } })
+    const changedFields = [
+      ...(before.name !== data.name ? ['name'] : []),
+      ...(before.email !== data.email ? ['email'] : []),
+    ]
+    if (changedFields.length)
+      await writeAudit(tx, actor, {
+        entity: 'users',
+        entityId: data.userId,
+        action: 'update',
+        changedFields,
+      })
     return summary(tx, data.userId)
   })
 }
@@ -98,7 +121,7 @@ export async function setEditorActive(
 ): Promise<{ success: true }> {
   await authenticate(database, env, headers)
   const data = parseEditorStatus(input)
-  return mutation(database, env, headers, data.userId, async (_tx, auth) => {
+  return mutation(database, env, headers, data.userId, async (tx, auth, actor) => {
     if (data.active) await auth.api.unbanUser({ headers, body: { userId: data.userId } })
     else
       await auth.api.banUser({
@@ -106,6 +129,12 @@ export async function setEditorActive(
         body: { userId: data.userId, banReason: 'Dinonaktifkan oleh Admin' },
       })
     await auth.api.revokeUserSessions({ headers, body: { userId: data.userId } })
+    await writeAudit(tx, actor, {
+      entity: 'users',
+      entityId: data.userId,
+      action: data.active ? 'activate' : 'deactivate',
+      changedFields: ['active'],
+    })
     return { success: true }
   })
 }
@@ -117,9 +146,15 @@ export async function changeEditorPassword(
 ): Promise<{ success: true }> {
   await authenticate(database, env, headers)
   const data = parseEditorPassword(input)
-  return mutation(database, env, headers, data.userId, async (_tx, auth) => {
+  return mutation(database, env, headers, data.userId, async (tx, auth, actor) => {
     await auth.api.setUserPassword({ headers, body: data })
     await auth.api.revokeUserSessions({ headers, body: { userId: data.userId } })
+    await writeAudit(tx, actor, {
+      entity: 'users',
+      entityId: data.userId,
+      action: 'password_change',
+      changedFields: ['password'],
+    })
     return { success: true }
   })
 }

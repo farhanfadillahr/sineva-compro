@@ -120,16 +120,33 @@ Pattern from Sintra pricing: once the hero CTA scrolls out of view, a slim bar s
 
 ## 5. Navbar
 
-Adapted from Sintra's custom header.
+The header has two looks: the regular full-width bar at the top of the page, and a floating pill below it that hides itself when the visitor is idle. The surface and the hide-on-scroll idea come from Sintra's custom header; the floating pill and the idle hide are Sineva's own.
 
 | State | Behaviour |
 |---|---|
-| At top of page | Transparent background, sits on the hero aurora gradient |
-| Scrolled > 8 px | Background `--surface-nav` + `--blur-nav`, hairline bottom border. Transition `background-color 250ms` |
-| Scrolling down (> 8 px delta) | Hides: `translateY(-100%)`, 500 ms `--ease-out` |
-| Scrolling up | Shows again immediately |
-| Dropdown open | Never hides while a dropdown or the mobile menu is open, or while focus is inside the header |
-| Keyboard focus | Always visible when anything in it has focus |
+| At the top (scrollY ≤ 8 px) | Regular full-width header, transparent, sits on the hero aurora gradient. It never hides. |
+| Scrolled past the top, scrolling down | Floating nav hidden: `translateY(-100%)` and opacity 0, 240 ms `--ease-out` |
+| Scrolling up, anywhere below the top | Floating nav shows at once: a centred pill, 12 px from the top, max-width 1100 px (viewport minus 16 px gutters on mobile), radius `--radius-lg` (20 px), `--surface-nav` + `--blur-nav`, hairline border, `--shadow-md`. Show and hide are translateY plus opacity, 240 ms `--ease-out`. |
+| Idle for 2.5 s while floating | Floating nav hides. The timer restarts on every scroll step and on the pointer leaving the nav. |
+| Back at the top | Morphs into the regular header: pill surface, inset and width change together, 360 ms `--ease-out-expo`, once per mode change and never per scroll frame |
+| Pointer over the nav, dropdown or mobile menu open, keyboard focus inside | Never hides, and the idle timer is paused. Starting any of these shows a hidden nav. A mouse click that focused a link does not count as keyboard focus. |
+
+Modes and events (a pure state machine, `src/components/layout/header-scroll.ts`):
+
+| Mode | Meaning |
+|---|---|
+| `top` | Regular header |
+| `floating-visible` | Pill on screen |
+| `floating-hidden` | Pill slid out and faded |
+
+Events: scroll (offset and delta), idle timeout, pointer enter and leave, focus in and out, menu open and close, reach top (≤ 8 px). A downward run needs more than 8 px in total before the pill hides, because wheels and touch scroll in steps of a few pixels. Any upward step shows it.
+
+Implementation rules:
+- The `<header>` stays `sticky` and in flow at `--header-height`, so it is the spacer: nothing below it moves (CLS 0). Pages that want the hero behind the transparent header pull up with `-mt-(--header-height)`.
+- Only `translate`, `scale` and `opacity` change. The bar keeps the pill's geometry in every mode; at the top its surface is transparent and the logo and actions are offset outwards with a translate, so the regular header looks like the full-width bar. No width, height or `top` animation, on scroll or on mode change.
+- The page-load logo intro lands on the navbar logo at the top ([§3.1](#31-first-visit-logo-intro-lottie)), which is the `top` mode. The landing slot (`data-logo-intro-target`) is the same element in every mode.
+- Mobile uses the same logic. The burger stays inside the pill, and opening the sheet keeps the pill visible.
+- Reduced motion (§9): every change is instant with no morph. The idle hide still applies.
 
 Desktop dropdown (Product, Services, Resources):
 - **One shared panel** that morphs its width/height/position between triggers (Sintra pattern): open 200 ms `--ease-bounce` from `scale(0.97) translateY(6px)` and opacity 0; content crossfades 200 ms in / 60 ms out; close 120 ms.

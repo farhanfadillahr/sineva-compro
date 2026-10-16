@@ -245,24 +245,23 @@ export const pages: PageContentMap = {
     locale: 'en',
     seo: seo(
       'Talk to us | Sineva',
-      'Tell us about your project and get a free consultation. Send your message on WhatsApp or by email and we will reply with next steps.',
+      'Tell us about your project and get a free consultation. Send your message on WhatsApp and we will reply with next steps.',
     ),
     metaChips: ['Free consultation', 'Plain words, no jargon'],
     headline: 'Tell us about your project',
-    lead: 'Share your goal. We turn it into a message you can send us on WhatsApp or by email.',
+    lead: 'Share your goal. We turn it into a message you can send us on WhatsApp.',
     steps: [
       step('Tell us your goal', 'Fill in the form with a few details.'),
-      step('Send it your way', 'We prepare the message. You send it on WhatsApp or by email.'),
+      step('Send it on WhatsApp', 'We prepare the message. You send it from your own WhatsApp.'),
       step('We plan it together', 'We reply with next steps and agree on a first step that fits.'),
     ],
     // No response time is approved, so the line stays hidden.
     responseTimeText: null,
     form: {
       intro:
-        'Tell us a little about your business and what you need. Nothing is sent until you press send in WhatsApp or your email app.',
+        'Tell us a little about your business and what you need. Nothing is sent until you press send in WhatsApp.',
       consentLabel: {
-        before:
-          'I understand this opens WhatsApp or my email app with my message ready to send. Read the ',
+        before: 'I understand this opens WhatsApp with my message ready to send. Read the ',
         linkLabel: 'privacy policy',
         after: '.',
       },

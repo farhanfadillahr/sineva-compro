@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 const base = new URL(process.env.TEST_BASE_URL ?? 'http://127.0.0.1:3001')
 if (!['127.0.0.1', 'localhost'].includes(base.hostname) || base.protocol !== 'http:') {
@@ -9,30 +9,37 @@ const get = (path: string, headers: Record<string, string> = {}) =>
 const localeCookie = (response: Response) =>
   response.headers.getSetCookie().some((value) => value.startsWith('NEXT_LOCALE='))
 
-const shells = [
-  ['/', 'Home'],
-  ['/products/ai-agents', 'AI Agents'],
-  ['/services', 'Services'],
-  ['/work', 'Work'],
-  ['/blog', 'Blog'],
-  ['/about', 'About'],
-  ['/contact', 'Contact'],
-  ['/contact/thank-you', 'Thank you'],
-  ['/privacy-policy', 'Privacy Policy'],
+const pages = [
+  '/',
+  '/products/ai-agents',
+  '/services',
+  '/work',
+  '/blog',
+  '/about',
+  '/contact',
+  '/contact/thank-you',
+  '/privacy-policy',
 ] as const
-describe('English shells without a locale prefix', () => {
-  it.each(shells)('serves %s', async (path, title) => {
+const heading = (html: string) => html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? ''
+let englishHeading: string
+beforeAll(async () => {
+  const response = await get('/')
+  expect(response.status).toBe(200)
+  englishHeading = heading(await response.text())
+  expect(englishHeading.trim()).not.toBe('')
+})
+describe('English pages without a locale prefix', () => {
+  it.each(pages)('serves %s', async (path) => {
     const response = await get(path)
     const html = await response.text()
     expect(response.status).toBe(200)
     expect(html).toContain('lang="en"')
     expect((html.match(/<html\b/g) ?? []).length).toBe(1)
     expect((html.match(/<body\b/g) ?? []).length).toBe(1)
-    expect(html).toMatch(new RegExp(`<h1[^>]*>${title}</h1>`))
-    expect(html).toContain('<title>Sineva</title>')
-    expect(html).toContain('This page is being prepared.')
+    expect((html.match(/<h1\b/g) ?? []).length).toBe(1)
+    expect(heading(html).trim()).not.toBe('')
+    expect(html).toMatch(/<title>[^<]*Sineva[^<]*<\/title>/)
     expect(html).not.toMatch(/Halaman sedang disiapkan|Sineva Tech/)
-    expect(html).toMatch(/name="robots"[^>]*content="noindex/)
     expect(html).not.toMatch(/hreflang=|next-intl\.messages|MISSING_MESSAGE/)
   })
 })
@@ -52,7 +59,7 @@ describe('root has no locale negotiation', () => {
     expect(response.status).toBe(200)
     expect(response.headers.get('location')).toBeNull()
     expect(html).toContain('lang="en"')
-    expect(html).toMatch(/<h1[^>]*>Home<\/h1>/)
+    expect(heading(html)).toBe(englishHeading)
     expect(localeCookie(response)).toBe(false)
   })
   it('sets no locale cookie on any English page', async () => {

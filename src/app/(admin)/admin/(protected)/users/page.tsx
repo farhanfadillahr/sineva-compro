@@ -5,55 +5,44 @@ import { readServerEnv } from '@/env/server'
 import { requirePrincipal } from '@/features/auth/session.server'
 import { listUsers } from '@/features/users/query.server'
 import { readUsersPage } from '@/features/users/page-access.server'
-import { UserTable } from '@/features/users/components/user-table'
+import { redirect } from 'next/navigation'
+import { UsersTable } from '@/components/admin/users-table'
+import { PageHeader } from '@/components/admin/shell'
+import { lastPageRedirect, readTableQuery } from '@/components/admin/table-state'
+import styles from '@/components/admin/admin.module.css'
 export const metadata = { title: 'Pengguna' }
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string | string[]; page?: string | string[] }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   await requirePrincipal()
   const params = await searchParams
+  const urlParams = new URLSearchParams()
+  for (const [key,value] of Object.entries(params)) {
+    if (typeof value === 'string') urlParams.set(key,value)
+    else if (Array.isArray(value) && value[0]) urlParams.set(key,value[0])
+  }
+  const state = readTableQuery(urlParams)
+  // The existing service permits at most 50. Keep its policy unchanged.
+  if (state.pageSize === 100) state.pageSize = 20
+  urlParams.set('pageSize',String(state.pageSize))
   const headersValue = await headers()
   const result = await readUsersPage(() =>
     listUsers(db, readServerEnv(process.env), headersValue, {
-      search: params.search ?? '',
-      page: params.page === undefined ? 1 : Number(params.page),
-      pageSize: 20,
+      search: state.search,
+      page: state.page,
+      pageSize: state.pageSize,
     }),
   )
+  const canonical = lastPageRedirect('/admin/users', urlParams, result.total, result.page, result.pageSize)
+  if (canonical) redirect(canonical)
   return (
     <main>
-      <div className="users-heading">
-        <div>
-          <p className="eyebrow">Akses tim</p>
-          <h1 className="dashboard-title">Pengguna</h1>
-          <p className="muted">Kelola akun Editor dan akses ke ruang kerja.</p>
-        </div>
-        <Link className="button-primary" href="/admin/users/new">
-          Tambah Editor
-        </Link>
-      </div>
-      <section className="users-panel">
-        <form className="users-search" action="/admin/users" method="get">
-          <div className="form-field">
-            <label htmlFor="user-search">Cari nama atau email</label>
-            <input
-              id="user-search"
-              name="search"
-              type="search"
-              maxLength={100}
-              defaultValue={typeof params.search === 'string' ? params.search : ''}
-            />
-          </div>
-          <button className="button-secondary" type="submit">
-            Cari
-          </button>
-        </form>
-        <UserTable
-          result={result}
-          search={typeof params.search === 'string' ? params.search : ''}
-        />
+      <PageHeader title="Pengguna" description="Kelola akun Editor dan akses ke ruang kerja."
+        actions={<Link className={`${styles.button} ${styles.primary}`} href="/admin/users/new">Tambah Editor</Link>} />
+      <section className={styles.panel} aria-label="Daftar pengguna">
+        <UsersTable result={result} query={urlParams.toString()} />
       </section>
     </main>
   )

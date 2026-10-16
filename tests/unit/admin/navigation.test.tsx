@@ -12,7 +12,10 @@ it('excludes privileged groups for Editor and reveals Admin routes only for Admi
   const { unmount } = render(<Sidebar role="editor" pathname="/admin" />)
   expect(screen.queryByText('Pengguna')).toBeNull()
   expect(screen.queryByText('Prospek')).toBeNull()
-  expect(screen.queryByText('Pengaturan')).toBeNull()
+  // Editors manage contact, WhatsApp and social settings (CPR-29); the rest stays Admin only.
+  expect(screen.getByRole('treeitem', { name: 'Situs' })).toBeTruthy()
+  for (const adminOnly of ['SEO', 'Email', 'Redirect'])
+    expect(screen.queryByRole('treeitem', { name: adminOnly })).toBeNull()
   expect(screen.getByRole('tree', { name: 'Navigasi admin' })).toBeTruthy()
   unmount()
   render(<Sidebar role="admin" pathname="/admin/users" />)
@@ -38,7 +41,7 @@ it('roves focus, expands, collapses, visits children and persists expanded branc
   expect(pages.getAttribute('aria-expanded')).toBe('false')
   expect(localStorage.getItem('sineva.admin.navigation.v1')).toBeTruthy()
   await user.keyboard('{End}')
-  expect(document.activeElement?.textContent).toContain('Media')
+  expect(document.activeElement?.textContent).toContain('Situs')
 })
 it('retains the active trail and tolerates unavailable or malformed storage', () => {
   localStorage.setItem('sineva.admin.navigation.v1', 'bad-json')

@@ -4,12 +4,20 @@ import { auditSeed } from './audit'
 import { mediaSeed } from './media'
 import { settingsSeed } from './settings'
 import { pagesSeed } from './pages'
+import { collectionSeed } from './collections'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
 // New CMS tickets register their own module here. No scanning/importing files
 // supplied by a CLI argument; module names are an explicit registry.
-const modules: readonly SeedModule[] = [auditSeed, mediaSeed, settingsSeed, pagesSeed]
+const modules: readonly SeedModule[] = [
+  auditSeed,
+  mediaSeed,
+  settingsSeed,
+  pagesSeed,
+  collectionSeed('capabilities', 'capabilities'),
+  collectionSeed('businessTypes', 'business-types'),
+]
 export async function runSeeds(
   database: Database,
   databaseUrl: string,

@@ -63,3 +63,22 @@ Each page document is stored in `page_content` with a `version`. To change a pag
 migration to `src/features/pages/migrations.ts` and update the descriptor in
 `src/features/pages/fields.ts` and the static content together; older rows are migrated on read.
 A unit test runs every page's launch content through its descriptor, so drift fails the suite.
+
+## Ordered collections (CPR-83 onwards)
+
+Small collections share one engine (`src/features/collections/`): an item table with a stable
+`key`, `sort_order` and language-independent `data`, plus one translation row per locale. The
+descriptors in `configs.ts` render the admin form and validate every write and read. Keys are
+kebab-case and cannot change after creation. "Simpan urutan" saves the display order in one go;
+it is refused if the list changed since the page was opened.
+
+Seed: `--module=<name>` with `capabilities`, `business-types` and the later collections. Base
+inserts launch rows whose key is missing; demo rows use a `demo-` key and `is_demo = true`, and
+`--purge-demo` removes only those.
+
+## Product (CPR-83)
+
+`/admin/product`: launch status (Segera hadir or Tersedia), capabilities and business types. The
+status is stored once in the Product page document; Home and Product read it, so switching it moves
+the site's calls to action from the waitlist to "try" without a deploy. Business types are the
+Product page tabs only; the contact and waitlist segment list stays a fixed list in code.

@@ -9,7 +9,6 @@ import {
   LoopOnce,
   LoopRepeat,
   Mesh,
-  NeutralToneMapping,
   Object3D,
   PMREMGenerator,
   PerspectiveCamera,
@@ -26,6 +25,7 @@ import {
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { SINO_LOOK } from './sino-look'
 import { claimSessionOnce } from '@/lib/motion/session'
 import { observeVisibility } from '@/lib/motion/in-view'
 import {
@@ -150,8 +150,8 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   const renderer = new WebGLRenderer({ antialias: true, alpha: true })
   renderer.setClearColor(new Color(0x000000), 0)
   renderer.outputColorSpace = SRGBColorSpace
-  // Khronos PBR Neutral keeps the brand's pale teal and white from shifting the way ACES does.
-  renderer.toneMapping = NeutralToneMapping
+  renderer.toneMapping = SINO_LOOK.toneMapping
+  renderer.toneMappingExposure = SINO_LOOK.exposure
   const canvas = renderer.domElement
   canvas.setAttribute('aria-hidden', 'true')
   Object.assign(canvas.style, {
@@ -173,13 +173,13 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
   const envTarget = pmrem.fromScene(room, 0.04)
   room.dispose?.()
   scene.environment = envTarget.texture
-  scene.environmentIntensity = 0.55
+  scene.environmentIntensity = SINO_LOOK.environmentIntensity
 
-  const key = new DirectionalLight(0xffffff, 2.2)
-  key.position.set(-2, 3, 2.5)
+  const key = new DirectionalLight(SINO_LOOK.key.color, SINO_LOOK.key.intensity)
+  key.position.set(...SINO_LOOK.key.position)
   // Teal rim light so the pale silhouette separates from the white page (mascot-sino.md section 4).
-  const rim = new DirectionalLight(0x80d2d2, 2.4)
-  rim.position.set(2.5, 1.5, -2)
+  const rim = new DirectionalLight(SINO_LOOK.rim.color, SINO_LOOK.rim.intensity)
+  rim.position.set(...SINO_LOOK.rim.position)
   scene.add(key, rim)
 
   const rig = new Group()

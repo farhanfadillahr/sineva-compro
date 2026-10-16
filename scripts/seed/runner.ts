@@ -1,12 +1,13 @@
 import { sql } from 'drizzle-orm'
 import type { Database } from '../../src/lib/db/connection'
 import { auditSeed } from './audit'
+import { mediaSeed } from './media'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
 // New CMS tickets register their own module here. No scanning/importing files
 // supplied by a CLI argument; module names are an explicit registry.
-const modules: readonly SeedModule[] = [auditSeed]
+const modules: readonly SeedModule[] = [auditSeed, mediaSeed]
 export async function runSeeds(
   database: Database,
   databaseUrl: string,

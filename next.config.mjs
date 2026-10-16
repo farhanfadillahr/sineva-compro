@@ -19,7 +19,24 @@ const securityHeaders = [
 ]
 
 /** @type {import('next').NextConfig} */
+const mediaOrigin = process.env.MEDIA_PUBLIC_ORIGIN
+  ? new URL(process.env.MEDIA_PUBLIC_ORIGIN)
+  : null
+if (
+  mediaOrigin &&
+  (mediaOrigin.username ||
+    mediaOrigin.password ||
+    mediaOrigin.pathname !== '/' ||
+    mediaOrigin.search ||
+    mediaOrigin.hash ||
+    !['https:', 'http:'].includes(mediaOrigin.protocol) ||
+    (mediaOrigin.protocol !== 'https:' &&
+      !['127.0.0.1', 'localhost'].includes(mediaOrigin.hostname)))
+)
+  throw new Error('Invalid MEDIA_PUBLIC_ORIGIN')
+
 const nextConfig = {
+  images: { remotePatterns: mediaOrigin ? [new URL('/api/media/public/**', mediaOrigin)] : [] },
   poweredByHeader: false,
   // Preserve the request origin for internal rewrites, including loopback IPs.
   skipProxyUrlNormalize: true,

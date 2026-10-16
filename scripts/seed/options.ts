@@ -27,7 +27,10 @@ export function parseSeedOptions(
   }
   if (seen.has('--demo') && seen.has('--purge-demo')) throw new Error('Choose demo or purge-demo')
   const moduleName = args.find((arg) => arg.startsWith('--module='))?.slice('--module='.length)
-  if ((seen.has('--module') && !moduleName) || (moduleName && moduleName !== 'audit'))
+  if (
+    (seen.has('--module') && !moduleName) ||
+    (moduleName && !['audit', 'media'].includes(moduleName))
+  )
     throw new Error('Unknown seed module')
   const mode = seen.has('--demo') ? 'demo' : seen.has('--purge-demo') ? 'purge-demo' : 'base'
   const confirmed = args

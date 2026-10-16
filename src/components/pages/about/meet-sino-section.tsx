@@ -5,7 +5,7 @@ import type { PoseKey } from '@/features/content/types'
 import { PoseImage } from '../home/pose-image'
 
 /**
- * "Meet Sino" on About (page-patterns.md 2.7): what the mascot stands for, with a still on its
+ * "Meet Sino" on About (page-patterns.md 2.7): Sino's role as a friendly companion, with a still on its
  * stage. Home has its own Meet Sino with a fixed pose; this one takes the pose so the About hero
  * and this section never show the same picture.
  */

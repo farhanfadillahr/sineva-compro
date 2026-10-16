@@ -53,7 +53,7 @@ export const pages: PageContentMap = {
         '/mascot/poster/v008/sino-hero.webp',
         1600,
         1600,
-        'Sino, the friendly AI agent mascot, waving hello',
+        'Sino, a friendly AI companion, waving hello',
       ),
     },
     twoPaths: {
@@ -74,7 +74,7 @@ export const pages: PageContentMap = {
     },
     meetSino: {
       title: 'Meet Sino',
-      body: 'Sino is our mascot and the face of Sineva AI Agents. One friendly agent, designed to help with many everyday tasks.',
+      body: 'Sino is a friendly companion for everyday work. Ask in plain words, and Sino can help with replies, ideas, and the next small task.',
     },
     capabilities: {
       title: 'What Sino can help with',
@@ -193,7 +193,7 @@ export const pages: PageContentMap = {
     locale: 'en',
     seo: seo(
       'About Sineva | Sineva',
-      'You know your business. We are here to help with the work around it. Meet Sineva and Sino, and tell us what would make your day easier.',
+      'Every business day brings a lot to look after. Sineva helps make everyday work feel lighter, with practical support for you and your team.',
     ),
     hero: {
       title: 'More room for what matters',
@@ -205,30 +205,30 @@ export const pages: PageContentMap = {
     story: doc(
       heading('Our story'),
       paragraph(
-        'Running a business means keeping a lot of things moving. Customer questions, unfinished tasks, and plans that need your attention. We want to help you make room for the work you care about.',
+        'A business day can move in many directions. Customer questions, repeat tasks, and plans all need your attention. Sineva helps make space for the work you care about.',
       ),
       paragraph(
-        'Sometimes that starts with one task you would like to hand over. Sometimes you need a hand finding the right first step. We can work through it together, using the tools and habits your team already knows.',
+        'That support can start with choosing a useful task for AI or shaping a solution around the way your team works. We begin by listening, then take the next step together.',
       ),
       paragraph(
-        'We are also building Sino, a friendly AI helper for everyday tasks. While Sino is on the way, you can talk to us about what would make your day easier.',
+        'We are building Sino as a friendly AI companion for everyday business tasks. You can ask in plain words and review each result with a helpful friend by your side.',
       ),
     ),
     mission: {
       title: 'Why we are here',
-      body: 'To make everyday work a little easier, so you have more time for the people and plans that matter.',
+      body: 'We help people make room for the work, people, and plans that matter to them.',
     },
     values: {
       title: 'What we value',
       items: [
         { title: 'Keep it simple', body: 'Plain words and small steps beat big promises.' },
-        { title: 'Be honest', body: 'We tell you what AI can do and what it cannot.' },
+        { title: 'Be honest', body: 'We explain AI clearly and set practical expectations.' },
         { title: 'Build with you', body: 'Your team knows the work, so we work together.' },
       ],
     },
     meetSino: {
       title: 'Meet Sino',
-      body: 'Sino is our mascot and the friendly face of Sineva AI Agents. One helper, many everyday tasks.',
+      body: 'Sino is a friendly companion for everyday work. Ask in plain words, and Sino can help you shape ideas, draft replies, and plan a next step.',
     },
     // Hidden until team members agree to be listed.
     team: { visible: false, title: 'The people behind Sineva' },

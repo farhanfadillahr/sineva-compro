@@ -141,11 +141,11 @@ export function ProductView({
       <TaskCardGrid
         title={page.capabilities.title}
         intro={page.capabilities.intro}
-        // One Sino pose per capability. A pose without an exported still falls back to the phone
-        // mockup built from the capability's own chat lines.
+        // These task cards show their request and reply on the shared 3D phone mockup. Sino's
+        // companion role is introduced elsewhere on the page.
         items={model.capabilities.map((capability) => ({
           ...capability,
-          image: poseImage(capability.pose),
+          image: null,
         }))}
         tone={tone}
       />

@@ -15,7 +15,7 @@ Lead with the help a visitor wants: a task made easier, a useful first step, or 
 2. **Never invent facts.** No customer numbers, testimonials, client logos, ratings, certifications, or results ("save 40 hours") until there is data. Sintra patterns such as "40,000+ business owners" and five-star ratings are **not used** until there is real evidence. This continues the rule in `docs/content/outline.md` §19.
 3. **Do not promise business results** (revenue up, costs down X%) and do not mention product features that team `CBT` has not confirmed.
 4. **One idea per sentence.** Body sentences are at most ±20 words.
-5. **Brand:** `Sineva` (company name), `Sino` (mascot). Never write "Sineva Tech" in public copy. The product name follows [brand-positioning.md](brand-positioning.md) §3.1.
+5. **Brand:** `Sineva` (company name), `Sino` (friendly AI companion). Describe Sino to visitors as a companion or helpful friend, never as a mascot. Never write "Sineva Tech" in public copy. The product name follows [brand-positioning.md](brand-positioning.md) §3.1.
 
 ## 2. Voice
 

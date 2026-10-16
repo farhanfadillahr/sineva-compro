@@ -1,0 +1,4 @@
+# Override the image's /etc/seaweedfs/filer.toml so metadata is on our named volume.
+[leveldb2]
+enabled = true
+dir = "/data/filerldb2"

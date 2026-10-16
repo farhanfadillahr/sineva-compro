@@ -14,7 +14,7 @@ Phase 1 has no CMS, so the public site needs neither the admin nor a database. T
 - **No database.** Nothing connects to PostgreSQL at build or at runtime. The `DATABASE_URL` below is a build-time placeholder only.
 - **Contact goes through the WhatsApp composer.** The site builds a `wa.me` link from the visitor's message. There is no form backend, no email sending, and no stored leads.
 - **Content is static.** It comes from `src/content/static` and `messages/`. A content change is a code change and a new deployment.
-- **No `robots.txt` or `sitemap.xml` yet.** Indexing is controlled by the `robots` meta tag only (section 5). Add both before launch if the SEO plan needs them.
+- **SEO routes are available.** `/robots.txt` follows the indexing switch, and `/sitemap.xml` includes public pages and published articles. Preview and prelaunch deployments remain noindex.
 
 ## 2. Import the project
 
@@ -127,3 +127,15 @@ Expected on a preview: `noindex, nofollow` and a canonical on the preview host. 
 - [ ] Copy, legal pages and the WhatsApp number are final.
 - [ ] At launch: set `SITE_INDEXABLE=true` on Production, redeploy, and confirm the meta robots is `index, follow`.
 - [ ] Rollback target noted (the last known good production deployment).
+
+## 11. Manual deployment from this local checkout
+
+The local `.vercel/project.json` links this checkout to the existing `sineva` project. From the repository root:
+
+```bash
+npx vercel --prod
+```
+
+The CLI uploads the current local source and Vercel builds it. A separate local build is optional. Use `npx vercel` for a preview. If authentication is requested, run `npx vercel login` using the project owner account. On a fresh checkout, use `npx vercel link` and select the existing project before deploying.
+
+GitHub auto-deploy setup was postponed by the owner on 2026-10-16. Merging a PR currently does not prove that production has updated. Deploy the completed source manually and verify its deployment URL using section 9.

@@ -393,7 +393,7 @@ describe('static content source: references', () => {
       ['/mascot/poster/v006/sino-hero.webp', [1600, 1600]],
       ['/og/default-v006.png', [1200, 630]],
     ])
-    for (const name of poseFiles) allowed.set(`/mascot/poses/${name}.webp`, [1200, 1200])
+    for (const name of poseFiles) allowed.set(`/mascot/poses/v006/${name}.webp`, [1200, 1200])
 
     const media = [...walkObjectsWithKey(staticContent, 'url')] as {
       url: string

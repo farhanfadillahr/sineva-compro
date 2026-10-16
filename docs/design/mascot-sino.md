@@ -2,7 +2,13 @@
 
 Sino is Sineva's mascot and also the "face" of the AI agent product. This document defines **where, how, and when** Sino appears on the website, along with the performance budget. Source assets: `../sino-3d-mascot/export/web/` (separate project). New asset requirements: [3d-asset-requirements.md](3d-asset-requirements.md).
 
-## 1. Current asset facts (`sino.glb` v004)
+## Current delivery (v006, 2026-10-16)
+
+The website loads `/mascot/sino-v006.glb`: 1,174,076 bytes raw, 367,332 bytes Brotli, 56,233 triangles and 22 primitives. Ten clips retain the seven original names and add `jet_launch`, `jet_hover`, `jet_land`. Arm animation in the original clips was corrected to avoid torso intersections, and the redundant cornea shell was removed to clear closed eyelids. Nozzles retract at rest. Corrected stills and hero poster use `/mascot/poses/v006/` and `/mascot/poster/v006/` to avoid old immutable caches.
+
+The first hero sequence runs after the logo intro. It hops inside the stage, lands, waves, and idles. Pointer reactions queue during flight; a click or key skips to landing. Reduced motion, Save-Data and webdriver keep the poster. Five loop videos and three one-shots ship with VP9 and HEVC alpha. CTA one-shots warm on focus/hover and skip if not ready, without delaying navigation. See [production notes](sino-v006-production.md) for source files, audits, budgets and pending device checks.
+
+## 1. Historical asset facts (`sino.glb` v004)
 
 Inspected with `gltf-transform inspect` and a three.js 0.170 parse on 15 October 2026.
 

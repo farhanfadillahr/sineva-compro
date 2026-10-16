@@ -15,6 +15,7 @@ const passing: GateEnvironment = {
   webgl2: true,
   reducedMotion: false,
   saveData: false,
+  webdriver: false,
   deviceMemoryGb: 8,
 }
 
@@ -25,6 +26,7 @@ describe('evaluateSinoGate', () => {
 
   it.each([
     ['disabled', { enabled: false }],
+    ['bot', { webdriver: true }],
     ['reduced-motion', { reducedMotion: true }],
     ['save-data', { saveData: true }],
     ['low-memory', { deviceMemoryGb: 2 }],

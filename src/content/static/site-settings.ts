@@ -69,7 +69,7 @@ export const siteSettings: SiteSettingsDTO = {
   seo: {
     titleTemplate: '{title} | Sineva',
     defaultDescription:
-      'Put AI to work for your business. Meet Sino, see what AI can do for you, and book a free consultation.',
+      'Make your business run smarter with AI. Meet Sino, see what AI can do for you, and book a free consultation.',
     indexable: true,
   },
   verification: { googleSearchConsoleToken: null },

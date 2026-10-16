@@ -8,7 +8,7 @@ beforeEach(() => {
   vi.useFakeTimers()
   sessionStorage.clear()
   media = installMatchMedia(false)
-  vi.spyOn(navigator, 'webdriver', 'get').mockReturnValue(false)
+  Object.defineProperty(navigator, 'webdriver', { configurable: true, value: false })
   vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Chrome/140 Safari/537.36')
   vi.spyOn(HTMLMediaElement.prototype, 'canPlayType').mockReturnValue('probably')
   vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {})

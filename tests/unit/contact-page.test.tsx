@@ -236,9 +236,11 @@ describe('Thank-you page', () => {
     await models()
     const { container } = intl(<ThankYouView model={thankYouModel} />)
     const img = container.querySelector('img')!
-    expect(decodeURIComponent(img.getAttribute('src')!)).toContain('/mascot/poses/sino-thumbs-up')
+    expect(decodeURIComponent(img.getAttribute('src')!)).toContain(
+      '/mascot/poses/v006/sino-thumbs-up',
+    )
     expect(img.getAttribute('alt')).toBe('')
-    expect(existsSync(join(root, 'public/mascot/poses/sino-thumbs-up.webp'))).toBe(true)
+    expect(existsSync(join(root, 'public/mascot/poses/v006/sino-thumbs-up.webp'))).toBe(true)
     const check = container.querySelector('[data-slot="check-icon"]')!
     expect(check.getAttribute('aria-hidden')).toBe('true')
     // The animated check (Lottie L3) is deferred: nothing here may load the player.

@@ -258,7 +258,13 @@ export async function startSinoRuntime(options: SinoRuntimeOptions): Promise<Sin
     send(command) {
       if (command.type === 'play') playCommand(command)
       else if (command.type === 'effect') effectStart[command.effect] = frameSeconds
-      else setRunning(command.active)
+      else {
+        if (command.active) {
+          mixer.stopAllAction()
+          current = null
+        }
+        setRunning(command.active)
+      }
     },
     claimGreeting: () => claimSessionOnce('sino-greet'),
     hasClip: (name) => actions.has(name),

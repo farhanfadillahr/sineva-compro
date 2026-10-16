@@ -70,7 +70,9 @@ describe('NotFoundView', () => {
     expect(pose).not.toBeNull()
     const img = pose.querySelector('img')!
     expect(img.getAttribute('alt')).toBe('')
-    expect(decodeURIComponent(img.getAttribute('src')!)).toContain('/mascot/poses/sino-confused')
+    expect(decodeURIComponent(img.getAttribute('src')!)).toContain(
+      '/mascot/poses/v006/sino-confused',
+    )
   })
 
   it('has exactly one image, so Sino is the only large mascot on the page', async () => {

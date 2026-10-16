@@ -40,7 +40,7 @@ function Stage({ enabled = true }: { enabled?: boolean }) {
     <section data-testid="hero">
       <div data-slot="sino-stage">
         {/* eslint-disable-next-line @next/next/no-img-element -- test stand-in for next/image */}
-        <img src="/mascot/poster/sino-hero.webp" alt="" width={1600} height={1600} />
+        <img src="/mascot/poster/v006/sino-hero.webp" alt="" width={1600} height={1600} />
         <div data-slot="sino-canvas" aria-hidden="true">
           <SinoHero enabled={enabled} />
         </div>

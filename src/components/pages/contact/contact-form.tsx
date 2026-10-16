@@ -35,7 +35,7 @@ import {
 
 // The form of /contact for the static launch. There is no backend: a valid submit composes a
 // message from the answers and opens it in WhatsApp (or the visitor's mail app), in a new tab,
-// then moves this tab to the thank-you page. Nothing is posted, stored or logged here, so the form
+// then moves this tab to the thank-you page. No answers are posted, stored or logged here, so the form
 // has no `action`, no fetch, and gives no control a `name`: if the script ever failed to load, a
 // native submit would otherwise put the visitor's answers into the address bar.
 

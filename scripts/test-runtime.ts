@@ -13,7 +13,7 @@ else if (mode === 'server')
     '--hostname',
     '127.0.0.1',
     '--port',
-    '3001',
+    new URL(env.authUrl).port || '80',
   ]
 else throw new Error('Test runtime mode must be prepare or server')
 

@@ -119,7 +119,7 @@ it('does not count CSRF, untrusted callback, malformed requests or IP limits as 
     headers: {
       origin: ctx.env.authUrl,
       'content-type': 'application/json',
-      'x-forwarded-for': ctx.ip(),
+      'cf-connecting-ip': ctx.ip(),
     },
     body: JSON.stringify({
       email: e.email,

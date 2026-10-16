@@ -115,4 +115,9 @@ export const collectionSeedData: Record<
       },
     ],
   },
+  categories: {
+    launch: () =>
+      staticContent.categories.map((c) => ({ key: c.slug, global: {}, local: { name: c.name } })),
+    demo: [{ key: 'demo-category', global: {}, local: { name: '[Demo] Category' } }],
+  },
 }

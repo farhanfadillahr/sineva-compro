@@ -42,6 +42,13 @@ export type SelectField = Readonly<{
   options: readonly Readonly<{ value: string; label: string }>[]
   nullable?: boolean
   hint?: string
+  /** Options supplied at render time (for example categories); see `TagsField.optionsKey`. */
+  optionsKey?: string
+  /**
+   * Regex source the server accepts for values outside `options` (dynamic options). The service
+   * must still check that the referenced record exists.
+   */
+  pattern?: string
 }>
 export type MediaField = Readonly<{
   kind: 'media'
@@ -206,7 +213,7 @@ export function parseMediaValue(input: unknown): MediaValue | undefined {
   return undefined
 }
 
-type Context = { errors: FieldErrors; isAdmin: boolean; previous: unknown }
+type Context = { errors: FieldErrors; isAdmin: boolean; previous: unknown; partial: boolean }
 
 const join = (path: string, key: string | number) => (path ? `${path}.${key}` : String(key))
 
@@ -221,7 +228,7 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
         return fail('Nilai tidak valid.')
       const value = schema.keepSpaces ? (input ?? '') : (input ?? '').trim()
       if (!value.trim()) {
-        if (schema.required) return fail(`${schema.label} wajib diisi.`)
+        if (schema.required && !ctx.partial) return fail(`${schema.label} wajib diisi.`)
         return schema.nullable ? null : schema.keepSpaces ? value : ''
       }
       if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value))
@@ -242,9 +249,11 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       return typeof input === 'boolean' ? input : fail('Nilai tidak valid.')
     case 'select': {
       if ((input === null || input === '' || input === undefined) && schema.nullable) return null
-      return typeof input === 'string' && schema.options.some((option) => option.value === input)
-        ? input
-        : fail(`Pilih ${schema.label.toLowerCase()} dari daftar.`)
+      const allowed =
+        typeof input === 'string' &&
+        (schema.options.some((option) => option.value === input) ||
+          (!!schema.pattern && new RegExp(`^(?:${schema.pattern})$`).test(input)))
+      return allowed ? input : fail(`Pilih ${schema.label.toLowerCase()} dari daftar.`)
     }
     case 'media': {
       const value = parseMediaValue(input)
@@ -264,13 +273,15 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       )
       if (invalid !== undefined) return fail(`Tag "${invalid}" tidak dikenal.`)
       if (tags.length > schema.max) return fail(`Maksimal ${schema.max} tag.`)
-      if (tags.length < (schema.min ?? 0)) return fail(`Pilih minimal ${schema.min} tag.`)
+      if (!ctx.partial && tags.length < (schema.min ?? 0))
+        return fail(`Pilih minimal ${schema.min} tag.`)
       return tags
     }
     case 'list': {
       if (!Array.isArray(input)) return fail('Daftar tidak valid.')
       if (input.length > schema.max) return fail(`Maksimal ${schema.max} item.`)
-      if (input.length < (schema.min ?? 0)) return fail(`Minimal ${schema.min} item.`)
+      if (!ctx.partial && input.length < (schema.min ?? 0))
+        return fail(`Minimal ${schema.min} item.`)
       const previous = Array.isArray(ctx.previous) ? ctx.previous : []
       return input.map((item, index) =>
         parseField(schema.item, item, join(path, index), { ...ctx, previous: previous[index] }),
@@ -306,9 +317,16 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
 export function parseFields<T>(
   schema: FieldSchema,
   input: unknown,
-  options: { isAdmin: boolean; previous?: unknown } = { isAdmin: true },
+  options: { isAdmin: boolean; previous?: unknown; partial?: boolean } = { isAdmin: true },
 ): ParseResult<T> {
-  const ctx: Context = { errors: {}, isAdmin: options.isAdmin, previous: options.previous }
+  const ctx: Context = {
+    errors: {},
+    isAdmin: options.isAdmin,
+    previous: options.previous,
+    // Drafts: empty required fields and short lists are allowed until publish; formats,
+    // limits and copy rules still apply.
+    partial: options.partial ?? false,
+  }
   const value = parseField(schema, input, '', ctx)
   return Object.keys(ctx.errors).length
     ? { ok: false, errors: ctx.errors }

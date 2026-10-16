@@ -65,6 +65,7 @@ export const productCapabilityTables = collectionTables('product_capability')
 export const businessTypeTables = collectionTables('business_type')
 export const faqItemTables = collectionTables('faq_item')
 export const teamMemberTables = collectionTables('team_member')
+export const categoryTables = collectionTables('category')
 
 export const productCapability = productCapabilityTables.items
 export const productCapabilityTranslation = productCapabilityTables.translations
@@ -74,5 +75,7 @@ export const faqItem = faqItemTables.items
 export const faqItemTranslation = faqItemTables.translations
 export const teamMember = teamMemberTables.items
 export const teamMemberTranslation = teamMemberTables.translations
+export const category = categoryTables.items
+export const categoryTranslation = categoryTables.translations
 
 export type CollectionTables = ReturnType<typeof collectionTables>

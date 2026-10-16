@@ -20,7 +20,7 @@ export type CollectionItem = {
 
 export type CollectionConfig = Readonly<{
   /** Registry name, also the table prefix. */
-  name: 'capabilities' | 'businessTypes' | 'faq' | 'team'
+  name: 'capabilities' | 'businessTypes' | 'faq' | 'team' | 'categories'
   /** Admin URL of the list, for redirects and revalidation. */
   adminPath: string
   title: string
@@ -147,11 +147,27 @@ export const teamConfig: CollectionConfig = {
   }),
 }
 
+export const categoriesConfig: CollectionConfig = {
+  name: 'categories',
+  adminPath: '/admin/blog/categories',
+  title: 'Kategori artikel',
+  itemLabel: 'Kategori',
+  description: 'Filter blog memakai kunci kategori: /blog?category=<kunci>.',
+  keyLabel: 'Slug',
+  audit: 'categories',
+  mediaEntity: 'posts',
+  titleField: 'name',
+  auditNames: { key: 'slug' },
+  globalSchema: f.object({}),
+  localeSchema: f.object({ name: f.required('Nama', 40) }),
+}
+
 export const collectionConfigs = {
   capabilities: capabilitiesConfig,
   businessTypes: businessTypesConfig,
   faq: faqConfig,
   team: teamConfig,
+  categories: categoriesConfig,
 } as const satisfies Record<CollectionConfig['name'], CollectionConfig>
 
 export type CollectionName = keyof typeof collectionConfigs

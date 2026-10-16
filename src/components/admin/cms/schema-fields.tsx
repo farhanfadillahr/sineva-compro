@@ -217,6 +217,8 @@ export function SchemaField(props: Props): ReactNode {
 function SelectInput(props: Props & { schema: Extract<FieldSchema, { kind: 'select' }> }) {
   const id = useId()
   const { schema, value, onChange, errors, path } = props
+  const dynamic = useContext(FieldOptionsContext)[schema.optionsKey ?? ''] ?? []
+  const options = [...schema.options, ...dynamic]
   return (
     <div className={s.field}>
       <label htmlFor={id}>{schema.label}</label>
@@ -229,7 +231,7 @@ function SelectInput(props: Props & { schema: Extract<FieldSchema, { kind: 'sele
         }
       >
         {schema.nullable ? <option value="">Tidak ada</option> : null}
-        {schema.options.map((option) => (
+        {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

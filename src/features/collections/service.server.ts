@@ -252,8 +252,11 @@ export async function deleteCollectionItem(headers: Headers, name: CollectionNam
       refs: [],
     },
     run: async (tx, actor) => {
-      const [row] = await tx.delete(items).where(eq(items.id, id)).returning({ key: items.key })
-      if (!row) throw new CmsError('NOT_FOUND', `${config.itemLabel} tidak ditemukan.`)
+      const [current] = await tx.select().from(items).where(eq(items.id, id)).for('update')
+      if (!current) throw new CmsError('NOT_FOUND', `${config.itemLabel} tidak ditemukan.`)
+      const blocked = await collectionRegistry[name].inUse?.(tx, current)
+      if (blocked) throw new CmsError('CONFLICT', blocked)
+      await tx.delete(items).where(eq(items.id, id))
       await writeAudit(tx, actor, {
         entity: config.audit,
         entityId: `${name}:${id}`,

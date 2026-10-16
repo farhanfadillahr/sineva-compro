@@ -71,6 +71,13 @@
       "when": 1792154274945,
       "tag": "0009_cpr28_team",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792154627948,
+      "tag": "0010_cpr31_blog",
+      "breakpoints": true
     }
   ]
 }

@@ -122,9 +122,26 @@ Native scrolling only. **No smooth-scroll hijacking library** (Sintra does not u
 
 ### 4.1 Reveal on scroll
 
-- Section headings and cards fade + rise 24 px when 15% of the element enters the viewport. Play once.
-- Card grids stagger 50 ms per card.
-- Implemented with IntersectionObserver plus CSS classes (no animation library needed). Elements already in view at load are not animated twice.
+Every section below the hero plays one of five presets, chosen by the **role** of the element, so a heading, a card and a picture each move their own way. Nothing is decorative: the motion shows what is arriving and in what order. `Reveal` takes a `variant` prop (default `rise`, which keeps the original behaviour for anything not yet assigned).
+
+| Variant | Role | Motion | Timing | Driver |
+|---|---|---|---|---|
+| `rise` | Text blocks, forms, share rows, anything without a better role | Fade, rise 24 px | 520 ms `--ease-out-expo`; siblings stagger 50 ms by `index` | IntersectionObserver + CSS |
+| `lines` | Section headers (`SectionHeader` inside `Reveal`) | Each title line rises 100% to 0 out of its own mask (`overflow: clip` per line); eyebrow, lead and action follow 120 ms later with a fade and a 12 px rise | 700 ms `--ease-out-expo`, 70 ms per line; parts 600 ms | IntersectionObserver + CSS, line split at runtime |
+| `depth` | Cards and grid items | From 40 px down, scale 0.96, rotateX 6 deg (perspective 1000 px, origin bottom) and opacity 0 to rest | 800 ms `--ease-out-expo`, 60 ms stagger by **arrival** (cards that enter together, in document order; a card that enters alone starts at once; capped at six) | IntersectionObserver + CSS |
+| `clip` | Pictures, frames and phones that have no motion of their own (article images) | `clip-path: inset(18% 0 0 0 round var(--radius))` to `inset(0)`, wipes up from the bottom edge, while the picture settles from scale 1.06; opacity 0 to 1 in the first 500 ms | 900 ms `--ease-out-expo` | IntersectionObserver + CSS |
+| `rise-scale` | The final CTA panel | Scale 0.94 and opacity 0 to rest; corners ease from a 48 px round to the panel's own radius (as a `clip-path` round, so only transform, opacity and clip-path animate) | Scrubbed with scroll, `start: clamp(top 92%)` to `end: clamp(top 50%)`, no clock | GSAP ScrollTrigger `scrub: true` |
+
+Shared rules:
+- **Server HTML is the final state.** The `from` state is only applied on the client, before first paint, to blocks below the fold (`useReveal`). A block already in view at load, or above it after a scroll restore, is never animated. A reveal plays once.
+- **Reduced motion** (section 9): every preset renders the final state. Nothing is split, observed or scrubbed, and the CSS has a matching override in case the preference flips after JS decided.
+- **Properties:** transform, opacity and clip-path only. `will-change` is set while a block is hidden or playing and dropped when it settles (`data-reveal="done"`).
+- **`lines` split.** The title is measured: each word goes in a span, rendered tops are grouped into lines, and each line becomes `<span data-line aria-hidden>` with an inner span that moves. The heading gets an `aria-label` with its full text, so a screen reader reads it once, as one heading. It re-splits (150 ms debounce, on width change and when web fonts finish loading) while it is still waiting; once the animation settles the original text node is put back, so the heading reflows natively from then on. A title with markup inside (a link, `em`, `br`) is not split and fades and rises as a block.
+- **`clip` and poses.** `AnimatedPose` has its own reveal, float and parallax. Inside a `Reveal` (a card, the CTA panel) a pose skips its own rise and rides in with its parent, so there is never a double motion. Use `clip` for pictures that are not poses.
+- **`rise-scale` loading.** GSAP and ScrollTrigger load only when the panel is within one viewport height of the screen, never on page load, and are killed on unmount and route change. Until they arrive the same from state is applied by CSS; if the chunk never loads, the panel plays as a one-shot fade and scale. It is the only GSAP use among the presets.
+- **Section progress (optional).** `SectionHeader rule` draws a 1 px hairline under the header with scroll, as a CSS scroll-driven animation (`animation-timeline: view()`, `scaleX` 0 to 1 over the first 35% of the section's travel). It is behind `@supports` and `prefers-reduced-motion: no-preference`; everywhere else the line is simply drawn. Used on the capability bento and the services cards only.
+- **Not covered by these presets:** hero sections (own entrance), sticky columns (StickySteps, tables of contents), phone-frame internals and the footer.
+- Where each is applied: headers `lines`, every card in a grid (and the mission, contact, featured post and empty-state cards) `depth`, rich-text article images `clip`, the final CTA `rise-scale`; text, forms, tabs, pagination and the FAQ accordion stay `rise`. `tests/unit/scroll-reveal-coverage.test.tsx` checks the roles on every public page.
 
 ### 4.2 Sticky step story ("How it works")
 

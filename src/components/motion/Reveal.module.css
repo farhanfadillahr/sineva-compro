@@ -1,19 +1,32 @@
 /*
- * Reveal on scroll (docs/design/motion.md 4.1). The server renders no state class at all, so with
+ * Scroll presets (docs/design/motion.md 4.1). The server renders no state class at all, so with
  * JavaScript off (or before it runs) every block is in its final, visible state. `.hidden` is only
- * ever added by useReveal on the client, before first paint, for blocks below the fold.
+ * ever added by useReveal on the client, before first paint, for blocks below the fold; `.shown`
+ * plays the transition to rest once; after that the element carries no state class at all.
  *
- * Only opacity and transform are animated. The var() fallbacks are the documented token values so
- * the component works regardless of whether the global motion tokens are loaded.
+ * One variant class per role (the numbers live in src/lib/motion/tokens.ts, revealPresets, and a
+ * test compares the two):
+ *   .rise        text blocks: fade and 24 px rise
+ *   .lines       headings: each line rises out of its own mask (the split is done in JS, the
+ *                motion is here), then eyebrow and lead fade in 12 px
+ *   .depth       cards: 40 px, scale .96 and a 6 degree tilt back to rest
+ *   .clip        media: bottom-up clip wipe with the image settling from 1.06
+ *   .riseScale   final CTA panel: CSS only as the fallback; GSAP scrubs it when it loads
+ *
+ * Only opacity, transform and clip-path are animated. will-change exists only while a block is
+ * hidden or playing. The var() fallbacks are the documented token values so the component works
+ * regardless of whether the global motion tokens are loaded.
  */
 
-.hidden {
+/* rise */
+
+.rise.hidden {
   opacity: 0;
   transform: translateY(var(--reveal-distance, 24px));
   will-change: opacity, transform;
 }
 
-.shown {
+.rise.shown {
   opacity: 1;
   transform: none;
   transition:
@@ -23,12 +36,146 @@
   will-change: opacity, transform;
 }
 
+/*
+ * lines. The wrapper itself never fades: its title is split into masked lines by useReveal
+ * (`[data-split]`), and the eyebrow, lead and action are marked `data-reveal-part` by
+ * SectionHeader. A title that could not be split (markup inside) is faded and risen as a block.
+ */
+
+.lines.hidden [data-reveal-part]:not([data-reveal-part='title']) {
+  opacity: 0;
+  transform: translateY(12px);
+  will-change: opacity, transform;
+}
+
+.lines.hidden [data-reveal-part='title']:not([data-split]) {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance, 24px));
+  will-change: opacity, transform;
+}
+
+.lines.shown [data-reveal-part]:not([data-reveal-part='title']),
+.lines.shown [data-reveal-part='title']:not([data-split]) {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 600ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 600ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: calc(var(--reveal-delay, 0ms) + 120ms);
+  will-change: opacity, transform;
+}
+
+/*
+ * The mask is one block per line. The vertical padding and the equal negative margin give the
+ * glyphs room (ascenders, descenders, accents) without changing the line's height in the flow,
+ * which is why the split heading is the same height as the plain one it replaces.
+ */
+.lines [data-split] [data-line] {
+  display: block;
+  overflow: clip;
+  padding-block: 0.14em;
+  margin-block: -0.14em;
+}
+
+.lines [data-split] [data-line-inner] {
+  display: block;
+}
+
+.lines.hidden [data-split] [data-line-inner] {
+  transform: translateY(100%);
+  will-change: transform;
+}
+
+.lines.shown [data-split] [data-line-inner] {
+  transform: none;
+  transition: transform 700ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: calc(var(--reveal-delay, 0ms) + var(--line, 0) * 70ms);
+  will-change: transform;
+}
+
+/* depth */
+
+.depth.hidden {
+  opacity: 0;
+  transform: perspective(1000px) translate3d(0, 40px, 0) rotateX(6deg) scale(0.96);
+  transform-origin: 50% 100%;
+  will-change: opacity, transform;
+}
+
+.depth.shown {
+  opacity: 1;
+  transform: none;
+  transform-origin: 50% 100%;
+  transition:
+    opacity 640ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 800ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+/* clip */
+
+.clip.hidden {
+  opacity: 0;
+  clip-path: inset(18% 0 0 0 round var(--reveal-radius, var(--radius-card, 20px)));
+  will-change: opacity, clip-path;
+}
+
+.clip.hidden :is(img, picture, video, [data-reveal-media]) {
+  transform: scale(1.06);
+  will-change: transform;
+}
+
+.clip.shown {
+  opacity: 1;
+  clip-path: inset(0 0 0 0 round var(--reveal-radius, var(--radius-card, 20px)));
+  transition:
+    opacity 500ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    clip-path 900ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, clip-path;
+}
+
+.clip.shown :is(img, picture, video, [data-reveal-media]) {
+  transform: none;
+  transition: transform 900ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: transform;
+}
+
+/* riseScale: the from state before GSAP is ready, and the whole effect if it never loads. */
+
+.riseScale.hidden {
+  opacity: 0;
+  transform: scale(0.94);
+  clip-path: inset(0 round 48px);
+  will-change: opacity, transform, clip-path;
+}
+
+.riseScale.shown {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 round var(--reveal-radius, var(--radius-2xl, 36px)));
+  transition:
+    opacity 600ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 800ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    clip-path 800ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  will-change: opacity, transform, clip-path;
+}
+
 /* Safety net for a preference flipped after JS decided: never leave anything hidden or moving. */
 @media (prefers-reduced-motion: reduce) {
   .hidden,
-  .shown {
+  .shown,
+  .hidden [data-reveal-part],
+  .shown [data-reveal-part],
+  .hidden [data-line-inner],
+  .shown [data-line-inner],
+  .hidden :is(img, picture, video, [data-reveal-media]),
+  .shown :is(img, picture, video, [data-reveal-media]) {
     opacity: 1;
     transform: none;
+    clip-path: none;
     transition: none;
     will-change: auto;
   }

@@ -144,6 +144,10 @@ For logo rows or capability tags only. 40-60 px/s linear, duplicated track, edge
 
 Pattern from Sintra pricing: once the hero CTA scrolls out of view, a slim bar slides up from the bottom (yPercent 100 to 0, 400 ms `power2.out`) with the primary CTA and the WhatsApp button. It hides again when the hero is back in view or when the final CTA section is visible. Mobile only on long pages (Home, Services detail, Product).
 
+### 4.6 Parallax
+
+Visuals drift against the scroll at 0.92x, transform only, clamped to ±24 px ([mascot-sino.md](mascot-sino.md) §5.1 has the pose version). Sino poses get it from `AnimatedPose`. Everything else that is a visual (hero images, hero phone mockups, the scene frame) is wrapped in `Parallax` (`src/components/motion/Parallax.tsx`): `mode="top"` for a visual on screen at load (offset follows the page scroll, zero at the top, so nothing jumps), `centre` for one further down. Passive listeners, one rAF per burst, no listener under reduced motion. Not used on sticky columns (StickySteps), on the live Sino canvas hero (the rig has its own scroll motion) or inside clipping frames.
+
 ## 5. Navbar
 
 The header has two looks: the regular full-width bar at the top of the page, and a floating pill below it that hides itself when the visitor is idle. The surface and the hide-on-scroll idea come from Sintra's custom header; the floating pill and the idle hide are Sineva's own.

@@ -164,11 +164,11 @@ export function HeroSplit({
   if (variant === 'mockup') {
     visual = (
       <div {...visualMotion} className="relative mx-auto w-full max-w-md py-6">
-        <Parallax mode="top">
-          <PhoneFrame chrome={mockup?.chrome}>
-            <ChatBubbles bubbles={mockup?.bubbles ?? []} />
-          </PhoneFrame>
-        </Parallax>
+        {/* No parallax on the phone: the owner found the moving phone fighting the copy next to
+            it. The chat inside already animates. */}
+        <PhoneFrame chrome={mockup?.chrome}>
+          <ChatBubbles bubbles={mockup?.bubbles ?? []} />
+        </PhoneFrame>
         {(mockup?.chips ?? []).slice(0, CHIP_POSITIONS.length).map((chip, index) => (
           <UiChip
             key={index}

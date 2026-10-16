@@ -2,7 +2,6 @@ import { Card, Container, Section, SectionHeader, type SectionTone } from '@/com
 import type { CardTone } from '@/components/ui/card'
 import { cx } from '@/components/ui/cx'
 import { AnimatedPose } from '@/components/motion/animated-pose'
-import { Parallax } from '@/components/motion/Parallax'
 import { Reveal } from '@/components/motion/Reveal'
 import type { CapabilityTint, MediaAsset, ProductCapability } from '@/features/content/types'
 import { bentoColClass, bentoLayout, bentoRowClass } from './_internal/bento'
@@ -116,21 +115,23 @@ export function TaskCardGrid({
                         isFeaturedTile ? 'h-80 md:h-96 lg:h-auto lg:min-h-0 lg:flex-1' : 'h-64',
                       )}
                     >
-                      <Parallax className="absolute inset-x-0 top-0">
-                        <PhoneFrame
-                          chrome={phoneChrome}
-                          size={isFeaturedTile ? 'lg' : 'sm'}
-                          className={cx(isFeaturedTile ? 'max-w-80 lg:max-w-88' : 'max-w-60')}
-                        >
-                          <ChatBubbles
-                            bubbles={mockupLines.map((text, i) => ({
-                              // The request comes first, then Sino's reply, alternating.
-                              from: i % 2 === 0 ? ('user' as const) : ('sino' as const),
-                              text,
-                            }))}
-                          />
-                        </PhoneFrame>
-                      </Parallax>
+                      {/* No parallax here: a moving phone slid up under the card's caption. */}
+                      <PhoneFrame
+                        chrome={phoneChrome}
+                        size={isFeaturedTile ? 'lg' : 'sm'}
+                        className={cx(
+                          'absolute inset-x-0 top-0',
+                          isFeaturedTile ? 'max-w-80 lg:max-w-88' : 'max-w-60',
+                        )}
+                      >
+                        <ChatBubbles
+                          bubbles={mockupLines.map((text, i) => ({
+                            // The request comes first, then Sino's reply, alternating.
+                            from: i % 2 === 0 ? ('user' as const) : ('sino' as const),
+                            text,
+                          }))}
+                        />
+                      </PhoneFrame>
                     </div>
                   ) : null}
                 </Card>

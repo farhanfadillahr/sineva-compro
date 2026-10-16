@@ -29,7 +29,6 @@ function runGate(settings: { enabled: boolean; force: boolean }) {
   tag.dataset.force = settings.force ? '1' : '0'
   Object.defineProperty(document, 'currentScript', { value: tag, configurable: true })
   try {
-    // eslint-disable-next-line no-eval -- the script under test is an inline classic script
     ;(0, eval)(INTRO_GATE_SCRIPT)
   } finally {
     Reflect.deleteProperty(document, 'currentScript')
@@ -118,7 +117,6 @@ describe('intro gate script', () => {
   })
 
   it('does nothing, and does not throw, when it cannot find its own element', () => {
-    // eslint-disable-next-line no-eval -- the script under test is an inline classic script
     expect(() => (0, eval)(INTRO_GATE_SCRIPT)).not.toThrow()
     expect(document.documentElement.dataset.logoIntro).toBeUndefined()
   })
@@ -173,7 +171,7 @@ describe('server-rendered gate and shell', () => {
     expect(layout.indexOf('<LogoIntroShell')).toBeGreaterThan(layout.indexOf('<body'))
     expect(layout.indexOf('<LogoIntroShell')).toBeLessThan(layout.indexOf('<SkipLink'))
     // The script flips an attribute on <html> before React hydrates it.
-    expect(layout).toMatch(/<html[^>]*suppressHydrationWarning/s)
+    expect(layout).toMatch(/<html[\s\S]*?suppressHydrationWarning[\s\S]*?<head>/)
   })
 })
 

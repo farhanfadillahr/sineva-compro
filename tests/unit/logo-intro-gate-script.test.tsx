@@ -226,27 +226,34 @@ describe('overlay CSS', () => {
     expect(5000).toBe(SPLASH_TIMING.hardStopMs)
   })
 
-  it('centres Sino: a 3:4 box whose top is the top of the screen, out of flow', () => {
+  it('centres a smaller Sino: a 54svh 3:4 box with her middle on the middle of the screen', () => {
     expect(launch).toMatch(/position:\s*absolute/)
-    expect(launch).toMatch(/top:\s*0/)
-    expect(launch).toMatch(/height:\s*76svh/)
+    // her middle sits at 59 % of the box: 50svh - 0.59 * 54svh = 18svh
+    expect(launch).toMatch(/top:\s*18svh/)
+    expect(launch).toMatch(/height:\s*54svh/)
     expect(launch).toMatch(/aspect-ratio:\s*3\s*\/\s*4/)
     expect(launch).toMatch(/pointer-events:\s*none/)
   })
 
-  it('sizes and places her from the measured silhouette: about 55svh tall, near the middle', () => {
+  it('fades the top of the clip so Sino leaves without a visible cut line', () => {
+    expect(css).toMatch(
+      /\.launch video\s*{[^}]*mask-image:\s*linear-gradient\(to bottom, transparent/,
+    )
+  })
+
+  it('sizes and places her from the measured silhouette: about 40svh tall, centred', () => {
     // Per-frame alpha bounding box of the standing pose (ffmpeg cropdetect, limit 0.03): the
     // silhouette spans y 204..924 of the 960 px frame.
     const top = 204 / 960
     const bottom = 924 / 960
     const boxHeightSvh = Number(launch.match(/height:\s*(\d+)svh/)![1])
+    const boxTopSvh = Number(launch.match(/top:\s*(\d+)svh/)![1])
     const heightSvh = (bottom - top) * boxHeightSvh
-    const middleSvh = ((top + bottom) / 2) * boxHeightSvh
-    expect(heightSvh).toBeGreaterThan(52)
-    expect(heightSvh).toBeLessThan(60)
-    // The box cannot move down: its top edge has to stay on the top of the screen, or she would be
-    // cut along a line across the screen while flying out of it. That leaves her a little high.
-    expect(Math.abs(middleSvh - 50)).toBeLessThan(7)
+    const middleSvh = boxTopSvh + ((top + bottom) / 2) * boxHeightSvh
+    // The owner found 57svh too big.
+    expect(heightSvh).toBeGreaterThan(36)
+    expect(heightSvh).toBeLessThan(44)
+    expect(Math.abs(middleSvh - 50)).toBeLessThan(2)
   })
 
   it('moves nothing but clip-path: no layout properties and no dissolve', () => {

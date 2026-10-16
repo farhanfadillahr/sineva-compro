@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
-import { PoseImage } from '@/components/pages/home/pose-image'
+import { SinoLoop } from '@/components/motion/sino-loop'
+import { poseImage } from '@/components/pages/home/poses'
 import { SinoStage } from '@/components/sections/_internal/sino-stage'
 import { Button, Container, Section, type ActionLinkComponent } from '@/components/ui'
 import type { NotFoundPageContent, PageLinkTarget } from '@/features/content/types'
@@ -29,7 +30,9 @@ export type NotFoundViewProps = Readonly<{
  * primary action; the rest are secondary so the page has one clear next step.
  *
  * Sino is decorative (empty alt): the headline carries the meaning. The pose goes through
- * AnimatedPose like every other still, and sits in a stage so its glow reacts to hover.
+ * AnimatedPose like every other still, and sits in a stage so its glow reacts to hover. SinoLoop
+ * is that same AnimatedPose: it plays L-confused once the loop is delivered and draws the confused
+ * still until then.
  */
 export function NotFoundView({ page, linkComponent }: NotFoundViewProps) {
   const t = useTranslations('NotFound')
@@ -40,8 +43,9 @@ export function NotFoundView({ page, linkComponent }: NotFoundViewProps) {
           {/* The stage glow spills past its box; the clip keeps it from widening the page. */}
           <div className="w-full overflow-x-clip">
             <SinoStage className="max-w-48 sm:max-w-56">
-              <PoseImage
-                pose="confused"
+              <SinoLoop
+                loop="L-confused"
+                still={poseImage('confused')}
                 sizes="(min-width: 640px) 224px, 192px"
                 className="size-full object-contain"
               />

@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MeetSinoSection } from '@/components/pages/home/meet-sino-section'
-import { poseImage } from '@/components/pages/home/poses'
 import { loadThankYouModel } from '@/components/pages/contact/contact-model'
 import { ThankYouView } from '@/components/pages/contact/thank-you-view'
+import { NotFoundView } from '@/components/pages/not-found/not-found-view'
 import { FinalCta } from '@/components/sections/final-cta'
 import { TwoPaths } from '@/components/sections/two-paths'
 import { createStaticContentSource } from '../../src/content/static'
@@ -22,10 +22,6 @@ import { image } from './sections-test-utils'
 // prove each placement asks for the right loop, and leave them off to prove each placement still
 // draws the still pose it showed before the loops existed.
 const state = vi.hoisted(() => ({ ready: false }))
-
-vi.mock('next-intl/server', () => ({
-  getTranslations: async () => (key: string) => key,
-}))
 
 vi.mock('../../src/components/motion/sino-loops', async (importOriginal) => {
   const original = await importOriginal<typeof import('../../src/components/motion/sino-loops')>()
@@ -192,8 +188,8 @@ describe('thank-you page', () => {
 
 describe('404 page', () => {
   async function view() {
-    const { default: NotFound } = await import('../../src/app/(public)/[locale]/not-found')
-    return render(await NotFound()).container
+    const page = (await createStaticContentSource().getPage('notFound', 'en'))!
+    return intl(<NotFoundView page={page} />).container
   }
 
   it('plays L-confused when ready', async () => {
@@ -201,12 +197,11 @@ describe('404 page', () => {
     expect(videoSources(await view())).toEqual(['/mascot/loops/sino-loop-confused.webm'])
   })
 
-  it('shows the decorative confused still until then', async () => {
+  it('keeps the decorative confused still until then', async () => {
     const container = await view()
     expect(videoSources(container)).toEqual([])
     const img = container.querySelector('img')!
     expect(img.getAttribute('src')).toContain('sino-confused')
     expect(img.getAttribute('alt')).toBe('')
-    expect(poseImage('confused')).not.toBeNull()
   })
 })

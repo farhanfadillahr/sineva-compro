@@ -55,7 +55,9 @@ describe('every pose on Services, Product, Contact and 404 goes through Animated
     const resolvers = files.filter((f) => /\bposeImage\(/.test(code(f)))
     expect(resolvers.length).toBeGreaterThan(0)
     for (const file of resolvers) {
-      expect(code(file), rel(file)).toMatch(/<(HeroSplit|FinalCta|TaskCardGrid|TwoPaths)\b/)
+      expect(code(file), rel(file)).toMatch(
+        /<(HeroSplit|FinalCta|TaskCardGrid|TwoPaths|SinoLoop)\b/,
+      )
     }
   })
 
@@ -68,14 +70,20 @@ describe('every pose on Services, Product, Contact and 404 goes through Animated
     for (const file of withPriority) expect(code(join(ROOT, file))).toMatch(/<HeroSplit\b/)
   })
 
-  it.each([
-    ['services/service-cards-section.tsx'],
-    ['services/services-list-view.tsx'],
-    ['contact/thank-you-view.tsx'],
-    ['not-found/not-found-view.tsx'],
-  ])('%s draws its pose with PoseImage', (name) => {
-    expect(code(join(PAGES, name))).toMatch(/<(?:PoseImage|JourneySteps)\b/)
-  })
+  it.each([['services/service-cards-section.tsx'], ['services/services-list-view.tsx']])(
+    '%s draws its pose with PoseImage',
+    (name) => {
+      expect(code(join(PAGES, name))).toMatch(/<(?:PoseImage|JourneySteps)\b/)
+    },
+  )
+
+  // SinoLoop is AnimatedPose with a video, and draws the same still while its loop is not ready.
+  it.each([['contact/thank-you-view.tsx'], ['not-found/not-found-view.tsx']])(
+    '%s plays its loop with SinoLoop',
+    (name) => {
+      expect(code(join(PAGES, name))).toMatch(/<SinoLoop\b/)
+    },
+  )
 })
 
 describe('the blocks the Services and Product pages compose animate their stills', () => {

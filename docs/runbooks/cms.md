@@ -82,3 +82,13 @@ inserts launch rows whose key is missing; demo rows use a `demo-` key and `is_de
 status is stored once in the Product page document; Home and Product read it, so switching it moves
 the site's calls to action from the waitlist to "try" without a deploy. Business types are the
 Product page tabs only; the contact and waitlist segment list stays a fixed list in code.
+
+## FAQ library (CPR-84)
+
+`/admin/faq`: one library for Home, Product, Services and each service page. Tags decide where an
+item appears (`home`, `product`, `services`, `service:<slug>`, listed from the current services).
+The library order applies inside every tag; reorder from the "Semua" view. Answers are limited to
+paragraphs and lists with bold, italic and links. The landing page builds `FAQPage` JSON-LD from
+the same items with plain-text answers (`buildFaqPageJsonLd`). Tags live in the item's validated
+`data`, which keeps the library on the shared collection engine; a separate tag table can be added
+if the library grows beyond a few hundred items.

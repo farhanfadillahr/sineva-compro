@@ -7,7 +7,7 @@
  * (FR-COPY-01) through the shared dash rule.
  */
 import { findForbiddenDashes, FORBIDDEN_DASH_MESSAGE } from '../../lib/copy/dash-rule'
-import { parseRichText } from './rich-text'
+import { parseRichText, type RichTextProfile } from './rich-text'
 
 export type TextFormat = 'email' | 'url' | 'e164' | 'date' | 'token' | 'slug' | 'path'
 
@@ -49,7 +49,26 @@ export type MediaField = Readonly<{
   hint?: string
   adminOnly?: boolean
 }>
-export type RichTextField = Readonly<{ kind: 'richText'; label: string; hint?: string }>
+export type RichTextField = Readonly<{
+  kind: 'richText'
+  label: string
+  hint?: string
+  /** `answer` allows paragraphs and lists with bold, italic and links only (FAQ answers). */
+  profile?: RichTextProfile
+}>
+/** Several values from a list; `pattern` also allows values outside it (for example per service). */
+export type TagsField = Readonly<{
+  kind: 'tags'
+  label: string
+  options: readonly Readonly<{ value: string; label: string }>[]
+  /** Regex source for values not in `options`. */
+  pattern?: string
+  /** Key of options supplied at render time (for example the current services). */
+  optionsKey?: string
+  min?: number
+  max: number
+  hint?: string
+}>
 export type ListField = Readonly<{
   kind: 'list'
   label: string
@@ -75,7 +94,14 @@ export type ObjectField = Readonly<{
   collapsible?: boolean
 }>
 export type FieldSchema =
-  TextField | BooleanField | SelectField | MediaField | RichTextField | ListField | ObjectField
+  | TextField
+  | BooleanField
+  | SelectField
+  | MediaField
+  | RichTextField
+  | TagsField
+  | ListField
+  | ObjectField
 
 /** How a media field is stored: a library reference, or a file shipped in `public/`. */
 export type MediaValue =
@@ -225,8 +251,21 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       return value === undefined ? fail('Media tidak valid.') : value
     }
     case 'richText': {
-      const result = parseRichText(input)
+      const result = parseRichText(input, schema.profile)
       return result.ok ? result.value : fail(result.message)
+    }
+    case 'tags': {
+      if (!Array.isArray(input) || input.some((tag) => typeof tag !== 'string'))
+        return fail('Tag tidak valid.')
+      const tags = [...new Set(input as string[])]
+      const pattern = schema.pattern ? new RegExp(`^(?:${schema.pattern})$`) : null
+      const invalid = tags.find(
+        (tag) => !schema.options.some((o) => o.value === tag) && !pattern?.test(tag),
+      )
+      if (invalid !== undefined) return fail(`Tag "${invalid}" tidak dikenal.`)
+      if (tags.length > schema.max) return fail(`Maksimal ${schema.max} tag.`)
+      if (tags.length < (schema.min ?? 0)) return fail(`Pilih minimal ${schema.min} tag.`)
+      return tags
     }
     case 'list': {
       if (!Array.isArray(input)) return fail('Daftar tidak valid.')
@@ -341,6 +380,8 @@ export function emptyValue(schema: FieldSchema): unknown {
       return null
     case 'richText':
       return { type: 'doc', content: [] }
+    case 'tags':
+      return []
     case 'list':
       return []
     case 'object':
@@ -367,8 +408,14 @@ export const f = {
   ) => ({ kind: 'select', label, options, ...extra }) as const satisfies SelectField,
   media: (label: string, hint?: string) =>
     ({ kind: 'media', label, ...(hint ? { hint } : {}) }) as const satisfies MediaField,
-  richText: (label: string, hint?: string) =>
-    ({ kind: 'richText', label, ...(hint ? { hint } : {}) }) as const satisfies RichTextField,
+  richText: (label: string, extra: Omit<RichTextField, 'kind' | 'label'> = {}) =>
+    ({ kind: 'richText', label, ...extra }) as const satisfies RichTextField,
+  tags: (
+    label: string,
+    options: TagsField['options'],
+    max: number,
+    extra: Omit<TagsField, 'kind' | 'label' | 'options' | 'max'> = {},
+  ) => ({ kind: 'tags', label, options, max, ...extra }) as const satisfies TagsField,
   list: (
     label: string,
     item: FieldSchema,

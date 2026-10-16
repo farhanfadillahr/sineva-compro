@@ -20,7 +20,7 @@ export type CollectionItem = {
 
 export type CollectionConfig = Readonly<{
   /** Registry name, also the table prefix. */
-  name: 'capabilities' | 'businessTypes'
+  name: 'capabilities' | 'businessTypes' | 'faq'
   /** Admin URL of the list, for redirects and revalidation. */
   adminPath: string
   title: string
@@ -87,9 +87,45 @@ export const businessTypesConfig: CollectionConfig = {
   }),
 }
 
+export const FAQ_BASE_TAGS = [
+  { value: 'home', label: 'Beranda' },
+  { value: 'product', label: 'Produk' },
+  { value: 'services', label: 'Ringkasan layanan' },
+] as const
+
+export const faqConfig: CollectionConfig = {
+  name: 'faq',
+  adminPath: '/admin/faq',
+  title: 'FAQ',
+  itemLabel: 'Pertanyaan',
+  description:
+    'Satu pustaka FAQ untuk Beranda, Produk, Layanan dan tiap layanan. Tag menentukan tempat tampil; urutan berlaku di semua tag.',
+  formHint: 'Jawaban tidak boleh memuat klaim yang belum terverifikasi.',
+  keyLabel: 'Kunci',
+  audit: 'faq',
+  mediaEntity: 'pages',
+  titleField: 'question',
+  globalSchema: f.object({
+    tags: f.tags('Tampil di', FAQ_BASE_TAGS, 20, {
+      min: 1,
+      pattern: 'service:[a-z0-9]+(?:-[a-z0-9]+)*',
+      optionsKey: 'serviceTags',
+      hint: 'Pilih satu atau lebih halaman.',
+    }),
+  }),
+  localeSchema: f.object({
+    question: f.required('Pertanyaan', 160),
+    answer: f.richText('Jawaban', {
+      profile: 'answer',
+      hint: 'Paragraf dan daftar dengan tebal, miring atau tautan.',
+    }),
+  }),
+}
+
 export const collectionConfigs = {
   capabilities: capabilitiesConfig,
   businessTypes: businessTypesConfig,
+  faq: faqConfig,
 } as const satisfies Record<CollectionConfig['name'], CollectionConfig>
 
 export type CollectionName = keyof typeof collectionConfigs

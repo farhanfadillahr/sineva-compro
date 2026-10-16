@@ -99,8 +99,8 @@ export const auditFields = {
     'seo',
     'published',
   ],
-  team: ['name', 'role', 'photo', 'bio', 'social', 'showOnAbout', 'order'],
-  faq: ['question', 'answer', 'tags', 'order'],
+  team: ['key', 'name', 'role', 'photo', 'bio', 'social', 'showOnAbout', 'order'],
+  faq: ['key', 'question', 'answer', 'tags', 'order'],
   product: [
     'key',
     'title',

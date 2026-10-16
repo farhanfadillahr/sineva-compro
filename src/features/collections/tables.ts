@@ -63,10 +63,13 @@ function collectionTables(name: string) {
 
 export const productCapabilityTables = collectionTables('product_capability')
 export const businessTypeTables = collectionTables('business_type')
+export const faqItemTables = collectionTables('faq_item')
 
 export const productCapability = productCapabilityTables.items
 export const productCapabilityTranslation = productCapabilityTables.translations
 export const businessType = businessTypeTables.items
 export const businessTypeTranslation = businessTypeTables.translations
+export const faqItem = faqItemTables.items
+export const faqItemTranslation = faqItemTables.translations
 
 export type CollectionTables = ReturnType<typeof collectionTables>

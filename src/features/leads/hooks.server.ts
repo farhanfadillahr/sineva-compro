@@ -65,6 +65,8 @@ export async function checkSpam(context: IntakeContext): Promise<SpamVerdict> {
   return { ok: true }
 }
 
+/** Runs after the lead is committed, outside the visitor's response (CPR-50). */
 export async function afterLeadCreated(id: string): Promise<void> {
-  void id
+  const { sendLeadEmails } = await import('./emails.server')
+  await sendLeadEmails(id)
 }

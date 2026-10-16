@@ -1,5 +1,6 @@
 import 'server-only'
 import type { EmailConfig } from './config.server'
+import { emailDeliveryIsLive } from './delivery'
 
 export type OutgoingEmail = Readonly<{
   to: string
@@ -83,6 +84,34 @@ const smtp: EmailTransport = async (config, email) => {
   }
 }
 
+/**
+ * Local development and CI never send real email: unless `EMAIL_DELIVERY=live` (preview and
+ * production set it), messages go to an in-memory outbox and a one-line log without content.
+ */
+export const mockOutbox: {
+  to: string
+  subject: string
+  text: string
+  html: string
+  replyTo: string | null
+}[] = []
+const mock: EmailTransport = async (config, email) => {
+  mockOutbox.push({
+    to: email.to,
+    subject: email.subject,
+    text: email.text,
+    html: email.html,
+    replyTo: email.replyTo ?? config.from.replyTo,
+  })
+  if (mockOutbox.length > 100) mockOutbox.shift()
+  console.info(`[email:mock] ${config.mode} message queued (${mockOutbox.length} in outbox).`)
+  return {
+    ok: true,
+    provider: config.mode,
+    detail: 'Mode uji: email tidak benar-benar dikirim (EMAIL_DELIVERY bukan live).',
+  }
+}
+
 let override: EmailTransport | null = null
 /** Tests replace the provider with a mock; production never calls this. */
 export function setEmailTransportForTests(transport: EmailTransport | null) {
@@ -91,5 +120,6 @@ export function setEmailTransportForTests(transport: EmailTransport | null) {
 
 export function sendEmail(config: EmailConfig, email: OutgoingEmail): Promise<SendResult> {
   if (override) return override(config, email)
+  if (!emailDeliveryIsLive()) return mock(config, email)
   return config.mode === 'smtp' ? smtp(config, email) : resend(config, email)
 }

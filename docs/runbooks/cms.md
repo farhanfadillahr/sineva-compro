@@ -200,3 +200,18 @@ provider response.
 - SMTP from a VPS is often blocked or marked as spam; use the Resend API in production. SPF, DKIM
   and DMARC are needed either way (CPR-12). Sending the waitlist confirmation needs a product
   decision first.
+
+## Contact intake (CPR-78)
+
+`submitContact(input, { locale, sourcePage })` (`src/features/leads/actions.ts`) is the public
+server action for the contact form. It validates with `src/lib/leads/contact-schema.ts`, which
+reuses the form's own rules (`contact-form-model`) for the visible fields and adds the work email
+and the WhatsApp number (stored as digits with the country code: `0812…`, `+62812…` and `62812…`
+become `62812…`; other numbers need `+` and a country code). Then it runs the anti-spam hook,
+stores the lead with status `new`, locale and source page (never from input), schedules the email
+step without blocking, and redirects to `/contact/thank-you`. On failure it returns English field
+errors, a form error and the submitted values so the form can keep them and offer WhatsApp.
+
+The launch form (Faishal, CPR-47) still composes a WhatsApp message and posts nothing. To switch it
+on, the form adds the email and WhatsApp fields and calls `submitContact`; the design is unchanged
+until then. There is no public `/api/leads` route.

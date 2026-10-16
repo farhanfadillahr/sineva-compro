@@ -14,7 +14,6 @@ vi.mock('next/cache', () => ({
 
 let ctx: Awaited<ReturnType<typeof createCmsTestContext>>
 let emails: typeof import('../../src/features/leads/emails.server')
-let intake: typeof import('../../src/features/leads/intake.server')
 let transport: typeof import('../../src/features/email/transport.server')
 let report: typeof import('../../src/lib/observability/report')
 
@@ -35,11 +34,8 @@ beforeAll(async () => {
   process.env.EMAIL_DELIVERY = 'mock'
   ctx = await createCmsTestContext()
   emails = await import('../../src/features/leads/emails.server')
-  intake = await import('../../src/features/leads/intake.server')
   transport = await import('../../src/features/email/transport.server')
   report = await import('../../src/lib/observability/report')
-  const hooks = await import('../../src/features/leads/hooks.server')
-  hooks.setTurnstileVerifierForTests(async (token) => token === 'valid-token')
   await ctx.connection.db.delete(emailSettings)
   await ctx.connection.db.delete(emailTemplate)
   await ctx.connection.db.delete(siteSettingsTranslation)
@@ -67,10 +63,19 @@ afterAll(async () => {
   await ctx.cleanup()
 })
 
+/** Stores the lead directly, so only the explicit `sendLeadEmails` call below sends email. */
 async function storedLead() {
-  const result = await intake.createContactLead(submission, { headers: new Headers() })
-  if (!result.ok) throw new Error('lead not stored')
-  return result.id
+  const { cleanLead, readContactSubmission } = await import('../../src/lib/leads/contact-schema')
+  const [row] = await ctx.connection.db
+    .insert(lead)
+    .values({
+      ...cleanLead(readContactSubmission(submission)),
+      consentAt: new Date(),
+      locale: 'en',
+      sourcePage: '/contact',
+    })
+    .returning({ id: lead.id })
+  return row.id
 }
 
 it('sends the notification to the inbox and the auto-reply to the prospect, safely', async () => {
@@ -89,14 +94,12 @@ it('sends the notification to the inbox and the auto-reply to the prospect, safe
 })
 
 it('uses a stored template when one exists', async () => {
-  await ctx.connection.db
-    .insert(emailTemplate)
-    .values({
-      key: 'lead-auto-reply',
-      locale: 'en',
-      subject: 'Hello {name}',
-      body: 'Custom reply for {service}.',
-    })
+  await ctx.connection.db.insert(emailTemplate).values({
+    key: 'lead-auto-reply',
+    locale: 'en',
+    subject: 'Hello {name}',
+    body: 'Custom reply for {service}.',
+  })
   const id = await storedLead()
   await emails.sendLeadEmails(id)
   expect(transport.mockOutbox[1].text).toBe('Custom reply for AI Build.')

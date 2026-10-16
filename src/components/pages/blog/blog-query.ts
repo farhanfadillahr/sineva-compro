@@ -59,6 +59,24 @@ export function blogCanonicalPath({ category, page }: BlogQuery): string {
   return category ? BLOG_LIST_PATH : blogListHref({ page })
 }
 
+/**
+ * Page numbers to show: the first and last page and the neighbours of the current one. A gap
+ * that would hide a single number shows that number instead, because "..." for one page is
+ * longer than the page itself.
+ */
+export function paginationItems(current: number, total: number): (number | 'gap')[] {
+  const wanted = new Set([1, total, current - 1, current, current + 1])
+  const pages = [...wanted].filter((page) => page >= 1 && page <= total).sort((a, b) => a - b)
+  const out: (number | 'gap')[] = []
+  pages.forEach((page, index) => {
+    const previous = pages[index - 1]
+    if (previous !== undefined && page - previous === 2) out.push(previous + 1)
+    else if (previous !== undefined && page - previous > 2) out.push('gap')
+    out.push(page)
+  })
+  return out
+}
+
 export type Pagination<T> = Readonly<{
   items: readonly T[]
   /** The page actually shown, within 1 to `totalPages`. */

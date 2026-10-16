@@ -8,6 +8,10 @@ vi.mock('next-intl/server', () => ({
   setRequestLocale: () => {},
 }))
 
+// The localised link pulls in next-intl's client navigation, which does not load in the jsdom
+// project. These tests look at what the routes decide (404, canonical, params), not at links.
+vi.mock('@/components/layout/app-link', () => ({ AppLink: () => null }))
+
 const { default: BlogListPage, generateMetadata: listMetadata } =
   await import('../../src/app/(public)/[locale]/blog/page')
 const {

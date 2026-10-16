@@ -2,8 +2,10 @@
 // write "5 min" and "16 October 2026" in every locale. UTC keeps the day stable between the server
 // and the browser, whatever the visitor's time zone.
 
-export function formatDate(iso: string, locale: string, dateStyle: 'medium' | 'long' = 'long') {
-  return new Intl.DateTimeFormat(locale, { dateStyle, timeZone: 'UTC' }).format(new Date(iso))
+export function formatDate(iso: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(
+    new Date(iso),
+  )
 }
 
 export function formatMinutes(minutes: number, locale: string) {

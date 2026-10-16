@@ -9,6 +9,7 @@ import { servicesSeed } from './services'
 import { postsSeed } from './posts'
 import { workSeed } from './work'
 import { redirectsSeed } from './redirects'
+import { emailSeed } from './email'
 import { parseSeedOptions } from './options'
 import type { SeedModule } from './types'
 
@@ -28,6 +29,7 @@ const modules: readonly SeedModule[] = [
   postsSeed,
   workSeed,
   redirectsSeed,
+  emailSeed,
 ]
 export async function runSeeds(
   database: Database,

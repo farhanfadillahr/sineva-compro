@@ -296,12 +296,9 @@ function parseField(schema: FieldSchema, input: unknown, path: string, ctx: Cont
       for (const [key, field] of Object.entries(schema.fields)) {
         const child = { ...ctx, previous: previous?.[key] }
         if ('adminOnly' in field && field.adminOnly && !ctx.isAdmin) {
-          // A non-Admin keeps the stored value whatever the form sent.
-          if (previous && key in previous) {
-            output[key] = previous[key]
-            continue
-          }
-          ctx.errors[join(path, key)] = 'Bagian ini hanya dapat diubah Admin.'
+          // A non-Admin keeps the stored value whatever the form sent; a new document gets the
+          // field's default, never the submitted value.
+          output[key] = previous && key in previous ? previous[key] : emptyValue(field)
           continue
         }
         output[key] = parseField(field, input[key], join(path, key), child)
@@ -335,12 +332,24 @@ export function parseFields<T>(
     : { ok: true, value: value as T }
 }
 
-/** Top-level keys whose JSON differs. Audit entries record names only, never values. */
+/** JSON with object keys sorted: PostgreSQL `jsonb` does not keep the key order it was given. */
+export function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`
+  if (isRecord(value))
+    return `{${Object.keys(value)
+      .sort()
+      .filter((key) => value[key] !== undefined)
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+      .join(',')}}`
+  return JSON.stringify(value) ?? 'null'
+}
+
+/** Top-level keys whose content differs. Audit entries record names only, never values. */
 export function changedKeys(before: unknown, after: unknown): string[] {
   const a = isRecord(before) ? before : {}
   const b = isRecord(after) ? after : {}
   return [...new Set([...Object.keys(a), ...Object.keys(b)])]
-    .filter((key) => JSON.stringify(a[key]) !== JSON.stringify(b[key]))
+    .filter((key) => canonicalJson(a[key]) !== canonicalJson(b[key]))
     .sort()
 }
 

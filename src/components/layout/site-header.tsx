@@ -125,7 +125,7 @@ export function SiteHeader({
             href="/"
             aria-label={t('homeLabel')}
             aria-current={ariaCurrentFor(pathname, '/')}
-            className={cx('rounded-sm no-underline', focusRing)}
+            className={cx(styles.edgeStart, 'rounded-sm no-underline', focusRing)}
           >
             <Logo />
           </AppLink>
@@ -137,7 +137,7 @@ export function SiteHeader({
             onOpenChange={setDropdownOpen}
           />
 
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
+          <div className={cx(styles.edgeEnd, 'ml-auto hidden items-center gap-2 lg:flex')}>
             <LanguageSwitcher />
             {whatsappHref ? (
               <Button
@@ -156,22 +156,25 @@ export function SiteHeader({
             </Button>
           </div>
 
-          <button
-            ref={burgerRef}
-            type="button"
-            aria-label={t('openMenu')}
-            aria-expanded={mobile === 'open'}
-            aria-controls={MOBILE_MENU_ID}
-            onClick={() => setMobile('open')}
-            // "Pressed key" look: the light bevel flattens and the key sinks 1 px on press.
-            className={cx(
-              'ml-auto flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light lg:hidden',
-              'transition-[translate,box-shadow] duration-(--dur-fast) ease-out active:translate-y-px active:shadow-xs motion-reduce:transition-none',
-              focusRing,
-            )}
-          >
-            <MenuIcon />
-          </button>
+          {/* The wrapper carries the edge offset: the burger's own `translate` is its press effect. */}
+          <span className={cx(styles.edgeEnd, 'ml-auto flex lg:hidden')}>
+            <button
+              ref={burgerRef}
+              type="button"
+              aria-label={t('openMenu')}
+              aria-expanded={mobile === 'open'}
+              aria-controls={MOBILE_MENU_ID}
+              onClick={() => setMobile('open')}
+              // "Pressed key" look: the light bevel flattens and the key sinks 1 px on press.
+              className={cx(
+                'flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light',
+                'transition-[translate,box-shadow] duration-(--dur-fast) ease-out active:translate-y-px active:shadow-xs motion-reduce:transition-none',
+                focusRing,
+              )}
+            >
+              <MenuIcon />
+            </button>
+          </span>
         </div>
       </header>
 

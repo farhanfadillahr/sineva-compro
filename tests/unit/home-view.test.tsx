@@ -228,17 +228,12 @@ describe('Home CTAs', () => {
     expect(link(paths, base.page.twoPaths.services.ctaLabel)).toBe('/services')
   })
 
-  it('puts both CTAs and a WhatsApp link in the final CTA', () => {
+  it('puts both CTAs in the final CTA and no WhatsApp button (owner decision)', () => {
     renderHome(base)
     const final = base.page.finalCta
     expect(link(finalEl(), final.primaryCtaLabel)).toBe('/contact')
     expect(link(finalEl(), final.secondaryCtaLabel!)).toBe('/products/ai-agents#waitlist')
-    const wa = link(finalEl(), final.whatsappCtaLabel)!
-    const digits = base.settings!.whatsapp.number.replace(/\D/g, '')
-    expect(wa.startsWith(`https://wa.me/${digits}?text=`)).toBe(true)
-    expect(decodeURIComponent(wa.split('?text=')[1]!)).toBe(
-      base.settings!.whatsapp.templates.general,
-    )
+    expect(within(finalEl()).queryByRole('link', { name: final.whatsappCtaLabel })).toBeNull()
   })
 
   it('drops the WhatsApp CTA when the number is unusable, never a dead link', () => {
@@ -260,7 +255,7 @@ describe('Home CTAs', () => {
     expect(link(finalEl(), base.page.finalCta.primaryCtaLabel)).toBe('/contact')
   })
 
-  it('uses the link component it is given for internal links, not for WhatsApp', () => {
+  it('uses the link component it is given for internal links', () => {
     const Marked = ({ href, children, ...rest }: { href: never; children?: ReactNode }) => (
       <a data-localised="yes" href={href as string} {...rest}>
         {children}
@@ -271,10 +266,6 @@ describe('Home CTAs', () => {
       within(heroEl()).getByRole('link', { name: base.page.hero.primaryCtaLabel }).dataset
         .localised,
     ).toBe('yes')
-    expect(
-      within(finalEl()).getByRole('link', { name: base.page.finalCta.whatsappCtaLabel }).dataset
-        .localised,
-    ).toBeUndefined()
   })
 })
 

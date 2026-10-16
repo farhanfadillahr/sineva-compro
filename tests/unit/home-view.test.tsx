@@ -405,7 +405,7 @@ describe('Home content sections', () => {
     renderHome(base)
     const caps = document.querySelector<HTMLElement>('[data-home-section="capabilities"]')!
     for (const capability of base.capabilities) {
-      expect(within(caps).getByText(capability.title)).toBeTruthy()
+      expect(within(caps).getAllByText(capability.title).length).toBeGreaterThan(0)
     }
     const how = document.querySelector<HTMLElement>('[data-home-section="howWeWork"]')!
     for (const step of base.page.howWeWork.steps) {

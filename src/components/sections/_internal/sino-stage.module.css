@@ -1,0 +1,77 @@
+/*
+ * Sino stage (docs/design/mascot-sino.md section 4, components.md section 10). Sino is pale teal
+ * with a bluish-white helmet and sinks into a white page, so every appearance gets a glow, two
+ * thin orbit arcs and a contact shadow. Colours come from the primitive tokens, mixed with
+ * color-mix so no colour literal lives here.
+ */
+
+.glow {
+  position: absolute;
+  /* Diameter about 1.2 times the stage, so the glow reaches past Sino's silhouette. */
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--teal-100) 70%, transparent),
+    transparent
+  );
+  /*
+   * AnimatedPose sets --pose-glow to 1 on the stage (or card) while it is hovered or focused;
+   * the glow grows a little instead of changing opacity, which is already 1 at rest.
+   */
+  transform: scale(calc(1 + 0.12 * var(--pose-glow, 0)));
+  transition: transform var(--dur-med, 360ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.arc {
+  fill: none;
+  stroke: var(--teal-300);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  /* Rotate around the centre of the 400 x 400 view box, not around each path's own box. */
+  transform-origin: 200px 200px;
+  transform-box: view-box;
+  animation: orbit 60s linear infinite;
+}
+
+.arcReverse {
+  animation-direction: reverse;
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.shadow {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 1%;
+  height: 6%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--teal-900) 18%, transparent);
+  filter: blur(14px);
+}
+
+/* Static under reduced motion: the arcs stay as a still brand mark. */
+@media (prefers-reduced-motion: reduce) {
+  .arc {
+    animation: none;
+  }
+
+  .glow {
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,9 @@
+/* The box itself is sized by the width/height/aspectRatio props; this only keeps the injected SVG
+   from adding inline-baseline space under the animation. */
+.root {
+  display: block;
+}
+
+.root > svg {
+  display: block;
+}

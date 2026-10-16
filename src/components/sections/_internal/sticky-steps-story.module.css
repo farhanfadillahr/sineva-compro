@@ -1,0 +1,89 @@
+/*
+ * Sticky step story (docs/design/motion.md section 4.2).
+ *
+ * Two modes share one DOM:
+ * - Static (phones, reduced motion, no JavaScript): every step shows its full body at full
+ *   opacity, stacked in a list. The active step is only marked, not emphasised by motion.
+ * - Story (desktop from 1024 px, motion allowed, scripting on): the inactive steps dim to 60
+ *   percent, their body collapses, and the active title grows from 20 to 28 px. The condition
+ *   lives in one media query so content is never hidden for a visitor who cannot run the script
+ *   that switches steps.
+ *
+ * The title growth changes layout, but it only happens when the active step changes (a discrete
+ * event, not a per-frame scroll effect), which keeps it clear of the "never animate layout on
+ * scroll" rule in motion.md section 10.
+ */
+
+.title {
+  font-size: 1.25rem;
+}
+
+.body {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.bodyInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Stacked screens of the sticky column: one grid cell, the active one is visible. */
+.screens {
+  display: grid;
+}
+
+.screen {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 450ms var(--ease-out),
+    visibility 0s linear 450ms;
+}
+
+.screen[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 450ms var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .step {
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+
+  .step[data-active='false'] {
+    opacity: 0.6;
+  }
+
+  .title {
+    transition: font-size var(--dur-slow) var(--ease-out);
+  }
+
+  .step[data-active='true'] .title {
+    font-size: 1.75rem;
+  }
+
+  .body {
+    transition:
+      grid-template-rows var(--dur-slow) var(--ease-out),
+      opacity var(--dur-slow) var(--ease-out);
+  }
+
+  .step[data-active='false'] .body {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+}
+
+/* Crossfade becomes an instant swap. */
+@media (prefers-reduced-motion: reduce) {
+  .screen,
+  .screen[data-active='true'] {
+    transition: none;
+  }
+}

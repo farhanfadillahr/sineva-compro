@@ -18,6 +18,7 @@
 | Rev. 1 | 14 October 2026 | First final version: headless CMS, light and dark mode, Indonesian and English |
 | Rev. 2 | 14 October 2026 | Headless CMS removed; the Founder chose a custom admin inside Next.js |
 | Rev. 3 | 15 October 2026 | New positioning (AI consulting, two pillars), brand name "Sineva", English default and only launch locale (i18n-ready), light theme only, documented design system, SeaweedFS replaces Cloudflare R2, off-host backups, copy rules. See the changelog below |
+| Rev. 3.1 | 16 October 2026 | Phase 1 launches static: no CMS, no stored leads. See the [Rev. 3.1 note](#rev-31-note-phase-1-static-launch) |
 
 ### Rev. 3 changelog
 
@@ -34,6 +35,16 @@
 11. **Links.** Links to the design system and the two Rev. 3 implementation plans added where relevant.
 
 ---
+
+### Rev. 3.1 note: phase 1 static launch
+
+Product owner decision, 16 October 2026. It changes how the first launch is delivered, not the positioning or the design.
+
+1. **No CMS in phase 1.** All public content is static in the repo (`src/content/static`) behind the `PublicContentSource` contract. The custom admin (§9) is kept and becomes the editing layer when it is ready; switching is a one-line change in `src/lib/content-source.ts`.
+2. **Contact through WhatsApp.** The contact form (§8.2) has no server. It composes a prefilled WhatsApp message, with a mailto alternative while a public email is confirmed. FR-LEAD-04 to FR-LEAD-13 (server validation, stored leads, notification and auto-reply emails, Turnstile, rate limit) and the mini-CRM (§8.4) are deferred. No personal data is stored server side.
+3. **Waitlist through WhatsApp or email.** The product waitlist (§8.3) is shown as "Get notified" and sends a message the same way. FR-WL-02 and FR-WL-03 are deferred.
+4. **Work hidden until real projects exist.** The Work link, page and Selected work sections stay off while the list is empty (§7.2, §7.4). The Team section stays off until members agree to be listed (§7.7).
+5. **Unconfirmed facts stay empty.** Public email, address, legal data, business hours and social accounts other than Instagram are hidden, not invented (§7.1, FR-GLB-03).
 
 ## 1. Summary
 

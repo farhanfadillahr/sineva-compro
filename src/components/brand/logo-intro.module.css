@@ -1,0 +1,82 @@
+/*
+ * First-visit logo intro (docs/design/motion.md section 3.1). Two layers:
+ *  - .shell: server-rendered, shown by CSS alone while <html data-logo-intro="pending">, so it
+ *    covers the page from first paint. Everything time-based about it is CSS, so it needs no
+ *    JavaScript to get out of the way.
+ *  - .root/.stage: client-rendered Lottie on top of the shell, never intercepts input.
+ */
+
+/* Hidden and inert by default: without the gate's marker it can never show or catch a click. */
+.shell {
+  position: fixed;
+  inset: 0;
+  /* Above the skip link (z 60) and the mobile sheet (z 50): nothing may peek through. */
+  z-index: 70;
+  background: var(--color-canvas, #fff);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* Removing the marker (hand-off, skip, failure) fades it out in 200 ms, then takes it out of the
+     hit-test and paint tree. */
+  transition:
+    opacity 200ms linear,
+    visibility 0s linear 200ms;
+}
+
+:global(html[data-logo-intro='pending']) .shell {
+  opacity: 1;
+  visibility: visible;
+  /* The shell catches input until 1.2 s so a click cannot reach controls half hidden by the
+     intro, and a click skips it. */
+  pointer-events: auto;
+  transition: none;
+  /* Safety net that needs no JavaScript: inert after 1.2 s, fully gone by 1.8 s, even if the
+     client never takes over. The client's own hand-off (1.1 s) normally gets there first. */
+  animation:
+    shell-inert 0s linear 1200ms forwards,
+    shell-safety 200ms linear 1600ms forwards;
+}
+
+@keyframes shell-inert {
+  to {
+    pointer-events: none;
+  }
+}
+
+@keyframes shell-safety {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* The gate already refuses to mark the document under reduced motion; this is the second lock. */
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    display: none;
+  }
+}
+
+/* Client layer: centres the stage over the shell. */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 71;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+/* The flying box: a square sized for the stacked logo, centred in the viewport. */
+.stage {
+  position: relative;
+  width: min(60vw, 20rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  /* Promoted only for the one-off flight; the whole node is removed right after. */
+  will-change: transform;
+}

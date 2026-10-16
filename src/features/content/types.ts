@@ -114,7 +114,8 @@ export type SiteSettingsDTO = Readonly<{
     logo: MediaAsset | null
   }>
   contact: Readonly<{
-    email: string
+    /** Public contact email, `null` hides it (not confirmed yet, and mailto links are omitted). */
+    email: string | null
     /** Business hours text for the locale, `null` hides the line. */
     businessHours: string | null
     address: string | null

@@ -1,6 +1,8 @@
 import { Button, Container, Section, type SectionTone } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
 import { AnimatedPose } from '@/components/motion/animated-pose'
+import { SinoLoop } from '@/components/motion/sino-loop'
+import { isLoopReady, type LoopId } from '@/components/motion/sino-loops'
 import type { MediaAsset } from '@/features/content/types'
 import { WhatsAppGlyph } from './_internal/icons'
 import type { CtaLink, LinkProps } from './_internal/types'
@@ -22,6 +24,8 @@ export type FinalCtaProps = LinkProps & {
   whatsappCta?: CtaLink | null
   /** Sino S1 waving. One hero-size Sino per viewport: do not pair this with a large hero pose. */
   image?: MediaAsset | null
+  /** Plays this loop in place of `image` once its files exist; until then `image` is drawn. */
+  loop?: LoopId
 }
 
 /**
@@ -40,8 +44,10 @@ export function FinalCta({
   secondaryCta,
   whatsappCta,
   image,
+  loop,
   linkComponent,
 }: FinalCtaProps) {
+  const showPose = Boolean(image) || (loop !== undefined && isLoopReady(loop))
   return (
     <Section id={id} tone="canvas">
       <Container size="wide">
@@ -57,10 +63,10 @@ export function FinalCta({
           <div
             className={cx(
               'grid grid-cols-1 items-center gap-10 p-8 sm:p-12 lg:p-16',
-              image && 'lg:grid-cols-12',
+              showPose && 'lg:grid-cols-12',
             )}
           >
-            <div className={cx('flex flex-col items-start gap-6', image && 'lg:col-span-7')}>
+            <div className={cx('flex flex-col items-start gap-6', showPose && 'lg:col-span-7')}>
               <h2 className="text-h1 text-balance text-text-inverse">{headline}</h2>
               {body ? (
                 <p className="max-w-[52ch] text-lead text-pretty text-text-inverse">{body}</p>
@@ -100,13 +106,22 @@ export function FinalCta({
                 ) : null}
               </div>
             </div>
-            {image ? (
+            {showPose ? (
               <div className="flex justify-center lg:col-span-5 lg:justify-end">
-                <AnimatedPose
-                  image={image}
-                  sizes="(min-width: 1024px) 30vw, 60vw"
-                  className="w-3/4 max-w-sm"
-                />
+                {loop ? (
+                  <SinoLoop
+                    loop={loop}
+                    still={image ?? null}
+                    sizes="(min-width: 1024px) 30vw, 60vw"
+                    className="w-3/4 max-w-sm"
+                  />
+                ) : (
+                  <AnimatedPose
+                    image={image ?? null}
+                    sizes="(min-width: 1024px) 30vw, 60vw"
+                    className="w-3/4 max-w-sm"
+                  />
+                )}
               </div>
             ) : null}
           </div>

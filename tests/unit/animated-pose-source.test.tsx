@@ -202,11 +202,22 @@ describe('every pose on Home goes through AnimatedPose', () => {
 
   it('Home draws every pose key through PoseImage (which is AnimatedPose), never a bare Image', () => {
     const users = homeFiles.filter((f) => imports(f, /<PoseImage\b/))
-    expect(users.map(rel).sort()).toEqual([
-      'src/components/pages/home/meet-sino-section.tsx',
-      'src/components/pages/home/post-card.tsx',
-    ])
+    expect(users.map(rel).sort()).toEqual(['src/components/pages/home/post-card.tsx'])
     for (const file of users) expect(imports(file, /from\s+['"]\.\/pose-image['"]/)).toBe(true)
+  })
+
+  it('Meet Sino and the loop-capable blocks go through SinoLoop, which is AnimatedPose with a video', () => {
+    expect(
+      imports(
+        join(HOME_DIR, 'meet-sino-section.tsx'),
+        /from\s+['"]@\/components\/motion\/sino-loop['"]/,
+      ),
+    ).toBe(true)
+    const sinoLoop = stripComments(read(join(MOTION_DIR, 'sino-loop.tsx')))
+    expect(sinoLoop).toMatch(/<AnimatedPose\b/)
+    expect(sinoLoop).toMatch(/media=/)
+    // It must compose the pose, not copy it: no second reveal, float or hover implementation.
+    expect(sinoLoop).not.toMatch(/useReveal|pointerenter|parallax|requestAnimationFrame/i)
   })
 
   it('no longer hand-rolls the old per-pose hover nudge or float class', () => {

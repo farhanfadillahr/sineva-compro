@@ -1,6 +1,8 @@
 import { Badge, Button, Card, Container, Eyebrow, Section } from '@/components/ui'
 import { cx } from '@/components/ui/cx'
 import { AnimatedPose } from '@/components/motion/animated-pose'
+import { SinoLoop } from '@/components/motion/sino-loop'
+import { isLoopReady, type LoopId } from '@/components/motion/sino-loops'
 import { Reveal } from '@/components/motion/Reveal'
 import type { MediaAsset } from '@/features/content/types'
 import type { CtaLink, LinkProps } from './_internal/types'
@@ -14,6 +16,8 @@ export type TwoPathsCard = Readonly<{
   cta: CtaLink
   /** Sino pose. The content DTO carries a pose key; the page resolves it to an asset. */
   image?: MediaAsset | null
+  /** Plays this loop in place of `image` once its files exist; until then `image` is drawn. */
+  loop?: LoopId
 }>
 
 export type TwoPathsProps = LinkProps & {
@@ -86,7 +90,7 @@ export function TwoPaths({ product, services, locale, linkComponent }: TwoPathsP
                     {card.cta.label}
                   </Button>
                 </div>
-                {card.image ? (
+                {card.image || (card.loop && isLoopReady(card.loop)) ? (
                   // Stacks under the text on phones; bleeds off the bottom right edge from sm up. This
                   // box only positions the pose: the lift on hover and focus, the float and the
                   // parallax all live in AnimatedPose, which finds the card by itself.
@@ -97,11 +101,20 @@ export function TwoPaths({ product, services, locale, linkComponent }: TwoPathsP
                       'sm:absolute sm:-bottom-4 sm:end-4 sm:mt-0 sm:w-[42%]',
                     )}
                   >
-                    <AnimatedPose
-                      image={card.image}
-                      index={index}
-                      sizes="(min-width: 1024px) 24vw, 60vw"
-                    />
+                    {card.loop ? (
+                      <SinoLoop
+                        loop={card.loop}
+                        still={card.image ?? null}
+                        index={index}
+                        sizes="(min-width: 1024px) 24vw, 60vw"
+                      />
+                    ) : (
+                      <AnimatedPose
+                        image={card.image ?? null}
+                        index={index}
+                        sizes="(min-width: 1024px) 24vw, 60vw"
+                      />
+                    )}
                   </div>
                 ) : null}
               </Card>

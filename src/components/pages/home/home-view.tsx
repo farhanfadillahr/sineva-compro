@@ -104,11 +104,13 @@ export function HomeView({
           badge: productStatus === 'live' ? undefined : labels.comingSoon,
           cta: { label: page.twoPaths.product.ctaLabel, href: HOME_HREFS.product },
           image: poseImage(page.twoPaths.product.pose),
+          loop: 'L-phone',
         }}
         services={{
           ...page.twoPaths.services,
           cta: { label: page.twoPaths.services.ctaLabel, href: HOME_HREFS.services },
           image: poseImage(page.twoPaths.services.pose),
+          loop: 'L-build',
         }}
       />
     ),
@@ -168,6 +170,7 @@ export function HomeView({
         secondaryCta={finalSecondary}
         whatsappCta={whatsappCta}
         image={poseImage('wave')}
+        loop="L-wave"
         linkComponent={linkComponent}
       />
     ),

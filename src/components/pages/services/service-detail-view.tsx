@@ -76,7 +76,7 @@ export function ServiceDetailView({
     hero: () => (
       <HeroSplit
         variant="sino-still"
-        eyebrow={labels.detail.eyebrow}
+        eyebrow={null}
         headline={service.title}
         lead={service.summary}
         primaryCta={{ label: service.ctaLabel, href: contactHref }}

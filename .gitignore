@@ -18,3 +18,5 @@ next-env.d.ts
 
 # Isolated local SeaweedFS data, credentials, logs, and compatibility reports.
 .storage/
+# local agent worktrees
+.claude/worktrees/

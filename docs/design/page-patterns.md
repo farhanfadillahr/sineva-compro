@@ -35,7 +35,7 @@ Legend: **[A]** aurora gradient bg, **[T]** tint, **[W]** warm, **[I]** inverse 
 
 | # | Section | Pattern | Content | Motion |
 |---|---|---|---|---|
-| 1 | Hero [A] | `Split` 6/6: text left, Sino stage right | Eyebrow "AI consulting and AI agents", H1 (≤ 10 words), lead, CTAs: **Book a free consultation** + **Join the waitlist** | Hero entrance, Sino greet + cursor look-at |
+| 1 | Hero [A] | `Split` 6/6: text left, Sino stage right | No eyebrow (product owner decision 2026-10-16: hero sections carry no eyebrow label), H1 (≤ 10 words), lead, CTAs: **Book a free consultation** + **Join the waitlist** | Hero entrance, Sino greet + cursor look-at |
 | 2 | Two paths [C] | Two `card-path` side by side | "Use it yourself" (Product) / "Let us build it with you" (Services), each with Sino pose and CTA | Reveal, pose hover |
 | 3 | Meet Sino [T] | Centered header + scroll scene | Short intro of the AI agent and what it can do | Scroll scrub (one per page) |
 | 4 | What Sino can do [C] | `BentoGrid` of `card-task` | 4-5 capabilities phrased as requests: "Sino, reply to today's customer chats" | Staggered reveal, typing-dots Lottie in mockups |

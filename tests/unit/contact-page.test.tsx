@@ -236,7 +236,7 @@ describe('Thank-you page', () => {
     await models()
     const { container } = intl(<ThankYouView model={thankYouModel} />)
     const img = container.querySelector('img')!
-    expect(decodeURIComponent(img.getAttribute('src')!)).toContain('/mascot/poses/sino-thumbs-up')
+    expect(decodeURIComponent(img.getAttribute('src')!)).toContain('/mascot/loops/sino-loop-thumbs')
     expect(img.getAttribute('alt')).toBe('')
     expect(existsSync(join(root, 'public/mascot/poses/sino-thumbs-up.webp'))).toBe(true)
     const check = container.querySelector('[data-slot="check-icon"]')!

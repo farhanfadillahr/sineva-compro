@@ -21,6 +21,7 @@ vi.mock('../../src/components/motion/sino-loops', async (importOriginal) => {
   const loops = {
     ...original.SINO_LOOPS,
     'L-wave': { ...original.SINO_LOOPS['L-wave'], ready: true },
+    'L-phone': { ...original.SINO_LOOPS['L-phone'], ready: false },
   }
   return {
     ...original,

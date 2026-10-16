@@ -34,7 +34,7 @@ const entry = (name: string): SinoLoopAsset => ({
   poster: `${DIRECTORY}/${name}.webp`,
   width: SIZE,
   height: SIZE,
-  ready: false,
+  ready: true,
 })
 
 export const SINO_LOOPS: Readonly<Record<LoopId, SinoLoopAsset>> = {

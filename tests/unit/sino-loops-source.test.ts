@@ -100,9 +100,9 @@ describe('SINO_LOOPS manifest', () => {
     expect(loop.height).toBeGreaterThan(0)
   })
 
-  it('is not ready anywhere yet: the files have not been delivered', () => {
-    for (const id of LOOP_IDS) expect(SINO_LOOPS[id].ready, id).toBe(false)
-    for (const id of LOOP_IDS) expect(isLoopReady(id), id).toBe(false)
+  it('enables the five delivered loops', () => {
+    for (const id of LOOP_IDS) expect(SINO_LOOPS[id].ready, id).toBe(true)
+    for (const id of LOOP_IDS) expect(isLoopReady(id), id).toBe(true)
   })
 
   it('may only be ready when all three files are on disk (no broken video in production)', () => {

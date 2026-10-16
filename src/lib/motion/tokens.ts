@@ -39,6 +39,33 @@ export const stagger = { stepMs: 50, minStepMs: 40, maxStepMs: 60, maxItems: 6 }
 /** Reveal on scroll (motion.md section 4.1). */
 export const revealDefaults = { distancePx: 24, threshold: 0.15 } as const
 
+/**
+ * Scroll presets (motion.md section 4.1). Each kind of element moves its own way; the CSS in
+ * Reveal.module.css carries the same numbers (tests/unit/motion-reveal-presets.test.ts compares
+ * them). Durations are the transform duration; `settleMs` below is when the last piece finishes.
+ */
+export const revealVariants = ['rise', 'lines', 'depth', 'clip', 'rise-scale'] as const
+export type RevealVariant = (typeof revealVariants)[number]
+
+export const revealPresets = {
+  /** Plain fade and rise: text blocks, forms, anything without a better role. */
+  rise: { durationMs: 520, distancePx: 24 },
+  /** Headings: one masked line at a time, then the eyebrow and lead. */
+  lines: {
+    durationMs: 700,
+    lineStepMs: 70,
+    partDelayMs: 120,
+    partDurationMs: 600,
+    partDistancePx: 12,
+  },
+  /** Cards and grids: lift, scale and a hint of perspective, staggered by arrival. */
+  depth: { durationMs: 800, stepMs: 60, distancePx: 40, scaleFrom: 0.96, rotateXDeg: 6 },
+  /** Media: a bottom-up clip wipe with an inner zoom settling back. */
+  clip: { durationMs: 900, insetPct: 18, scaleFrom: 1.06 },
+  /** Final CTA panel: scrubbed with scroll, no clock. */
+  riseScale: { scaleFrom: 0.94, radiusFromPx: 48 },
+} as const
+
 /** Longest opacity fade that survives reduced motion (motion.md section 9). */
 export const reducedMotionFadeMaxMs = 150
 

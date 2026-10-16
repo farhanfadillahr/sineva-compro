@@ -55,11 +55,15 @@ export function loadGsap(): Promise<GsapBundle | null> {
  *
  * `setup` is read from a ref, so an inline arrow does not re-run the effect; pass `deps` to
  * re-run it deliberately. The reduced-motion decision is taken at mount, not tracked live.
+ *
+ * `enabled: false` keeps the library unloaded: a section that only needs GSAP once it is near the
+ * viewport arms the hook then, instead of downloading the chunk on every page that contains it.
  */
 export function useGsapContext(
   scopeRef: RefObject<HTMLElement | null>,
   setup: (bundle: GsapBundle) => void | (() => void),
   deps: DependencyList = [],
+  enabled = true,
 ) {
   const setupRef = useRef(setup)
   useEffect(() => {
@@ -67,6 +71,7 @@ export function useGsapContext(
   })
 
   useEffect(() => {
+    if (!enabled) return
     let cancelled = false
     let ctx: ReturnType<Gsap['context']> | undefined
     let userCleanup: (() => void) | undefined
@@ -102,5 +107,5 @@ export function useGsapContext(
     }
     // The caller's deps are the contract; the ref and setup identity are deliberately excluded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scopeRef, ...deps])
+  }, [scopeRef, enabled, ...deps])
 }

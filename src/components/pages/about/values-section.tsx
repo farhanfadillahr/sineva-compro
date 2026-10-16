@@ -18,12 +18,12 @@ export function ValuesSection({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {items.map((item, index) => (
-            <Reveal as="li" key={`${index}-${item.title}`} index={index} className="flex">
+            <Reveal as="li" variant="depth" key={`${index}-${item.title}`} className="flex">
               <Card variant="feature" className="w-full">
                 <h3 className="text-h4 text-text">{item.title}</h3>
                 <p className="text-body-sm text-pretty text-text-secondary">{item.body}</p>

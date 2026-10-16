@@ -62,8 +62,8 @@ export function TaskCardGrid({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
-          <SectionHeader eyebrow={eyebrow} title={title} lead={intro} />
+        <Reveal variant="lines">
+          <SectionHeader eyebrow={eyebrow} title={title} lead={intro} rule />
         </Reveal>
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-flow-dense lg:grid-cols-6">
           {items.map((item, index) => {
@@ -74,8 +74,8 @@ export function TaskCardGrid({
             return (
               <Reveal
                 as="li"
+                variant="depth"
                 key={item.key}
-                index={index}
                 className={cx(
                   'flex',
                   isFeaturedTile && 'md:col-span-2 lg:row-start-1 lg:col-start-1',

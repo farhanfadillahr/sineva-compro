@@ -1,0 +1,38 @@
+/*
+ * Section progress hairline (docs/design/motion.md 4.1): a 1 px line that draws left to right as
+ * its section scrolls into view, then rests drawn. Pure CSS scroll-driven animation, so it costs no
+ * JavaScript and no scroll listener.
+ *
+ * The drawn state is the base style. Only a browser that supports scroll timelines, and only when
+ * motion is allowed, ever shows the line shorter than full width, so nothing depends on script or
+ * support. `cover` is the range because an `entry` range is as long as the element is tall, which
+ * for a 1 px line is a 1 px scroll.
+ */
+
+.rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--color-border-strong, rgba(11, 42, 49, 0.14));
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rule {
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 35%;
+    }
+
+    @keyframes draw {
+      from {
+        transform: scaleX(0);
+      }
+
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+}

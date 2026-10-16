@@ -38,12 +38,12 @@ export function TeamSection({
   return (
     <Section tone={tone}>
       <Container className="flex flex-col gap-12">
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader title={title} />
         </Reveal>
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {members.map((member, index) => (
-            <Reveal as="li" key={`${index}-${member.name}`} index={index} className="flex">
+            <Reveal as="li" variant="depth" key={`${index}-${member.name}`} className="flex">
               <Card variant="feature" data-team-member="" className="w-full">
                 {member.photo ? (
                   <Image

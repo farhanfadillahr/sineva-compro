@@ -92,9 +92,9 @@ describe('loadGsap: loading', () => {
 })
 
 describe('useGsapContext', () => {
-  function Host(props: { setup: Parameters<typeof useGsapContext>[1] }) {
+  function Host(props: { setup: Parameters<typeof useGsapContext>[1]; enabled?: boolean }) {
     const ref = useRef<HTMLDivElement>(null)
-    useGsapContext(ref, props.setup)
+    useGsapContext(ref, props.setup, [], props.enabled)
     return createElement('div', { ref, 'data-testid': 'scope' }, 'content')
   }
 
@@ -159,5 +159,16 @@ describe('useGsapContext', () => {
     await flush()
     expect(setup).not.toHaveBeenCalled()
     expect(h.context).not.toHaveBeenCalled()
+  })
+
+  it('does nothing while disabled, and runs once it is enabled', async () => {
+    const setup = vi.fn()
+    const view = render(createElement(Host, { setup, enabled: false }))
+    await flush()
+    expect(setup).not.toHaveBeenCalled()
+    expect(h.context).not.toHaveBeenCalled()
+    view.rerender(createElement(Host, { setup, enabled: true }))
+    await flush()
+    expect(setup).toHaveBeenCalledTimes(1)
   })
 })

@@ -22,6 +22,7 @@ export function BlogEmptyState({
 }) {
   return (
     <Reveal
+      variant="depth"
       data-blog-empty=""
       className="flex flex-col items-center gap-4 rounded-xl bg-canvas-alt px-6 py-12 text-center"
     >

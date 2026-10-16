@@ -25,16 +25,16 @@ The BVH audit checks every exported GLB clip frame, all 72 frames of each loop, 
 |---|---:|---:|
 | GLB raw / Brotli | 1,174,076 / 367,332 bytes | 600,000 bytes Brotli |
 | Geometry / base primitives | 56,233 tris / 22 | 80,000 tris / 30 draw calls |
-| Realtime effects | 5 additional draw calls, no extra lights | 27 total |
+| Realtime effects | None (the hero flame and smoke were removed; the jet is video only) | 27 total |
 | Largest loop | 861,305 bytes | 900,000 bytes each |
 | Largest one-shot | 391,436 bytes | 600,000 bytes each |
-| Added runtime + overlay JS | 3,957 bytes gzip | 6,000 bytes gzip |
+| Added runtime + overlay JS | 3,957 bytes gzip as delivered; 2,563 after the hero jet code was removed (`scripts/check-jet-budget.mjs`: 50 realtime, 2,513 CTA overlay). The splash launch module (`splash-launch.ts`) adds about 2.4 KB minified, about 1 KB gzip, to the main bundle | 6,000 bytes gzip |
 
 One-shots ship as 720 x 960 launch and 1280 x 540 fly-bys. All are silent, end empty, and include WebM/VP9 alpha, MOV/HEVC alpha and a WebP poster. Loops are 720 x 720. Source, decoded VP9 and AVFoundation-decoded HEVC frames were compared on white and pale teal. The comparison script resets the selected video frame timestamp before compositing.
 
 ## Runtime behavior and verification
 
-The logo intro finishes before the hero launch starts. The root hop is scaled to fit the existing stage. A click/key skips to landing; reactions queue during flight; leaving the hero resets to idle. Flames use the exported thrust socket scale, with a 2 Hz flicker and a preallocated 24-quad smoke pool. Resources dispose with the runtime.
+The hero does not play the jet clips: the logo intro finishes, then the canvas plays `greet_wave` once per session and `idle` (product owner decision, 2026-10-16). The jetpack launch plays on the first-visit splash as the pre-rendered `sino-launch` one-shot, inside the logo intro overlay (see [motion.md section 3.1](motion.md)). The realtime flame and smoke effects, the root-motion overlay and the skip-flight input that existed for the hero sequence were removed; `jet_launch`, `jet_hover`, `jet_land` and the `FX-jet_L/R` sockets remain in the GLB unused.
 
 CTA animation warms only on hover/focus. An unready click skips animation. Navigation has no awaited media, timeout or `preventDefault`. Caps are once per CTA kind and at most twice per session. A recent contact handoff timestamp permits one mail fly-by, then the thumbs loop; a refresh skips the fly-by. No form answers are stored for this decoration. The single CTA kill switch is `LAUNCH_ENABLED` in `launch-bus.ts`.
 

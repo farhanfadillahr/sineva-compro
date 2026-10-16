@@ -40,7 +40,7 @@ export const pages: PageContentMap = {
     key: 'home',
     locale: 'en',
     seo: seo(
-      'Put AI to work for your business | Sineva',
+      'Make your business run smarter with AI | Sineva',
       'Save time on everyday tasks with AI that fits your business. Meet Sino and book a free consultation.',
     ),
     hero: {

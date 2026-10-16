@@ -32,9 +32,12 @@ const linkClass = cx(
 export function SiteFooter({
   settings,
   services,
+  showWork = true,
 }: {
   settings: FooterSettings | null
   services: readonly NavService[]
+  /** `false` hides the Work link while there are no projects to list. */
+  showWork?: boolean
 }) {
   const t = useTranslations('Footer')
   const nav = useTranslations('Nav')
@@ -51,6 +54,10 @@ export function SiteFooter({
         .filter(Boolean)
         .join(' · ')
     : null
+  // The public email can be unconfirmed (null), so each line is optional and the whole block
+  // disappears when none of them has content, rather than leaving an empty rule line.
+  const hasAddressBlock = Boolean(contact?.email || contact?.businessHours || contact?.address)
+  const hasContactBlock = hasAddressBlock || Boolean(legal)
   const socials = socialNetworks.flatMap((network) => {
     const href = settings?.social[network]
     return href ? [{ network, href }] : []
@@ -99,11 +106,13 @@ export function SiteFooter({
                   {t('links.about')}
                 </AppLink>
               </li>
-              <li>
-                <AppLink href="/work" className={linkClass}>
-                  {t('links.work')}
-                </AppLink>
-              </li>
+              {showWork ? (
+                <li>
+                  <AppLink href="/work" className={linkClass}>
+                    {t('links.work')}
+                  </AppLink>
+                </li>
+              ) : null}
               <li>
                 <AppLink href="/blog" className={linkClass}>
                   {t('links.blog')}
@@ -128,22 +137,29 @@ export function SiteFooter({
           </FooterColumn>
         </div>
 
-        {contact ? (
+        {hasContactBlock ? (
           <div className="mt-8 grid gap-1 border-t border-border pt-8 text-body-sm text-text-secondary">
-            <address className="grid gap-1 not-italic">
-              <a
-                href={`mailto:${contact.email}`}
-                className={cx('w-fit rounded-xs text-text no-underline hover:underline', focusRing)}
-              >
-                {contact.email}
-              </a>
-              {contact.businessHours ? <p className="m-0">{contact.businessHours}</p> : null}
-              {contact.address ? (
-                <p data-slot="footer-address" className="m-0">
-                  {contact.address}
-                </p>
-              ) : null}
-            </address>
+            {hasAddressBlock ? (
+              <address className="grid gap-1 not-italic">
+                {contact?.email ? (
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className={cx(
+                      'w-fit rounded-xs text-text no-underline hover:underline',
+                      focusRing,
+                    )}
+                  >
+                    {contact.email}
+                  </a>
+                ) : null}
+                {contact?.businessHours ? <p className="m-0">{contact.businessHours}</p> : null}
+                {contact?.address ? (
+                  <p data-slot="footer-address" className="m-0">
+                    {contact.address}
+                  </p>
+                ) : null}
+              </address>
+            ) : null}
             {legal ? (
               <p data-slot="footer-legal" className="m-0 text-micro text-text-tertiary">
                 {legal}

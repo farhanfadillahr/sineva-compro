@@ -36,10 +36,13 @@ export default async function PublicLayout({
   const messages = await getMessages()
 
   const content = getContentSource()
-  const [settings, services] = await Promise.all([
+  const [settings, services, work] = await Promise.all([
     content.getSiteSettings(locale),
     content.listServices(locale),
+    content.listWork({ locale }),
   ])
+  // An empty list is the honest state before there are real projects: no link to an empty page.
+  const showWork = work.length > 0
   // Only what the navigation needs crosses into the client components.
   const navServices = services.map(({ slug, title, summary, icon }) => ({
     slug,
@@ -60,12 +63,16 @@ export default async function PublicLayout({
       <body className="flex min-h-svh flex-col bg-canvas text-text">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkipLink />
-          <SiteHeader services={navServices} whatsapp={settings?.whatsapp ?? null} />
+          <SiteHeader
+            services={navServices}
+            whatsapp={settings?.whatsapp ?? null}
+            showWork={showWork}
+          />
           {/* Skip-link target. Pages render their own <main>; this wrapper only receives focus. */}
           <div id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 outline-none">
             {children}
           </div>
-          <SiteFooter settings={settings} services={navServices} />
+          <SiteFooter settings={settings} services={navServices} showWork={showWork} />
           <FloatingWhatsApp whatsapp={settings?.whatsapp ?? null} services={navServices} />
         </NextIntlClientProvider>
       </body>

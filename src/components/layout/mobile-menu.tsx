@@ -25,12 +25,6 @@ export const MOBILE_MENU_ID = 'mobile-menu'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-const plainLinks = [
-  { key: 'work', href: '/work' },
-  { key: 'blog', href: '/blog' },
-  { key: 'about', href: '/about' },
-] as const
-
 const rowClass = 'border-b border-border'
 
 /**
@@ -223,7 +217,7 @@ export function MobileMenu({
                 </ul>
               </Accordion>
             </Row>
-            {plainLinks.map(({ key, href }, i) => (
+            {model.plainLinks.map(({ key, href }, i) => (
               <Row key={key} index={i + 2}>
                 <AppLink
                   href={href}

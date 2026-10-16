@@ -92,6 +92,17 @@ Built from section blocks ([page-patterns.md](../../design/page-patterns.md) §3
 ### Phase 7: QA and launch (M4-M5)
 `CPR-52` SEO (no hreflang until a 2nd locale, canonical, OG via `next/og`), `CPR-53` security headers (CSP incl. media host + wasm), `CPR-54` EN content input, `CPR-55` showcase, `CPR-56` E2E, `CPR-57` sitemap/robots/JSON-LD, `CPR-58` Lighthouse + axe (light), `CPR-59` device QA, `CPR-60`-`CPR-64` launch.
 
+### Phase 1: static launch (no CMS)
+
+Product owner decision (2026-10-16): the first launch has no CMS and no lead backend. This narrows Phase 3 (content model and admin) and Phase 6 (leads) for the launch only; the admin work is kept and becomes the editing layer later.
+
+- **Content** is typed modules in `src/content/static/**`, implementing `PublicContentSource`. `src/lib/content-source.ts` returns that source. Switching to the database source later is a one-line change there.
+- **Work** is hidden: the Work link (header, mobile menu, footer) is shown only when `listWork` is not empty, and the Work page and Selected work sections stay off until real projects exist. Same rule for Team.
+- **Contact** has no backend. `src/lib/contact-message.ts` builds a prefilled WhatsApp message (with a mailto alternative while a public email is confirmed). No personal data is posted to or stored on a server.
+- **Waitlist** becomes "Get notified" through WhatsApp or email until a backend exists.
+- **Facts left null** until confirmed: public email, address, legal entity, business hours, and every social account except Instagram.
+- **Not in the launch:** stored leads, mini-CRM, notification and auto-reply emails, Turnstile and rate limits on forms (no form endpoint exists to protect).
+
 ## 5. Execution with an agent swarm
 
 Implementation runs as a swarm of agents in parallel lanes with strict TDD, fresh-context review, and evidence-based verification. Roles, skills, lane ownership, waves (W1-W7), and the task brief template: [agent swarm playbook](2026-10-15-agent-swarm.md).

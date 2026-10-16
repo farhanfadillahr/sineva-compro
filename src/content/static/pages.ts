@@ -44,7 +44,7 @@ export const pages: PageContentMap = {
       'Sineva helps small businesses and teams use AI, with consulting services and an AI agent named Sino on the way. Book a free consultation.',
     ),
     hero: {
-      eyebrow: 'AI consulting',
+      eyebrow: null,
       headline: 'AI for your business, without the hassle',
       lead: 'Ready-to-use AI agents for everyday tasks, and consulting to find, build, and run AI that fits how you work.',
       primaryCtaLabel: 'Book a free consultation',
@@ -104,7 +104,7 @@ export const pages: PageContentMap = {
     ),
     productStatus: 'coming_soon',
     hero: {
-      eyebrow: 'Product',
+      eyebrow: null,
       headline: 'Hand off the busywork to Sino',
       lead: 'Ask Sino for a task the way you would ask a teammate. You look over the result before you use it.',
       primaryCtaLabel: 'Get notified',
@@ -167,7 +167,7 @@ export const pages: PageContentMap = {
       'Find, build, and run AI that fits your business with AI Discovery, AI Build, and AI Enablement. Book a free consultation.',
     ),
     hero: {
-      eyebrow: 'Services',
+      eyebrow: null,
       headline: 'AI help that fits your business',
       lead: 'We help you find, build, and run AI. You get a clear plan and plain words at every step.',
       primaryCtaLabel: 'Book a free consultation',

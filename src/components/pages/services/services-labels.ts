@@ -19,7 +19,6 @@ export type ServicesLabels = Readonly<{
   /** Badge on showcase cards (FR-PF-03). */
   internalDemo: string
   detail: Readonly<{
-    eyebrow: string
     problemsTitle: string
     deliverablesTitle: string
     processTitle: string
@@ -60,7 +59,6 @@ export function servicesLabelsFromMessages(messages: unknown): ServicesLabels {
     chatOnWhatsapp: m('chatOnWhatsapp'),
     internalDemo: m('internalDemo'),
     detail: {
-      eyebrow: m('detail.eyebrow'),
       problemsTitle: m('detail.problemsTitle'),
       deliverablesTitle: m('detail.deliverablesTitle'),
       processTitle: m('detail.processTitle'),

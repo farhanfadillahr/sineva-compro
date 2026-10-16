@@ -14,6 +14,7 @@ import {
 import { RichTextEditor } from '../rich-text-editor'
 import { AdminButton } from '../primitives'
 import { MediaValueField } from './media-value-field'
+import { SeoPreview } from './seo-preview'
 import s from '../admin.module.css'
 import c from './cms.module.css'
 
@@ -393,7 +394,13 @@ function ObjectInput(props: Props & { schema: ObjectField }) {
           ))}
     </>
   )
-  if (!schema.label) return <div className={s.stack}>{body}</div>
+  if (!schema.label)
+    return (
+      <div className={s.stack}>
+        {body}
+        {schema.preview === 'seo' ? <SeoPreview value={data} /> : null}
+      </div>
+    )
   return (
     <fieldset className={c.group}>
       <legend>
@@ -403,6 +410,7 @@ function ObjectInput(props: Props & { schema: ObjectField }) {
       {schema.hint ? <p className={s.muted}>{schema.hint}</p> : null}
       {props.errors[path] ? <p className={s.error}>{props.errors[path]}</p> : null}
       {body}
+      {schema.preview === 'seo' ? <SeoPreview value={data} /> : null}
     </fieldset>
   )
 }

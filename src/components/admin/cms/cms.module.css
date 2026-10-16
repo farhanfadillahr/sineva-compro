@@ -111,3 +111,35 @@
   font-size: var(--admin-text-sm);
   overflow-wrap: anywhere;
 }
+.seoPreview {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.snippet {
+  display: grid;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-surface);
+  overflow-wrap: anywhere;
+}
+.snippet p {
+  margin: 0;
+}
+.snippetTitle {
+  color: var(--admin-action);
+  font-size: 1.05rem;
+}
+.ogCard {
+  display: grid;
+  align-content: end;
+  gap: 4px;
+  aspect-ratio: 1200 / 630;
+  padding: 16px;
+  border-radius: var(--admin-radius);
+  background: var(--admin-tint);
+  border: 1px solid var(--admin-border);
+  overflow-wrap: anywhere;
+}

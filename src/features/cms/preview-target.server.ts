@@ -2,15 +2,11 @@ import 'server-only'
 import { routing } from '../../i18n/routing'
 import { db } from '../../lib/db/client.server'
 import type { ContentLocale } from '../content/types'
+import { localizedPath } from './paths'
 import { documentConfigs, isDocumentName } from '../documents/configs'
 import { readDocuments } from '../documents/service.server'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-/** Locale prefix for a public path: none for the default locale (`as-needed`). */
-export function localizedPath(locale: ContentLocale, path: string) {
-  return locale === routing.defaultLocale ? path : `/${locale}${path === '/' ? '' : path}`
-}
 
 /**
  * The public path to preview, resolved from the database, never from the request: a preview

@@ -11,6 +11,8 @@ import { CmsError } from '../cms/errors'
 import { changedKeys, collectMedia, parseFields, type FieldErrors } from '../cms/fields'
 import { cmsMutation, cmsReader } from '../cms/mutation.server'
 import { revalidateContent } from '../cms/revalidate.server'
+import { localizedPath } from '../cms/paths'
+import { recordSlugChange } from '../redirects/service.server'
 import { serviceGlobalSchema, serviceLocaleSchema, serviceSlugField } from './fields'
 import { service, serviceTranslation } from './schema'
 
@@ -232,6 +234,18 @@ export async function saveService(headers: Headers, payload: unknown): Promise<s
               .where(
                 and(eq(serviceTranslation.serviceId, id), eq(serviceTranslation.locale, locale)),
               )
+        }
+        // A published service whose slug changes keeps its old address working (301).
+        for (const locale of routing.locales) {
+          const before = current?.locales[locale]?.slug
+          const after = next.locales[locale]?.slug
+          if (current?.published && next.published && before && after && before !== after)
+            await recordSlugChange(
+              tx,
+              actor,
+              localizedPath(locale, `/services/${before}`),
+              localizedPath(locale, `/services/${after}`),
+            )
         }
         await writeAudit(tx, actor, {
           entity: 'services',

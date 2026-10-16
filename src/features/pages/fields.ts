@@ -269,7 +269,7 @@ export const PAGE_ROUTES = [
 
 export type PageRoute = (typeof PAGE_ROUTES)[number]
 
-/** Sections the page editor shows; SEO has its own panel (CPR-85). */
+/** Sections the page editor shows, in page order, with the SEO panel last (CPR-85). */
 export function editorSections(key: PageKey): string[] {
-  return Object.keys(pageSchemas[key].fields).filter((section) => section !== 'seo')
+  return Object.keys(pageSchemas[key].fields)
 }

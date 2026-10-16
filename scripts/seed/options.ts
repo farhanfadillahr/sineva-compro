@@ -14,6 +14,7 @@ export const SEED_MODULES = [
   'services',
   'posts',
   'work',
+  'redirects',
 ] as const
 
 export type SeedOptions = { mode: 'base' | 'demo' | 'purge-demo'; module?: string }

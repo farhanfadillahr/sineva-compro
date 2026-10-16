@@ -7,24 +7,9 @@ import {
   selectRelatedPosts,
 } from '@/components/pages/blog/blog-model'
 import { estimateReadingMinutes, WORDS_PER_MINUTE } from '@/components/pages/blog/reading-time'
-import type {
-  Category,
-  ContentLocale,
-  PostDetail,
-  PostSummary,
-  RichTextDocument,
-} from '@/features/content/types'
-import type { PublicContentSource } from '@/features/content/public'
+import type { ContentLocale, PostSummary, RichTextDocument } from '@/features/content/types'
 import { createStaticContentSource, staticContent } from '../../src/content/static'
-import { createFixtureContentSource } from '../../src/features/content/fixture-source'
-
-const richText = (...paragraphs: string[]) =>
-  ({
-    type: 'doc',
-    content: paragraphs.map((text) => ({ type: 'paragraph', content: [{ type: 'text', text }] })),
-  }) as unknown as RichTextDocument
-
-const words = (count: number) => Array.from({ length: count }, () => 'word').join(' ')
+import { makePost, many, richText, sourceOf, words } from './blog-test-utils'
 
 describe('estimateReadingMinutes', () => {
   it('documents the formula: 200 words per minute, rounded up, never below 1', () => {
@@ -53,87 +38,6 @@ describe('estimateReadingMinutes', () => {
     }
   })
 })
-
-// A list of generated posts, newest first, spread over two categories.
-const CATEGORIES: readonly Category[] = [
-  { slug: 'alpha', name: 'Alpha' },
-  { slug: 'beta', name: 'Beta' },
-  { slug: 'empty', name: 'Empty' },
-]
-
-function makePost(index: number, overrides: Partial<PostDetail> = {}): PostDetail {
-  const day = String(28 - index).padStart(2, '0')
-  return {
-    slug: `post-${index}`,
-    locale: 'en',
-    title: `Post ${index}`,
-    excerpt: `Excerpt ${index}`,
-    cover: null,
-    category: CATEGORIES[index % 2]!,
-    author: null,
-    publishedAt: `2026-09-${day}T09:00:00.000Z`,
-    readingMinutes: 1,
-    body: richText('body'),
-    updatedAt: null,
-    seo: {
-      metaTitle: `Post ${index}`,
-      metaDescription: 'd',
-      ogImage: null,
-      canonicalUrl: null,
-      noindex: false,
-    },
-    ...overrides,
-  }
-}
-
-/**
- * Content source over a given list. It starts from the fixture source (pages, settings) and only
- * replaces what the blog reads, with the contract's own rules: newest first, page and pageSize
- * validated, category filter applied before paging.
- */
-function sourceOf(
-  details: readonly PostDetail[],
-  { leakOtherLocales = false }: { leakOtherLocales?: boolean } = {},
-): PublicContentSource {
-  const base = createFixtureContentSource()
-  const summary = (post: PostDetail): PostSummary => ({
-    slug: post.slug,
-    locale: post.locale,
-    title: post.title,
-    excerpt: post.excerpt,
-    cover: post.cover,
-    category: post.category,
-    author: post.author,
-    publishedAt: post.publishedAt,
-    readingMinutes: post.readingMinutes,
-  })
-  return {
-    ...base,
-    async listCategories() {
-      return CATEGORIES
-    },
-    async listPosts({ locale, category, page, pageSize }) {
-      const matching = details
-        // A source that is correct only returns the asked locale. `leakOtherLocales` models the
-        // regression this page must survive: rows of another locale slipping through a query.
-        .filter((post) => leakOtherLocales || post.locale === locale)
-        .filter((post) => category === undefined || post.category?.slug === category)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-      const start = (page - 1) * pageSize
-      return {
-        posts: matching.slice(start, start + pageSize).map(summary),
-        total: matching.length,
-        page,
-        pageSize,
-      }
-    },
-    async getPost(slug) {
-      return details.find((post) => post.slug === slug) ?? null
-    },
-  }
-}
-
-const many = (count: number) => Array.from({ length: count }, (_, index) => makePost(index))
 
 describe('loadBlogListModel', () => {
   it('returns null when the locale has no Blog page content', async () => {

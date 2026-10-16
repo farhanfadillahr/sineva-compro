@@ -4,6 +4,7 @@ import {
   blogCanonicalPath,
   blogListHref,
   paginate,
+  paginationItems,
   parseBlogQuery,
 } from '@/components/pages/blog/blog-query'
 
@@ -133,5 +134,22 @@ describe('paginate', () => {
   it('clamps a page below 1 to the first page', () => {
     expect(paginate(items, 0, 9).page).toBe(1)
     expect(paginate(items, -4, 9).page).toBe(1)
+  })
+})
+
+describe('paginationItems', () => {
+  it('lists every page of a short range', () => {
+    expect(paginationItems(1, 1)).toEqual([1])
+    expect(paginationItems(3, 5)).toEqual([1, 2, 3, 4, 5])
+  })
+
+  it('keeps the first and last page and the neighbours of the current one', () => {
+    expect(paginationItems(1, 10)).toEqual([1, 2, 'gap', 10])
+    expect(paginationItems(5, 10)).toEqual([1, 'gap', 4, 5, 6, 'gap', 10])
+    expect(paginationItems(10, 10)).toEqual([1, 'gap', 9, 10])
+  })
+
+  it('shows a single missing page instead of a gap that hides just one number', () => {
+    expect(paginationItems(4, 8)).toEqual([1, 2, 3, 4, 5, 'gap', 8])
   })
 })

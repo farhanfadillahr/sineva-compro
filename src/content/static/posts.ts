@@ -1,7 +1,7 @@
 import type { Category, PostDetail, RichTextDocument } from '../../features/content/types'
 import { bulletList, doc, heading, paragraph, plainText, seo } from './helpers'
 
-// Three launch articles. They teach, and they make no claim about results: no statistics, no
+// Four launch articles. They teach, and they make no claim about results: no statistics, no
 // invented quotes, no client stories. The author is the team, not a named person, so nothing here
 // attributes a view to someone who has not approved it.
 
@@ -226,6 +226,72 @@ const prepareData = doc(
   ),
 )
 
+const safeAi = doc(
+  heading('The short version'),
+  paragraph(
+    'An AI tool that works but leaks data, makes decisions nobody checks, or cannot be explained is not a win. Safe AI is planned from the first day: what it may see, what it may do, who checks it, and how you would know if something went wrong.',
+  ),
+  heading('Start with what the AI may see'),
+  paragraph(
+    'Give the tool only the information its task needs. A tool that answers delivery questions does not need payment details or your whole customer list. Less access means less to lose if something goes wrong.',
+  ),
+  bulletList(
+    'Keep passwords, payment details, and identity numbers out of AI tools.',
+    'Check where the tool stores what you send it, and for how long.',
+    'Use separate accounts for each person, so access can be removed when someone leaves.',
+  ),
+  heading('Decide what the AI may do on its own'),
+  paragraph(
+    'Drafting a reply is low risk. Sending money, changing prices, or promising a refund is not. Write down which actions the AI may take alone and which ones need a person to approve first. Start strict and loosen the rules only when the results earn it.',
+  ),
+  heading('Keep a person in the loop'),
+  paragraph(
+    'Someone should read the results, at least at the start, and be able to say why a result is right or wrong. Name that person. When nobody owns the checking, small mistakes repeat quietly.',
+  ),
+  heading('Keep a record'),
+  paragraph(
+    'Keep a simple log of what the AI was asked and what it produced, for the tasks that matter. When a customer asks why they got a certain answer, you can look it up instead of guessing. A record also shows whether the tool is getting better or worse over time.',
+  ),
+  heading('Plan for mistakes'),
+  paragraph(
+    'AI can be wrong while sounding sure of itself. Decide in advance what happens when it is: who is told, how the mistake is fixed, and how you switch the tool off if you need to. A clear plan turns a bad moment into a small one.',
+  ),
+  heading('Check a tool before you trust it'),
+  paragraph(
+    'Before a new AI tool touches real work, ask a few plain questions. Who makes it, and where is it based? Does it keep what you type, and can you delete it? Can you control who on your team has access? If the answers are hard to find, treat that as an answer too.',
+  ),
+  paragraph(
+    'A free tool is not always a bad choice, and a paid one is not always safe. What matters is whether you understand what happens to your information once you press send.',
+  ),
+  heading('Test it on real cases before you rely on it'),
+  paragraph(
+    'A demo shows the best case. Your customers will bring the odd questions, the typos, and the angry messages. Try the tool on a set of real, everyday cases, including a few hard ones, and write down where it fails. Also try asking it to do something it should refuse, and check that it does.',
+  ),
+  paragraph(
+    'Only move a task into daily use once the results are good enough that checking them is quick. If every answer needs heavy fixing, the tool is not ready yet, however impressive it looked at first.',
+  ),
+  heading('Review it on a schedule'),
+  paragraph(
+    'Tools change, prices change, and your business changes. Put a short review in the calendar every few months: is the tool still doing the job, is anyone using it in ways you did not plan, and do the rules still fit? Trust is something you keep earning, not something you set once.',
+  ),
+  heading('Set simple team rules'),
+  paragraph(
+    'Most risk comes from everyday use, not from the tool itself. A one-page guide helps more than a long policy nobody reads:',
+  ),
+  bulletList(
+    'Which AI tools the team may use, and for what.',
+    'What must never be pasted into them.',
+    'Who to ask before trying a new tool or a new use.',
+  ),
+  paragraph(
+    'Some data is covered by data protection rules. If you are unsure what applies to your business, ask a qualified adviser before you share it.',
+  ),
+  heading('Where we can help'),
+  paragraph(
+    'In AI Build we design these safeguards into the solution from the start: limited access, protected data, clear rules for what the AI may do, and a record of its work. In AI Enablement we help your team agree on simple rules for safe everyday use. Book a free consultation and tell us what you want to protect.',
+  ),
+)
+
 // Newest first, which is also the order the Home "From the blog" section shows.
 export const postDetails: readonly PostDetail[] = [
   {
@@ -280,6 +346,24 @@ export const postDetails: readonly PostDetail[] = [
     seo: seo(
       'Prepare your business data for an AI project | Sineva',
       'A six-step checklist to gather, tidy, and protect your business information before an AI project. Read it, then talk to Sineva.',
+    ),
+  },
+  {
+    slug: 'how-to-use-ai-safely-in-your-business',
+    locale: 'en',
+    title: 'How to use AI safely in your business',
+    excerpt:
+      'Working AI is not enough. A plain guide to security, clear rules, and trust before you rely on it.',
+    cover: { kind: 'cover-kit', pose: 'typing-laptop', gradient: 'teal' },
+    category: aiBasics,
+    author,
+    publishedAt: '2026-10-13T02:00:00.000Z',
+    readingMinutes: readingMinutes(safeAi),
+    body: safeAi,
+    updatedAt: null,
+    seo: seo(
+      'How to use AI safely in your business | Sineva',
+      'Limit what AI can see and do, keep a person in the loop, keep a record, and set simple team rules. Read the guide.',
     ),
   },
 ]

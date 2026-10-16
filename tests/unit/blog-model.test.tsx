@@ -148,7 +148,7 @@ describe('loadBlogListModel', () => {
   it('lists the real static articles newest first', async () => {
     const model = await loadBlogListModel(createStaticContentSource(), 'en', {})
     expect(model!.featured?.slug).toBe('where-to-start-with-ai-in-a-small-business')
-    expect(model!.posts).toHaveLength(2)
+    expect(model!.posts).toHaveLength(3)
   })
 })
 
@@ -206,7 +206,7 @@ describe('loadBlogPostModel', () => {
       true,
     )
     // Three articles on the site, so the two others fill the related list.
-    expect(model!.related).toHaveLength(2)
+    expect(model!.related).toHaveLength(3)
     expect(model!.related.map((post) => post.slug)).not.toContain(slug)
   })
 

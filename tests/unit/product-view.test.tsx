@@ -284,19 +284,19 @@ describe('Product when live', () => {
 })
 
 describe('Product capabilities, steps, tabs and control', () => {
-  it('renders one task card per capability, each with its Sino pose as a decorative image', () => {
+  it('renders one task card per capability, each with its request on a decorative phone mockup', () => {
     renderProduct(base)
     const caps = section('capabilities')
     const cards = caps.querySelectorAll('[data-variant="task"]')
     expect(cards).toHaveLength(base.capabilities.length)
     base.capabilities.forEach((capability, index) => {
       const card = cards[index] as HTMLElement
-      expect(within(card).getByText(capability.title)).toBeTruthy()
+      expect(within(card).getByRole('heading', { name: capability.title })).toBeTruthy()
       expect(within(card).getByText(capability.body)).toBeTruthy()
-      const img = card.querySelector('img')!
-      expect(img.getAttribute('alt')).toBe('')
-      const src = new URL(img.getAttribute('src')!, 'http://localhost').searchParams.get('url')
-      expect(src).toMatch(/^\/mascot\/poses\/v008\/sino-[a-z-]+\.webp$/)
+      const phone = card.querySelector('[data-slot="phone-frame"]') as HTMLElement
+      expect(phone.getAttribute('aria-hidden')).toBe('true')
+      expect(phone.querySelector('img')).toBeNull()
+      expect(within(phone).getByText('Online')).toBeTruthy()
     })
   })
 

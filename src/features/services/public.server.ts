@@ -13,6 +13,8 @@ import type {
   StepItem,
 } from '../content/types'
 import { cachedRead } from '../cms/cache.server'
+import { isPreviewRequest } from '../cms/preview.server'
+import { previewStateFor } from '../preview/service.server'
 import { resolveMediaFields } from '../cms/media.server'
 import { serviceLocaleSchema } from './fields'
 import { publishedServices } from './service.server'
@@ -30,12 +32,41 @@ function summary(item: Published, locale: ContentLocale): ServiceSummary {
   }
 }
 
-async function listServices(locale: ContentLocale): Promise<readonly ServiceSummary[]> {
-  return (await publishedServices(db, locale)).map((item) => summary(item, locale))
+/** Published services, with the previewed service's unsaved state swapped in (CPR-88). */
+async function servicesFor(locale: ContentLocale, preview: boolean): Promise<Published[]> {
+  const items = await publishedServices(db, locale)
+  if (!preview) return items
+  const state = await previewStateFor('service', locale)
+  if (!state) return items
+  const data = state.data as {
+    slug: string
+    global: Record<string, unknown>
+    local: Record<string, unknown>
+  }
+  const previewed: Published = {
+    id: state.target,
+    slug: data.slug,
+    global: data.global,
+    local: data.local,
+  }
+  return items.some((item) => item.id === state.target)
+    ? items.map((item) => (item.id === state.target ? previewed : item))
+    : [...items, previewed]
 }
 
-async function getService(slug: string, locale: ContentLocale): Promise<ServiceDetail | null> {
-  const item = (await publishedServices(db, locale)).find((s) => s.slug === slug)
+async function listServices(
+  locale: ContentLocale,
+  preview = false,
+): Promise<readonly ServiceSummary[]> {
+  return (await servicesFor(locale, preview)).map((item) => summary(item, locale))
+}
+
+async function getService(
+  slug: string,
+  locale: ContentLocale,
+  preview = false,
+): Promise<ServiceDetail | null> {
+  const item = (await servicesFor(locale, preview)).find((s) => s.slug === slug)
   if (!item) return null
   const local = (await resolveMediaFields(db, serviceLocaleSchema, item.local, locale)) as Record<
     string,
@@ -52,10 +83,25 @@ async function getService(slug: string, locale: ContentLocale): Promise<ServiceD
   }
 }
 
-export const serviceReads = {
-  listServices: cachedRead('services', listServices, (l) => [cacheTags.services(l)]),
-  getService: cachedRead('service', getService, (slug, l) => [
+const cachedList = cachedRead(
+  'services',
+  (l: ContentLocale) => listServices(l),
+  (l) => [cacheTags.services(l)],
+)
+const cachedItem = cachedRead(
+  'service',
+  (slug: string, l: ContentLocale) => getService(slug, l),
+  (slug, l) => [
     cacheTags.services(l),
     ...(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? [cacheTags.service(slug, l)] : []),
-  ]),
+  ],
+)
+
+export const serviceReads = {
+  async listServices(locale: ContentLocale) {
+    return (await isPreviewRequest()) ? listServices(locale, true) : cachedList(locale)
+  },
+  async getService(slug: string, locale: ContentLocale) {
+    return (await isPreviewRequest()) ? getService(slug, locale, true) : cachedItem(slug, locale)
+  },
 } satisfies Partial<PublicContentSource>

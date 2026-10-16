@@ -5,7 +5,7 @@ import { AnimatedPose } from '@/components/motion/animated-pose'
 import { Reveal } from '@/components/motion/Reveal'
 import type { CapabilityTint, MediaAsset, ProductCapability } from '@/features/content/types'
 import { bentoColClass, bentoLayout, bentoRowClass } from './_internal/bento'
-import { ChatBubbles, PhoneFrame } from './_internal/phone-frame'
+import { ChatBubbles, PhoneFrame, type PhoneChrome } from './_internal/phone-frame'
 
 // `ProductCapability` from the content layer fits as is; the page adds the resolved pose image.
 export type TaskCardItem = Pick<ProductCapability, 'key' | 'title' | 'body' | 'tint' | 'featured'> &
@@ -22,6 +22,8 @@ export type TaskCardGridProps = {
   intro?: string | null
   items: readonly TaskCardItem[]
   tone?: SectionTone
+  /** Words in the phone mockups' chat chrome. */
+  phoneChrome?: PhoneChrome
 }
 
 // The mint surface has no semantic token (tokens.md lists teal-50, sun-100, ink-50), so it is a
@@ -44,7 +46,14 @@ const TINT: Record<CapabilityTint, { tone: CardTone; extra?: string }> = {
  * (`grid-flow-dense`), so on desktop the visual order can differ from the DOM order when the
  * featured item is not first. Keep the DOM order meaningful for reading.
  */
-export function TaskCardGrid({ eyebrow, title, intro, items, tone = 'canvas' }: TaskCardGridProps) {
+export function TaskCardGrid({
+  eyebrow,
+  title,
+  intro,
+  items,
+  tone = 'canvas',
+  phoneChrome,
+}: TaskCardGridProps) {
   if (items.length === 0) return null
 
   const featuredIndex = items.findIndex((item) => item.featured)
@@ -98,6 +107,7 @@ export function TaskCardGrid({ eyebrow, title, intro, items, tone = 'canvas' }: 
                     </div>
                   ) : mockupLines.length > 0 ? (
                     <PhoneFrame
+                      chrome={phoneChrome}
                       size={isFeaturedTile ? 'lg' : 'sm'}
                       className={cx(
                         'mt-auto',

@@ -112,6 +112,11 @@
     "comingSoon": "Coming soon",
     "stickyBarLabel": "Get notified",
     "tabsLabel": "Business type",
+    "phone": {
+      "name": "Sino",
+      "status": "Online",
+      "day": "Today"
+    },
     "waitlist": {
       "formLabel": "Get notified about Sino",
       "nameLabel": "Name (optional)",

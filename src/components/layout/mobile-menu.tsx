@@ -252,7 +252,7 @@ export function MobileMenu({
           size="lg"
           withArrow
           onClick={onClose}
-          className="flex-1"
+          className="w-full sm:w-auto sm:flex-1"
         >
           {t('bookConsultation')}
         </Button>
@@ -265,7 +265,7 @@ export function MobileMenu({
             leadingIcon={<WhatsAppIcon className="text-success" />}
             data-analytics="whatsapp_click"
             data-location="mobile_menu"
-            className="flex-1"
+            className="w-full sm:w-auto sm:flex-1"
           >
             {t('chatOnWhatsapp')}
           </Button>

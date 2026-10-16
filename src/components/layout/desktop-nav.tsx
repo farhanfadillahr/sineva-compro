@@ -17,6 +17,7 @@ import { ArrowRightIcon, ChevronDownIcon } from './icons'
 import styles from './layout.module.css'
 import { MenuLinkItem } from './menu-link'
 import { ariaCurrentFor, type NavModel } from './nav-model'
+import { clampPanelX } from './panel-position'
 
 type MenuId = 'product' | 'services'
 /** How a panel was opened decides whether leaving with the pointer closes it again. */
@@ -129,8 +130,15 @@ export function DesktopNav({
     const rootBox = root.getBoundingClientRect()
     const triggerBox = trigger.getBoundingClientRect()
     const centred = triggerBox.left - rootBox.left + triggerBox.width / 2 - width / 2
+    const rootStyle = getComputedStyle(root)
     setGeometry({
-      x: Math.min(Math.max(centred, 0), Math.max(rootBox.width - width, 0)),
+      x: clampPanelX({
+        centred,
+        rootWidth: rootBox.width,
+        width,
+        padLeft: parseFloat(rootStyle.paddingLeft) || 0,
+        padRight: parseFloat(rootStyle.paddingRight) || 0,
+      }),
       width,
       height,
     })

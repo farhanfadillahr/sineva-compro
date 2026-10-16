@@ -7,6 +7,10 @@ import { revealSettleMs } from '../../src/lib/motion/use-reveal'
 // jsdom does not evaluate stylesheets, so the preset numbers are checked on the source: the CSS
 // must say what the tokens (and motion.md 4.1) say.
 const css = readFileSync(join(process.cwd(), 'src/components/motion/Reveal.module.css'), 'utf8')
+const scrubCss = readFileSync(
+  join(process.cwd(), 'src/components/motion/ScrubReveal.module.css'),
+  'utf8',
+)
 const doc = readFileSync(join(process.cwd(), 'docs/design/motion.md'), 'utf8')
 
 function rule(selector: string): string {
@@ -75,6 +79,19 @@ describe('Reveal.module.css presets', () => {
     const hidden = rule('.riseScale.hidden')
     expect(hidden).toMatch(/scale\(0\.94\)/)
     expect(hidden).toMatch(/inset\(0 round 48px\)/)
+  })
+
+  it('riseScale: the native scroll timeline carries the same from and to values', () => {
+    const supports = /@supports \(animation-timeline: view\(\)\)\s*\{([\s\S]*?)\n\}\n/.exec(
+      scrubCss,
+    )?.[1]
+    expect(supports, 'a @supports block').toBeDefined()
+    expect(supports).toMatch(/prefers-reduced-motion: no-preference/)
+    expect(supports).toMatch(/animation-timeline:\s*view\(\)/)
+    expect(supports).toMatch(/\.native\b/)
+    expect(supports).toMatch(/scale\(0\.94\)/)
+    expect(supports).toMatch(/inset\(0 round 48px\)/)
+    expect(supports).toMatch(/opacity:\s*0/)
   })
 
   it('animates only opacity, transform and clip-path', () => {

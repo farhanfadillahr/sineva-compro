@@ -67,7 +67,43 @@ function renderPanel(top: number, props: Record<string, unknown> = {}) {
   return { ...view, el }
 }
 
-describe('rise-scale', () => {
+describe('rise-scale with native scroll timelines', () => {
+  // Chromium and Safari 26 scrub in CSS (`animation-timeline: view()`), which costs no JavaScript;
+  // GSAP (about 26 KB gzip) is only the fallback for browsers without it.
+  beforeEach(() => {
+    vi.stubGlobal('CSS', {
+      supports: (p: string, v?: string) =>
+        `${p}${v ? `: ${v}` : ''}`.includes('animation-timeline'),
+    })
+  })
+
+  it('scrubs in CSS before first paint and never loads GSAP', () => {
+    const { el } = renderPanel(5000)
+    expect(el.dataset.scrub).toBe('css')
+    expect(el.dataset.reveal).toBe('done')
+    expect(h.calls.at(-1)?.enabled).toBe(false)
+    expect(IO.liveObserverCount()).toBe(0)
+  })
+
+  it('does nothing to a panel already in view', () => {
+    const { el } = renderPanel(100)
+    expect(el.dataset.scrub).toBeUndefined()
+    expect(el.dataset.reveal).toBe('idle')
+  })
+
+  it('does nothing under reduced motion', () => {
+    installMatchMedia(true)
+    const { el } = renderPanel(5000)
+    expect(el.dataset.scrub).toBeUndefined()
+    expect(el.dataset.reveal).toBe('idle')
+  })
+})
+
+describe('rise-scale (GSAP fallback)', () => {
+  beforeEach(() => {
+    vi.stubGlobal('CSS', { supports: () => false })
+  })
+
   it('server HTML is the final state', () => {
     const html = renderToString(createElement(Reveal, { variant: 'rise-scale' }, 'panel'))
     expect(html).toContain('data-reveal="idle"')

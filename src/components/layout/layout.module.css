@@ -6,7 +6,8 @@
  * Only transform, opacity and clip-path animate, plus the dropdown panel's width, height and
  * translate while it morphs between triggers. That is the one deliberate exception to "never
  * animate width or height" in motion.md section 10: the shared panel IS the morph, it only runs
- * on a click or hover (never on scroll) and the panel is a single small element.
+ * on a click or hover (never on scroll) and the panel is a single small element. The header
+ * never animates layout: its floating morph is transform and opacity only (see Header below).
  *
  * The var() fallbacks repeat the documented token values so the file also works when the global
  * tokens are not loaded (isolated component tests, Storybook-like galleries).
@@ -14,26 +15,116 @@
 
 /* ---------- Header ---------- */
 
+/*
+ * Nothing in the header ever changes layout, so the page cannot shift (CLS 0):
+ * - .header is the sticky in-flow slot, always --header-height tall and click-through. Pages pull
+ *   themselves under it with -mt-(--header-height). Show and hide move it with translate and
+ *   opacity (240 ms --ease-out).
+ * - .bar has the geometry of the floating pill in EVERY mode: centred, at most 1100 px wide
+ *   (16 px gutters on mobile), 12 px from the top, 60 px tall. Only paint and transforms change.
+ * - The pill surface is the bar's ::before. At the top it is transparent; entering floating mode
+ *   fades it in and settles its scale, 360 ms --ease-out-expo.
+ * - At the top the three content groups (logo and nav, actions) are pushed outwards with a
+ *   translate, so the regular header looks exactly like the full-width bar it replaces; floating
+ *   mode releases them back inside the pill. The distance is pure CSS (container query units on
+ *   the header), so it follows the viewport without JS or measuring.
+ * This is the morph of motion.md section 5 done with transforms only: width, radius, inset and
+ * shadow change together once per mode change, never per scroll frame.
+ */
 .header {
-  /* Background fades in 250 ms; hide and show take 500 ms (motion.md section 5). */
+  container-type: inline-size;
+  pointer-events: none;
   transition:
-    background-color 250ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
-    border-color 250ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
-    translate 500ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+    translate 240ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity 240ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.header[data-scrolled='true'] {
+.header[data-mode='floating-hidden'] {
+  translate: 0 -100%;
+  opacity: 0;
+}
+
+.bar {
+  --bar-pad: 1rem;
+  --pill-width: min(100cqw - 2rem, 68.75rem);
+  --top-width: min(100cqw, var(--container-max-wide, 1360px));
+  /*
+   * How far the logo moves left at the top (negative) to sit where the full-width header put it:
+   * half the width difference, plus the full-width gutter, minus the pill padding and border.
+   * The actions move by the opposite amount. 6 px up: the pill centre is 6 px below the slot's.
+   */
+  --edge-x: calc(
+    (var(--pill-width) - var(--top-width)) / 2 + var(--gutter, 16px) - var(--bar-pad) - 1px
+  );
+  --edge-y: -6px;
+
+  pointer-events: auto;
+  box-sizing: border-box;
+  width: var(--pill-width);
+  height: calc(var(--header-height, 4.5rem) - 12px);
+  margin-inline: auto;
+  padding-inline: var(--bar-pad);
+  translate: 0 12px;
+}
+
+@media (min-width: 768px) {
+  .bar {
+    --bar-pad: 1.25rem;
+  }
+}
+
+.bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid var(--color-border, rgba(11, 42, 49, 0.08));
+  border-radius: var(--radius-lg, 20px);
+  background-color: var(--surface-nav, rgba(255, 255, 255, 0.78));
+  box-shadow: var(
+    --shadow-md,
+    0 4px 12px rgba(11, 42, 49, 0.06),
+    0 12px 32px rgba(11, 42, 49, 0.08)
+  );
   -webkit-backdrop-filter: var(--blur-nav, saturate(180%) blur(14px));
   backdrop-filter: var(--blur-nav, saturate(180%) blur(14px));
+  opacity: 0;
+  scale: 1.04 1;
+  transition:
+    opacity 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    scale 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
-.header[data-hidden='true'] {
-  translate: 0 -100%;
+.header[data-mode^='floating'] .bar::before {
+  opacity: 1;
+  scale: 1 1;
 }
 
-/* Hide and show are instant, never animated (motion.md section 9). */
+.edgeStart,
+.edgeEnd {
+  transition: translate 360ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.header[data-mode='top'] .edgeStart {
+  translate: var(--edge-x) var(--edge-y);
+}
+
+.header[data-mode='top'] .edgeEnd {
+  translate: calc(-1 * var(--edge-x)) var(--edge-y);
+}
+
+/* A hidden pill is off screen but its box still exists: it must not catch the pointer. */
+.header[data-mode='floating-hidden'] .bar {
+  pointer-events: none;
+}
+
+/* Every state change is instant, never animated (motion.md section 9). The idle hide still runs. */
 @media (prefers-reduced-motion: reduce) {
-  .header {
+  .header,
+  .bar::before,
+  .edgeStart,
+  .edgeEnd {
     transition: none;
   }
 }

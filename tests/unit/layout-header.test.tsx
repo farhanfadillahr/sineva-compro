@@ -126,22 +126,58 @@ describe('SiteHeader WhatsApp button', () => {
   })
 })
 
-describe('SiteHeader scroll behaviour', () => {
-  it('is transparent at the top and gets its surface after 8 px', () => {
+const mode = () => header().getAttribute('data-mode')
+const bar = () => document.querySelector<HTMLElement>('[data-slot="header-bar"]')!
+
+describe('SiteHeader floating nav (modes)', () => {
+  it('is the regular transparent header at the top', () => {
     renderHeader()
-    expect(header().getAttribute('data-scrolled')).toBe('false')
+    expect(mode()).toBe('top')
     act(() => scrollTo(8))
-    expect(header().getAttribute('data-scrolled')).toBe('false')
-    act(() => scrollTo(9))
-    expect(header().getAttribute('data-scrolled')).toBe('true')
+    expect(mode()).toBe('top')
   })
 
-  it('hides on scroll down and shows on scroll up', () => {
+  it('hides when scrolling down past 8 px and floats back in on scroll up', () => {
     renderHeader()
+    act(() => scrollTo(9))
+    expect(mode()).toBe('floating-hidden')
     act(() => scrollTo(100))
-    expect(header().getAttribute('data-hidden')).toBe('true')
+    expect(mode()).toBe('floating-hidden')
     act(() => scrollTo(95))
-    expect(header().getAttribute('data-hidden')).toBe('false')
+    expect(mode()).toBe('floating-visible')
+  })
+
+  it('morphs back into the regular header on reaching the top', () => {
+    renderHeader()
+    act(() => scrollTo(300))
+    act(() => scrollTo(290))
+    expect(mode()).toBe('floating-visible')
+    act(() => scrollTo(0))
+    expect(mode()).toBe('top')
+  })
+
+  it('starts hidden when the page loads already scrolled down', () => {
+    Object.defineProperty(window, 'scrollY', { value: 400, configurable: true, writable: true })
+    renderHeader()
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('stays in normal flow (sticky, never fixed) so floating never reflows the page', () => {
+    renderHeader()
+    const classes = header().className.split(/\s+/)
+    expect(classes).toContain('sticky')
+    expect(classes).not.toContain('fixed')
+  })
+
+  it('keeps the logo intro landing slot exactly once, inside the bar, in every mode', () => {
+    renderHeader()
+    const slot = () => document.querySelectorAll('[data-logo-intro-target]')
+    expect(slot()).toHaveLength(1)
+    expect(bar().contains(slot()[0])).toBe(true)
+    act(() => scrollTo(300))
+    expect(slot()).toHaveLength(1)
+    act(() => scrollTo(290))
+    expect(slot()).toHaveLength(1)
   })
 
   it('never hides while a dropdown is open', async () => {
@@ -149,7 +185,7 @@ describe('SiteHeader scroll behaviour', () => {
     renderHeader()
     await user.click(trigger('Product'))
     act(() => scrollTo(300))
-    expect(header().getAttribute('data-hidden')).toBe('false')
+    expect(mode()).toBe('floating-visible')
   })
 
   it('never hides while keyboard focus is inside the header', async () => {
@@ -158,16 +194,16 @@ describe('SiteHeader scroll behaviour', () => {
     await user.tab()
     expect(header().contains(document.activeElement)).toBe(true)
     act(() => scrollTo(300))
-    expect(header().getAttribute('data-hidden')).toBe('false')
+    expect(mode()).toBe('floating-visible')
   })
 
   it('shows a hidden header when keyboard focus enters it', async () => {
     const user = userEvent.setup()
     renderHeader()
     act(() => scrollTo(300))
-    expect(header().getAttribute('data-hidden')).toBe('true')
+    expect(mode()).toBe('floating-hidden')
     await user.tab()
-    expect(header().getAttribute('data-hidden')).toBe('false')
+    expect(mode()).toBe('floating-visible')
   })
 
   it('resumes hiding once focus leaves the header', async () => {
@@ -176,7 +212,7 @@ describe('SiteHeader scroll behaviour', () => {
     await user.tab()
     await user.click(screen.getByRole('button', { name: 'outside' }))
     act(() => scrollTo(300))
-    expect(header().getAttribute('data-hidden')).toBe('true')
+    expect(mode()).toBe('floating-hidden')
   })
 
   it('does not keep the header pinned after a mouse click focused a link inside it', async () => {
@@ -185,11 +221,14 @@ describe('SiteHeader scroll behaviour', () => {
     const user = userEvent.setup()
     renderHeader()
     await user.click(screen.getByRole('link', { name: 'Blog' }))
+    // The pointer over the nav is its own hold; move it away so only the focus is under test.
+    await user.unhover(screen.getByRole('link', { name: 'Blog' }))
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: 'Blog' }))
     act(() => scrollTo(300))
-    expect(header().getAttribute('data-hidden')).toBe('true')
+    expect(mode()).toBe('floating-hidden')
   })
 
-  it('exposes the reduced-motion preference so hide and show can be instant', () => {
+  it('exposes the reduced-motion preference so show, hide and morph can be instant', () => {
     installMatchMedia({ [REDUCED_MOTION_QUERY]: true })
     renderHeader()
     expect(header().getAttribute('data-motion')).toBe('reduced')
@@ -198,6 +237,140 @@ describe('SiteHeader scroll behaviour', () => {
   it('uses full motion by default', () => {
     renderHeader()
     expect(header().getAttribute('data-motion')).toBe('full')
+  })
+})
+
+describe('SiteHeader floating nav (idle auto-hide)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    // See the note in "SiteHeader dropdown hover": user-event needs this under Vitest fake timers.
+    Object.assign(globalThis, { jest: { advanceTimersByTime: vi.advanceTimersByTime.bind(vi) } })
+  })
+
+  afterEach(() => {
+    Reflect.deleteProperty(globalThis, 'jest')
+  })
+
+  const setup = () => userEvent.setup({ delay: null })
+  const advance = (ms: number) =>
+    act(() => {
+      vi.advanceTimersByTime(ms)
+    })
+  /** Floating and visible: scrolled down, then a little up. */
+  const floatVisible = () => {
+    act(() => scrollTo(300))
+    act(() => scrollTo(290))
+    expect(mode()).toBe('floating-visible')
+  }
+
+  it('hides after 2.5 s without scrolling, not before', () => {
+    renderHeader()
+    floatVisible()
+    advance(2499)
+    expect(mode()).toBe('floating-visible')
+    advance(1)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('restarts the countdown on every scroll event', () => {
+    renderHeader()
+    floatVisible()
+    advance(2000)
+    act(() => scrollTo(280))
+    advance(2000)
+    expect(mode()).toBe('floating-visible')
+    advance(500)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('shows again on the next upward scroll after an idle hide', () => {
+    renderHeader()
+    floatVisible()
+    advance(2500)
+    expect(mode()).toBe('floating-hidden')
+    act(() => scrollTo(285))
+    expect(mode()).toBe('floating-visible')
+  })
+
+  it('never auto-hides the regular header at the top', () => {
+    renderHeader()
+    advance(10_000)
+    expect(mode()).toBe('top')
+  })
+
+  it('returning to the top cancels the idle hide and keeps the regular header', () => {
+    renderHeader()
+    floatVisible()
+    act(() => scrollTo(0))
+    advance(10_000)
+    expect(mode()).toBe('top')
+  })
+
+  it('still applies under reduced motion', () => {
+    installMatchMedia({ [REDUCED_MOTION_QUERY]: true })
+    renderHeader()
+    floatVisible()
+    advance(2500)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('is paused while the pointer is over the nav and restarts when it leaves', async () => {
+    const user = setup()
+    renderHeader()
+    floatVisible()
+    await user.hover(screen.getByRole('link', { name: 'Blog' }))
+    advance(10_000)
+    expect(mode()).toBe('floating-visible')
+    await user.unhover(screen.getByRole('link', { name: 'Blog' }))
+    advance(2499)
+    expect(mode()).toBe('floating-visible')
+    advance(1)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('ignores touch pointers, which have no hover', () => {
+    renderHeader()
+    floatVisible()
+    fireEvent.pointerEnter(bar(), { pointerType: 'touch' })
+    advance(2500)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('is paused while keyboard focus is inside and restarts when it leaves', async () => {
+    const user = setup()
+    renderHeader()
+    floatVisible()
+    await user.tab()
+    expect(header().contains(document.activeElement)).toBe(true)
+    advance(10_000)
+    expect(mode()).toBe('floating-visible')
+    await user.click(screen.getByRole('button', { name: 'outside' }))
+    advance(2500)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('is paused while a dropdown is open and restarts when it closes', async () => {
+    const user = setup()
+    renderHeader()
+    floatVisible()
+    await user.click(trigger('Product'))
+    advance(10_000)
+    expect(mode()).toBe('floating-visible')
+    await user.click(trigger('Product'))
+    expect(trigger('Product').getAttribute('aria-expanded')).toBe('false')
+    await user.click(screen.getByRole('button', { name: 'outside' }))
+    advance(2500)
+    expect(mode()).toBe('floating-hidden')
+  })
+
+  it('is paused while the mobile menu is open, and the nav stays visible', async () => {
+    const user = setup()
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    renderHeader()
+    floatVisible()
+    await user.click(screen.getByRole('button', { name: 'Open menu' }))
+    advance(10_000)
+    expect(mode()).toBe('floating-visible')
   })
 })
 

@@ -285,11 +285,17 @@ describe('buildContactMailto', () => {
 
   it('has no dash in the subject or body, and no header injection through a newline', () => {
     const href = buildContactMailto(
-      { ...fields, name: 'Rina\r\nBcc: evil@x.com — hi' },
+      { ...fields, name: 'Rina\r\nBcc: evil@x.com \u2014 hi' },
       settings,
-      settings.whatsapp.templates,
     )!
-    expect(href).not.toMatch(/%0D|%0A.*bcc/i === undefined ? /x/ : /subject=[^&]*%0[AD]/i)
+    const params = new URLSearchParams(href.slice(href.indexOf('?') + 1))
+    expect(params.get('subject')).not.toMatch(/[\r\n]/)
+    expect(
+      params
+        .get('body')!
+        .split('\n')
+        .some((line) => /^bcc:/i.test(line)),
+    ).toBe(false)
     expect(decodeURIComponent(href)).not.toMatch(/[‒-―]/)
   })
 

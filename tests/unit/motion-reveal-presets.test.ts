@@ -49,6 +49,14 @@ describe('Reveal.module.css presets', () => {
     expect(rule('.lines [data-split] [data-line]')).toMatch(/overflow:\s*clip/)
   })
 
+  it('lines: the split heading is a flex column, so the lines margins add instead of collapsing', () => {
+    // Block siblings collapse their negative margins (-0.14em twice becomes -0.14em once), which made
+    // a two-line heading 0.14em taller than the plain one and shifted the page when it was restored.
+    const heading = rule('.lines [data-split]')
+    expect(heading).toMatch(/display:\s*flex/)
+    expect(heading).toMatch(/flex-direction:\s*column/)
+  })
+
   it('lines: eyebrow and lead follow 120 ms later with a fade and a 12 px rise', () => {
     const hidden = rule(".lines.hidden [data-reveal-part]:not([data-reveal-part='title'])")
     expect(hidden).toMatch(/opacity:\s*0/)

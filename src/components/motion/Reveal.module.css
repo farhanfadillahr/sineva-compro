@@ -66,6 +66,15 @@
 }
 
 /*
+ * A flex column, not blocks: sibling blocks collapse their negative margins into one, which would
+ * leave the split heading taller than the plain one it replaces and shift the page on restore.
+ */
+.lines [data-split] {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
  * The mask is one block per line. The vertical padding and the equal negative margin give the
  * glyphs room (ascenders, descenders, accents) without changing the line's height in the flow,
  * which is why the split heading is the same height as the plain one it replaces.

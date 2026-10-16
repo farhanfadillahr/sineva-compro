@@ -66,5 +66,37 @@
     "servicesMenu": {
       "seeAll": "See all services"
     }
+  },
+  "Footer": {
+    "columns": {
+      "product": "Product",
+      "services": "Services",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "links": {
+      "aiAgents": "AI Agents",
+      "joinWaitlist": "Join the waitlist",
+      "allServices": "All services",
+      "about": "About",
+      "work": "Work",
+      "blog": "Blog",
+      "contact": "Contact",
+      "privacyPolicy": "Privacy policy"
+    },
+    "registration": "Registration number {number}",
+    "copyright": "© 2026 Sineva",
+    "socialLabel": "Social media",
+    "social": {
+      "instagram": "Sineva on Instagram",
+      "linkedin": "Sineva on LinkedIn",
+      "tiktok": "Sineva on TikTok",
+      "youtube": "Sineva on YouTube",
+      "x": "Sineva on X"
+    }
+  },
+  "Whatsapp": {
+    "label": "Chat with us",
+    "ariaLabel": "Chat with us on WhatsApp"
   }
 }

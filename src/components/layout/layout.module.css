@@ -230,6 +230,7 @@
 
 .fabLabel {
   max-width: 10rem;
+  margin-left: 0.5rem;
   opacity: 1;
   overflow: hidden;
   transition:
@@ -242,14 +243,14 @@
 .fab[data-collapsed='true'] .fabLabel {
   max-width: 0;
   opacity: 0;
-  margin-left: -0.5rem;
+  margin-left: 0;
 }
 
 .fab[data-collapsed='true'] .fabInner:hover .fabLabel,
 .fab[data-collapsed='true'] .fabInner:focus-visible .fabLabel {
   max-width: 10rem;
   opacity: 1;
-  margin-left: 0;
+  margin-left: 0.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

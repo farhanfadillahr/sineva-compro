@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest'
 import { DESKTOP_QUERY } from '../../src/components/layout/media-queries'
 import { SiteHeader } from '../../src/components/layout/site-header'
 import {
@@ -45,11 +45,8 @@ beforeEach(() => {
   resetScroll()
   removeMatchMedia()
   // jsdom implements scrollTo as "not implemented"; the scroll lock calls it to restore position.
+  // Never restored: Testing Library unmounts (and releases the lock) after each test's own hooks.
   scrollToSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
-})
-
-afterEach(() => {
-  scrollToSpy.mockRestore()
 })
 
 describe('mobile menu open and close', () => {

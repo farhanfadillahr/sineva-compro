@@ -1,0 +1,146 @@
+/*
+ * AnimatedPose (docs/design/mascot-sino.md section 5.1). Four stacked layers, each owning one
+ * transform, so reveal, parallax, float and hover never overwrite each other:
+ *
+ *   .root      reveal (rise 24 px, fade, 1 degree settle), runs once
+ *   .parallax  --pose-parallax, written by a rAF-throttled scroll handler while in view
+ *   .float     idle float, 6 px over 6 s, phase from --pose-float-delay
+ *   .lift      hover and focus-visible: --pose-lift and --pose-rotate, set from [data-active]
+ *
+ * Only transform and opacity are ever animated or transitioned (motion.md section 10). The server
+ * renders none of the data attributes the rules below key on, so with JavaScript off the pose is
+ * in its final, visible, still state. will-change is set only while something is moving.
+ */
+
+.root {
+  display: block;
+}
+
+.parallax,
+.float,
+.lift {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.parallax {
+  transform: translate3d(0, var(--pose-parallax, 0px), 0);
+}
+
+.lift {
+  transform: translate3d(0, var(--pose-lift, 0px), 0) rotate(var(--pose-rotate, 0deg));
+  transition: transform var(--dur-med, 360ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.imageNatural,
+.imageContain {
+  display: block;
+  width: 100%;
+}
+
+.imageNatural {
+  height: auto;
+}
+
+.imageContain {
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Reveal: below-the-fold poses start hidden (set on the client before first paint). */
+.root[data-reveal='hidden'] {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance, 24px));
+  will-change: opacity, transform;
+}
+
+.root[data-reveal='shown'] {
+  animation: reveal var(--dur-scene, 1000ms) linear backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+/*
+ * Two segments with their own curves: a fast expo rise and fade to a 1 degree overshoot, then the
+ * bounce curve eases the tilt back to level. `backwards` (not `forwards`) keeps the end state the
+ * element's own styles, so nothing sticks once the animation finishes.
+ */
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance, 24px)) rotate(0deg);
+    animation-timing-function: var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) rotate(1deg);
+    animation-timing-function: var(--ease-bounce, cubic-bezier(0.34, 1.35, 0.64, 1));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* Float and parallax only run while the pose is on screen (data-inview is set by JavaScript). */
+.root[data-inview='true'] .parallax {
+  will-change: transform;
+}
+
+.root[data-inview='true'] .float {
+  animation: float 6s var(--ease-in-out, cubic-bezier(0.65, 0, 0.35, 1)) infinite;
+  animation-delay: var(--pose-float-delay, 0s);
+  will-change: transform;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* Hover and focus-visible on the nearest card: lift 6 px, tilt 2 degrees, direction per card. */
+.root[data-active='true'] {
+  --pose-lift: -6px;
+  --pose-rotate: calc(var(--pose-tilt, 1) * 2deg);
+}
+
+.root[data-active='true'] .lift {
+  will-change: transform;
+}
+
+/*
+ * Static under reduced motion (motion.md section 9). Selectors match the specificity of the rules
+ * above, and come later, so a preference flipped after JavaScript decided still wins.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .root[data-reveal] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .root .parallax,
+  .root[data-inview] .parallax,
+  .root .lift,
+  .root[data-active] .lift {
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .root .float,
+  .root[data-inview] .float {
+    transform: none;
+    animation: none;
+    will-change: auto;
+  }
+}

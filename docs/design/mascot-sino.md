@@ -90,9 +90,30 @@ Sino is pale teal with a bluish-white helmet, so she **sinks into a plain white 
 | Submit success | `happy_success` → `idle` | |
 | Scroll out of hero | Pause rendering | |
 | Touch/tap Sino (mobile) | `greet_wave` (5 s cooldown) | Small easter egg, no look-at on mobile |
+| **Pointer enters the 3D mascot** (desktop, raycast hit on the model, not just the canvas box) | Short reaction: `wave_small` if available, else `greet_wave` at 1.25x speed, plus a quick happy brow raise (`browInnerUp` 0 → 0.6 → 0) and a 6° head tilt toward the cursor | Cooldown 4 s. Cursor changes to `pointer` only over the model. While the pointer stays on the model, Sino keeps eye contact (look-at weight 1.0); on leave, he returns to `idle` with a 0.35 s crossfade |
+| **Pointer hovers the model for 1.5 s** | `listening` loop | Stops when the pointer leaves |
+| **Click / Enter on the model** (desktop) | `happy_success` | Same 5 s cooldown as tap. The canvas wrapper is a decorative button only if it has an accessible name; otherwise it stays `aria-hidden` and click is mouse-only |
+| **Page scroll while the hero is visible** | Scroll-linked motion of the whole rig: body rotates up to 20° toward the content below, the canvas moves up with a 0.85x parallax, and the head tips down slightly (pitch 8°) as if following the scroll | Driven by scroll progress through the hero (0 to 1), smoothed with a lerp, transform of the rig root only (no layout). Look-at still blends on top |
+| **Scroll velocity spike** (fast flick) | Small "whoa" reaction: brows up + a 0.3 s body sway | Max once per 3 s |
+| **Hero leaves the viewport** | Pause rendering | Resume on re-entry with `idle` |
 | `prefers-reduced-motion` | No canvas, static poster | |
 
 Crossfade between clips: 0.35 s (`AnimationAction.crossFadeTo`).
+
+### 5.1 Animated stills (all pages)
+
+Pre-rendered Sino poses (`/mascot/poses/*`) are not static either. Every pose image uses the same small motion vocabulary, CSS and IntersectionObserver only (no GSAP, no canvas), so it stays cheap:
+
+| Trigger | Behaviour |
+|---|---|
+| Scroll into view | Rises 24 px and fades in (Reveal), then settles with a 1° overshoot tilt (`--ease-bounce`) |
+| While in view | Gentle idle float: translateY 0 → -6 px → 0 over 6 s, alternating phase per image so neighbours do not move in sync |
+| Scroll progress through its section | Parallax: the pose moves at 0.92x scroll speed relative to its card (transform only, clamped to ±24 px) |
+| Hover on the card or the pose (desktop) | Lifts 6 px and tilts ±2° (alternating per card, Sintra pattern); the stage glow intensifies |
+| Focus-visible on the card | Same as hover |
+| `prefers-reduced-motion` | Static, no float, no parallax |
+
+Implementation lives in one shared `AnimatedPose` wrapper (used by TwoPaths, TaskCardGrid, FinalCta, page heroes with stills, 404 and thank-you).
 
 ## 6. Where Sino appears per page
 
@@ -126,3 +147,6 @@ Limit: **at most one "large" Sino per viewport.** More than that feels crowded a
 - [ ] Smooth look-at with no jitter at 60 fps on a MacBook Air M1 and ≥ 45 fps on a mid-range Android
 - [ ] Reduced motion: no canvas, no video
 - [ ] Unit tests for the state machine (trigger → clip) and the loading gate (feature detection mocked)
+- [ ] Hovering the 3D model (raycast hit) plays the reaction within 100 ms, respects the 4 s cooldown, and keeps eye contact while the pointer stays on the model
+- [ ] Scrolling through the hero drives the rig rotation, parallax and head pitch smoothly (no jank at 60 fps on desktop), transform only, with zero CLS
+- [ ] Every pose still uses `AnimatedPose`: reveal, idle float, scroll parallax, hover lift and tilt; static under reduced motion

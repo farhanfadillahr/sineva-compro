@@ -8,3 +8,5 @@ node_modules/
 coverage/
 package-lock.json
 drizzle/meta/
+public/draco/
+.claude/worktrees/

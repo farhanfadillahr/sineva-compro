@@ -18,5 +18,130 @@
   },
   "NotFound": {
     "title": "Page not found."
+  },
+  "Nav": {
+    "skipToContent": "Skip to content",
+    "homeLabel": "Sineva home",
+    "primaryLabel": "Main",
+    "product": "Product",
+    "services": "Services",
+    "work": "Work",
+    "blog": "Blog",
+    "about": "About",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "bookConsultation": "Book a free consultation",
+    "chatOnWhatsapp": "Chat on WhatsApp",
+    "language": "Language",
+    "productMenu": {
+      "items": {
+        "customerChat": {
+          "title": "Customer chat",
+          "description": "Draft answers to common questions."
+        },
+        "socialMedia": {
+          "title": "Social media",
+          "description": "Get post ideas and caption drafts."
+        },
+        "salesFollowUp": {
+          "title": "Sales follow-up",
+          "description": "Keep track of who asked and draft a reply."
+        },
+        "financeAdmin": {
+          "title": "Finance and admin",
+          "description": "Record simple transactions and see a summary."
+        },
+        "operations": {
+          "title": "Daily operations",
+          "description": "Get a short daily summary and reminders."
+        }
+      },
+      "promo": {
+        "eyebrow": "Early access",
+        "title": "Join the waitlist",
+        "description": "Be the first to try Sino when it is ready."
+      }
+    },
+    "servicesMenu": {
+      "seeAll": "See all services"
+    }
+  },
+  "Footer": {
+    "columns": {
+      "product": "Product",
+      "services": "Services",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "links": {
+      "aiAgents": "AI Agents",
+      "joinWaitlist": "Join the waitlist",
+      "allServices": "All services",
+      "about": "About",
+      "work": "Work",
+      "blog": "Blog",
+      "contact": "Contact",
+      "privacyPolicy": "Privacy policy"
+    },
+    "registration": "Registration number {number}",
+    "copyright": "© 2026 Sineva",
+    "socialLabel": "Social media",
+    "social": {
+      "instagram": "Sineva on Instagram",
+      "linkedin": "Sineva on LinkedIn",
+      "tiktok": "Sineva on TikTok",
+      "youtube": "Sineva on YouTube",
+      "x": "Sineva on X"
+    }
+  },
+  "Home": {
+    "stickyBarLabel": "Next steps",
+    "comingSoon": "Coming soon",
+    "internalDemo": "Internal demo project"
+  },
+  "Product": {
+    "comingSoon": "Coming soon",
+    "stickyBarLabel": "Get notified",
+    "tabsLabel": "Business type",
+    "waitlist": {
+      "formLabel": "Get notified about Sino",
+      "nameLabel": "Name (optional)",
+      "businessTypeLabel": "Business type (optional)",
+      "businessTypePlaceholder": "Choose one",
+      "consentBefore": "I agree that Sineva can use these details to contact me about Sino. Read the",
+      "consentLink": "privacy policy",
+      "consentAfter": ".",
+      "consentError": "Tick the box so we know you are happy to be contacted.",
+      "helper": "This opens WhatsApp with your message ready to send. Nothing is saved on this website.",
+      "emailButton": "Send by email instead",
+      "openedMessage": "WhatsApp should open in a new tab. If it did not, use this link.",
+      "openedLink": "Open WhatsApp",
+      "messageNotify": "Please let me know when Sino is ready.",
+      "messageName": "Name",
+      "messageBusinessType": "Business type",
+      "emailSubject": "Notify me when Sino is ready"
+    }
+  },
+  "Whatsapp": {
+    "label": "Chat with us",
+    "ariaLabel": "Chat with us on WhatsApp"
+  },
+  "Services": {
+    "breadcrumbLabel": "Breadcrumb",
+    "stickyBarLabel": "Next steps",
+    "cardCta": "Explore {name}",
+    "chatOnWhatsapp": "Chat on WhatsApp",
+    "internalDemo": "Internal demo project",
+    "detail": {
+      "problemsTitle": "Problems we solve",
+      "deliverablesTitle": "What you get",
+      "processTitle": "How it works",
+      "toolsTitle": "Tools we use",
+      "relatedWorkTitle": "Related work",
+      "faqTitle": "Questions, answered",
+      "finalCtaHeadline": "Ready to plan your AI project?",
+      "finalCtaBody": "Tell us what you want to improve. We will reply with next steps."
+    }
   }
 }

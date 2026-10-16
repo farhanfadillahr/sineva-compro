@@ -13,10 +13,12 @@ export function proxy(request: NextRequest) {
   return localize(request)
 }
 // Static files that live outside the localized tree must be excluded here, otherwise they
-// would be rewritten to `/en/...` and 404: /admin, /api, /_next, /brand, /lottie (public/)
-// and the root files browsers and crawlers request by name.
+// would be rewritten to `/en/...` and 404: /admin, /api, /_next, /brand, /lottie, /mascot
+// (poster, poses and the GLB), /draco (self-hosted decoder) and /og (public/) and the root files
+// browsers and crawlers request by name. Each folder is matched as `name(?:/|$)` so a page whose
+// first segment only starts with the same letters (for example `/mascots`) is still localized.
 export const config = {
   matcher: [
-    '/((?!admin(?:/|$)|api(?:/|$)|_next(?:/|$)|brand(?:/|$)|lottie(?:/|$)|(?:favicon\\.ico|robots\\.txt|sitemap\\.xml)$).*)',
+    '/((?!admin(?:/|$)|api(?:/|$)|_next(?:/|$)|brand(?:/|$)|lottie(?:/|$)|mascot(?:/|$)|draco(?:/|$)|og(?:/|$)|(?:favicon\\.ico|robots\\.txt|sitemap\\.xml)$).*)',
   ],
 }

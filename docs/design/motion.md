@@ -59,6 +59,19 @@ Rules (these protect conversion and Core Web Vitals; do not relax them without r
 - Lottie player loaded with `next/dynamic` only on the first visit.
 - Bots and Lighthouse-like agents get no overlay (`navigator.webdriver` or no JS: nothing renders).
 
+Implementation note (three parts, `src/components/brand/`):
+- **Gate** (`intro-gate-script.ts`, rendered by `logo-intro-server.tsx` in `<head>`): a blocking inline script decides before first paint. A client-only decision lets the page paint at about 44 ms and covers it at about 388 ms, a visible flash. It plays when the toggle is on, the session flag is unset, the visitor does not prefer reduced motion and `navigator.webdriver` is false (or the test-only `LOGO_INTRO_FORCE=1` build flag is set). It then claims the session flag and sets `<html data-logo-intro="pending">`. Its truth table is tested against `shouldPlayIntro` for every input combination.
+- **Shell** (`LogoIntroShell`, first in `<body>`): a canvas-coloured full-screen layer in the server HTML, shown by CSS only while the marker is present. Pure CSS makes it inert after 1.2 s and fades it out by 1.8 s even if JavaScript never runs.
+- **Takeover** (`logo-intro.tsx`, `logo-intro-overlay.tsx`): the client plays the Lottie on top of the shell, runs the FLIP at 1.1 s and removes the marker, which fades the shell. The marker is also removed on skip input, reduced motion, a Lottie that fails or is not ready within 500 ms, and a mount later than 800 ms. Its clock is `performance.now()`, the same clock as the shell's CSS timers.
+
+CSP (CPR-53): the gate is an inline script, so a CSP needs its hash or a nonce. The text is byte-stable (its settings are data attributes on the script element), so one hash covers every build. `tests/unit/logo-intro-gate-script.test.tsx` fails if this value goes stale. The exact script (338 bytes):
+
+```js
+!function(){try{var s=document.currentScript.dataset,k="sineva:once:logo-intro",t=sessionStorage;if(s.enabled!=="1"||t.getItem(k)!==null||navigator.webdriver&&s.force!=="1"||window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;t.setItem(k,"1");document.documentElement.dataset.logoIntro="pending"}catch(e){}}()
+```
+
+`script-src 'sha256-Q+sYKFt+3ar9/MWCokEfS+mDbusO2z9vGjpMphGvrmQ='` (header form; the test looks for the `sha256-` token).
+
 ### 3.2 Hero entrance (every load)
 
 After the intro (or immediately on later visits):
@@ -93,7 +106,7 @@ Pattern from the Sintra home page: a sticky device mockup on one side, a list of
 
 ### 4.3 Scroll-scrubbed scenes
 
-At most **one per page**. Candidates:
+At most **one per page**. A step selector driven by scroll progress (StickySteps, §4.2) does not count as a scene; it only switches content. Scroll-linked motion of the hero mascot ([mascot-sino.md](mascot-sino.md) §5) and the animated stills (§5.1 there) do not count either: they are small, transform-only and never pin the page. Candidates:
 - Home "Meet Sino": Sino's helmet turns toward the user and his eyes open as the section scrolls into view (GLB driven by scroll progress, or sprite sequence Q1 from [3d-asset-requirements.md](3d-asset-requirements.md)). Equivalent of Sintra's Lottie helmet section.
 - Product capability orbit: capability chips orbit around Sino (Sintra's orbit carousel pattern, 15 s per loop, paused when off-screen).
 

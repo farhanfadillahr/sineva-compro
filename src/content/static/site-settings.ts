@@ -13,7 +13,7 @@ export const siteSettings: SiteSettingsDTO = {
   brand: {
     siteName: 'Sineva',
     defaultOgImage: asset(
-      '/og/default-v006.png',
+      '/og/default-v008.png',
       1200,
       630,
       'Sineva and Sino, the friendly AI agent mascot',

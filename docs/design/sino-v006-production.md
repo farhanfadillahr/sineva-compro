@@ -1,5 +1,7 @@
 # Sino v006 production notes
 
+Superseded by v008 for skin weights, arm animation and the rendered assets: see [sino-v008-rig-repair.md](sino-v008-rig-repair.md). The jetpack, the thrust sockets, the launch overlay and the runtime behaviour described here still apply.
+
 Delivered on 2026-10-16 for CPR-96 and CPR-99. The owner requested that moving limbs and props never pass through Sino. This delivery corrects the source geometry/poses as well as adding the jetpack.
 
 ## Editable source and recipes

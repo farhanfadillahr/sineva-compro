@@ -17,13 +17,21 @@ describe('proxy matcher', () => {
     '/brand/logo.svg',
     '/lottie/intro.json',
     '/favicon.ico',
-    '/api/health',
-    '/admin',
-    '/admin/users',
+    '/robots.txt',
+    '/sitemap.xml',
     '/_next/static/chunk.js',
   ])('leaves the static or internal path %s alone', (pathname) => {
     expect(handledByIntl(pathname)).toBe(false)
   })
+
+  // The proxy itself decides what to do with these (404 when the admin is off, no localization
+  // either way), so the matcher must let them through.
+  it.each(['/admin', '/admin/users', '/api/health', '/api/auth/get-session'])(
+    'lets the admin or api path %s reach the proxy',
+    (pathname) => {
+      expect(handledByIntl(pathname)).toBe(true)
+    },
+  )
 
   it.each(['/', '/services', '/en/services', '/blog/some-post', '/contact'])(
     'still localizes the page path %s',

@@ -458,6 +458,8 @@ Module boundaries, folder structure, security, and transition details are in the
 
 ### 14.2 Infrastructure: VPS + Coolify
 
+> **Hosting update (2026-10-16, CPR-94).** Phase 1 is a static public site with no CMS, no admin, and no database, so it is hosted on **Vercel** (runbook: [`docs/deploy/vercel.md`](../deploy/vercel.md)). The VPS + Coolify stack below (decision D2) applies from the **CMS phase**, when the admin, PostgreSQL, and SeaweedFS are needed (CPR-8, CPR-11).
+
 ```
 Visitor ──► Cloudflare (DNS, proxy/CDN, Turnstile)
                 │   media requests cached long at the CDN edge
@@ -537,7 +539,7 @@ Ticket title format: **`CPR-{number} | [MODULE] Action`**. `CPR-{number}` is ass
 | # | Decision | Rejected alternative |
 |---|---|---|
 | D1 (Rev. 2) | Next.js with an integrated custom admin; PostgreSQL data; no headless CMS | Payload/headless CMS (Rev. 1 decision replaced); content only in the repo; separate conventional CMS |
-| D2 | VPS + Coolify hosting | Vercel Pro + Neon |
+| D2 | VPS + Coolify hosting for the CMS phase; phase 1 (static site, no admin or database) is hosted on Vercel (2026-10-16) | Vercel Pro + Neon for the CMS phase |
 | D3 | Primary call to action: service consultation (WhatsApp + form); secondary: product waitlist | waitlist as the primary call to action; two equal paths |
 | D4 (Rev. 3) | English default and only enabled locale at launch, i18n-ready (`localePrefix: 'as-needed'`); Indonesian added later | Indonesian and English at launch (Rev. 1/2) |
 | D5 | Credibility through clearly labelled internal showcases | team profile only; launch without a portfolio |

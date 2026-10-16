@@ -45,7 +45,7 @@ export default async function WaitlistPage({
         }
       />
       <form
-        className={`${s.panel} ${s.row}`}
+        className={`${s.panel} ${s.filterBar}`}
         method="get"
         autoComplete="off"
         aria-label="Filter waitlist"

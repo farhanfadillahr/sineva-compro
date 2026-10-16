@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { ArrowDown, ArrowUp, GripVertical } from 'lucide-react'
 import s from './admin.module.css'
 export function SortableList<T extends { id: string; label: string }>({
   label,
@@ -124,33 +125,33 @@ function SortableItem({
     >
       <button
         ref={setActivatorNodeRef}
-        className={s.button}
+        className={`${s.button} ${s.iconButton}`}
         {...attributes}
         {...listeners}
         type="button"
         aria-label={`Pindahkan ${label}`}
       >
-        ↕
+        <GripVertical size={16} aria-hidden />
       </button>
       {children}
       <div className={s.row}>
         <button
           type="button"
-          className={s.button}
+          className={`${s.button} ${s.iconButton}`}
           aria-label={`Naikkan ${label}`}
           disabled={!canMoveUp}
           onClick={() => onMove(-1)}
         >
-          <span aria-hidden>↑</span>
+          <ArrowUp size={16} aria-hidden />
         </button>
         <button
           type="button"
-          className={s.button}
+          className={`${s.button} ${s.iconButton}`}
           aria-label={`Turunkan ${label}`}
           disabled={!canMoveDown}
           onClick={() => onMove(1)}
         >
-          <span aria-hidden>↓</span>
+          <ArrowDown size={16} aria-hidden />
         </button>
       </div>
     </li>

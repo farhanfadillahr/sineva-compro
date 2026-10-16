@@ -44,7 +44,7 @@ export default async function LeadsPage({
         description="Pesan dari formulir kontak. Hanya Admin yang dapat melihat data ini."
       />
       <form
-        className={`${s.panel} ${s.row}`}
+        className={`${s.panel} ${s.filterGrid}`}
         method="get"
         autoComplete="off"
         aria-label="Filter lead"

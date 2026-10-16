@@ -21,6 +21,7 @@ The admin at `/admin` uses the **same design tokens** as the public site ([token
 | Primary action | `--color-action-primary` pill | Same color, **rounded-square 10 px** buttons (no pills except status chips) |
 | Radius | Cards 20-28 px | Panels 20 px, inputs 10 px, tables 12 px. Founder alignment request, 2026-10-17 |
 | Shadow | Soft, layered | `--shadow-sm` on panels, shared bevel on buttons, `--shadow-md` on popovers and dialogs |
+| Controls | Marketing action sizes | Admin controls 40 px high, icon actions 40 × 40 px, 16 px control icons. Login fields/submit 44 px |
 | Focus | 2 px `--color-focus` | Same |
 | Status colors | `--color-success`, `--color-danger` | Plus `warning` (`--amber-700` on amber tint) for drafts and missing translations |
 

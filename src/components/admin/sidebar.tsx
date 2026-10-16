@@ -233,7 +233,7 @@ export function Sidebar({
           </Link>
         )}
         {item.children && open ? (
-          <ul role="group" aria-label={item.label}>
+          <ul className={s.treeGroup} role="group" aria-label={item.label}>
             {item.children.map((i) => renderItem(i, level + 1))}
           </ul>
         ) : null}

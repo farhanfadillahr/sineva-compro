@@ -1,7 +1,8 @@
 .grid {
   display: grid;
   gap: var(--admin-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
 }
 .wide {
   display: grid;
@@ -43,4 +44,34 @@
 }
 .sparkline {
   margin-top: 8px;
+}
+
+.chartFrame {
+  align-content: start;
+}
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--admin-control-height);
+}
+.chartHeader h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.grid > * {
+  min-height: 160px;
+}
+@media (max-width: 1199px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

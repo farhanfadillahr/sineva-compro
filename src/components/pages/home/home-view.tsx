@@ -168,7 +168,8 @@ export function HomeView({
         body={page.finalCta.body}
         primaryCta={{ label: page.finalCta.primaryCtaLabel, href: HOME_HREFS.contact }}
         secondaryCta={finalSecondary}
-        whatsappCta={whatsappCta}
+        // No WhatsApp button here (owner decision, 2026-10-16): the panel keeps two clear
+        // choices. WhatsApp stays in the header, the floating button and the sticky bar.
         image={poseImage('wave')}
         loop="L-wave"
         linkComponent={linkComponent}

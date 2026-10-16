@@ -92,6 +92,23 @@ Scene rules: warm neutral background palette (cream, light wood, white), teal ac
 | V2 | Scene C1 with subtle motion (coffee steam, Sino waves once at second 1) | MP4/WebM opaque | Alternative hero option if the GLB performance test fails | P1 |
 | V3 | Sino typing on a laptop (animated version of S3) | alpha | Product "operations" section | P2 |
 
+#### Pose loops (L-wave, L-phone, L-build, L-thumbs, L-confused)
+
+Short animated versions of the stills, played by `SinoLoop` (see [mascot-sino.md](mascot-sino.md) section 5.1). Each loop is delivered as three files with the same base name:
+
+| ID | Loop | Used in | Files in `public/mascot/loops/` |
+|---|---|---|---|
+| L-wave | Sino waves (animated S1) | Home "Meet Sino", final CTA | `sino-loop-wave.{webm,mov,webp}` |
+| L-phone | Sino with the phone (animated S2) | TwoPaths, Product card | `sino-loop-phone.{webm,mov,webp}` |
+| L-build | Sino stacks blocks (animated S8) | TwoPaths, Services card | `sino-loop-build.{webm,mov,webp}` |
+| L-thumbs | Sino thumbs up (animated S10) | Contact thank-you | `sino-loop-thumbs.{webm,mov,webp}` |
+| L-confused | Sino confused (animated S11) | 404 | `sino-loop-confused.{webm,mov,webp}` |
+
+- **Formats:** `.webm` VP9 with alpha (Chrome, Edge, Firefox), `.mov` HEVC with alpha, `hvc1` tag (Safari and iOS), and a `.webp` poster that is the first frame. All transparent, no audio track. Chrome can decode HEVC but drops its alpha, so the `.mov` is only ever served to WebKit.
+- **Budget:** each `.webm` and `.mov` at most 900 KB (checked in `tests/unit/assets-budget.test.ts`, skipped while a file is absent), each poster at most 120 KB. Seamless loop of 2 to 6 s at 24 fps (section 2). The web size is the reserved box in the manifest (720 x 720 until the render is delivered); change the manifest if the render is not square.
+- **Playback rules:** plays only while on screen and the tab is visible; the poster alone under `prefers-reduced-motion` or Save-Data; muted, inline, looping, `preload="none"`, no controls, `aria-hidden`.
+- **Delivery:** add the three files, then set `ready: true` for that loop in `src/components/motion/sino-loops.ts`. Until then the page keeps drawing the still pose.
+
 ### 3.5 Scroll-scrub sequence
 
 | ID | Sequence | Spec | Used in | Priority |
@@ -189,7 +206,7 @@ public/mascot/
 ├── poster/                  hero poster still (LCP)
 ├── poses/                   S1-S14  (.avif, .webp)
 ├── scenes/                  C1-C5
-├── loops/                   V1-V3   (.webm, .mp4, poster)
+├── loops/                   V1-V3, L-wave/phone/build/thumbs/confused  (.webm, .mov or .mp4, poster)
 ├── icons/                   I1-I8
 └── og/                      B1
 ```

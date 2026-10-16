@@ -1,7 +1,7 @@
 import type { Category, PostDetail, RichTextDocument } from '../../features/content/types'
 import { bulletList, doc, heading, paragraph, plainText, seo } from './helpers'
 
-// Three starter articles. They teach, and they make no claim about results: no statistics, no
+// Three launch articles. They teach, and they make no claim about results: no statistics, no
 // invented quotes, no client stories. The author is the team, not a named person, so nothing here
 // attributes a view to someone who has not approved it.
 
@@ -62,6 +62,17 @@ const whereToStart = doc(
   paragraph(
     'Be careful with private information too. Do not paste customer details or passwords into a tool unless you understand how that tool handles them.',
   ),
+  heading('Try it with a customer question'),
+  paragraph(
+    'Imagine you run a small bakery. People often ask when orders close and whether you deliver to their area. Gather your current delivery rules, opening hours, and order cutoff times. Ask the tool to draft a reply using only those notes. Tell it to ask you when an answer is missing.',
+  ),
+  paragraph(
+    'Now test an awkward case. A customer wants delivery outside your usual area for an order tomorrow. A useful draft should explain the limit or ask you to review it. A cheerful promise that your team cannot keep is a failed result, even if the wording sounds friendly.',
+  ),
+  heading('Keep a simple record'),
+  paragraph(
+    'Use a small sheet with the original request, the draft, your correction, and the time spent checking it. Compare that with doing the task yourself. Include the checking time in your decision. If every answer needs rewriting, change the instructions or choose a simpler task before trying again.',
+  ),
   heading('When to ask for help'),
   paragraph(
     'Some businesses can do all of this alone. Others want a second pair of eyes to map their work and pick the first step. That is what our AI Discovery service is for.',
@@ -118,6 +129,17 @@ const everydayTasks = doc(
   paragraph(
     'Each one is repeated, easy to check, and low risk if a draft needs a fix. That is why they make good first tasks. Tasks that involve large payments, legal promises, or sensitive personal details need more care and a person in the loop.',
   ),
+  heading('Give the agent a clear boundary'),
+  paragraph(
+    'A helpful request names the task, the information to use, and the point where the agent should stop. Instead of asking it to handle customer service, ask it to draft replies to delivery questions using your current delivery notes. Say that unusual requests should come back to you.',
+  ),
+  paragraph(
+    'The same boundary applies to the other tasks. A caption draft should use the prices you supply. A follow-up note should go only to people you have chosen. A daily list should show missing information instead of quietly making it up. Small instructions like these make results easier to review.',
+  ),
+  heading('Review the whole task'),
+  paragraph(
+    'Try several ordinary examples and a few awkward ones before relying on the setup. Check the facts as well as the tone. Record what you changed and why, then update the instructions. Count the time spent correcting drafts too. Keep the task only when the complete process feels useful for your team.',
+  ),
   heading('How to try it safely'),
   bulletList(
     'Pick one task, not all five.',
@@ -133,7 +155,7 @@ const everydayTasks = doc(
 const prepareData = doc(
   heading('The short version'),
   paragraph(
-    'AI projects rarely stall because the AI is too weak. More often, the information it needs is scattered, out of date, or known by only one person. A little preparation before you start makes the project smoother and the results more useful.',
+    'An AI project can get stuck when the information it needs is scattered, out of date, or known by only one person. A little preparation before you start makes the project smoother and the results more useful.',
   ),
   paragraph(
     'You do not need a data team. You need to know what you have, where it lives, and what is safe to share.',
@@ -183,9 +205,20 @@ const prepareData = doc(
   paragraph(
     'Information changes. Someone should be responsible for keeping it current, such as updating a price or retiring an old answer. Without an owner, even a good setup slowly drifts out of date.',
   ),
+  heading('Make a small reference pack'),
+  paragraph(
+    'For a customer reply pilot, your pack could contain one current price list, a delivery guide, and a page of approved answers. Put a date and an owner on each file. Add a short note saying which file wins if two answers disagree. Keep a separate list of questions that need a person.',
+  ),
+  paragraph(
+    'Use made-up names in your test cases when a real identity adds nothing to the task. For example, you can check whether a delivery reply is correct without sharing the full customer conversation. Ask yourself what information is needed for the answer, then leave the rest out of the reference pack.',
+  ),
+  heading('Check it with someone who does the work'),
+  paragraph(
+    'Ask a teammate to answer a few sample questions using only the pack. If they need to ask you for missing details, the AI will need those details too. Fix the gaps before the pilot. Keep a note of each change so you can explain why a result changed later.',
+  ),
   heading('What you can skip'),
   paragraph(
-    'You do not need to move everything into one system first. You do not need perfect formatting. You can start with a small, tidy set of information and add more once the first task works.',
+    'You do not need to move everything into one system first. You do not need perfect formatting. You can start with a small, current set of information and add more once the first task works.',
   ),
   heading('Where we can help'),
   paragraph(

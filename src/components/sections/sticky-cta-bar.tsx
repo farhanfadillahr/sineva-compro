@@ -97,7 +97,18 @@ function Bar({
       )}
     >
       <div className="mx-auto flex max-w-(--container-max) gap-3">
-        <Button href={primaryCta.href} size="md" className="min-w-0 flex-1 px-3">
+        <Button
+          href={primaryCta.href}
+          launch={
+            primaryCta.href.startsWith('/contact')
+              ? 'booking'
+              : primaryCta.href.includes('wa.me')
+                ? 'waitlist'
+                : undefined
+          }
+          size="md"
+          className="min-w-0 flex-1 px-3"
+        >
           {primaryCta.label}
         </Button>
         {whatsappCta ? (
@@ -106,6 +117,7 @@ function Bar({
           // and keeps its label for screen readers.
           <Button
             href={whatsappCta.href}
+            launch={'whatsapp'}
             variant="whatsapp"
             size="md"
             leadingIcon={<WhatsAppGlyph />}

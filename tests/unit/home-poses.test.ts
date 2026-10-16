@@ -20,7 +20,7 @@ describe('poseImage', () => {
 
   it.each(mapped)('pose "%s" points at a real file under public/mascot/poses', (key) => {
     const asset = poseImage(key)!
-    expect(asset.url).toMatch(/^\/mascot\/poses\/sino-[a-z-]+\.webp$/)
+    expect(asset.url).toMatch(/^\/mascot\/poses\/v006\/sino-[a-z-]+\.webp$/)
     expect(onDisk(asset.url), asset.url).toBe(true)
     // The AVIF twin ships with every pose: next/image serves it when the browser asks for it.
     expect(onDisk(asset.url.replace(/\.webp$/, '.avif')), asset.url).toBe(true)
@@ -36,7 +36,7 @@ describe('poseImage', () => {
 
   it('every file in the map exists (no dead entry)', () => {
     for (const [key, name] of Object.entries(POSE_FILES)) {
-      expect(onDisk(`/mascot/poses/${name}.webp`), `${key} -> ${name}`).toBe(true)
+      expect(onDisk(`/mascot/poses/v006/${name}.webp`), `${key} -> ${name}`).toBe(true)
     }
   })
 

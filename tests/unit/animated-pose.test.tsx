@@ -20,7 +20,7 @@ import {
 
 const VIEWPORT = 800
 const IMAGE: MediaAsset = {
-  url: '/mascot/poses/sino-wave.webp',
+  url: '/mascot/poses/v006/sino-wave.webp',
   width: 1200,
   height: 1200,
   alt: '',
@@ -129,6 +129,29 @@ describe('markup and server render', () => {
     expect(img.getAttribute('width')).toBe('1200')
     expect(img.getAttribute('height')).toBe('1200')
     expect(img.getAttribute('alt')).toBe('')
+  })
+})
+
+describe('media slot', () => {
+  it('draws the given media in the lift layer instead of the still, so it reveals and lifts with it', () => {
+    const { container, poseEl } = mount({ media: <video data-testid="loop" /> })
+    expect(container.querySelector('img')).toBeNull()
+    const video = container.querySelector('video')!
+    expect(poseEl.contains(video)).toBe(true)
+    // The lift layer is the one that carries --pose-lift (hover and focus).
+    expect(video.parentElement!.className).toMatch(/lift/)
+  })
+
+  it('still reveals on scroll and lifts on hover with media inside', () => {
+    const { hostEl, poseEl } = mount({ media: <video /> })
+    expect(poseEl.getAttribute('data-reveal')).toBe('hidden')
+    fireEvent.pointerEnter(hostEl, { pointerType: 'mouse' })
+    expect(poseEl.getAttribute('data-active')).toBe('true')
+  })
+
+  it('renders with media alone: a null still does not hide it', () => {
+    const { container } = render(<AnimatedPose image={null} media={<video />} sizes="50vw" />)
+    expect(container.querySelector('video')).not.toBeNull()
   })
 })
 

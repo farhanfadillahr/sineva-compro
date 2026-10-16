@@ -1,0 +1,39 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+.launch {
+  position: absolute;
+  left: var(--launch-x);
+  top: var(--launch-y);
+  width: 180px;
+  height: 240px;
+  object-fit: contain;
+  animation: launch var(--dur-sino-launch) var(--ease-in) both;
+}
+@keyframes launch {
+  0%,
+  35% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(25vw, -35vh, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    display: none;
+  }
+}
+.flyby {
+  position: absolute;
+  width: min(100vw, 800px);
+  height: auto;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+}

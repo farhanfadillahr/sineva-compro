@@ -60,6 +60,7 @@ export function FloatingWhatsApp({
         aria-label={t('ariaLabel')}
         data-analytics="whatsapp_click"
         data-location="floating"
+        data-sino-launch="whatsapp"
         className={cx(
           styles.fabInner,
           'flex size-14 items-center justify-center rounded-pill bg-surface text-text no-underline shadow-lg',

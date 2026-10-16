@@ -20,6 +20,12 @@ export function buildHomeMetadata(
     description: seo.metaDescription,
     alternates: { canonical: seo.canonicalUrl ?? '/' },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: ogImage ? [ogImage.url] : undefined,
+    },
     openGraph: {
       type: 'website',
       title: seo.metaTitle,

@@ -10,15 +10,21 @@ const handledByIntl = (pathname: string) => matcher.test(pathname)
 describe('proxy matcher', () => {
   it.each([
     '/mascot/sino.glb',
-    '/mascot/poses/sino-wave.webp',
-    '/mascot/poster/sino-hero.avif',
+    '/mascot/poses/v006/sino-wave.webp',
+    '/mascot/poster/v006/sino-hero.avif',
     '/draco/draco_decoder.wasm',
-    '/og/default.png',
+    '/og/default-v006.png',
     '/brand/logo.svg',
     '/lottie/intro.json',
     '/favicon.ico',
     '/robots.txt',
     '/sitemap.xml',
+    '/manifest.webmanifest',
+    '/icon.svg',
+    '/icon1.png',
+    '/apple-icon.png',
+    '/icon-1k2j3z.svg',
+    '/apple-icon-1k2j3z.png',
     '/_next/static/chunk.js',
   ])('leaves the static or internal path %s alone', (pathname) => {
     expect(handledByIntl(pathname)).toBe(false)
@@ -41,10 +47,19 @@ describe('proxy matcher', () => {
   )
 
   // A page whose first segment merely starts with an excluded name must still be localized.
-  it.each(['/mascots', '/drac', '/ogre', '/mascot-news'])(
-    'does not over-match the look-alike page path %s',
-    (pathname) => {
-      expect(handledByIntl(pathname)).toBe(true)
-    },
-  )
+  it.each([
+    '/mascots',
+    '/drac',
+    '/ogre',
+    '/mascot-news',
+    '/icon',
+    '/icons',
+    '/icon.svg.html',
+    '/iconography',
+    '/manifest',
+    '/manifest.webmanifest/extra',
+    '/en/icon.svg',
+  ])('does not over-match the look-alike page path %s', (pathname) => {
+    expect(handledByIntl(pathname)).toBe(true)
+  })
 })

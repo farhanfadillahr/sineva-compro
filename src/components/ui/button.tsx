@@ -1,3 +1,4 @@
+import type { LaunchKind } from '@/components/mascot/sino-launch/launch-bus'
 import type { ComponentProps, ReactNode } from 'react'
 import { ActionElement, type ActionLinkComponent } from './action'
 import { cx, focusRing, hitArea44 } from './cx'
@@ -71,6 +72,7 @@ const BASE = cx(
 )
 
 type ButtonOwnProps = {
+  launch?: LaunchKind
   variant?: ButtonVariant
   size?: ButtonSize
   // Keeps the label, swaps the trailing icon for a spinner, sets aria-busy and disables the control.

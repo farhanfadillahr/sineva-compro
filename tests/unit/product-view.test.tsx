@@ -296,7 +296,7 @@ describe('Product capabilities, steps, tabs and control', () => {
       const img = card.querySelector('img')!
       expect(img.getAttribute('alt')).toBe('')
       const src = new URL(img.getAttribute('src')!, 'http://localhost').searchParams.get('url')
-      expect(src).toMatch(/^\/mascot\/poses\/sino-[a-z-]+\.webp$/)
+      expect(src).toMatch(/^\/mascot\/poses\/v006\/sino-[a-z-]+\.webp$/)
     })
   })
 

@@ -217,19 +217,9 @@ describe.each(SLUGS)('Service detail composition: %s', (slug) => {
     }, 0)
   })
 
-  it('shows the breadcrumb Home > Services > service with the current page marked', () => {
+  it('does not render visual breadcrumbs', () => {
     renderDetail()
-    const nav = screen.getByRole('navigation', { name: labels.breadcrumbLabel })
-    const items = within(nav).getAllByRole('listitem')
-    expect(items.map((li) => li.textContent)).toEqual([
-      labels.homeCrumb,
-      labels.servicesCrumb,
-      model().service.title,
-    ])
-    expect(within(items[0]!).getByRole('link').getAttribute('href')).toBe('/')
-    expect(within(items[1]!).getByRole('link').getAttribute('href')).toBe('/services')
-    expect(within(items[2]!).queryByRole('link')).toBeNull()
-    expect(items[2]!.querySelector('[aria-current="page"]')).toBeTruthy()
+    expect(screen.queryByRole('navigation', { name: /breadcrumb/i })).toBeNull()
   })
 
   it('sends the hero CTA to /contact with ?service=<slug>', () => {

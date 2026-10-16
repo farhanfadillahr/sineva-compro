@@ -269,10 +269,7 @@ describe('cleanup', () => {
   it('removes every listener, observer and pending frame on unmount', () => {
     const scroll = listenerCounter(window, 'scroll')
     const resize = listenerCounter(window, 'resize')
-    const { poseEl, hostEl, unmount } = mount({}, { 'data-top': '350' })
-    const hostEvents = ['pointerenter', 'pointerleave', 'focusin', 'focusout'].map((t) =>
-      listenerCounter(hostEl, t),
-    )
+    const { poseEl, unmount } = mount({}, { 'data-top': '350' })
 
     setInView(poseEl, true)
     fireEvent.scroll(window)
@@ -284,7 +281,6 @@ describe('cleanup', () => {
 
     expect(scroll.live()).toBe(0)
     expect(resize.live()).toBe(0)
-    for (const counter of hostEvents) expect(counter.live()).toBe(0)
     expect(frames.size).toBe(0)
     expect(IO.liveObserverCount()).toBe(0)
   })

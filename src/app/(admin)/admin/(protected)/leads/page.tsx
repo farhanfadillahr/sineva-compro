@@ -43,7 +43,12 @@ export default async function LeadsPage({
         title="Lead"
         description="Pesan dari formulir kontak. Hanya Admin yang dapat melihat data ini."
       />
-      <form className={`${s.panel} ${s.row}`} method="get" aria-label="Filter lead">
+      <form
+        className={`${s.panel} ${s.row}`}
+        method="get"
+        autoComplete="off"
+        aria-label="Filter lead"
+      >
         <label className={s.field}>
           Status
           <select name="status" defaultValue={filters.status}>

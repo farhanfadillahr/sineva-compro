@@ -4,7 +4,7 @@ import { EmptyState } from '@/components/admin/display'
 import { SectionHeader } from '@/components/admin/shell'
 import { routing } from '@/i18n/routing'
 import { documentConfigs, type DocumentItem, type DocumentName } from '../configs'
-import { documentStatus } from './document-editor'
+import { documentStatus } from '../status'
 import s from '@/components/admin/admin.module.css'
 
 /** Server-rendered list of posts or work with the status of each locale. */

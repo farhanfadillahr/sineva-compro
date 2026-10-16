@@ -106,7 +106,7 @@ Pattern from the Sintra home page: a sticky device mockup on one side, a list of
 
 ### 4.3 Scroll-scrubbed scenes
 
-At most **one per page**. Candidates:
+At most **one per page**. A step selector driven by scroll progress (StickySteps, §4.2) does not count as a scene; it only switches content. Scroll-linked motion of the hero mascot ([mascot-sino.md](mascot-sino.md) §5) and the animated stills (§5.1 there) do not count either: they are small, transform-only and never pin the page. Candidates:
 - Home "Meet Sino": Sino's helmet turns toward the user and his eyes open as the section scrolls into view (GLB driven by scroll progress, or sprite sequence Q1 from [3d-asset-requirements.md](3d-asset-requirements.md)). Equivalent of Sintra's Lottie helmet section.
 - Product capability orbit: capability chips orbit around Sino (Sintra's orbit carousel pattern, 15 s per loop, paused when off-screen).
 

@@ -1,6 +1,7 @@
 import 'server-only'
 import { createStaticContentSource } from '../../content/static'
 import type { PublicContentSource } from '../content/public'
+import { faqReads } from '../faq/public.server'
 import { pageReads } from '../pages/public.server'
 import { productReads } from '../product/public.server'
 import { settingsReads } from '../settings/public.server'
@@ -11,5 +12,11 @@ import { settingsReads } from '../settings/public.server'
  * CMS grows feature by feature. Add a feature's reads here, explicitly, when its tables ship.
  */
 export function createDatabaseContentSource(): PublicContentSource {
-  return { ...createStaticContentSource(), ...settingsReads, ...pageReads, ...productReads }
+  return {
+    ...createStaticContentSource(),
+    ...settingsReads,
+    ...pageReads,
+    ...productReads,
+    ...faqReads,
+  }
 }

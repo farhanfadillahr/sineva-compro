@@ -1,5 +1,5 @@
 'use client'
-import { useId, type ReactNode } from 'react'
+import { createContext, useContext, useId, type ReactNode } from 'react'
 import type { JSONContent } from '@tiptap/core'
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
 import { validateCopyField } from '@/lib/copy/dash-rule'
@@ -18,6 +18,10 @@ import s from '../admin.module.css'
 import c from './cms.module.css'
 
 export type Extras = Readonly<Record<string, (value: unknown) => ReactNode>>
+
+type Option = Readonly<{ value: string; label: string }>
+/** Options known only at render time (for example the current services), by `optionsKey`. */
+export const FieldOptionsContext = createContext<Readonly<Record<string, readonly Option[]>>>({})
 
 type Props = {
   schema: FieldSchema
@@ -192,6 +196,9 @@ export function SchemaField(props: Props): ReactNode {
         </div>
       )
       break
+    case 'tags':
+      control = <TagsInput {...props} schema={schema} />
+      break
     case 'list':
       control = <ListInput {...props} schema={schema} />
       break
@@ -231,6 +238,37 @@ function SelectInput(props: Props & { schema: Extract<FieldSchema, { kind: 'sele
       {schema.hint ? <p className={s.muted}>{schema.hint}</p> : null}
       {errors[path] ? <p className={s.error}>{errors[path]}</p> : null}
     </div>
+  )
+}
+
+function TagsInput(props: Props & { schema: Extract<FieldSchema, { kind: 'tags' }> }) {
+  const { schema, value, onChange, errors, path } = props
+  const dynamic = useContext(FieldOptionsContext)[schema.optionsKey ?? '']
+  const selected = Array.isArray(value) ? (value as string[]) : []
+  const options = [...schema.options, ...(dynamic ?? [])]
+  const unknown = selected.filter((tag) => !options.some((o) => o.value === tag))
+  const toggle = (tag: string, on: boolean) =>
+    onChange(on ? [...selected, tag] : selected.filter((t) => t !== tag))
+  return (
+    <fieldset className={s.cards}>
+      <legend>{schema.label}</legend>
+      {[...options, ...unknown.map((tag) => ({ value: tag, label: tag }))].map((option) => (
+        <label key={option.value} className={s.radioCard}>
+          <input
+            type="checkbox"
+            checked={selected.includes(option.value)}
+            onChange={(event) => toggle(option.value, event.target.checked)}
+          />
+          {option.label}
+        </label>
+      ))}
+      {schema.hint ? <p className={s.muted}>{schema.hint}</p> : null}
+      {errors[path] ? (
+        <p className={s.error} role="alert">
+          {errors[path]}
+        </p>
+      ) : null}
+    </fieldset>
   )
 }
 

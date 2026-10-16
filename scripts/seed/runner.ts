@@ -17,6 +17,7 @@ const modules: readonly SeedModule[] = [
   pagesSeed,
   collectionSeed('capabilities', 'capabilities'),
   collectionSeed('businessTypes', 'business-types'),
+  collectionSeed('faq', 'faq'),
 ]
 export async function runSeeds(
   database: Database,

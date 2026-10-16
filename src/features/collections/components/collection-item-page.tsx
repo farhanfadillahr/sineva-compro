@@ -15,10 +15,12 @@ export async function CollectionItemPage({
   name,
   id,
   basePath,
+  fieldOptions,
 }: {
   name: CollectionName
   id: string
   basePath: string
+  fieldOptions?: Record<string, { value: string; label: string }[]>
 }) {
   const principal = await requireCapability('content:write')
   const config = collectionConfigs[name]
@@ -43,6 +45,7 @@ export async function CollectionItemPage({
         locales={routing.locales.map((code) => ({ code, label: localeLabels[code] ?? code }))}
         isAdmin={principal.role === 'admin'}
         basePath={basePath}
+        fieldOptions={fieldOptions}
       />
     </main>
   )

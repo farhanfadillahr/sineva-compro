@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { CmsForm } from '@/components/admin/cms/cms-form'
-import { SchemaField } from '@/components/admin/cms/schema-fields'
+import { FieldOptionsContext, SchemaField } from '@/components/admin/cms/schema-fields'
 import { ConfirmAction } from '@/components/admin/cms/confirm-action'
 import { InlineBanner } from '@/components/admin/feedback'
 import { LocaleTabs } from '@/components/admin/forms'
@@ -24,12 +24,14 @@ export function CollectionEditor({
   locales,
   isAdmin,
   basePath,
+  fieldOptions = {},
 }: {
   name: CollectionName
   item: CollectionItem | null
   locales: { code: string; label: string }[]
   isAdmin: boolean
   basePath: string
+  fieldOptions?: Record<string, { value: string; label: string }[]>
 }) {
   const config = collectionConfigs[name]
   const [locale, setLocale] = useState(locales[0]?.code ?? 'en')
@@ -51,7 +53,7 @@ export function CollectionEditor({
         ),
       }
   return (
-    <>
+    <FieldOptionsContext value={fieldOptions}>
       {config.formHint ? <InlineBanner tone="info">{config.formHint}</InlineBanner> : null}
       <CmsForm
         action={saveCollectionItemAction}
@@ -142,6 +144,6 @@ export function CollectionEditor({
           </>
         )}
       </CmsForm>
-    </>
+    </FieldOptionsContext>
   )
 }

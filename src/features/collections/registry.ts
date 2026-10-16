@@ -1,7 +1,12 @@
 import { cacheTags } from '../../lib/cache/tags'
 import type { ContentLocale } from '../content/types'
 import { collectionConfigs, type CollectionName } from './configs'
-import { businessTypeTables, productCapabilityTables, type CollectionTables } from './tables'
+import {
+  businessTypeTables,
+  faqItemTables,
+  productCapabilityTables,
+  type CollectionTables,
+} from './tables'
 
 /** Tables and public cache tags of each ordered collection. */
 export const collectionRegistry: Record<
@@ -10,6 +15,7 @@ export const collectionRegistry: Record<
 > = {
   capabilities: { tables: productCapabilityTables, tags: (l) => [cacheTags.capabilities(l)] },
   businessTypes: { tables: businessTypeTables, tags: (l) => [cacheTags.industries(l)] },
+  faq: { tables: faqItemTables, tags: (l) => [cacheTags.faq(l)] },
 }
 
 export function isCollectionName(value: unknown): value is CollectionName {

@@ -20,6 +20,10 @@ const BLOCKS = new Set([
 ])
 const INLINE = new Set(['text', 'hardBreak'])
 const MARKS = new Set(['bold', 'italic', 'code', 'strike', 'link'])
+/** Short answers (FAQ): paragraphs and lists with bold, italic and links only. */
+const ANSWER_BLOCKS = new Set(['paragraph', 'bulletList', 'orderedList', 'listItem'])
+const ANSWER_MARKS = new Set(['bold', 'italic', 'link'])
+export type RichTextProfile = 'full' | 'answer'
 const MAX_DEPTH = 12
 const MAX_BYTES = 200_000
 
@@ -56,12 +60,14 @@ function attrs(
 
 class Invalid extends Error {}
 
-function node(input: unknown, depth: number): RichTextNode {
+function node(input: unknown, depth: number, profile: RichTextProfile): RichTextNode {
   if (depth > MAX_DEPTH) throw new Invalid('Struktur teks terlalu dalam.')
   if (!isRecord(input) || typeof input.type !== 'string') throw new Invalid('Isi teks tidak valid.')
   const type = input.type
   if (!BLOCKS.has(type) && !INLINE.has(type))
     throw new Invalid(`Elemen "${type}" tidak didukung editor.`)
+  if (profile === 'answer' && !ANSWER_BLOCKS.has(type) && !INLINE.has(type))
+    throw new Invalid('Jawaban hanya boleh berisi paragraf dan daftar.')
   if (type === 'text') {
     if (typeof input.text !== 'string' || !input.text) throw new Invalid('Isi teks tidak valid.')
     if (findForbiddenDashes(input.text).length) throw new Invalid(FORBIDDEN_DASH_MESSAGE)
@@ -69,6 +75,8 @@ function node(input: unknown, depth: number): RichTextNode {
       ? input.marks.map((mark) => {
           if (!isRecord(mark) || typeof mark.type !== 'string' || !MARKS.has(mark.type))
             throw new Invalid('Format teks tidak didukung.')
+          if (profile === 'answer' && !ANSWER_MARKS.has(mark.type))
+            throw new Invalid('Jawaban hanya boleh memakai tebal, miring dan tautan.')
           if (mark.type === 'link') {
             const href = isRecord(mark.attrs) ? mark.attrs.href : undefined
             if (!safeHref(href)) throw new Invalid('Tautan harus https, mailto, tel atau path /.')
@@ -97,7 +105,7 @@ function node(input: unknown, depth: number): RichTextNode {
   } else if (type === 'codeBlock') nodeAttrs = attrs(input.attrs, ['language'])
   else if (type === 'orderedList') nodeAttrs = attrs(input.attrs, ['start'])
   const content = Array.isArray(input.content)
-    ? input.content.map((child) => node(child, depth + 1))
+    ? input.content.map((child) => node(child, depth + 1, profile))
     : undefined
   return {
     type,
@@ -107,11 +115,11 @@ function node(input: unknown, depth: number): RichTextNode {
 }
 
 /** Accepts a Tiptap document (`{ type: 'doc', content: [...] }`) and returns a clean copy. */
-export function parseRichText(input: unknown): RichTextResult {
+export function parseRichText(input: unknown, profile: RichTextProfile = 'full'): RichTextResult {
   try {
     if (!isRecord(input) || input.type !== 'doc') throw new Invalid('Isi teks tidak valid.')
     if (JSON.stringify(input).length > MAX_BYTES) throw new Invalid('Isi teks terlalu panjang.')
-    const content = Array.isArray(input.content) ? input.content.map((child) => node(child, 1)) : []
+    const content = Array.isArray(input.content) ? input.content.map((child) => node(child, 1, profile)) : []
     // An editor's empty document is one empty paragraph; store it as an empty document.
     const meaningful = content.filter(
       (child) => child.type !== 'paragraph' || child.content?.length,

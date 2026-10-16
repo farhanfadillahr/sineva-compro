@@ -12,6 +12,7 @@ import {
   INTRO_TIMING,
 } from './intro-gate'
 import { observeLottieState } from './lottie-state'
+import type { SplashLaunch } from './splash-launch'
 import styles from './logo-intro.module.css'
 
 // Window events that mean "the visitor wants the page now". Capture phase and passive: the overlay
@@ -36,14 +37,29 @@ const releaseShell = () => {
  * The marker is also removed, ending everything, on skip input, reduced motion, a Lottie that
  * fails or is not ready within 500 ms, and a mount so late that the Lottie could not play.
  *
+ * The jetpack launch (splash-launch.ts) plays in its own slot behind the logo, from the lower
+ * centre, only if the clip is ready by INTRO_TIMING.launchDeadlineMs. It never delays or extends
+ * anything above: not ready in time means it is dropped, and the logo plays as before. Every path
+ * that ends the intro (skip input, cap, failure, reduced motion) goes through finish(), which
+ * disposes the clip with the rest.
+ *
  * Gotchas:
  * - The shell owns pointer interception (until 1.2 s, in CSS); this layer is always inert.
  * - The FLIP target is measured at hand-off time, not at mount, because the header can move
  *   (scroll restoration, font swap) in between.
  */
-export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
+export function LogoIntroOverlay({
+  onDone,
+  launch = null,
+}: {
+  onDone: () => void
+  launch?: SplashLaunch | null
+}) {
   const stageRef = useRef<HTMLDivElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
+  const launchSlotRef = useRef<HTMLDivElement>(null)
+  // Read once: the clip is chosen before this layer mounts and never changes during the intro.
+  const launchRef = useRef(launch)
   const onDoneRef = useRef(onDone)
   useEffect(() => {
     onDoneRef.current = onDone
@@ -63,6 +79,8 @@ export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
     // the observer is still being created.
     let stopObserving = () => {}
     let stopReducedMotion = () => {}
+    let stopLaunch = () => {}
+    const clip = launchRef.current
 
     const after = (ms: number, fn: () => void) => {
       const id = setTimeout(
@@ -82,6 +100,7 @@ export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
       for (const type of SKIP_EVENTS) window.removeEventListener(type, finish, true)
       stopObserving()
       stopReducedMotion()
+      stopLaunch()
       // The real logo was hidden so the flying copy is the only one on screen; opacity (not
       // visibility) keeps its layout box, so the measured landing rect stays valid.
       if (target) target.style.opacity = targetOpacity
@@ -91,6 +110,10 @@ export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
       if (finished) return
       finished = true
       teardown()
+      // The clip belongs to the takeover, which created it before this layer existed, so it is
+      // not released in teardown(): StrictMode runs teardown between two mounts of the same layer
+      // and would throw the clip away. Ending the intro is what ends the clip.
+      clip?.dispose()
       releaseShell()
       onDoneRef.current()
     }
@@ -146,6 +169,16 @@ export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
         finish()
       }
     })
+    const slot = launchSlotRef.current
+    if (clip && slot) {
+      // Ready before this layer mounted (cached file) or later: either way one start, and
+      // start() itself refuses past the deadline, so a slow clip is dropped rather than shown late.
+      const tryStart = () => {
+        if (!finished && clip.isReady()) clip.start(slot)
+      }
+      stopLaunch = clip.onReady(tryStart)
+      tryStart()
+    }
     after(INTRO_TIMING.readyDeadlineMs, () => {
       // Only the Lottie "ready" state keeps the intro alive past the deadline.
       if (root.querySelector('[data-lottie-state="ready"]') === null) finish()
@@ -158,6 +191,10 @@ export function LogoIntroOverlay({ onDone }: { onDone: () => void }) {
 
   return (
     <div ref={rootRef} data-slot="logo-intro" aria-hidden="true" className={styles.root}>
+      {/* Before the stage in the DOM, so the logo paints over Sino where they overlap. */}
+      {launch ? (
+        <div ref={launchSlotRef} data-slot="logo-intro-launch" className={styles.launch} />
+      ) : null}
       <div ref={stageRef} data-slot="logo-intro-stage" className={styles.stage}>
         <LottiePlayer src={INTRO_LOTTIE_SRC} playOnce aspectRatio={1} width="100%" />
       </div>

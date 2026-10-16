@@ -60,6 +60,7 @@ Phase 1 deploys to Vercel: see [docs/deploy/vercel.md](docs/deploy/vercel.md).
 
 ## Docs map
 
+- [Contributing](CONTRIBUTING.md): branch names, Conventional Commits, and pull request expectations
 - [docs/prd](docs/prd/2026-10-14-company-profile-prd.md): product requirements
 - [docs/design](docs/design/README.md): design system, brand positioning, copy rules
 - [docs/deploy](docs/deploy/vercel.md): deployment

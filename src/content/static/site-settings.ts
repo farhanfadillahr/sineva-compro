@@ -17,7 +17,7 @@ export const siteSettings: SiteSettingsDTO = {
       '/og/default-v008.png',
       1200,
       630,
-      'Sineva and Sino, the friendly AI agent mascot',
+      'Sineva and Sino, a friendly AI companion for everyday work',
     ),
     logo: null,
   },

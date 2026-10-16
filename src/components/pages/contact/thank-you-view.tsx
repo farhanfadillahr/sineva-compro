@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { WhatsAppIcon } from '@/components/layout/icons'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
+import { Reveal } from '@/components/motion/Reveal'
 import { ThankYouFlight } from '@/components/mascot/sino-launch/thank-you-flight'
 import { SinoLoop } from '@/components/motion/sino-loop'
 import { poseImage } from '@/components/pages/home/poses'
@@ -78,7 +79,8 @@ export function ThankYouView({ model, linkComponent }: ThankYouViewProps) {
           ) : null}
 
           {page.nextLinks.length > 0 ? (
-            <nav
+            <Reveal
+              as="nav"
               aria-labelledby="thank-you-more"
               className="mt-4 flex flex-col items-center gap-3 border-t border-border pt-8"
             >
@@ -100,7 +102,7 @@ export function ThankYouView({ model, linkComponent }: ThankYouViewProps) {
                   </li>
                 ))}
               </ul>
-            </nav>
+            </Reveal>
           ) : null}
         </Container>
       </Section>

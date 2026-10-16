@@ -50,7 +50,9 @@ export function PrivacyView({ page }: PrivacyViewProps) {
             <RichText
               document={page.body}
               reservedIds={reservedIds}
-              className="[&>:first-child]:mt-0"
+              // Each block sits in its own reveal wrapper, so the first heading is one level down.
+              className="[&>:first-child>:first-child]:mt-0"
+              reveal
             />
           </article>
         </Container>

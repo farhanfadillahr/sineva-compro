@@ -51,3 +51,15 @@ export function parityOfId(id: string): number {
   for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i)
   return sum % 2
 }
+
+/**
+ * Parallax offset (px) for a visual that is on screen from the first paint (a hero), keyed to the
+ * page scroll instead of the viewport centre. Same drift as `parallaxOffset` ((1 - 0.92) px per
+ * scrolled px, same clamp), but zero at scrollY 0: the centre-based form would start a hero at
+ * about +14 px and make it jump the moment the script runs. Negative scroll (iOS rubber band) is
+ * ignored so the visual never moves up past its natural position.
+ */
+export function scrollParallaxOffset(scrollY: number): number {
+  const raw = (1 - PARALLAX_SPEED) * Math.max(0, scrollY)
+  return Math.round(Math.min(PARALLAX_MAX_PX, raw) * 10) / 10 + 0
+}

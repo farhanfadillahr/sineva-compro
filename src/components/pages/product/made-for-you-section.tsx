@@ -31,7 +31,9 @@ export function MadeForYouSection({
         <Reveal>
           <SectionHeader title={title} lead={intro} />
         </Reveal>
-        <IndustryTabs label={tabsLabel} items={items} />
+        <Reveal delayMs={80}>
+          <IndustryTabs label={tabsLabel} items={items} />
+        </Reveal>
       </Container>
     </Section>
   )

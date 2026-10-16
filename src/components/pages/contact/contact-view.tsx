@@ -2,6 +2,7 @@ import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { WhatsAppIcon } from '@/components/layout/icons'
 import { MAIN_CONTENT_ID } from '@/components/layout/skip-link'
+import { Reveal } from '@/components/motion/Reveal'
 import { Button, Card, Container, Section } from '@/components/ui'
 import { whatsappHrefFor } from '@/lib/whatsapp'
 import type { ContactModel } from './contact-model'
@@ -67,76 +68,81 @@ export function ContactView({ model, form }: ContactViewProps) {
             <div className="flex flex-col gap-10 lg:col-span-5">
               <ol aria-label={t('side.stepsLabel')} className="flex flex-col gap-6">
                 {page.steps.map((step, index) => (
-                  <Card as="li" variant="step" key={step.title}>
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-surface-tint font-mono text-eyebrow text-text-brand"
-                    >
-                      {index + 1}
-                    </span>
-                    <div className="flex flex-col gap-1">
-                      <p className="text-h4 text-text">{step.title}</p>
-                      <p className="text-body-sm text-text-secondary">{step.body}</p>
-                    </div>
-                  </Card>
+                  <Reveal as="li" index={index} key={step.title}>
+                    <Card variant="step">
+                      <span
+                        aria-hidden="true"
+                        className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-surface-tint font-mono text-eyebrow text-text-brand"
+                      >
+                        {index + 1}
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-h4 text-text">{step.title}</p>
+                        <p className="text-body-sm text-text-secondary">{step.body}</p>
+                      </div>
+                    </Card>
+                  </Reveal>
                 ))}
               </ol>
 
               {whatsappHref || details.length > 0 || page.responseTimeText ? (
-                <Card tone="surface" className="flex flex-col gap-5">
-                  {whatsappHref ? (
-                    <div className="flex flex-col items-start gap-3">
-                      <h2 className="text-h4 text-text">{t('side.whatsappTitle')}</h2>
-                      <p className="text-body-sm text-text-secondary">{t('side.whatsappBody')}</p>
-                      <Button
-                        href={whatsappHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variant="whatsapp"
-                        size="lg"
-                        leadingIcon={<WhatsAppIcon className="text-success" />}
-                      >
-                        {t('side.whatsappCta')}
-                      </Button>
-                    </div>
-                  ) : null}
-                  {details.length > 0 ? (
-                    <dl className="flex flex-col gap-3">
-                      {details.map((item) => (
-                        <div key={item.key} className="flex flex-col gap-0.5">
-                          <dt className="text-micro text-text-tertiary">{item.label}</dt>
-                          <dd className="text-body-sm text-text">
-                            {item.href ? (
-                              <a
-                                href={item.href}
-                                className="text-(--color-link) underline underline-offset-4"
-                              >
-                                {item.value}
-                              </a>
-                            ) : (
-                              item.value
-                            )}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  ) : null}
-                  {/* Only an approved response time (the Founder's SLA) ever reaches this line. */}
-                  {page.responseTimeText ? (
-                    <p className="text-body-sm text-text-secondary">{page.responseTimeText}</p>
-                  ) : null}
-                </Card>
+                <Reveal delayMs={150}>
+                  <Card tone="surface" className="flex flex-col gap-5">
+                    {whatsappHref ? (
+                      <div className="flex flex-col items-start gap-3">
+                        <h2 className="text-h4 text-text">{t('side.whatsappTitle')}</h2>
+                        <p className="text-body-sm text-text-secondary">{t('side.whatsappBody')}</p>
+                        <Button
+                          href={whatsappHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="whatsapp"
+                          size="lg"
+                          leadingIcon={<WhatsAppIcon className="text-success" />}
+                        >
+                          {t('side.whatsappCta')}
+                        </Button>
+                      </div>
+                    ) : null}
+                    {details.length > 0 ? (
+                      <dl className="flex flex-col gap-3">
+                        {details.map((item) => (
+                          <div key={item.key} className="flex flex-col gap-0.5">
+                            <dt className="text-micro text-text-tertiary">{item.label}</dt>
+                            <dd className="text-body-sm text-text">
+                              {item.href ? (
+                                <a
+                                  href={item.href}
+                                  className="text-(--color-link) underline underline-offset-4"
+                                >
+                                  {item.value}
+                                </a>
+                              ) : (
+                                item.value
+                              )}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : null}
+                    {/* Only an approved response time (the Founder's SLA) ever reaches this line. */}
+                    {page.responseTimeText ? (
+                      <p className="text-body-sm text-text-secondary">{page.responseTimeText}</p>
+                    ) : null}
+                  </Card>
+                </Reveal>
               ) : null}
             </div>
 
             {/* Not `Card`: components.md section 6 asks for radius-xl, padding 32 and shadow-md
                 here, and Card's base variant fixes radius-card and shadow-sm. */}
-            <div
+            <Reveal
               data-slot="form-card"
+              delayMs={100}
               className="rounded-xl bg-surface p-6 shadow-md [border:var(--border-hairline)] sm:p-8 lg:col-span-7"
             >
               {form}
-            </div>
+            </Reveal>
           </div>
         </Container>
       </Section>

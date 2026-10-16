@@ -138,4 +138,4 @@ npx vercel --prod
 
 The CLI uploads the current local source and Vercel builds it. A separate local build is optional. Use `npx vercel` for a preview. If authentication is requested, run `npx vercel login` using the project owner account. On a fresh checkout, use `npx vercel link` and select the existing project before deploying.
 
-GitHub auto-deploy setup was postponed by the owner on 2026-10-16. Merging a PR currently does not prove that production has updated. Deploy the completed source manually and verify its deployment URL using section 9.
+GitHub setup was postponed by the owner earlier on 2026-10-16. At the final PR check, the project API showed a GitHub link to `farhanfadillahr/sineva-compro`, production branch `main`. PR #47 preview was `BLOCKED`, so connection alone does not prove a successful deployment. Use the manual command if needed, and verify the resulting deployment URL using section 9.

@@ -1,6 +1,6 @@
 # Phase 1 continuation report
 
-Date: 2026-10-16. This supersedes the unfinished-status tables in the earlier checkpoint. Merged changes and local production builds do not mean the Vercel production deployment has updated. The owner postponed GitHub connection and will deploy manually.
+Date: 2026-10-16. This supersedes the unfinished-status tables in the earlier checkpoint. Merged changes and local production builds do not mean the Vercel production deployment has updated. The owner postponed agent setup of the GitHub connection and asked for manual deploy commands. At the final PR check the project was connected, but the PR preview was blocked.
 
 ## Completed batches
 
@@ -23,7 +23,7 @@ The public introduction now leads with help for everyday tasks rather than the c
 - P1 card-specific loops, optional additional device props and Lottie L3 to L10 remain follow-ups from the checkpoint. The complete P0 loops and requested jetpack replace the immediate missing mascot media.
 - Real Safari/iOS and Android checks, Lighthouse comparison and timed navigation benchmark remain pending. Unit/build success is not device/performance certification.
 - Linear is behind its login screen in this session, so ticket statuses were not changed. PR references preserve the CPR mapping.
-- GitHub auto-deploy setup was cancelled for now by the owner. Use `npx vercel --prod` from the repository root after choosing the completed source. The local checkout is linked to the existing Vercel project `sineva`.
+- The final project API reports GitHub linked to `farhanfadillahr/sineva-compro` with production branch `main`. PR #47 preview is `BLOCKED`; successful automatic production deployment has not been verified. Use `npx vercel --prod` from the repository root if needed. The local checkout is linked to the existing Vercel project `sineva`.
 
 ## Validation
 

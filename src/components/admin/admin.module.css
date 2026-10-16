@@ -857,3 +857,56 @@
     max-width: 100%;
   }
 }
+
+/* Preferences from "Profil saya" (CPR-90). */
+.shell[data-density='compact'] .table:not([data-density='comfortable']) :where(th, td) {
+  height: 40px;
+  padding-block: 6px;
+}
+@media (min-width: 1280px) {
+  .shell[data-sidebar='collapsed'] {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .shell[data-sidebar='collapsed'] .sidebar {
+    padding-inline: 6px;
+    overflow: visible;
+  }
+  .shell[data-sidebar='collapsed'] :where(.navText, .groupLabel, .logoText, .sideFooter, .chevron) {
+    display: none;
+  }
+  .shell[data-sidebar='collapsed'] .logo {
+    padding: 0;
+    justify-content: center;
+  }
+  .shell[data-sidebar='collapsed'] .treeItem {
+    justify-content: center;
+    padding: 8px;
+  }
+  .shell[data-sidebar='collapsed'] .tree li {
+    position: relative;
+  }
+  .shell[data-sidebar='collapsed'] .tree ul {
+    display: none;
+    position: absolute;
+    left: 52px;
+    top: 0;
+    width: 224px;
+    padding: 8px;
+    z-index: 50;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-panel-radius);
+    box-shadow: var(--admin-shadow);
+  }
+  .shell[data-sidebar='collapsed'] .tree li:focus-within > ul,
+  .shell[data-sidebar='collapsed'] .tree li:hover > ul {
+    display: block;
+  }
+  .shell[data-sidebar='collapsed'] .tree ul :where(.treeItem) {
+    justify-content: flex-start;
+    padding-left: 12px;
+  }
+  .shell[data-sidebar='collapsed'] .tree ul :where(.navText) {
+    display: inline;
+  }
+}

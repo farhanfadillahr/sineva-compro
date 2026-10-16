@@ -217,7 +217,7 @@ function TablePage<T extends { id: string }>({
       ) : (
         <>
           <div className={s.tableWrap}>
-            <table className={s.table} data-density={current.get('density') ?? 'comfortable'}>
+            <table className={s.table} data-density={current.get('density') ?? undefined}>
               <caption className={s.srOnly}>{label}</caption>
               <thead>
                 {table.getHeaderGroups().map((group) => (

@@ -171,3 +171,13 @@ session and a valid token, sets a short-lived httpOnly cookie, enables Draft Mod
 real page, which renders the state through the normal DTO path (no cache, `noindex`). Previews
 never write content and never refresh caches. Expired rows are removed whenever a preview is
 created.
+
+## My profile (CPR-90)
+
+`/admin/profil` for every signed-in user: name (email is read-only; Admins change Editor emails in
+Users), avatar (content-sniffed image, cropped to a 256 px WebP, stored in private storage and
+served through a short-lived signed URL), password change (current password checked, a wrong one
+counts toward the CPR-24 lockout; all other sessions are revoked in the same transaction), active
+sessions (device, IP, last active; own sessions only, never tokens) and preferences (table density,
+sidebar default) stored per user. Revoking sessions needs the password again when the current
+session is older than 15 minutes. Every change is audited (`profile`).

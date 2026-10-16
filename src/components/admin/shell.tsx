@@ -41,11 +41,14 @@ export function AdminShell({
   children,
   logout,
   searchTrigger,
+  preferences = { density: 'comfortable', sidebarCollapsed: false },
 }: {
   principal: Principal
   children: ReactNode
   logout: ReactNode
   searchTrigger?: ReactNode
+  /** Saved in "Profil saya" (CPR-90). */
+  preferences?: { density: 'comfortable' | 'compact'; sidebarCollapsed: boolean }
 }) {
   const pathname = usePathname() ?? '/admin'
   const [drawer, setDrawer] = useState(false)
@@ -72,7 +75,11 @@ export function AdminShell({
     </DropdownMenu>
   )
   return (
-    <div className={`${s.root} ${s.shell}`}>
+    <div
+      className={`${s.root} ${s.shell}`}
+      data-density={preferences.density}
+      data-sidebar={preferences.sidebarCollapsed ? 'collapsed' : 'expanded'}
+    >
       <a className={`${s.button} ${s.skip}`} href="#admin-main">
         Lewati navigasi
       </a>

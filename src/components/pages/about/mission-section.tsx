@@ -17,7 +17,7 @@ export function MissionSection({
   return (
     <Section tone={tone}>
       <Container size="text">
-        <Reveal>
+        <Reveal variant="depth">
           <Card variant="base" className="flex flex-col items-center gap-4 text-center lg:p-12">
             <h2 className="text-h4 text-text-brand">{title}</h2>
             <p className="text-h2 text-balance text-text">{body}</p>

@@ -31,10 +31,12 @@ it('seeds every launch page once and serves the same public DTO as the static co
   const run = () => runSeeds(ctx.connection.db, ctx.env.databaseUrl, ['--module=pages'], 'test')
   await run()
   await run()
-  expect(await ctx.connection.db.select().from(pageContent)).toHaveLength(10)
-  const { staticContent } = await import('../../src/content/static/source')
+  // Ten pages in each of the two locales (CPR-101).
+  expect(await ctx.connection.db.select().from(pageContent)).toHaveLength(20)
+  const { staticContent, staticContentId } = await import('../../src/content/static/source')
   expect(await reads.pageReads.getPage('notFound', 'en')).toEqual(staticContent.pages.notFound)
   expect(await reads.pageReads.getPage('home', 'en')).toEqual(staticContent.pages.home)
+  expect(await reads.pageReads.getPage('home', 'id')).toEqual(staticContentId.pages.home)
 })
 
 it('rejects anonymous saves and em dashes, and saves an Editor change', async () => {

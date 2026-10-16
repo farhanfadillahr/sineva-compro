@@ -175,6 +175,31 @@ describe('reveal on scroll', () => {
   })
 })
 
+describe('inside another reveal', () => {
+  it('takes the final state instead of animating a second time on top of its card', () => {
+    const view = render(
+      <li data-reveal="hidden" data-testid="card">
+        <AnimatedPose image={IMAGE} sizes="50vw" />
+      </li>,
+    )
+    const poseEl = pose(view.getByTestId('card'))
+    expect(poseEl.getAttribute('data-reveal')).toBe('idle')
+    // Only the float/parallax observer (threshold 0) watches it; no 15% reveal observer.
+    expect(IO.instances.filter((io) => io.options?.threshold === 0.15)).toHaveLength(0)
+  })
+
+  it('still floats and parallaxes while in view', () => {
+    const view = render(
+      <li data-reveal="hidden" data-testid="card">
+        <AnimatedPose image={IMAGE} sizes="50vw" />
+      </li>,
+    )
+    const poseEl = pose(view.getByTestId('card'))
+    setInView(poseEl, true)
+    expect(poseEl.dataset.inview).toBe('true')
+  })
+})
+
 describe('idle float phase', () => {
   it('alternates the phase by index so neighbours do not move in sync', () => {
     const { container } = render(

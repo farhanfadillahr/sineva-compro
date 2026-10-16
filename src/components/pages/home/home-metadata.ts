@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { HomePageContent, SiteSettingsDTO } from '@/features/content/types'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 /**
  * Metadata of `/` from the page SEO fields.
@@ -14,11 +15,12 @@ export function buildHomeMetadata(
   settings: SiteSettingsDTO | null,
 ): Metadata {
   const { seo } = page
+  const canonical = seo.canonicalUrl ?? localizeHref(page.locale, '/')
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical: seo.canonicalUrl ?? '/' },
+    alternates: { canonical, languages: languageAlternates('/') },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
       card: 'summary_large_image',
@@ -30,7 +32,7 @@ export function buildHomeMetadata(
       type: 'website',
       title: seo.metaTitle,
       description: seo.metaDescription,
-      url: seo.canonicalUrl ?? '/',
+      url: canonical,
       siteName: settings?.brand.siteName,
       images: ogImage
         ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height, alt: ogImage.alt }]

@@ -11,7 +11,13 @@ import type { Principal } from '../auth/types'
 import { user } from '../auth/schema'
 import { writeAudit } from '../audit/service.server'
 import { media, mediaDelivery, mediaTranslation, mediaUsage } from './schema'
-import { MediaError, mediaId, parseMediaMetadata, type MediaMetadata } from './metadata'
+import {
+  MediaError,
+  mediaId,
+  parseMediaMetadata,
+  requireDefaultAlt,
+  type MediaMetadata,
+} from './metadata'
 import { validateUpload, type CleanUpload } from './validation'
 import { getPublicMedia, publicMediaUrl, type PublishedMedia } from './query.server'
 import type { MediaItem, MediaOwner, MediaPage, MediaReference } from './types'
@@ -252,7 +258,7 @@ export class MediaService {
         .from(mediaUsage)
         .where(and(eq(mediaUsage.mediaId, id), eq(mediaUsage.published, true)))
         .limit(1)
-      if (used.length) parseMediaMetadata(data, true)
+      if (used.length) requireDefaultAlt(data)
       await this.saveMetadata(tx, id, data)
       await writeAudit(tx, actor, {
         entity: 'media',
@@ -271,15 +277,12 @@ export class MediaService {
   ) {
     if (row.isDemo)
       throw new MediaError('INVALID', 'Ganti file contoh dengan upload nyata sebelum publikasi.')
-    parseMediaMetadata(
-      {
-        translations: await this.translated(tx, row.id),
-        credit: row.credit,
-        focalX: row.focalX,
-        focalY: row.focalY,
-      },
-      true,
-    )
+    requireDefaultAlt({
+      translations: await this.translated(tx, row.id),
+      credit: row.credit,
+      focalX: row.focalX,
+      focalY: row.focalY,
+    })
     let [delivery] = await tx
       .select()
       .from(mediaDelivery)

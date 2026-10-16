@@ -11,7 +11,7 @@ const metadata = {
 }
 describe('media metadata', () => {
   it('requires all enabled locale alt text on upload and rejects unsafe copy/limits', () => {
-    expect(parseMediaMetadata(metadata, true).translations.en.alt).toBe('Our team at work')
+    expect(parseMediaMetadata(metadata, true, ['en']).translations.en.alt).toBe('Our team at work')
     for (const value of [
       { ...metadata, translations: {} },
       { ...metadata, focalX: 2 },
@@ -19,8 +19,14 @@ describe('media metadata', () => {
       { ...metadata, translations: { en: { alt: 'Team — work', caption: '' } } },
       { ...metadata, translations: { en: { alt: 'Team', caption: 'Office – team' } } },
     ])
-      expect(() => parseMediaMetadata(value, true)).toThrow(MediaError)
-    expect(() => parseMediaMetadata(metadata, true, ['en', 'id'])).toThrow()
+      expect(() => parseMediaMetadata(value, true, ['en'])).toThrow(MediaError)
+    // Both locales are enabled (CPR-101), so an upload needs Indonesian alt text too.
+    expect(() => parseMediaMetadata(metadata, true)).toThrow()
+    const bilingual = {
+      ...metadata,
+      translations: { ...metadata.translations, id: { alt: 'Tim kami bekerja', caption: '' } },
+    }
+    expect(parseMediaMetadata(bilingual, true).translations.id.alt).toBe('Tim kami bekerja')
     expect(
       parseMediaMetadata({ ...metadata, translations: { en: { alt: '', caption: '' } } }, false)
         .translations.en.alt,

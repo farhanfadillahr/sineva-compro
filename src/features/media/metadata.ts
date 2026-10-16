@@ -51,6 +51,12 @@ export function parseMediaMetadata(
   if (Object.keys(translated).some((key) => !locales.includes(key))) return invalid()
   const translations: MediaMetadata['translations'] = {}
   for (const locale of locales) {
+    // A locale the client did not send is left out (its stored row stays as it is), unless alt
+    // is required. Media saved before a locale was enabled (CPR-101) stays editable.
+    if (translated[locale] === undefined) {
+      if (requireAlt) return invalid()
+      continue
+    }
     const value = object(translated[locale])
     if (Object.keys(value).some((key) => !['alt', 'caption'].includes(key))) return invalid()
     translations[locale] = {
@@ -77,4 +83,20 @@ export function mediaId(input: unknown) {
   if (typeof input !== 'string' || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(input))
     throw new MediaError('INVALID', 'ID media tidak valid.')
   return input
+}
+
+/**
+ * The publish rule: alt in the default locale. Another locale without alt is not an error, because
+ * the public read of that locale returns no image (getPublicMedia), so nothing ships without alt
+ * and media uploaded before a locale was enabled (CPR-101) does not block publishing.
+ */
+export function requireDefaultAlt(
+  data: Pick<MediaMetadata, 'credit' | 'focalX' | 'focalY'> & {
+    translations: Record<string, unknown>
+  },
+): void {
+  const locale = routing.defaultLocale
+  parseMediaMetadata({ ...data, translations: { [locale]: data.translations[locale] } }, true, [
+    locale,
+  ])
 }

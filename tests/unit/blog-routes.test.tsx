@@ -41,7 +41,7 @@ const NOT_FOUND = 'NEXT_HTTP_ERROR_FALLBACK;404'
 describe('/blog/[slug] static params', () => {
   it('prerenders one page per article of the content source', async () => {
     const slugs = staticContent.postDetails.map((post) => post.slug)
-    expect(slugs).toHaveLength(3)
+    expect(slugs).toHaveLength(4)
     expect(await generateStaticParams()).toEqual(slugs.map((slug) => ({ locale: 'en', slug })))
   })
 })

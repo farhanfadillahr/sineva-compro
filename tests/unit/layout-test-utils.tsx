@@ -16,12 +16,41 @@ export const navigationState = { pathname: '/' }
  * which does not exist under jsdom. Use it as
  * `vi.mock('@/i18n/navigation', async () => (await import('./layout-test-utils')).navigationMock)`.
  */
+type MockHref =
+  | string
+  | {
+      pathname: string
+      params?: Record<string, string>
+      query?: Record<string, string>
+      hash?: string
+    }
+
+/**
+ * The English href the real Link would build, without the pathname table: AppLink passes parsed
+ * objects ({ pathname, params, query, hash }) and the language switcher adds `locale`.
+ */
+export function formatMockHref(href: MockHref, locale?: string): string {
+  if (typeof href === 'string') return locale && locale !== 'en' ? `/${locale}${href}` : href
+  const path = href.pathname.replace(/\[(\w+)\]/g, (_, name: string) =>
+    encodeURIComponent(href.params?.[name] ?? ''),
+  )
+  const query = href.query ? `?${new URLSearchParams(href.query)}` : ''
+  const hash = href.hash ? `#${href.hash}` : ''
+  const prefixed = locale && locale !== 'en' ? `/${locale}${path === '/' ? '' : path}` : path
+  return `${prefixed}${query}${hash}`
+}
+
 export const navigationMock = {
   // jsdom cannot navigate, so a real click on an href would log "not implemented: navigation".
   // The caller's onClick still runs first, which is what the tests observe.
-  Link: ({ href, onClick, ...rest }: ComponentProps<'a'>) => (
+  Link: ({
+    href,
+    locale,
+    onClick,
+    ...rest
+  }: Omit<ComponentProps<'a'>, 'href'> & { href: MockHref; locale?: string }) => (
     <a
-      href={href}
+      href={formatMockHref(href, locale)}
       onClick={(event) => {
         onClick?.(event)
         event.preventDefault()
@@ -30,6 +59,8 @@ export const navigationMock = {
     />
   ),
   usePathname: () => navigationState.pathname,
+  getPathname: ({ locale, href }: { locale: string; href: MockHref }) =>
+    formatMockHref(href, locale),
 }
 
 export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'

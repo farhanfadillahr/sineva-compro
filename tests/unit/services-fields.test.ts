@@ -14,6 +14,10 @@ describe('service descriptors', () => {
     for (const row of rows) {
       expect(parseFields(serviceGlobalSchema, row.global)).toEqual({ ok: true, value: row.global })
       expect(parseFields(serviceLocaleSchema, row.local)).toEqual({ ok: true, value: row.local })
+      // Every enabled locale has launch copy (CPR-101), and it passes the same descriptor.
+      expect(Object.keys(row.translations)).toEqual(['en', 'id'])
+      for (const local of Object.values(row.translations))
+        expect(parseFields(serviceLocaleSchema, local)).toEqual({ ok: true, value: local })
     }
   })
 

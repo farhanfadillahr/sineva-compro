@@ -6,7 +6,8 @@ import type {
   SiteSettingsDTO,
 } from '@/features/content/types'
 import { blogPostHref } from './blog-model'
-import { blogCanonicalPath, type BlogQuery } from './blog-query'
+import { BLOG_LIST_PATH, blogCanonicalPath, type BlogQuery } from './blog-query'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 const ogImages = (image: MediaAsset | null) =>
   image ? [{ url: image.url, width: image.width, height: image.height, alt: image.alt }] : undefined
@@ -27,12 +28,19 @@ export function buildBlogListMetadata(
 ): Metadata {
   const { seo } = page
   const isMainList = query.category === null && query.page === 1
-  const canonical = isMainList && seo.canonicalUrl ? seo.canonicalUrl : blogCanonicalPath(query)
+  const canonical =
+    isMainList && seo.canonicalUrl
+      ? seo.canonicalUrl
+      : localizeHref(page.locale, blogCanonicalPath(query))
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      // Lists are per locale, so only the main list has a counterpart worth announcing.
+      ...(isMainList ? { languages: languageAlternates(BLOG_LIST_PATH) } : {}),
+    },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
       card: 'summary_large_image',
@@ -66,7 +74,7 @@ export function buildBlogPostMetadata(
   settings: SiteSettingsDTO | null,
 ): Metadata {
   const { seo } = post
-  const canonical = seo.canonicalUrl ?? blogPostHref(post.slug)
+  const canonical = seo.canonicalUrl ?? localizeHref(post.locale, blogPostHref(post.slug))
   const ogImage = postShareImage(post, settings)
   return {
     title: { absolute: seo.metaTitle },

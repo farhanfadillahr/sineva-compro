@@ -87,8 +87,8 @@ export function whatsappHrefFor(
 
 /**
  * Maps an internal (locale-less) pathname to a context. Paths come from the English table in
- * src/i18n/routing.ts; when `id` is enabled, `usePathname` from '@/i18n/navigation' still returns
- * these internal keys, so this function needs no per-locale table.
+ * src/i18n/routing.ts; `useInternalPathname` returns these internal paths with params filled in
+ * for every locale, so this function needs no per-locale table.
  */
 export function whatsappContextFromPathname(pathname: string | null | undefined): WhatsAppContext {
   if (!pathname) return { kind: 'general' }

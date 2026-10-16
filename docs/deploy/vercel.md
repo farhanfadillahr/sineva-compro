@@ -43,7 +43,7 @@ Vercel applies a changed variable only to new deployments, so redeploy after eve
 | `DATABASE_URL` | Yes, build-time placeholder | `postgres://placeholder:placeholder@127.0.0.1:5432/placeholder` | Read by the disabled admin routes while Next.js collects page configuration at build. No connection is made. See section 4. | Production, Preview |
 | `BETTER_AUTH_SECRET` | Yes, build-time placeholder | output of `openssl rand -base64 32` | Same reason. At least 32 non-blank characters. Use a random value, not a real secret and not a value reused from another environment. | Production, Preview |
 | `BETTER_AUTH_URL` | Yes, build-time placeholder | same value as `SITE_URL` | Same reason. An `http(s)` origin, no path. On Preview any valid origin works, for example `https://preview.invalid`. | Production, Preview |
-| `LOGO_INTRO_FORCE` | No | `1` | Forces the logo intro to play every time. Debug only. | Do not set |
+| `LOGO_INTRO_FORCE` | No | `1` | Lets the first-load splash play for automated browsers (webdriver), Sino clip included. Debug only. | Do not set |
 | `VERCEL_ENV`, `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL` | Provided by Vercel | `production`, `my-site-abc.vercel.app`, `my-site.com` | System variables. `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL` are host names without `https://`; the code adds the scheme. `VERCEL_PROJECT_PRODUCTION_URL` is set on preview deployments too, which is why the code only uses it when `VERCEL_ENV` is `production`. | Set by Vercel |
 
 No real secret belongs in this project in phase 1. Do not paste the local `.env` into Vercel.

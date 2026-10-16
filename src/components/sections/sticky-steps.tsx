@@ -33,7 +33,7 @@ export function StickySteps({ eyebrow, title, intro, steps, tone = 'alt' }: Stic
       <Container className="flex flex-col gap-12">
         {/* Only the header reveals: the story is `position: sticky` and scroll-driven, and a
             transformed ancestor would break both. */}
-        <Reveal>
+        <Reveal variant="lines">
           <SectionHeader eyebrow={eyebrow} title={title} lead={intro} />
         </Reveal>
         <StickyStepsStory steps={steps} />

@@ -34,7 +34,9 @@ describe('/services/[slug] static params', () => {
   it('prerenders one page per service of the content source, per locale', async () => {
     const slugs = staticContent.services.map((s) => s.slug)
     expect(slugs).toEqual(['ai-discovery', 'ai-build', 'ai-enablement'])
-    expect(await generateStaticParams()).toEqual(slugs.map((slug) => ({ locale: 'en', slug })))
+    expect(await generateStaticParams()).toEqual(
+      ['en', 'id'].flatMap((locale) => slugs.map((slug) => ({ locale, slug }))),
+    )
   })
 
   it('has no param for Web Development', async () => {

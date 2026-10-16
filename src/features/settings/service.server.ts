@@ -3,7 +3,7 @@ import { eq, inArray } from 'drizzle-orm'
 import { routing } from '../../i18n/routing'
 import { db } from '../../lib/db/client.server'
 import type { Database, DatabaseTransaction } from '../../lib/db/connection'
-import { staticContent } from '../../content/static/source'
+import { staticContent, staticContentFor } from '../../content/static/source'
 import { writeAudit } from '../audit/service.server'
 import type { Principal } from '../auth/types'
 import type { ContentLocale } from '../content/types'
@@ -22,9 +22,17 @@ import { siteSettings, siteSettingsTranslation } from './schema'
 
 export type StoredSettings = { global: SettingsGlobal; locales: Record<string, SettingsLocale> }
 
-/** Launch values, used when the singleton has not been seeded yet. */
-export function defaultSettings(): { global: SettingsGlobal; local: SettingsLocale } {
-  return settingsFromDto(staticContent.siteSettings)
+/**
+ * Launch values, used when the singleton has not been seeded yet. `local` is the launch copy of
+ * `locale`, or the default locale's when that locale has none.
+ */
+export function defaultSettings(locale: ContentLocale = routing.defaultLocale): {
+  global: SettingsGlobal
+  local: SettingsLocale
+} {
+  const { global } = settingsFromDto(staticContent.siteSettings)
+  const { local } = settingsFromDto((staticContentFor(locale) ?? staticContent).siteSettings)
+  return { global, local }
 }
 
 export async function readStoredSettings(
@@ -59,7 +67,7 @@ export async function loadSettingsForAdmin(headers: Headers) {
   const locales: Record<string, SettingsLocale> = {}
   const services: Record<string, { slug: string; title: string }[]> = {}
   for (const locale of routing.locales) {
-    const local = stored.locales[locale] ?? fallback.local
+    const local = stored.locales[locale] ?? defaultSettings(locale).local
     services[locale] = await currentServices(locale)
     locales[locale] = {
       ...local,
@@ -117,7 +125,7 @@ export async function saveSiteSettings(
     const locales: Record<string, { before: SettingsLocale; after: SettingsLocale }> = {}
     const submitted = isRecord(input.locales) ? input.locales : {}
     for (const locale of routing.locales) {
-      const before = stored.locales[locale] ?? fallback.local
+      const before = stored.locales[locale] ?? defaultSettings(locale).local
       const local = parseFields<SettingsLocale>(
         settingsLocaleSchema,
         { ...before, ...pick(submitted[locale], groups.locale) },

@@ -39,7 +39,7 @@ async function slugTaken(tx: Parameters<SeedModule['base']>[0], slug: string) {
 
 async function insert(
   tx: Parameters<SeedModule['base']>[0],
-  row: { slug: string; global: object; local: object },
+  row: { slug: string; global: object; local: object; translations?: Record<string, object> },
   isDemo: boolean,
 ) {
   const [{ last }] = await tx.select({ last: max(service.sortOrder) }).from(service)
@@ -47,23 +47,37 @@ async function insert(
     .insert(service)
     .values({ sortOrder: (last ?? -1) + 1, published: !isDemo, data: row.global, isDemo })
     .returning({ id: service.id })
-  await tx.insert(serviceTranslation).values({
-    serviceId: created.id,
-    locale: routing.defaultLocale,
-    slug: row.slug,
-    data: row.local,
-  })
+  await addTranslations(tx, created.id, row)
+}
+
+/** One translation per locale with launch copy; a locale that already has a row is left alone. */
+async function addTranslations(
+  tx: Parameters<SeedModule['base']>[0],
+  serviceId: string,
+  row: { slug: string; local: object; translations?: Record<string, object> },
+) {
+  const byLocale = row.translations ?? { [routing.defaultLocale]: row.local }
+  for (const [locale, data] of Object.entries(byLocale))
+    await tx
+      .insert(serviceTranslation)
+      .values({ serviceId, locale, slug: row.slug, data })
+      .onConflictDoNothing()
 }
 
 /**
- * Base: the three launch services (published), inserted when their slug is missing. Demo: one
+ * Base: the three launch services (published) in every locale with launch copy, inserted when
+ * their slug or a locale's translation is missing. Demo: one
  * unpublished, noindex `demo-service` flagged `is_demo`; purge removes only that flagged row.
  */
 export const servicesSeed: SeedModule = {
   key: 'services',
   async base(tx) {
-    for (const row of launchServices())
-      if (!(await slugTaken(tx, row.slug))) await insert(tx, row, false)
+    for (const row of launchServices()) {
+      const taken = await slugTaken(tx, row.slug)
+      if (!taken) await insert(tx, row, false)
+      // A locale enabled after the first seed (CPR-101) gets its launch copy on the next run.
+      else if (!taken.isDemo) await addTranslations(tx, taken.id, row)
+    }
   },
   async demo(tx) {
     const taken = await slugTaken(tx, demo.slug)

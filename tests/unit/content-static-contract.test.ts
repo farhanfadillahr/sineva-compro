@@ -290,9 +290,9 @@ function textOf(node: unknown): string {
 }
 
 describe('static content source: blog', () => {
-  it('has three launch articles, newest first, written by the Sineva team', async () => {
+  it('has four launch articles, newest first, written by the Sineva team', async () => {
     const page = await source.listPosts({ locale: 'en', page: 1, pageSize: 10 })
-    expect(page.total).toBe(3)
+    expect(page.total).toBe(4)
     const dates = page.posts.map((post) => post.publishedAt)
     expect([...dates].sort().reverse()).toEqual(dates)
     for (const post of page.posts) {
@@ -332,8 +332,8 @@ describe('static content source: blog', () => {
     expect(filtered.posts.length).toBeGreaterThan(0)
     expect(filtered.posts.every((post) => post.category?.slug === category.slug)).toBe(true)
     const paged = await source.listPosts({ locale: 'en', page: 2, pageSize: 2 })
-    expect(paged.posts).toHaveLength(1)
-    expect(paged.total).toBe(3)
+    expect(paged.posts).toHaveLength(2)
+    expect(paged.total).toBe(4)
   })
 
   it('rejects invalid page and pageSize like the database source', async () => {
@@ -413,8 +413,25 @@ describe('static content source: references', () => {
 })
 
 describe('static content source: other locales', () => {
+  it('serves Indonesian content for id, with the same slugs and keys as English', async () => {
+    const settings = await source.getSiteSettings('id')
+    expect(settings?.locale).toBe('id')
+    expect((await source.getPage('home', 'id'))?.locale).toBe('id')
+    const [en, id] = await Promise.all([source.listServices('en'), source.listServices('id')])
+    expect(id.map((s) => s.slug)).toEqual(en.map((s) => s.slug))
+    expect((await source.getService('ai-build', 'id'))?.locale).toBe('id')
+    expect((await source.listCapabilities('id')).length).toBe(
+      (await source.listCapabilities('en')).length,
+    )
+    expect((await source.listFaq('home', 'id')).length).toBe(
+      (await source.listFaq('home', 'en')).length,
+    )
+    // No Indonesian articles yet: the blog is empty in id rather than showing English posts.
+    expect((await source.listPosts({ locale: 'id', page: 1, pageSize: 5 })).total).toBe(0)
+  })
+
   it('returns the empty contract for a locale without content', async () => {
-    const other = 'id' as unknown as 'en'
+    const other = 'xx' as unknown as 'en'
     expect(await source.getSiteSettings(other)).toBeNull()
     expect(await source.getPage('home', other)).toBeNull()
     expect(await source.listServices(other)).toEqual([])

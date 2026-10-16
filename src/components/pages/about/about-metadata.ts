@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { AboutPageContent, SiteSettingsDTO } from '@/features/content/types'
 import { ABOUT_HREFS } from './about-model'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 /**
  * Metadata of `/about` from the page SEO fields. The title is `absolute`: the content already
@@ -13,11 +14,12 @@ export function buildAboutMetadata(
   settings: SiteSettingsDTO | null,
 ): Metadata {
   const { seo } = page
+  const canonical = seo.canonicalUrl ?? localizeHref(page.locale, ABOUT_HREFS.about)
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical: seo.canonicalUrl ?? ABOUT_HREFS.about },
+    alternates: { canonical, languages: languageAlternates(ABOUT_HREFS.about) },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
       card: 'summary_large_image',
@@ -29,7 +31,7 @@ export function buildAboutMetadata(
       type: 'website',
       title: seo.metaTitle,
       description: seo.metaDescription,
-      url: seo.canonicalUrl ?? ABOUT_HREFS.about,
+      url: canonical,
       siteName: settings?.brand.siteName,
       images: ogImage
         ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height, alt: ogImage.alt }]

@@ -56,6 +56,9 @@ it('validates selected files and requires alt before uploading', async () => {
   const submit = screen.getByRole('button', { name: 'Unggah office.png' })
   expect((submit as HTMLButtonElement).disabled).toBe(true)
   await user.type(screen.getByLabelText('Alt (en) untuk office.png'), 'Office')
+  // Both locales are enabled (CPR-101): the Indonesian alt is required too.
+  expect((submit as HTMLButtonElement).disabled).toBe(true)
+  await user.type(screen.getByLabelText('Alt (id) untuk office.png'), 'Kantor')
   expect((submit as HTMLButtonElement).disabled).toBe(false)
 })
 it('image field provides keyboard focal controls and clear without changing an unrelated file', async () => {

@@ -244,7 +244,13 @@ export function MobileMenu({
             ))}
           </ul>
         </nav>
-        <LanguageSwitcher />
+        <LanguageSwitcher
+          full
+          className={cx(
+            'mt-6 inline-flex min-h-11 items-center rounded-sm text-label text-text underline underline-offset-4',
+            focusRing,
+          )}
+        />
       </div>
 
       {/* Fixed bottom action bar: the two conversion paths stay one thumb away at any scroll. */}

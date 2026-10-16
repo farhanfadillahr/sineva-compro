@@ -164,12 +164,12 @@ export function BlogPostView({ model, labels, siteUrl, linkComponent }: BlogPost
       {related.length > 0 ? (
         <Section tone="alt" id={RELATED_ID} data-blog-related="">
           <Container className="flex flex-col gap-12">
-            <Reveal>
+            <Reveal variant="lines">
               <SectionHeader title={article.relatedTitle} />
             </Reveal>
             <ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {related.map((item, index) => (
-                <Reveal as="li" key={item.slug} index={index} className="flex">
+              {related.map((item) => (
+                <Reveal as="li" variant="depth" key={item.slug} className="flex">
                   <PostCard post={item} locale={locale} linkComponent={linkComponent} />
                 </Reveal>
               ))}

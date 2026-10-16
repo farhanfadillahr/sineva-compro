@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import type { PublicContentSource } from '@/features/content/public'
 import type { ContentLocale, PageKey } from '@/features/content/types'
+import { localizeHref } from '@/i18n/href'
 import { getPathname } from '@/i18n/navigation'
 
 /** A page to list: a path (or an editor's canonical override), resolved against the site origin. */
@@ -91,18 +92,20 @@ export async function collectSitemapEntries({
 export const blogSitemapSource: SitemapSource = async ({ content, locale }) => {
   const index = await content.getPage('blogIndex', locale)
   if (!index || index.seo.noindex) return []
-  const entries: SitemapPage[] = [{ path: index.seo.canonicalUrl ?? '/blog' }]
+  const entries: SitemapPage[] = []
   let page = 1
   while (true) {
     const result = await content.listPosts({ locale, page, pageSize: 100 })
     for (const summary of result.posts) {
       const post = await content.getPost(summary.slug, locale)
       if (post && !post.seo.noindex) {
-        entries.push({ path: post.seo.canonicalUrl ?? `/blog/${post.slug}` })
+        entries.push({ path: post.seo.canonicalUrl ?? localizeHref(locale, `/blog/${post.slug}`) })
       }
     }
     if (result.posts.length === 0 || page * result.pageSize >= result.total) break
     page += 1
   }
-  return entries
+  // An empty list (the Indonesian blog before its first article) is not worth crawling.
+  if (entries.length === 0) return []
+  return [{ path: index.seo.canonicalUrl ?? localizeHref(locale, '/blog') }, ...entries]
 }

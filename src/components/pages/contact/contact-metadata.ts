@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import type {
   ContactPageContent,
+  ContentLocale,
   SeoFields,
   SiteSettingsDTO,
   ThankYouPageContent,
 } from '@/features/content/types'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 const CONTACT_PATH = '/contact'
 const THANK_YOU_PATH = '/contact/thank-you'
@@ -14,16 +16,17 @@ const THANK_YOU_PATH = '/contact/thank-you'
  * layout sets no title template, so a template here would print the brand twice.
  */
 function metadataFor(
-  seo: SeoFields,
+  { seo, locale }: { seo: SeoFields; locale: ContentLocale },
   path: string,
   settings: SiteSettingsDTO | null,
   noindex: boolean,
 ): Metadata {
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
+  const canonical = seo.canonicalUrl ?? localizeHref(locale, path)
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical: seo.canonicalUrl ?? path },
+    alternates: { canonical, languages: languageAlternates(path) },
     // Robots are otherwise left to the layout (the whole site stays noindex until launch).
     ...(noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
@@ -36,7 +39,7 @@ function metadataFor(
       type: 'website',
       title: seo.metaTitle,
       description: seo.metaDescription,
-      url: seo.canonicalUrl ?? path,
+      url: canonical,
       siteName: settings?.brand.siteName,
       images: ogImage
         ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height, alt: ogImage.alt }]
@@ -49,7 +52,7 @@ export function buildContactMetadata(
   page: ContactPageContent,
   settings: SiteSettingsDTO | null,
 ): Metadata {
-  return metadataFor(page.seo, CONTACT_PATH, settings, page.seo.noindex)
+  return metadataFor(page, CONTACT_PATH, settings, page.seo.noindex)
 }
 
 /**
@@ -61,5 +64,5 @@ export function buildThankYouMetadata(
   page: ThankYouPageContent,
   settings: SiteSettingsDTO | null,
 ): Metadata {
-  return metadataFor(page.seo, THANK_YOU_PATH, settings, true)
+  return metadataFor(page, THANK_YOU_PATH, settings, true)
 }

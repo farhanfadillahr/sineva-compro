@@ -7,8 +7,11 @@ import { launchPage } from '../../src/features/pages/launch'
 import { FutureVersionError, migrateDocument } from '../../src/features/pages/migrations'
 
 describe('page descriptors', () => {
-  it.each(PAGE_KEYS)('%s: the launch content passes its descriptor unchanged', (key) => {
-    const stored = launchPage(key, 'en')!
+  const cases = PAGE_KEYS.flatMap((key) =>
+    (['en', 'id'] as const).map((locale) => [key, locale] as const),
+  )
+  it.each(cases)('%s (%s): the launch content passes its descriptor unchanged', (key, locale) => {
+    const stored = launchPage(key, locale)!
     const result = parseFields(pageSchemas[key], stored)
     expect(result).toEqual({ ok: true, value: stored })
   })

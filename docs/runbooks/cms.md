@@ -27,6 +27,14 @@ The base seed copies the static launch content into the tables, so the site look
 right after the switch. It never overwrites a row an editor changed. `npm run db:seed -- --demo`
 adds clearly marked demo rows on a loopback database; `--purge-demo` removes untouched ones.
 
+The launch content exists in English and Indonesian (CPR-101, `src/content/static/id/`). The base
+seed writes both: pages, site settings, services (same slug in both locales), capabilities,
+business types and FAQ. A database seeded before `id` was enabled gets the missing Indonesian rows
+on the next `npm run db:seed`; existing English rows are untouched. Without that run, `/id/...`
+pages answer 404 in database mode, because there is no cross-locale fallback. Blog posts and
+categories have no Indonesian launch copy: the Indonesian blog stays empty until an editor
+publishes an Indonesian article.
+
 ## Building blocks
 
 - `src/features/cms/fields.ts`: field descriptors. The admin renders forms from them and the server

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { ProductPageContent, SiteSettingsDTO } from '@/features/content/types'
 import { PRODUCT_HREFS } from './product-model'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 /**
  * Metadata of `/products/ai-agents` from the page SEO fields.
@@ -16,11 +17,11 @@ export function buildProductMetadata(
 ): Metadata {
   const { seo } = page
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
-  const canonical = seo.canonicalUrl ?? PRODUCT_HREFS.product
+  const canonical = seo.canonicalUrl ?? localizeHref(page.locale, PRODUCT_HREFS.product)
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical },
+    alternates: { canonical, languages: languageAlternates(PRODUCT_HREFS.product) },
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
       card: 'summary_large_image',

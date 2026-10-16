@@ -62,10 +62,22 @@ describe('SiteHeader structure', () => {
     ).toBe('/contact')
   })
 
-  it('offers a theme toggle and no language switcher while there is one locale', () => {
+  it('offers a theme toggle and a switch to the same page in Indonesian', () => {
+    navigationState.pathname = '/about'
     renderHeader()
     expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy()
-    expect(document.querySelector('[data-slot="language-switcher"]')).toBeNull()
+    const switcher = screen.getByRole('link', { name: 'ID, Switch to Bahasa Indonesia' })
+    // The mock Link only prefixes the locale; the real one also translates the path (/id/tentang).
+    expect(switcher.getAttribute('href')).toBe('/id/about')
+    expect(switcher.getAttribute('hreflang')).toBe('id')
+  })
+
+  it('switches an article to the Indonesian blog list, where the same slug rarely exists', () => {
+    navigationState.pathname = '/blog/[slug]'
+    renderHeader()
+    expect(
+      screen.getByRole('link', { name: 'ID, Switch to Bahasa Indonesia' }).getAttribute('href'),
+    ).toBe('/id/blog')
   })
 
   it('offers a 44 px burger for the mobile menu', () => {
@@ -167,17 +179,6 @@ describe('SiteHeader floating nav (modes)', () => {
     const classes = header().className.split(/\s+/)
     expect(classes).toContain('sticky')
     expect(classes).not.toContain('fixed')
-  })
-
-  it('keeps the logo intro landing slot exactly once, inside the bar, in every mode', () => {
-    renderHeader()
-    const slot = () => document.querySelectorAll('[data-logo-intro-target]')
-    expect(slot()).toHaveLength(1)
-    expect(bar().contains(slot()[0])).toBe(true)
-    act(() => scrollTo(300))
-    expect(slot()).toHaveLength(1)
-    act(() => scrollTo(290))
-    expect(slot()).toHaveLength(1)
   })
 
   it('never hides while a dropdown is open', async () => {

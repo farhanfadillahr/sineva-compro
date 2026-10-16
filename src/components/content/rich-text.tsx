@@ -181,7 +181,18 @@ export function RichText({
   return (
     <div className={cx('flex min-w-0 flex-col gap-5 text-body text-text break-words', className)}>
       {blocks.map((item, index) =>
-        reveal ? <Reveal key={index}>{block(item, index)}</Reveal> : block(item, index),
+        reveal ? (
+          // A picture wipes in; every other block rises. The radius is the image's own (rounded-lg).
+          <Reveal
+            key={index}
+            variant={item.type === 'image' ? 'clip' : 'rise'}
+            className={item.type === 'image' ? '[--reveal-radius:var(--radius-lg)]' : undefined}
+          >
+            {block(item, index)}
+          </Reveal>
+        ) : (
+          block(item, index)
+        ),
       )}
     </div>
   )

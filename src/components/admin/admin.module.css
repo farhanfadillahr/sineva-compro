@@ -16,7 +16,7 @@
   --admin-warning: var(--amber-700);
   --admin-success: var(--color-success);
   --admin-radius: var(--radius-sm);
-  --admin-panel-radius: var(--radius-md);
+  --admin-panel-radius: var(--radius-lg);
   --admin-text-sm: var(--text-micro);
   --admin-text-base: var(--text-body-sm);
   --admin-gap: var(--space-4);
@@ -29,7 +29,7 @@
   color-scheme: light;
 }
 :global(:root[data-theme='dark']) .root {
-  --admin-warning: #f7b267;
+  --admin-warning: var(--sun-500);
   color-scheme: dark;
 }
 .root *,
@@ -59,21 +59,37 @@
   justify-content: center;
   gap: 8px;
   min-height: 36px;
-  border: 1px solid var(--admin-input-border);
+  border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius);
   padding: 7px 12px;
   background: var(--admin-surface);
-  color: var(--admin-brand);
+  color: var(--admin-text);
+  font-weight: 500;
+  line-height: 1.2;
+  box-shadow: var(--shadow-button-bevel-light);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
   text-decoration: none;
   cursor: pointer;
+}
+.button:hover:not(:disabled) {
+  background: var(--admin-canvas);
+  border-color: var(--admin-input-border);
+}
+.button:active:not(:disabled) {
+  box-shadow: var(--shadow-xs);
 }
 .primary {
   background: var(--admin-action);
   border-color: var(--admin-action);
   color: var(--admin-inverse);
+  box-shadow: var(--shadow-button-bevel);
 }
-.primary:hover {
+.primary:hover:not(:disabled) {
   background: var(--admin-hover);
+  border-color: var(--admin-hover);
 }
 .danger {
   color: var(--admin-danger);
@@ -81,9 +97,10 @@
 .panel {
   padding: 20px;
   background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--admin-panel-radius);
-  box-shadow: var(--shadow-xs, none);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
 }
 .stack {
   display: grid;
@@ -136,7 +153,7 @@
   gap: 12px;
   min-height: 40px;
   text-decoration: none;
-  color: var(--admin-brand);
+  color: var(--color-wordmark);
   font-size: 20px;
   font-weight: 600;
   padding-inline: 8px;
@@ -180,6 +197,7 @@
   background: var(--admin-tint);
   color: var(--admin-brand);
   font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--color-border);
 }
 .treeItem[data-trail='true'] {
   border-left-color: var(--admin-action);
@@ -216,7 +234,8 @@
   gap: 12px;
   padding: 8px 24px;
   border-bottom: 1px solid var(--admin-border);
-  background: var(--admin-surface);
+  background: var(--surface-nav);
+  backdrop-filter: blur(16px);
 }
 .breadcrumb {
   display: flex;
@@ -272,6 +291,8 @@
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 4px;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 .pageHeader[data-compact='true'] {
   min-height: 56px;
@@ -285,6 +306,8 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 .sectionHeader h2 {
   font-size: 18px;
@@ -322,6 +345,10 @@
   gap: 6px;
   min-width: 0;
 }
+.field > label,
+label.field > span:first-child {
+  font-weight: 500;
+}
 .field :where(input:not([type='checkbox'], [type='radio']), textarea, select),
 .input {
   width: 100%;
@@ -331,6 +358,11 @@
   padding: 8px 12px;
   color: var(--admin-text);
   background: var(--admin-surface);
+  box-shadow: var(--shadow-xs);
+}
+.field :where(input, textarea, select):focus-visible,
+.input:focus-visible {
+  border-color: var(--admin-focus);
 }
 .field [aria-invalid='true'] {
   border-color: var(--admin-danger);
@@ -463,6 +495,12 @@
   padding: 4px 8px;
   background: var(--admin-tint);
   border-radius: var(--radius-xs, 6px);
+  text-decoration: none;
+}
+.chip[aria-current='page'] {
+  color: var(--admin-inverse);
+  background: var(--admin-action);
+  box-shadow: var(--shadow-button-bevel);
 }
 .dialog {
   color: var(--admin-text);
@@ -538,6 +576,7 @@
 .empty {
   text-align: center;
   padding: 40px 20px;
+  color: var(--admin-muted);
 }
 .skeleton {
   min-height: 16px;
@@ -629,9 +668,10 @@
   background: var(--admin-surface);
 }
 .kpi {
-  font-size: 28px;
+  font-size: var(--text-h3);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
 }
 .list {
   list-style: none;

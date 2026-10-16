@@ -44,7 +44,12 @@ export default async function WaitlistPage({
           </a>
         }
       />
-      <form className={`${s.panel} ${s.row}`} method="get" aria-label="Filter waitlist">
+      <form
+        className={`${s.panel} ${s.row}`}
+        method="get"
+        autoComplete="off"
+        aria-label="Filter waitlist"
+      >
         <label className={s.field}>
           Jenis bisnis
           <select name="segment" defaultValue={filters.segment}>

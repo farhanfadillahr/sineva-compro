@@ -1,16 +1,18 @@
 .grid {
   display: grid;
   gap: var(--admin-gap);
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
 }
 .wide {
   display: grid;
   gap: var(--admin-gap);
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
 }
 .chart {
   width: 100%;
   min-width: 0;
+  /* Recharts retains tooltip coordinates after resize, even while hidden. */
+  overflow: clip;
 }
 .donut {
   position: relative;

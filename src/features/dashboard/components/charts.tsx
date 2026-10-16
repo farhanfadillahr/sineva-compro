@@ -21,18 +21,18 @@ import c from './dashboard.module.css'
 
 /** Chart colours come from the brand tokens only (admin-ui.md 4.4). */
 const TOKENS = {
-  line: 'var(--teal-700, #00757a)',
-  bar: 'var(--teal-500, #00949b)',
-  grid: 'var(--ink-100, #e3ecec)',
-  axis: 'var(--ink-500, #5a7372)',
-  previous: 'var(--ink-400, #8aa1a0)',
+  line: 'var(--color-text-brand)',
+  bar: 'var(--color-action-primary)',
+  grid: 'var(--color-border)',
+  axis: 'var(--color-text-tertiary)',
+  previous: 'var(--color-border-input)',
 }
 const STATUS_COLORS: Record<string, string> = {
-  new: 'var(--teal-500, #00949b)',
-  contacted: 'var(--sun-500, #f2b705)',
-  qualified: 'var(--teal-300, #5fc4c7)',
-  won: 'var(--teal-800, #005a5e)',
-  lost: 'var(--ink-400, #8aa1a0)',
+  new: 'var(--color-text-brand)',
+  contacted: 'var(--admin-warning)',
+  qualified: 'var(--color-focus)',
+  won: 'var(--color-success)',
+  lost: 'var(--color-text-tertiary)',
 }
 const STATUS_LABELS: Record<string, string> = {
   new: 'Baru',
@@ -135,8 +135,8 @@ export function LeadsAreaChart({
         <AreaChart data={series} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
           <defs>
             <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(0,148,155,.28)" />
-              <stop offset="100%" stopColor="rgba(0,148,155,0)" />
+              <stop offset="0%" stopColor="var(--color-focus)" stopOpacity={0.28} />
+              <stop offset="100%" stopColor="var(--color-focus)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} stroke={TOKENS.grid} strokeDasharray="3 3" />

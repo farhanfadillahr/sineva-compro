@@ -53,15 +53,4 @@
   --shadow-button-bevel-light:
     inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1.5px 0 rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(238, 244, 245, 0.1), 0 1px 2px rgba(0, 0, 0, 0.4);
-
-  /* Legacy admin variables (login and users screens). */
-  --canvas: #08181c;
-  --surface: #0f272d;
-  --ink: #eef4f5;
-  --muted: #bccbce;
-  --brand: #6cc6c9;
-  --brand-hover: #9ff5ec;
-  --accent: #2fb0b5;
-  --line: #29494f;
-  --error: #ff8a80;
 }

@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { AdminButton } from '@/components/admin/primitives'
+import s from '@/components/admin/admin.module.css'
+import a from '@/components/admin/auth.module.css'
 
 export function LoginForm() {
   const router = useRouter()
@@ -32,8 +35,8 @@ export function LoginForm() {
     }
   }
   return (
-    <form onSubmit={handleSubmit} className="auth-form" aria-busy={busy}>
-      <div className="form-field">
+    <form onSubmit={handleSubmit} className={a.form} aria-busy={busy}>
+      <div className={s.field}>
         <label htmlFor="email">Email</label>
         <input
           id="email"
@@ -45,7 +48,7 @@ export function LoginForm() {
           aria-describedby={error ? 'login-error' : undefined}
         />
       </div>
-      <div className="form-field">
+      <div className={s.field}>
         <label htmlFor="password">Password</label>
         <input
           id="password"
@@ -58,13 +61,13 @@ export function LoginForm() {
         />
       </div>
       {error ? (
-        <p id="login-error" className="form-error" role="alert">
+        <p id="login-error" className={s.error} role="alert">
           {error}
         </p>
       ) : null}
-      <button className="button-primary" type="submit" disabled={busy}>
+      <AdminButton tone="primary" type="submit" disabled={busy}>
         {busy ? 'Sedang masuk…' : 'Masuk'}
-      </button>
+      </AdminButton>
     </form>
   )
 }

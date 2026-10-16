@@ -44,3 +44,18 @@ Recharts dan command palette belum ditambahkan. Tidak ada migration database dal
 - Isolasi bundle: 15 manifest route publik tidak mereferensikan komponen admin. Traversal 81 modul sumber dari 15 client entry publik tidak menemukan import library khusus admin; 16 script yang dimuat oleh 14 halaman HTML publik tidak memiliki marker library admin yang diperiksa. Pemeriksaan ini berlaku pada build tersebut, bukan jaminan untuk import baru di tiket berikutnya.
 
 Untuk mengulang, gunakan Node sesuai `package.json`, jalankan setup environment dan database test terisolasi, lalu `npm test`, `npm run test:prepare`, `npm run test:database`, `npm run lint`, `npm run typecheck`, `npm run format:check`, dan `npm run build`. Untuk HTTP production, jalankan `npm run test:server` dan `npm run test:integration` pada URL loopback yang sama melalui `TEST_AUTH_URL` dan `TEST_BASE_URL`. Pemeriksaan jalur Cloudflare memakai `CLIENT_IP_MODE=cloudflare` serta `CLOUDFLARE_ORIGIN_LOCKED=true` khusus proses test, bukan sebagai bukti firewall production.
+
+## Penyelarasan brand dan regresi, 17 Oktober 2026
+
+Basis pemeriksaan: `development` 55c3312 (termasuk Makefile/setup terbaru), sudah memuat `main` 0bc43f8. Perubahan development terbaru meliputi CMS konten, dashboard, profil, prospek dan dukungan bahasa Indonesia. Keterangan dependency dan cakupan kit di atas merupakan kondisi pengiriman 16 Oktober; consumer berikutnya sudah menambahkan profil, Recharts dan integrasi CMS.
+
+- Login, shell, form lama Pengguna/Log audit, panel CMS dan grafik mengikuti token semantik landing page: font, warna, radius, bayangan, tombol dan tema terang/gelap. Login tetap memakai alur autentikasi yang sama.
+- Status dokumen dipindah ke modul murni bersama. Sebelumnya daftar Blog yang dirender server memanggil ekspor dari editor client dan menghasilkan error 500 saat ada artikel. Browser production lokal membuktikan daftar Blog dan editor kembali terbuka; daftar Karya juga terbuka, dengan keadaan kosong pada fixture ini.
+- Filter GET Lead/Waitlist menonaktifkan pemulihan nilai otomatis browser agar pilihan filter sesuai URL dan hasil ketika pengguna menekan Back. Diuji dari tiga baris demo, filter satu baris, lalu Back kembali ke Semua/tiga baris pada kedua daftar.
+- Grid dashboard dapat menyusut sampai lebar 320 px. Area grafik membatasi overflow tooltip Recharts yang menyimpan koordinat lama setelah resize. Skenario desktop dengan tooltip kemudian diperkecil ke 320 px menghasilkan lebar dokumen 320 px.
+
+Verifikasi lokal pada Node 24/PostgreSQL 17: 197 file/2.981 tes unit dan 34 file/115 tes database lulus; build production, typecheck, lint dan format lulus. Dua tes status dokumen mencakup terjemahan belum tersedia, draf, terbit dan perubahan isi/slug, termasuk kesetaraan urutan properti JSON.
+
+Browser production lokal: login/logout/login ulang akun QA, tema terang/gelap, dashboard dan alternatif tabel dengan keyboard, navigasi drawer/tree, Blog/editor, Karya, filter Lead/Waitlist, simpan pengaturan situs tanpa perubahan isi, profil dan tampilan form Pengguna. Login/dashboard/profil diperiksa pada lebar 320 px; desktop pada 1440 px. Ini pemeriksaan alur yang disebutkan, bukan seluruh kombinasi form. Ganti password dan upload media tidak diuji ulang melalui UI pada pekerjaan ini. Tidak ada pengiriman email atau verifikasi deployment Vercel.
+
+Pemeriksaan build memindai 67 chunk client terhadap nilai rahasia lokal dan nama environment storage, serta 15 manifest publik dan 110 modul sumber yang terjangkau dari 23 client entry publik; tidak ditemukan kebocoran yang diperiksa atau dependensi admin dalam graf publik. Suite HTTP production tidak dijalankan ulang pada pekerjaan penyelarasan ini.

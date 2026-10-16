@@ -102,7 +102,7 @@ Internal users:
 - Running paid ads.
 
 ### 4.3 Definition of Done v1
-- [ ] All pages in §6 are live in **English** with final content, and the site is i18n-ready (FR-I18N-01 to 06).
+- [ ] All pages in §6 are live in **English and Indonesian** with final content (FR-I18N-01 to 06).
 - [ ] At least **2 Work (portfolio) items** are published.
 - [ ] Contact form, WhatsApp buttons, and waitlist work in production. Notification and auto-reply emails are delivered, with SPF/DKIM passing.
 - [ ] All analytics events in §12 are recorded in Umami.
@@ -136,7 +136,7 @@ Internal users:
 | Building the showcase demo applications | Separate work. The chatbot demo depends on team `CBT` |
 | Selling or onboarding users to the AI agents product | Product is not launched. Waitlist only |
 | Standalone Web Development service page | Web development is delivered as part of AI Build (Rev. 3) |
-| Indonesian locale at launch | Added later; the site is i18n-ready (FR-I18N-01 to 06) |
+| Indonesian locale at launch | Enabled (Rev. 4, CPR-101); the Indonesian privacy policy shares the legal review of the English one |
 | Dark mode | Deferred to the post-launch backlog; tokens are split so it can be added (FR-GLB-05) |
 | Pricing page | Services are priced per project |
 | Careers page | No hiring yet |
@@ -176,7 +176,7 @@ Primary navigation: Product, Services, Work, Blog, About, plus the CTA. Contact 
 Each requirement has an ID so it can be referenced from Linear tickets. Section order and patterns follow [page-patterns.md](../design/page-patterns.md); copy follows [copywriting.md](../design/copywriting.md).
 
 ### 7.1 Global elements
-- **FR-GLB-01: Header.** Logo, navigation (**Product, Services, Work, Blog, About**), and the CTA button **Book a free consultation** linking to the Contact page. A **theme toggle** (light/dark, Rev. 4) sits in the header and the mobile menu. A language switcher slot exists but is **hidden while only one locale is enabled** (FR-I18N-03). At widths ≤ 1024 px the navigation becomes a mobile menu with a bottom action bar (primary CTA and WhatsApp). Scroll behaviour is specified in [motion.md](../design/motion.md) §5.
+- **FR-GLB-01: Header.** Logo, navigation (**Product, Services, Work, Blog, About**), and the CTA button **Book a free consultation** linking to the Contact page. A **theme toggle** (light/dark, Rev. 4) sits in the header and the mobile menu. A **language switcher** (Rev. 4) opens the counterpart page in the other locale (FR-I18N-03). At widths ≤ 1024 px the navigation becomes a mobile menu with a bottom action bar (primary CTA and WhatsApp). Scroll behaviour is specified in [motion.md](../design/motion.md) §5.
 - **FR-GLB-02: Floating WhatsApp button** on all public pages. The prefilled message follows the originating page (§8.1). It sits above the sticky CTA bar (FR-GLB-08) when that bar is visible.
 - **FR-GLB-03: Footer.** Company summary, navigation, list of services, contact (email, WhatsApp, address), legal data, social media, Privacy Policy link, and copyright (`© 2026 Sineva`). Legal data and address are **hidden while their fields are empty in Site Settings**.
 - **FR-GLB-04: 404 page** in every enabled locale, with links to Home, Services, and Contact.
@@ -375,11 +375,11 @@ Full CMS scope (editable fields per page, SEO, media, email/SMTP settings, roles
 
 English is the default and the only enabled locale at launch. The site is **i18n-ready** so Indonesian can be added later with a locale and content only, without structural change. The existing Indonesian draft copy (`docs/content/copy-id.md`) is kept as source material for the later `id` locale; its positioning is outdated.
 
-- **FR-I18N-01:** `en` is the default and the only enabled locale. All UI text goes through next-intl messages, DB content is stored per `(entity_id, locale)`, and slugs are per locale. Cross-locale fallback is **disabled**, so text from one locale never appears on a page of another.
-- **FR-I18N-02: Visiting `/`:** `/` serves English directly, with no redirect, while there is a single locale (next-intl `localePrefix: 'as-needed'`: English has no prefix, future locales use `/id/...`). When a second locale is enabled, a saved locale cookie redirects returning visitors to their locale; without a cookie `/` keeps serving English (proposed, to be confirmed in that locale's launch ticket).
-- **FR-I18N-03: Language switcher** is **hidden until a second locale is enabled**. Behaviour kept for later: the switcher opens the **counterpart page** in the other locale and stores the choice in a cookie. If no counterpart exists (a single-locale article), the visitor goes to the blog list of the target locale.
+- **FR-I18N-01 (Rev. 4):** `en` is the default locale and `id` is enabled next to it. All UI text goes through next-intl messages, DB content is stored per `(entity_id, locale)`, and slugs are per locale. Cross-locale fallback is **disabled**, so text from one locale never appears on a page of another.
+- **FR-I18N-02: Visiting `/` (Rev. 4):** `/` serves English directly, with no redirect (next-intl `localePrefix: 'as-needed'`: English has no prefix, Indonesian uses `/id/...` with the localized paths of [page-patterns.md](../design/page-patterns.md) §1). No locale cookie and no `Accept-Language` redirect, so `/` stays cacheable and a shared link always opens the language it names (CPR-101).
+- **FR-I18N-03: Language switcher (Rev. 4):** shown in the header and the mobile menu. It opens the **counterpart page** in the other locale (same service slug in both). Articles and projects are written per locale, so from an article or project the switcher opens the target locale's list. The choice is not stored.
 - **FR-I18N-04:** core content (settings and content of all pages, Services, Portfolio) must be **complete in every ENABLED locale** before that locale launches. Checked through a QA checklist.
-- **FR-I18N-05:** blog articles may exist in only one locale. An article without a version in a locale does not appear in that locale's blog list, sitemap, or `hreflang`.
+- **FR-I18N-05:** blog articles may exist in only one locale. An article without a version in a locale does not appear in that locale's blog list, sitemap, or `hreflang`. Pages that exist in both locales announce each other through `hreflang` (English is `x-default`); articles carry no `hreflang`.
 - **FR-I18N-06:** interface text (button labels, error messages, etc.) is stored in translation files in the repo (`messages/{locale}.json`), separate from page content in the database.
 
 ## 11. SEO

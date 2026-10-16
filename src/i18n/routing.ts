@@ -1,8 +1,9 @@
 import { defineRouting } from 'next-intl/routing'
 
-// English URL table of docs/design/page-patterns.md section 1. Keys are the internal
-// pathnames used by `Link`/`getPathname`; with a single locale each maps to itself.
-const pathnames = {
+// URL table of docs/design/page-patterns.md section 1. Keys are the internal pathnames used by
+// `Link`/`getPathname`. English keeps its URLs without a prefix; Indonesian is served under `/id`
+// with the paths below (PRD Rev. 4, CPR-101).
+const englishPathnames = {
   '/': '/',
   '/products/ai-agents': '/products/ai-agents',
   '/services': '/services',
@@ -18,15 +19,10 @@ const pathnames = {
 } as const
 
 /**
- * Future Indonesian pathnames (table column "Future `id` URL"), documented but NOT enabled.
- * Values omit the `/id` prefix because next-intl adds it itself for non-default locales
- * (`/layanan` is served at `/id/layanan`, `/` at `/id`); writing `/id/layanan` here would
- * produce `/id/id/layanan`. Enabling `id` is a data-only change: add 'id' to `locales`, then
- * turn every `pathnames` entry into `{ en: <entry>, id: plannedIdPathnames[<key>] }`. English
- * URLs stay unchanged because the default locale has no prefix. Kept outside `routing` so no
- * `id` route is reachable until that change.
+ * Indonesian pathnames (table column "`id` URL"). Values omit the `/id` prefix because next-intl
+ * adds it itself for non-default locales (`/layanan` is served at `/id/layanan`, `/` at `/id`).
  */
-export const plannedIdPathnames: Readonly<Record<keyof typeof pathnames, string>> = {
+export const indonesianPathnames: Readonly<Record<keyof typeof englishPathnames, string>> = {
   '/': '/',
   '/products/ai-agents': '/produk/ai-agents',
   '/services': '/layanan',
@@ -41,15 +37,24 @@ export const plannedIdPathnames: Readonly<Record<keyof typeof pathnames, string>
   '/privacy-policy': '/kebijakan-privasi',
 }
 
+const pathnames = Object.fromEntries(
+  Object.entries(englishPathnames).map(([key, en]) => [
+    key,
+    { en, id: indonesianPathnames[key as keyof typeof englishPathnames] },
+  ]),
+) as { [K in keyof typeof englishPathnames]: { en: (typeof englishPathnames)[K]; id: string } }
+
 export const routing = defineRouting({
-  locales: ['en'],
+  locales: ['en', 'id'],
   defaultLocale: 'en',
-  // The default locale has no prefix; `/en/...` is redirected to the unprefixed URL.
+  // English has no prefix; Indonesian lives under /id. `/en/...` redirects to the unprefixed URL.
   localePrefix: 'as-needed',
-  // One locale: nothing to detect, so `/` serves English directly (no cookie or
-  // Accept-Language redirect) and no NEXT_LOCALE cookie is written.
+  // `/` always serves English (FR-I18N-02): no Accept-Language redirect, so it stays cacheable.
+  // Visitors switch with the language switcher, which opens the counterpart page.
   localeDetection: false,
   localeCookie: false,
+  // No automatic `Link` header: it would announce `/id/blog/<slug>` for articles that exist in one
+  // locale only. Pages set their own hreflang through `languageAlternates` (src/i18n/href.ts).
   alternateLinks: false,
   pathnames,
 })

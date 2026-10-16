@@ -1,9 +1,7 @@
 import { readFileSync } from 'node:fs'
-import { createNavigation } from 'next-intl/navigation'
-import { defineRouting } from 'next-intl/routing'
 import { describe, expect, it } from 'vitest'
 import { getPathname } from '../../src/i18n/navigation'
-import { plannedIdPathnames, routing } from '../../src/i18n/routing'
+import { indonesianPathnames, routing } from '../../src/i18n/routing'
 
 // The URL table in docs/design/page-patterns.md section 1 is the source of truth.
 function sitemapRows(): { en: string; id: string }[] {
@@ -19,9 +17,9 @@ function sitemapRows(): { en: string; id: string }[] {
   return rows
 }
 
-describe('single English locale with as-needed prefix', () => {
-  it('enables only en, as the default, with an unprefixed default locale', () => {
-    expect(routing.locales).toEqual(['en'])
+describe('English and Indonesian with as-needed prefix (CPR-101)', () => {
+  it('enables en and id, en as the unprefixed default locale', () => {
+    expect(routing.locales).toEqual(['en', 'id'])
     expect(routing.defaultLocale).toBe('en')
     expect(routing.localePrefix).toBe('as-needed')
   })
@@ -33,8 +31,12 @@ describe('single English locale with as-needed prefix', () => {
     const rows = sitemapRows()
     expect(rows).toHaveLength(12)
     expect(Object.keys(routing.pathnames).sort()).toEqual(rows.map((row) => row.en).sort())
-    for (const { en } of rows) {
-      expect(routing.pathnames[en as keyof typeof routing.pathnames]).toBe(en)
+    for (const { en, id } of rows) {
+      expect(routing.pathnames[en as keyof typeof routing.pathnames]).toEqual({
+        en,
+        // Stored without the `/id` prefix, which next-intl adds for non-default locales.
+        id: id === '/id' ? '/' : id.replace(/^\/id/, ''),
+      })
     }
   })
   it.each(
@@ -63,36 +65,18 @@ describe('single English locale with as-needed prefix', () => {
   })
 })
 
-describe('i18n-ready registry', () => {
-  it('documents the future id URLs of the table, one per registered pathname', () => {
-    const rows = sitemapRows()
-    expect(Object.keys(plannedIdPathnames).sort()).toEqual(rows.map((row) => row.en).sort())
-    // Stored without the `/id` prefix, which next-intl adds for non-default locales.
-    for (const { en, id } of rows) {
-      expect(plannedIdPathnames[en as keyof typeof plannedIdPathnames]).toBe(
-        id === '/id' ? '/' : id.replace(/^\/id/, ''),
-      )
-    }
+describe('Indonesian URLs', () => {
+  it('lists one Indonesian URL per registered pathname', () => {
+    expect(Object.keys(indonesianPathnames).sort()).toEqual(Object.keys(routing.pathnames).sort())
   })
-  it('adds id as a data-only change that leaves English URLs unchanged', () => {
-    const pathnames = Object.fromEntries(
-      Object.entries(routing.pathnames).map(([key, en]) => [
-        key,
-        { en, id: plannedIdPathnames[key as keyof typeof plannedIdPathnames] },
-      ]),
-    )
-    // Only `locales` and `pathnames` differ from the production config.
-    const fixture = defineRouting({ ...routing, locales: ['en', 'id'], pathnames } as never)
-    expect(fixture.defaultLocale).toBe('en')
-    expect(fixture.localePrefix).toEqual(routing.localePrefix)
-    const nav = createNavigation(fixture as never) as unknown as {
-      getPathname: (input: { locale: string; href: unknown }) => string
-    }
+  it('builds every page of the table under /id, and leaves English URLs unchanged', () => {
     for (const { en, id } of sitemapRows()) {
       const slugged = (path: string) => path.replace('[slug]', 'x')
-      const href = en.includes('[slug]') ? { pathname: en, params: { slug: 'x' } } : en
-      expect(nav.getPathname({ locale: 'en', href })).toBe(slugged(en))
-      expect(nav.getPathname({ locale: 'id', href })).toBe(slugged(id))
+      const href = (
+        en.includes('[slug]') ? { pathname: en, params: { slug: 'x' } } : en
+      ) as Parameters<typeof getPathname>[0]['href']
+      expect(getPathname({ locale: 'en', href })).toBe(slugged(en))
+      expect(getPathname({ locale: 'id', href })).toBe(slugged(id))
     }
   })
 })

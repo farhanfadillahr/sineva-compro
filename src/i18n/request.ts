@@ -4,10 +4,10 @@ import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from './routing'
 
-// Only the active locales are bundled. The Indonesian source text lives in
-// docs/content/messages-id.json and moves to messages/id.json when `id` is enabled.
+// One dictionary per enabled locale; tests keep their keys identical (CPR-101).
 const dictionaries = {
   en: () => import('../../messages/en.json').then((module) => module.default),
+  id: () => import('../../messages/id.json').then((module) => module.default),
 }
 export default getRequestConfig(async () => {
   const locale = await rootParams.locale()

@@ -52,7 +52,7 @@ Structure (desktop ≥ 1024 px):
 - Dropdown panel: white, radius `--radius-lg`, border `--border-hairline`, shadow `--shadow-md`, padding 8. Item = 36 px icon tile (`--color-surface-tint`, radius 10, teal icon) + title (15 px 600) + description (13 px `--color-text-tertiary`). Item padding 12, radius 12, hover bg `--ink-50`.
 - Product panel: one item per capability group + promo card "Join the waitlist".
 - Services panel: AI Discovery, AI Build, AI Enablement + "See all services".
-- Mobile (< 1024): logo + burger. Sheet menu with accordions, bottom action bar with primary CTA and WhatsApp. Language switcher slot exists but is hidden while only one locale is enabled.
+- Mobile (< 1024): logo + burger. Sheet menu with accordions, bottom action bar with primary CTA and WhatsApp. The language switcher (CPR-101) shows the other language: the short code (`ID`/`EN`) next to the theme toggle on desktop, the full name ("Bahasa Indonesia"/"English") under the menu links on mobile. It opens the counterpart page; an article or project opens the list of the other language.
 
 ## 3. Footer
 

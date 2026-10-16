@@ -65,7 +65,7 @@ Update `.env` with the new URLs and a random Better Auth secret; keep the old cr
 
 ## Public ID/EN routing
 
-Note: this section describes the CPR-25 behavior (`localePrefix: 'always'`, `id` and `en`). PRD Rev. 3 changes this to `'as-needed'` with English only (see PRD section 10).
+Note: this section describes the CPR-25 behavior (`localePrefix: 'always'`, `id` and `en`). Current behavior (PRD Rev. 4, CPR-101): `localePrefix: 'as-needed'`, English unprefixed (`/services`) and Indonesian under `/id` with localized paths (`/id/layanan`). `/` always serves English (no cookie, no `Accept-Language` redirect); the header switcher opens the counterpart page. Build data-driven links with `AppLink` or `localizeHref` (`src/i18n/href.ts`), which localize slugs, queries and anchors.
 
 Public URLs are always prefixed with `/id` or `/en`. Examples: `/id/layanan/ai-otomasi` and `/en/services/ai-automation`, `/id/tentang-kami` and `/en/about`. A visit to `/` picks a valid `NEXT_LOCALE` cookie, then the `Accept-Language` weights, then `id`; a prefixed URL determines the language even when the cookie/browser differs. The query is kept on redirects. `/admin`, `/api`, `/_next` and `/brand` stay unprefixed.
 

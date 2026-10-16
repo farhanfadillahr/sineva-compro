@@ -2,10 +2,20 @@
  * Launch and demo rows for the ordered collections. Kept apart from `configs.ts` so admin client
  * bundles never include the static site content.
  */
-import { staticContent } from '../../content/static/source'
+import { staticContent, staticContentId } from '../../content/static/source'
+import type { ContentLocale } from '../content/types'
 import type { CollectionName } from './configs'
 
-export type SeedRow = { key: string; global: object; local: object }
+/**
+ * `local` is the default locale's copy. `translations` adds the copy of other locales that have
+ * launch content (CPR-101); demo rows have none.
+ */
+export type SeedRow = {
+  key: string
+  global: object
+  local: object
+  translations?: Partial<Record<ContentLocale, object>>
+}
 
 /** Stable kebab-case key from a question, for launch rows that had no key. */
 export function keyFromText(text: string): string {
@@ -25,11 +35,17 @@ export const collectionSeedData: Record<
 > = {
   capabilities: {
     launch: () =>
-      staticContent.capabilities.map((item) => ({
-        key: item.key,
-        global: { tint: item.tint, pose: item.pose, featured: item.featured },
-        local: { title: item.title, body: item.body, mockupLines: [...item.mockupLines] },
-      })),
+      staticContent.capabilities.map((item) => {
+        const id = staticContentId.capabilities.find((other) => other.key === item.key)
+        return {
+          key: item.key,
+          global: { tint: item.tint, pose: item.pose, featured: item.featured },
+          local: { title: item.title, body: item.body, mockupLines: [...item.mockupLines] },
+          translations: id
+            ? { id: { title: id.title, body: id.body, mockupLines: [...id.mockupLines] } }
+            : {},
+        }
+      }),
     demo: [
       {
         key: 'demo-capability',
@@ -44,11 +60,15 @@ export const collectionSeedData: Record<
   },
   businessTypes: {
     launch: () =>
-      staticContent.industries.map((item) => ({
-        key: item.key,
-        global: {},
-        local: { label: item.label, exampleDay: item.exampleDay },
-      })),
+      staticContent.industries.map((item) => {
+        const id = staticContentId.industries.find((other) => other.key === item.key)
+        return {
+          key: item.key,
+          global: {},
+          local: { label: item.label, exampleDay: item.exampleDay },
+          translations: id ? { id: { label: id.label, exampleDay: id.exampleDay } } : {},
+        }
+      }),
     demo: [
       {
         key: 'demo-business-type',
@@ -62,11 +82,16 @@ export const collectionSeedData: Record<
   },
   faq: {
     launch: () =>
-      staticContent.faq.map((entry) => ({
-        key: keyFromText(entry.item.question),
-        global: { tags: [...entry.tags] },
-        local: { question: entry.item.question, answer: entry.item.answer },
-      })),
+      // The Indonesian FAQ translates the English one in order (src/content/static/id/faq.ts).
+      staticContent.faq.map((entry, i) => {
+        const id = staticContentId.faq[i]?.item
+        return {
+          key: keyFromText(entry.item.question),
+          global: { tags: [...entry.tags] },
+          local: { question: entry.item.question, answer: entry.item.answer },
+          translations: id ? { id: { question: id.question, answer: id.answer } } : {},
+        }
+      }),
     demo: [
       {
         key: 'demo-faq',

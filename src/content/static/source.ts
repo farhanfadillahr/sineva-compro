@@ -3,6 +3,7 @@ import type { ContentLocale, PageContentMap, PageKey } from '../../features/cont
 import { capabilities, industries } from './capabilities'
 import { team, work, workDetails } from './empty'
 import { faq } from './faq'
+import { staticContentId } from './id'
 import { pages } from './pages'
 import { categories, postDetails, posts } from './posts'
 import { serviceDetails, services } from './services'
@@ -25,11 +26,18 @@ export const staticContent = {
   team,
 } as const
 
+export { staticContentId }
+
 type Bundle = typeof staticContent
 
-// Only `en` has content. Any other enabled locale gets the empty contract ([] and null), exactly
-// what the database source returns for a locale with no published rows.
-const bundles: Partial<Record<ContentLocale, Bundle>> = { en: staticContent }
+// One bundle per enabled locale. A locale missing here gets the empty contract ([] and null),
+// exactly what the database source returns for a locale with no published rows.
+const bundles: Partial<Record<ContentLocale, Bundle>> = { en: staticContent, id: staticContentId }
+
+/** The launch content of a locale, or `null` when it has none. For seeds and tests. */
+export function staticContentFor(locale: ContentLocale): Bundle | null {
+  return bundles[locale] ?? null
+}
 
 /** Callers get copies, so one caller mutating a result cannot change what the next one sees. */
 const copy = <T>(value: T): T => structuredClone(value)

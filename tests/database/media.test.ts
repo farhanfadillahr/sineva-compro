@@ -5,7 +5,7 @@ import { createAuthTestContext } from '../helpers/auth-context'
 import { MemoryMediaStore } from '../../src/lib/media/memory-store'
 import { MediaService } from '../../src/features/media/service.server'
 import { getPublicMedia } from '../../src/features/media/query.server'
-import { media, mediaUsage, mediaDelivery, mediaTranslation } from '../../src/features/media/schema'
+import { media, mediaUsage, mediaDelivery } from '../../src/features/media/schema'
 import { auditLog } from '../../src/features/audit/schema'
 import { user } from '../../src/features/auth/schema'
 let ctx: Awaited<ReturnType<typeof createAuthTestContext>>,
@@ -16,7 +16,10 @@ let ctx: Awaited<ReturnType<typeof createAuthTestContext>>,
 const owned: string[] = [],
   store = new MemoryMediaStore('test')
 const meta = {
-  translations: { en: { alt: 'Team at the office', caption: '' } },
+  translations: {
+    en: { alt: 'Team at the office', caption: '' },
+    id: { alt: 'Tim di kantor', caption: '' },
+  },
   focalX: 0.5,
   focalY: 0.5,
   credit: '',
@@ -189,11 +192,13 @@ it('rechecks an account deactivated after its session was issued', async () => {
   await ctx.connection.db.update(user).set({ banned: false }).where(eq(user.id, actorId))
 })
 
-it('ignores inactive translations without discarding them when publishing the enabled locale', async () => {
+it('publishes with the default locale alt; a locale without alt shows no image there', async () => {
   const row = await upload()
-  await ctx.connection.db
-    .insert(mediaTranslation)
-    .values({ mediaId: row.id, locale: 'id', alt: '', caption: '' })
+  // Media uploaded before `id` was enabled has no Indonesian alt (CPR-101).
+  await service.update(editor, row.id, {
+    ...meta,
+    translations: { ...meta.translations, id: { alt: '', caption: '' } },
+  })
   const owner = { entity: 'posts' as const, id: crypto.randomUUID(), label: 'Locale fixture' }
   await service.withReferences(
     editor,
@@ -201,15 +206,9 @@ it('ignores inactive translations without discarding them when publishing the en
     [{ field: 'cover', mediaId: row.id, published: true }],
     async () => {},
   )
-  expect((await service.detail(editor, row.id)).translations).not.toHaveProperty('id')
-  expect(
-    (
-      await ctx.connection.db
-        .select()
-        .from(mediaTranslation)
-        .where(eq(mediaTranslation.mediaId, row.id))
-    ).length,
-  ).toBe(2)
+  expect(await getPublicMedia(ctx.connection.db, row.id, 'en', '', store.prefix)).not.toBeNull()
+  expect(await getPublicMedia(ctx.connection.db, row.id, 'id', '', store.prefix)).toBeNull()
+  await service.withReferences(editor, owner, [], async () => {})
 })
 it('enforces non-null image dimensions at the database boundary', async () => {
   const row = await upload()

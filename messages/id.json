@@ -1,0 +1,302 @@
+{
+  "Brand": {
+    "name": "Sineva"
+  },
+  "Pages": {
+    "home": "Beranda",
+    "aiAgents": "AI Agents",
+    "services": "Layanan",
+    "work": "Karya",
+    "blog": "Blog",
+    "about": "Tentang",
+    "contact": "Kontak",
+    "thankYou": "Terima kasih",
+    "privacy": "Kebijakan Privasi"
+  },
+  "Status": {
+    "pending": "Halaman ini sedang disiapkan."
+  },
+  "NotFound": {
+    "title": "Halaman tidak ditemukan.",
+    "body": "Yuk, kembali ke jalur yang benar.",
+    "home": "Ke beranda",
+    "linksLabel": "Jalan kembali ke situs"
+  },
+  "Privacy": {
+    "title": "Kebijakan privasi",
+    "lastUpdated": "Terakhir diperbarui",
+    "tocLabel": "Di halaman ini"
+  },
+  "Nav": {
+    "skipToContent": "Langsung ke konten",
+    "homeLabel": "Beranda Sineva",
+    "primaryLabel": "Utama",
+    "product": "Produk",
+    "services": "Layanan",
+    "work": "Karya",
+    "blog": "Blog",
+    "about": "Tentang",
+    "menu": "Menu",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu",
+    "bookConsultation": "Jadwalkan konsultasi gratis",
+    "chatOnWhatsapp": "Chat di WhatsApp",
+    "language": "Bahasa",
+    "switchLanguage": "Ganti ke {language}",
+    "themeToDark": "Ganti ke mode gelap",
+    "themeToLight": "Ganti ke mode terang",
+    "productMenu": {
+      "items": {
+        "customerChat": {
+          "title": "Chat pelanggan",
+          "description": "Siapkan jawaban untuk pertanyaan yang sering muncul."
+        },
+        "socialMedia": {
+          "title": "Media sosial",
+          "description": "Dapatkan ide unggahan dan draf caption."
+        },
+        "salesFollowUp": {
+          "title": "Tindak lanjut penjualan",
+          "description": "Catat siapa yang bertanya dan siapkan balasannya."
+        },
+        "financeAdmin": {
+          "title": "Keuangan dan administrasi",
+          "description": "Catat transaksi sederhana dan lihat ringkasannya."
+        },
+        "operations": {
+          "title": "Operasional harian",
+          "description": "Dapatkan ringkasan harian singkat dan pengingat."
+        }
+      },
+      "promo": {
+        "eyebrow": "Akses awal",
+        "title": "Gabung daftar tunggu",
+        "description": "Jadi yang pertama mencoba Sino saat sudah siap."
+      }
+    },
+    "servicesMenu": {
+      "seeAll": "Lihat semua layanan"
+    }
+  },
+  "Footer": {
+    "columns": {
+      "product": "Produk",
+      "services": "Layanan",
+      "company": "Perusahaan",
+      "legal": "Legal"
+    },
+    "links": {
+      "aiAgents": "AI Agents",
+      "joinWaitlist": "Gabung daftar tunggu",
+      "allServices": "Semua layanan",
+      "about": "Tentang",
+      "work": "Karya",
+      "blog": "Blog",
+      "contact": "Kontak",
+      "privacyPolicy": "Kebijakan privasi"
+    },
+    "registration": "Nomor registrasi {number}",
+    "copyright": "© 2026 Sineva",
+    "socialLabel": "Media sosial",
+    "social": {
+      "instagram": "Sineva di Instagram",
+      "linkedin": "Sineva di LinkedIn",
+      "tiktok": "Sineva di TikTok",
+      "youtube": "Sineva di YouTube",
+      "x": "Sineva di X"
+    }
+  },
+  "Home": {
+    "stickyBarLabel": "Langkah berikutnya",
+    "comingSoon": "Segera hadir",
+    "internalDemo": "Proyek demo internal"
+  },
+  "Product": {
+    "comingSoon": "Segera hadir",
+    "stickyBarLabel": "Kabari saya",
+    "tabsLabel": "Jenis bisnis",
+    "phone": {
+      "name": "Sino",
+      "status": "Online",
+      "day": "Hari ini"
+    },
+    "waitlist": {
+      "formLabel": "Kabari saya tentang Sino",
+      "nameLabel": "Nama (opsional)",
+      "businessTypeLabel": "Jenis bisnis (opsional)",
+      "businessTypePlaceholder": "Pilih salah satu",
+      "consentBefore": "Saya setuju Sineva memakai data ini untuk menghubungi saya tentang Sino. Baca",
+      "consentLink": "kebijakan privasi",
+      "consentAfter": ".",
+      "consentError": "Centang kotak ini supaya kami tahu Anda bersedia dihubungi.",
+      "helper": "Ini membuka WhatsApp dengan pesan yang siap dikirim. Tidak ada data yang disimpan di situs ini.",
+      "emailButton": "Kirim lewat email saja",
+      "openedMessage": "WhatsApp seharusnya terbuka di tab baru. Kalau belum, pakai tautan ini.",
+      "openedLink": "Buka WhatsApp",
+      "messageNotify": "Tolong kabari saya saat Sino sudah siap.",
+      "messageName": "Nama",
+      "messageBusinessType": "Jenis bisnis",
+      "emailSubject": "Kabari saya saat Sino sudah siap"
+    }
+  },
+  "Whatsapp": {
+    "label": "Chat dengan kami",
+    "ariaLabel": "Chat dengan kami di WhatsApp"
+  },
+  "Services": {
+    "breadcrumbLabel": "Breadcrumb",
+    "stickyBarLabel": "Langkah berikutnya",
+    "cardCta": "Lihat {name}",
+    "chatOnWhatsapp": "Chat di WhatsApp",
+    "internalDemo": "Proyek demo internal",
+    "detail": {
+      "problemsTitle": "Masalah yang kami bantu",
+      "deliverablesTitle": "Yang Anda dapatkan",
+      "processTitle": "Cara kerjanya",
+      "toolsTitle": "Alat yang kami pakai",
+      "relatedWorkTitle": "Karya terkait",
+      "faqTitle": "Pertanyaan yang sering muncul",
+      "finalCtaHeadline": "Siap merencanakan proyek AI Anda?",
+      "finalCtaBody": "Ceritakan apa yang ingin Anda perbaiki. Kami akan membalas dengan langkah berikutnya."
+    }
+  },
+  "Blog": {
+    "breadcrumbLabel": "Breadcrumb",
+    "categoryFilterLabel": "Saring artikel menurut kategori",
+    "allCategories": "Semua",
+    "latestBadge": "Terbaru",
+    "readArticle": "Baca artikel",
+    "paginationLabel": "Halaman",
+    "previousPage": "Sebelumnya",
+    "nextPage": "Berikutnya",
+    "pageLink": "Halaman {page}",
+    "emptyTitle": "Belum ada bacaan di sini",
+    "emptyCta": "Jadwalkan konsultasi gratis",
+    "article": {
+      "byAuthor": "Oleh {name}",
+      "published": "Terbit",
+      "updated": "Diperbarui",
+      "tocTitle": "Di halaman ini",
+      "tocLabel": "Daftar isi",
+      "shareTitle": "Bagikan artikel ini",
+      "shareWhatsapp": "Bagikan di WhatsApp",
+      "shareLinkedin": "Bagikan di LinkedIn",
+      "copyLink": "Salin tautan",
+      "linkCopied": "Tautan disalin",
+      "copyFailed": "Tautan belum bisa disalin. Salin dari bilah alamat saja.",
+      "relatedTitle": "Baca juga",
+      "finalCtaHeadline": "Butuh bantuan untuk langkah AI pertama Anda?",
+      "finalCtaBody": "Ceritakan apa yang ingin Anda perbaiki. Kami akan membalas dengan langkah berikutnya.",
+      "finalCtaButton": "Jadwalkan konsultasi gratis",
+      "chatOnWhatsapp": "Chat di WhatsApp"
+    }
+  },
+  "Contact": {
+    "formHeading": "Pesan Anda",
+    "requiredMarker": "(wajib)",
+    "fields": {
+      "name": {
+        "label": "Nama"
+      },
+      "company": {
+        "label": "Perusahaan (opsional)"
+      },
+      "segment": {
+        "label": "Jenis bisnis",
+        "placeholder": "Pilih salah satu"
+      },
+      "interest": {
+        "label": "Apa yang ingin Anda bantu",
+        "placeholder": "Pilih salah satu"
+      },
+      "budget": {
+        "label": "Kisaran anggaran (opsional)",
+        "placeholder": "Pilih kisaran",
+        "helper": "Kisaran kasar membantu kami menyarankan pilihan yang pas."
+      },
+      "message": {
+        "label": "Pesan",
+        "helper": "Ceritakan tujuan Anda dalam beberapa kalimat."
+      }
+    },
+    "segments": {
+      "smallBusiness": "Usaha kecil",
+      "company": "Perusahaan",
+      "startup": "Startup",
+      "other": "Lainnya"
+    },
+    "interests": {
+      "aiDiscovery": "AI Discovery",
+      "aiBuild": "AI Build",
+      "aiEnablement": "AI Enablement",
+      "aiAgents": "Produk AI Agents",
+      "notSure": "Belum yakin"
+    },
+    "budgets": {
+      "under10m": "Di bawah Rp10 juta",
+      "10to50m": "Rp10 juta sampai Rp50 juta",
+      "50to150m": "Rp50 juta sampai Rp150 juta",
+      "over150m": "Di atas Rp150 juta",
+      "notSure": "Belum yakin"
+    },
+    "errors": {
+      "name": {
+        "required": "Isi nama Anda.",
+        "tooShort": "Isi minimal 2 karakter.",
+        "tooLong": "Gunakan paling banyak 80 karakter."
+      },
+      "company": {
+        "tooLong": "Gunakan paling banyak 120 karakter."
+      },
+      "segment": {
+        "required": "Pilih jenis bisnis Anda.",
+        "invalid": "Pilih salah satu jenis bisnis yang tersedia."
+      },
+      "interest": {
+        "required": "Pilih apa yang ingin Anda bantu.",
+        "invalid": "Pilih salah satu pilihan yang tersedia."
+      },
+      "budget": {
+        "invalid": "Pilih salah satu kisaran yang tersedia."
+      },
+      "message": {
+        "required": "Tulis sedikit tentang kebutuhan Anda.",
+        "tooShort": "Tulis minimal 20 karakter supaya kami paham tujuan Anda.",
+        "tooLong": "Gunakan paling banyak 1000 karakter."
+      },
+      "consent": {
+        "required": "Centang kotak ini untuk melanjutkan."
+      }
+    },
+    "summary": {
+      "title": "Tolong perbaiki isian berikut"
+    },
+    "submit": {
+      "label": "Kirim pesan",
+      "sending": "Membuka WhatsApp",
+      "emailInstead": "Kirim lewat email saja"
+    },
+    "fallback": {
+      "title": "WhatsApp belum bisa dibuka",
+      "blocked": "Browser Anda memblokir tab baru. Buka WhatsApp lagi, atau salin pesan Anda dan kirim sendiri ke kami.",
+      "noLink": "WhatsApp sedang tidak tersedia. Salin pesan Anda dan kirim lewat cara lain.",
+      "open": "Buka WhatsApp",
+      "copy": "Salin pesan",
+      "copied": "Pesan disalin",
+      "copyFailed": "Penyalinan tidak berhasil. Pilih teks yang Anda tulis lalu salin manual."
+    },
+    "side": {
+      "highlightsLabel": "Sorotan",
+      "stepsLabel": "Cara kerjanya",
+      "whatsappTitle": "Lebih suka chat sekarang?",
+      "whatsappBody": "Kirim pesan lewat WhatsApp, kami lanjutkan dari sana.",
+      "whatsappCta": "Chat di WhatsApp",
+      "emailLabel": "Email",
+      "hoursLabel": "Jam operasional",
+      "addressLabel": "Alamat"
+    },
+    "thankYou": {
+      "moreLabel": "Sambil menunggu"
+    }
+  }
+}

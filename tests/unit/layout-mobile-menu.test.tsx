@@ -119,11 +119,15 @@ describe('mobile menu open and close', () => {
     await waitFor(() => expect(maybeDialog()).toBeNull())
   })
 
-  it('shows the language switcher slot nowhere while there is one locale', async () => {
+  it('names the other language in full in the menu', async () => {
     const user = userEvent.setup()
+    navigationState.pathname = '/contact'
     renderHeader()
     await user.click(burger())
-    expect(document.querySelector('[data-slot="language-switcher"]')).toBeNull()
+    const dialog = screen.getByRole('dialog')
+    const link = within(dialog).getByRole('link', { name: 'Bahasa Indonesia' })
+    expect(link.getAttribute('href')).toBe('/id/contact')
+    expect(link.getAttribute('lang')).toBe('id')
   })
 })
 

@@ -413,8 +413,25 @@ describe('static content source: references', () => {
 })
 
 describe('static content source: other locales', () => {
+  it('serves Indonesian content for id, with the same slugs and keys as English', async () => {
+    const settings = await source.getSiteSettings('id')
+    expect(settings?.locale).toBe('id')
+    expect((await source.getPage('home', 'id'))?.locale).toBe('id')
+    const [en, id] = await Promise.all([source.listServices('en'), source.listServices('id')])
+    expect(id.map((s) => s.slug)).toEqual(en.map((s) => s.slug))
+    expect((await source.getService('ai-build', 'id'))?.locale).toBe('id')
+    expect((await source.listCapabilities('id')).length).toBe(
+      (await source.listCapabilities('en')).length,
+    )
+    expect((await source.listFaq('home', 'id')).length).toBe(
+      (await source.listFaq('home', 'en')).length,
+    )
+    // No Indonesian articles yet: the blog is empty in id rather than showing English posts.
+    expect((await source.listPosts({ locale: 'id', page: 1, pageSize: 5 })).total).toBe(0)
+  })
+
   it('returns the empty contract for a locale without content', async () => {
-    const other = 'id' as unknown as 'en'
+    const other = 'xx' as unknown as 'en'
     expect(await source.getSiteSettings(other)).toBeNull()
     expect(await source.getPage('home', other)).toBeNull()
     expect(await source.listServices(other)).toEqual([])

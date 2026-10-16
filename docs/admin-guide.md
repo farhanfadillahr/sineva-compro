@@ -2,8 +2,10 @@
 
 Panduan singkat untuk Admin dan Editor yang mengelola situs Sineva tanpa bantuan developer.
 
-> Menu dan tombol admin berbahasa Indonesia, tetapi **isi situs ditulis dalam bahasa Inggris**.
-> Jangan menerjemahkan teks publik ke bahasa Indonesia.
+> Menu dan tombol admin berbahasa Indonesia. **Situs publik tersedia dalam dua bahasa**: Inggris
+> (alamat tanpa awalan, mis. `/services`) dan Indonesia (di bawah `/id`, mis. `/id/layanan`).
+> Setiap editor punya pilihan bahasa **en** dan **id**; isi keduanya. Bahasa yang kosong tidak
+> diisi otomatis dari bahasa lain, jadi halamannya tidak tampil di bahasa itu.
 
 ## 1. Masuk dan keluar
 
@@ -38,6 +40,9 @@ Ikuti [docs/design/copywriting.md](design/copywriting.md). Ringkasnya:
   disetujui.
 - Huruf kapital hanya di awal kalimat (sentence case), kalimat pendek, tanpa jargon.
 - Setiap gambar wajib punya **teks alternatif (alt)** yang menjelaskan isi gambar, bukan nama file.
+  Upload baru meminta alt dalam dua bahasa. Media lama tanpa alt Indonesia tetap bisa dipakai,
+  tetapi gambarnya tidak tampil di halaman berbahasa Indonesia sampai alt `id` diisi.
+- Aturan tanda baca dan isi yang sama berlaku untuk teks berbahasa Indonesia.
 - Penghitung karakter berubah kuning saat hampir penuh dan merah bila lewat batas; simpan diblokir.
 
 ## 4. Mengubah isi halaman
@@ -89,6 +94,8 @@ deploy), analitik dan token verifikasi.
    draf.
 6. Kategori dikelola di **Blog > Kategori**. Kategori atau penulis yang masih dipakai artikel tidak
    dapat dihapus.
+7. Artikel ditulis per bahasa. Artikel yang hanya ada dalam bahasa Inggris tidak tampil di blog
+   Indonesia (dan sebaliknya). Tombol ganti bahasa pada artikel membuka daftar blog bahasa lain.
 
 ## 8. Menambah karya
 

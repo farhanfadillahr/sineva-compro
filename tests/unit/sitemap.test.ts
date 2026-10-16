@@ -58,12 +58,31 @@ describe('collectSitemapEntries', () => {
     expect(urls(entries)).toContain('https://sinevaai.vercel.app/services/ai-discovery')
   })
 
+  it('lists the Indonesian pages under their /id URLs', async () => {
+    const entries = await collectSitemapEntries({ content, siteUrl, locales: ['id'] })
+    expect(urls(entries)).toEqual([
+      'https://sinevaai.vercel.app/id',
+      'https://sinevaai.vercel.app/id/layanan',
+      'https://sinevaai.vercel.app/id/produk/ai-agents',
+      'https://sinevaai.vercel.app/id/tentang',
+      'https://sinevaai.vercel.app/id/kontak',
+      'https://sinevaai.vercel.app/id/kebijakan-privasi',
+      'https://sinevaai.vercel.app/id/layanan/ai-discovery',
+      'https://sinevaai.vercel.app/id/layanan/ai-build',
+      'https://sinevaai.vercel.app/id/layanan/ai-enablement',
+    ])
+  })
+
   it('lists a locale only when it has content', async () => {
-    // `id` is not enabled, so the static source answers with the empty contract for it.
+    const englishOnly: typeof content = {
+      ...content,
+      getPage: async (key, locale) => (locale === 'en' ? content.getPage(key, locale) : null),
+      listServices: async (locale) => (locale === 'en' ? content.listServices(locale) : []),
+    }
     const entries = await collectSitemapEntries({
-      content,
+      content: englishOnly,
       siteUrl,
-      locales: ['en', 'id' as never],
+      locales: ['en', 'id'],
     })
     expect(entries).toHaveLength(9)
   })

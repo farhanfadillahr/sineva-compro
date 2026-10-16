@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { cx, focusRing } from '@/components/ui/cx'
-import { usePathname } from '@/i18n/navigation'
+import { useInternalPathname } from '@/i18n/use-internal-pathname'
 import { usePrefersReducedMotion } from '@/lib/motion/reduced-motion'
 import type { WhatsAppSettings } from '@/lib/whatsapp'
 import { AppLink } from './app-link'
@@ -54,7 +54,7 @@ export function SiteHeader({
   showWork?: boolean
 }) {
   const t = useTranslations('Nav')
-  const pathname = usePathname()
+  const pathname = useInternalPathname()
   const reduced = usePrefersReducedMotion()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const model = useNavModel(services, { showWork })
@@ -146,7 +146,12 @@ export function SiteHeader({
                 focusRing,
               )}
             />
-            <LanguageSwitcher />
+            <LanguageSwitcher
+              className={cx(
+                'flex h-11 min-w-11 items-center justify-center rounded-sm px-2 text-label text-text no-underline hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+                focusRing,
+              )}
+            />
             {whatsappHref ? (
               <Button
                 href={whatsappHref}

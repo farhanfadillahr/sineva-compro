@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, it, vi } from 'vitest'
-import { eq, like } from 'drizzle-orm'
+import { and, eq, like } from 'drizzle-orm'
 import { createCmsTestContext } from '../helpers/cms-context'
 import { runSeeds } from '../../scripts/seed/runner'
 import { service, serviceTranslation } from '../../src/features/services/schema'
@@ -107,15 +107,16 @@ it('publishes, unpublishes and reorders; public reads only published in order', 
   expect(await reads.serviceReads.getService('ai-coaching', 'en')).toBeNull()
 })
 
-it('stores a second locale as a row without a schema change, with no cross-locale fallback', async () => {
+it('seeds the Indonesian translation of each launch service, with its own per-locale slug', async () => {
   const [first] = await services.readServices(ctx.connection.db)
-  await ctx.connection.db.insert(serviceTranslation).values({
-    serviceId: first.id,
-    locale: 'id',
-    slug: 'ai-penemuan',
-    data: content('AI Penemuan'),
-  })
   const both = await services.readServices(ctx.connection.db, ['en', 'id'])
-  expect(both.find((s) => s.id === first.id)?.locales.id?.slug).toBe('ai-penemuan')
-  await ctx.connection.db.delete(serviceTranslation).where(eq(serviceTranslation.locale, 'id'))
+  // The seed gives every launch service an `id` row with the English slug (CPR-101).
+  expect(both.find((s) => s.id === first.id)?.locales.id?.slug).toBe(first.locales.en?.slug)
+  await ctx.connection.db
+    .update(serviceTranslation)
+    .set({ slug: 'ai-penemuan', data: content('AI Penemuan') })
+    .where(and(eq(serviceTranslation.serviceId, first.id), eq(serviceTranslation.locale, 'id')))
+  const renamed = await services.readServices(ctx.connection.db, ['en', 'id'])
+  expect(renamed.find((s) => s.id === first.id)?.locales.id?.slug).toBe('ai-penemuan')
+  expect(renamed.find((s) => s.id === first.id)?.locales.en?.slug).toBe(first.locales.en?.slug)
 })

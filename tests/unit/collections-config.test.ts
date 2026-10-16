@@ -11,6 +11,8 @@ describe('ordered collections', () => {
     for (const row of [...collectionSeedData[name].launch(), ...collectionSeedData[name].demo]) {
       expect(parseFields(config.globalSchema, row.global)).toEqual({ ok: true, value: row.global })
       expect(parseFields(config.localeSchema, row.local)).toEqual({ ok: true, value: row.local })
+      for (const local of Object.values(row.translations ?? {}))
+        expect(parseFields(config.localeSchema, local)).toEqual({ ok: true, value: local })
     }
   })
 

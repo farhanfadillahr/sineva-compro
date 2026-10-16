@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { PrivacyPageContent, SiteSettingsDTO } from '@/features/content/types'
+import { languageAlternates, localizeHref } from '@/i18n/href'
 
 export const PRIVACY_PATH = '/privacy-policy'
 
@@ -12,11 +13,12 @@ export function buildPrivacyMetadata(
   settings: SiteSettingsDTO | null,
 ): Metadata {
   const { seo } = page
+  const canonical = seo.canonicalUrl ?? localizeHref(page.locale, PRIVACY_PATH)
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
   return {
     title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
-    alternates: { canonical: seo.canonicalUrl ?? PRIVACY_PATH },
+    alternates: { canonical, languages: languageAlternates(PRIVACY_PATH) },
     // Robots are otherwise left to the layout (the whole site stays noindex until launch).
     ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
@@ -29,7 +31,7 @@ export function buildPrivacyMetadata(
       type: 'website',
       title: seo.metaTitle,
       description: seo.metaDescription,
-      url: seo.canonicalUrl ?? PRIVACY_PATH,
+      url: canonical,
       siteName: settings?.brand.siteName,
       images: ogImage
         ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height, alt: ogImage.alt }]

@@ -19,7 +19,7 @@ export function buildSiteJsonLd(siteUrl: URL, settings: SiteSettingsDTO | null) 
         '@id': new URL('/#website', siteUrl).href,
         name,
         url: siteUrl.href,
-        inLanguage: 'en',
+        inLanguage: settings?.locale ?? 'en',
         publisher: { '@id': organizationId },
       },
     ],

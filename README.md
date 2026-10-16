@@ -21,12 +21,15 @@ npm run setup:env
 docker compose up -d --wait --wait-timeout 90 postgres
 npm run db:migrate
 npm run bootstrap:admin -- --confirm-database=sineva_compro_app
+npm run db:seed -- --demo
 npm run dev
 ```
 
 Bootstrap meminta nama/email dan password tersembunyi melalui terminal. Password 12–128 karakter, tanpa nilai bawaan; tidak dimasukkan ke argumen atau dicetak. Database harus dikonfirmasi secara eksplisit. Target remote memerlukan `--allow-remote` tambahan, hanya untuk operator yang sengaja menyiapkan environment tersebut.
 
 Website: `http://127.0.0.1:3000`. Admin: `http://127.0.0.1:3000/admin`, anonim diarahkan ke `/admin/login`. Signup publik dan endpoint CRUD/operator library melalui HTTP tetap tertutup. Pengelolaan Editor tersedia melalui halaman Users dan Server Actions berizin. Rate limit per IP library tetap berlaku selain lockout akun.
+
+Seed base/demo/purge bersifat modular dan idempotent. Actor demo audit diblokir dan tidak memiliki kredensial; jalankan bootstrap pada database kosong sebelum menambahkan demo bila perlu membuat Admin pertama. Log audit Admin tersedia di `/admin/audit`; guard seed, integrasi helper dan kebijakan retensi yang masih menunggu owner dijelaskan di [runbook audit](docs/architecture/audit-log-runbook.md).
 
 `setup:env` membuat `.env` mode 600 dengan credential acak, tidak mencetak nilainya dan menolak overwrite. `.env.example` mendokumentasikan URL DB developer/test, `BETTER_AUTH_SECRET` dan `BETTER_AUTH_URL`. Origin auth harus cocok dengan origin aplikasi. Jangan memakai credential production untuk lokal/test atau mencetak `docker compose config`; gunakan `--quiet`.
 

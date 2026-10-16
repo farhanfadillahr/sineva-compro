@@ -15,6 +15,12 @@
     color-mix(in srgb, var(--teal-100) 70%, transparent),
     transparent
   );
+  /*
+   * AnimatedPose sets --pose-glow to 1 on the stage (or card) while it is hovered or focused;
+   * the glow grows a little instead of changing opacity, which is already 1 at rest.
+   */
+  transform: scale(calc(1 + 0.12 * var(--pose-glow, 0)));
+  transition: transform var(--dur-med, 360ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
 .orbit {
@@ -62,5 +68,10 @@
 @media (prefers-reduced-motion: reduce) {
   .arc {
     animation: none;
+  }
+
+  .glow {
+    transform: none;
+    transition: none;
   }
 }

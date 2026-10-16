@@ -139,8 +139,10 @@ export function HomeView({
               <SinoStage className="max-w-xs sm:max-w-sm">
                 <PoseImage
                   pose={HOW_WE_WORK_POSES[index % HOW_WE_WORK_POSES.length]!}
+                  index={index}
                   sizes="(min-width: 1024px) 384px, 80vw"
-                  className="size-full object-contain"
+                  fit="contain"
+                  className="size-full"
                 />
               </SinoStage>
             </div>

@@ -66,7 +66,8 @@ export function PostCard({
             <PoseImage
               pose={cover.pose}
               sizes="(min-width: 1024px) 20vw, 50vw"
-              className="h-5/6 w-auto object-contain transition-transform duration-(--dur-med) ease-out group-hover/card:scale-[1.03] motion-reduce:transition-none"
+              fit="contain"
+              className="aspect-square h-5/6"
             />
           </div>
         ) : null}

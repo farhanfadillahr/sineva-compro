@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { CSSProperties, ReactNode } from 'react'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { SinoLaunchOverlay } from '@/components/mascot/sino-launch/sino-launch-overlay'
 import { LogoIntro } from '@/components/brand/logo-intro'
@@ -21,10 +21,9 @@ import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import { ThemeScript } from '@/components/theme/theme-script'
-import Script from 'next/script'
+import { AnalyticsConsent } from '@/components/consent/analytics-consent'
+import { AppLink } from '@/components/layout/app-link'
 import '../../globals.css'
-
-const googleAnalyticsId = 'G-SD295J8222'
 
 // SITE_URL and SITE_INDEXABLE are read when this module's metadata is generated (at build for
 // prerendered pages), so changing either takes a new deployment to show up. An unsupported
@@ -58,6 +57,7 @@ export default async function PublicLayout({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
   const messages = await getMessages()
+  const consent = await getTranslations('Consent')
 
   const content = getContentSource()
   const [settings, services, work, productPage, preview] = await Promise.all([
@@ -95,18 +95,6 @@ export default async function PublicLayout({
           enabled={settings?.features.enableLogoIntro ?? false}
           force={process.env.LOGO_INTRO_FORCE === '1'}
         />
-        <Script
-          id="google-tag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){window.dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${googleAnalyticsId}');`,
-          }}
-        />
-        <Script
-          id="google-tag"
-          src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
-          strategy="afterInteractive"
-        />
       </head>
       {/* Utilities sit in a higher cascade layer than the shared base body rule (admin colours). */}
       <body className="flex min-h-svh flex-col bg-canvas text-text">
@@ -138,6 +126,23 @@ export default async function PublicLayout({
           {/* Last in the tree so it never changes tab order; it renders nothing until it plays. */}
           <LogoIntro />
           <SinoLaunchOverlay />
+          {/* Google Analytics loads only after the visitor accepts (CPR-109). */}
+          <AnalyticsConsent
+            labels={{
+              title: consent('title'),
+              body: consent('body'),
+              accept: consent('accept'),
+              decline: consent('decline'),
+            }}
+            privacyLink={
+              <AppLink
+                href="/privacy-policy"
+                className="text-(--color-link) underline underline-offset-4"
+              >
+                {consent('privacyLink')}
+              </AppLink>
+            }
+          />
           {/* Editors only: Draft Mode plus a valid admin session (CPR-106). */}
           {preview ? <PreviewBar /> : null}
         </NextIntlClientProvider>

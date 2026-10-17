@@ -2,6 +2,7 @@ import { useTranslations } from 'next-intl'
 import { Container } from '@/components/ui/container'
 import { cx, focusRing } from '@/components/ui/cx'
 import type { SiteSettingsDTO } from '@/features/content/types'
+import { ConsentSettingsButton } from '@/components/consent/analytics-consent'
 import { AppLink } from './app-link'
 import { FooterColumn } from './footer-column'
 import { SocialIcon, type SocialNetwork } from './icons'
@@ -137,6 +138,9 @@ export function SiteFooter({
                 <AppLink href="/privacy-policy" className={linkClass}>
                   {t('links.privacyPolicy')}
                 </AppLink>
+              </li>
+              <li>
+                <ConsentSettingsButton label={t('links.cookieSettings')} className={linkClass} />
               </li>
             </ul>
           </FooterColumn>

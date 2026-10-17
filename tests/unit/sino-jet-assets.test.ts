@@ -4,9 +4,9 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { POSE_FILES } from '@/components/pages/home/poses'
 const root = join(process.cwd(), 'public')
-describe('v008 delivery budgets', () => {
+describe('current Sino delivery budgets', () => {
   it('has ten clips and both thrust attachment nodes within 600 KB brotli', () => {
-    const data = readFileSync(join(root, 'mascot/sino-v008.glb'))
+    const data = readFileSync(join(root, 'mascot/sino-v009.glb'))
     const gltf = JSON.parse(data.subarray(20, 20 + data.readUInt32LE(12)).toString())
     expect(brotliCompressSync(data).length).toBeLessThanOrEqual(600000)
     expect(gltf.animations.map((a: { name: string }) => a.name).sort()).toEqual(
@@ -46,7 +46,7 @@ describe('v008 delivery budgets', () => {
           120000,
         )
     for (const ext of ['webp', 'avif'])
-      expect(statSync(join(root, `mascot/poster/v008/sino-hero.${ext}`)).size).toBeLessThanOrEqual(
+      expect(statSync(join(root, `mascot/poster/v009/sino-hero.${ext}`)).size).toBeLessThanOrEqual(
         120000,
       )
   })

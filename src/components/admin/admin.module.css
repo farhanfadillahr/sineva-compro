@@ -734,6 +734,34 @@ label.field > span:first-child {
 .table tr[data-selected='true'] {
   background: var(--admin-tint);
 }
+/*
+ * The record link of a list row (CPR-110). It reads as a link, and its ::after stretches over the
+ * whole row so a click anywhere opens the record. Other controls in the row (reorder, delete,
+ * selects) sit above that layer and keep working on their own.
+ */
+.rowLink {
+  color: var(--admin-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.rowLink:hover,
+.rowLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rowLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.table tbody tr:has(.rowLink) {
+  position: relative;
+  cursor: pointer;
+}
+.table tbody tr:has(.rowLink) :where(button, input, select, textarea, label, a:not(.rowLink)) {
+  position: relative;
+  z-index: 1;
+}
 .cellTruncate {
   display: block;
   max-width: 40ch;

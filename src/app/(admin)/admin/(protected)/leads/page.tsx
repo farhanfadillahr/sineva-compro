@@ -108,7 +108,9 @@ export default async function LeadsPage({
               {result.items.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <Link href={`/admin/leads/${item.id}`}>{item.name}</Link>
+                    <Link className={s.rowLink} href={`/admin/leads/${item.id}`}>
+                      {item.name}
+                    </Link>
                     {item.company ? <span className={s.muted}> · {item.company}</span> : null}{' '}
                     {item.isDemo ? <Badge tone="warning">Demo</Badge> : null}
                   </td>

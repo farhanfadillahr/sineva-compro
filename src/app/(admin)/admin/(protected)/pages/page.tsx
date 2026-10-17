@@ -30,7 +30,9 @@ export default async function PagesPage() {
             {pages.map((page) => (
               <tr key={page.id}>
                 <td>
-                  <Link href={`/admin/pages/${page.id}`}>{page.label}</Link>
+                  <Link className={s.rowLink} href={`/admin/pages/${page.id}`}>
+                    {page.label}
+                  </Link>
                 </td>
                 <td>
                   <div className={s.row}>

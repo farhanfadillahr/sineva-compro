@@ -40,7 +40,7 @@ export function DocumentList({ name, items }: { name: DocumentName; items: Docum
                 return (
                   <tr key={item.id}>
                     <td>
-                      <Link href={`${config.adminPath}/${item.id}`}>
+                      <Link className={s.rowLink} href={`${config.adminPath}/${item.id}`}>
                         {String(local?.draft.title || 'Tanpa judul')}
                       </Link>{' '}
                       {item.isDemo ? <Badge tone="warning">Demo</Badge> : null}

@@ -20,3 +20,17 @@ export async function writeAudit(
     .insert(auditLog)
     .values({ actorId: actor.id, ...entry, changedFields: [...entry.changedFields] })
 }
+
+/**
+ * Audit entry for work the system does on its own, such as retention deletions (CPR-111). There is
+ * no principal, so `actor_id` stays null; the entry is still validated like any other.
+ */
+export async function writeSystemAudit(
+  tx: DatabaseTransaction,
+  input: AuditEntryInput,
+): Promise<void> {
+  const entry = parseAuditEntry(input)
+  await tx
+    .insert(auditLog)
+    .values({ actorId: null, ...entry, changedFields: [...entry.changedFields] })
+}

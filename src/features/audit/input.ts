@@ -126,6 +126,8 @@ export const auditActions = [
   'activate',
   'deactivate',
   'password_change',
+  /** Removed by the system when its retention period ended (CPR-111); no actor. */
+  'expire',
 ] as const
 export type AuditAction = (typeof auditActions)[number]
 export type AuditEntryInput = {

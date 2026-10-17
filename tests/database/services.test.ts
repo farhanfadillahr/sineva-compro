@@ -4,6 +4,13 @@ import { createCmsTestContext } from '../helpers/cms-context'
 import { runSeeds } from '../../scripts/seed/runner'
 import { service, serviceTranslation } from '../../src/features/services/schema'
 import { auditLog } from '../../src/features/audit/schema'
+import { withTopicTitle } from '../../src/features/cms/seo-title'
+
+// Stored meta titles hold the topic only; the site adds the brand (CPR-104).
+const topicSeo = <T extends { seo: { metaTitle: string } }>(dto: T): T => ({
+  ...dto,
+  seo: withTopicTitle(dto.seo),
+})
 
 vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
@@ -60,7 +67,7 @@ it('seeds exactly the three launch services, safe to run twice, equal to the sta
   const { staticContent } = await import('../../src/content/static/source')
   expect(await reads.serviceReads.listServices('en')).toEqual(staticContent.services)
   for (const detail of staticContent.serviceDetails)
-    expect(await reads.serviceReads.getService(detail.slug, 'en')).toEqual(detail)
+    expect(await reads.serviceReads.getService(detail.slug, 'en')).toEqual(topicSeo(detail))
   await run(['--demo'])
   expect((await reads.serviceReads.listServices('en')).map((s) => s.slug)).not.toContain(
     'demo-service',

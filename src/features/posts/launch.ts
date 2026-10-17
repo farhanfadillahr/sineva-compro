@@ -1,5 +1,6 @@
 import { staticContent } from '../../content/static/source'
 import { storedFromDto } from '../cms/fields'
+import { withTopicTitle } from '../cms/seo-title'
 import { postsConfig } from '../documents/configs'
 
 /** Stored snapshots of the launch articles, for the base seed and tests. */
@@ -19,7 +20,7 @@ export function launchPosts() {
       bylineName: post.author?.name ?? null,
       publishDate: post.publishedAt.slice(0, 10),
       body: post.body,
-      seo: post.seo,
+      seo: withTopicTitle(post.seo),
     }
     return {
       slug: post.slug,

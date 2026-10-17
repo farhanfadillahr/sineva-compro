@@ -4,6 +4,13 @@ import { createCmsTestContext } from '../helpers/cms-context'
 import { runSeeds } from '../../scripts/seed/runner'
 import { pageContent } from '../../src/features/pages/schema'
 import { auditLog } from '../../src/features/audit/schema'
+import { withTopicTitle } from '../../src/features/cms/seo-title'
+
+// Stored meta titles hold the topic only; the site adds the brand (CPR-104).
+const topicSeo = <T extends { seo: { metaTitle: string } }>(dto: T): T => ({
+  ...dto,
+  seo: withTopicTitle(dto.seo),
+})
 
 vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
@@ -34,9 +41,11 @@ it('seeds every launch page once and serves the same public DTO as the static co
   // Ten pages in each of the two locales (CPR-101).
   expect(await ctx.connection.db.select().from(pageContent)).toHaveLength(20)
   const { staticContent, staticContentId } = await import('../../src/content/static/source')
-  expect(await reads.pageReads.getPage('notFound', 'en')).toEqual(staticContent.pages.notFound)
-  expect(await reads.pageReads.getPage('home', 'en')).toEqual(staticContent.pages.home)
-  expect(await reads.pageReads.getPage('home', 'id')).toEqual(staticContentId.pages.home)
+  expect(await reads.pageReads.getPage('notFound', 'en')).toEqual(
+    topicSeo(staticContent.pages.notFound),
+  )
+  expect(await reads.pageReads.getPage('home', 'en')).toEqual(topicSeo(staticContent.pages.home))
+  expect(await reads.pageReads.getPage('home', 'id')).toEqual(topicSeo(staticContentId.pages.home))
 })
 
 it('rejects anonymous saves and em dashes, and saves an Editor change', async () => {

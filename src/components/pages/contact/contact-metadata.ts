@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { renderTitle } from '@/lib/site-metadata'
 import type {
   ContactPageContent,
   ContentLocale,
@@ -12,8 +13,8 @@ const CONTACT_PATH = '/contact'
 const THANK_YOU_PATH = '/contact/thank-you'
 
 /**
- * The title is `absolute`: the content already holds the full title ("... | Sineva") and the
- * layout sets no title template, so a template here would print the brand twice.
+ * The title is the meta title inside the SEO title template (`renderTitle`), passed as `absolute`
+ * and reused for Open Graph and Twitter so the tab, search result and social card match.
  */
 function metadataFor(
   { seo, locale }: { seo: SeoFields; locale: ContentLocale },
@@ -24,20 +25,20 @@ function metadataFor(
   const ogImage = seo.ogImage ?? settings?.brand.defaultOgImage ?? null
   const canonical = seo.canonicalUrl ?? localizeHref(locale, path)
   return {
-    title: { absolute: seo.metaTitle },
+    title: { absolute: renderTitle(seo.metaTitle, settings) },
     description: seo.metaDescription,
     alternates: { canonical, languages: languageAlternates(path) },
     // Robots are otherwise left to the layout (the whole site stays noindex until launch).
     ...(noindex ? { robots: { index: false, follow: false } } : {}),
     twitter: {
       card: 'summary_large_image',
-      title: seo.metaTitle,
+      title: renderTitle(seo.metaTitle, settings),
       description: seo.metaDescription,
       images: ogImage ? [ogImage.url] : undefined,
     },
     openGraph: {
       type: 'website',
-      title: seo.metaTitle,
+      title: renderTitle(seo.metaTitle, settings),
       description: seo.metaDescription,
       url: canonical,
       siteName: settings?.brand.siteName,

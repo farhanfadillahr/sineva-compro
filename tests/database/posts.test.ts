@@ -5,6 +5,13 @@ import { runSeeds } from '../../scripts/seed/runner'
 import { post, postTranslation } from '../../src/features/documents/tables'
 import { category } from '../../src/features/collections/tables'
 import { auditLog } from '../../src/features/audit/schema'
+import { withTopicTitle } from '../../src/features/cms/seo-title'
+
+// Stored meta titles hold the topic only; the site adds the brand (CPR-104).
+const topicSeo = <T extends { seo: { metaTitle: string } }>(dto: T): T => ({
+  ...dto,
+  seo: withTopicTitle(dto.seo),
+})
 
 vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
@@ -45,7 +52,7 @@ it('serves the launch articles exactly like the static source', async () => {
   expect(await reads.postReads.listCategories('en')).toEqual(await source.listCategories('en'))
   const [first] = (await source.listPosts(input)).posts
   expect(await reads.postReads.getPost(first.slug, 'en')).toEqual(
-    await source.getPost(first.slug, 'en'),
+    topicSeo((await source.getPost(first.slug, 'en'))!),
   )
   await expect(reads.postReads.listPosts({ ...input, page: 0 })).rejects.toThrow(RangeError)
 })

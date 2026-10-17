@@ -1,5 +1,6 @@
 import { staticContent } from '../../content/static/source'
 import { storedFromDto } from '../cms/fields'
+import { withTopicTitle } from '../cms/seo-title'
 import { workConfig } from '../documents/configs'
 
 /** Stored snapshots of launch work items (none until real projects exist). */
@@ -7,12 +8,13 @@ export function launchWork() {
   return staticContent.workDetails.map((work) => {
     const { slug, locale, ...rest } = work
     void locale
-    return { slug, data: storedFromDto(workConfig.schema, rest) as Record<string, unknown> }
+    const data = { ...rest, seo: withTopicTitle(rest.seo) }
+    return { slug, data: storedFromDto(workConfig.schema, data) as Record<string, unknown> }
   })
 }
 
 const demoSeo = (title: string) => ({
-  metaTitle: `${title} | Sineva`,
+  metaTitle: title,
   metaDescription: 'Demo work item for development and tests. Not a real project.',
   ogImage: null,
   canonicalUrl: null,

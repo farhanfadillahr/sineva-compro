@@ -5,6 +5,7 @@ import { parseFields } from '../../src/features/cms/fields'
 import { pageSchemas, PAGE_ROUTES } from '../../src/features/pages/fields'
 import { launchPage } from '../../src/features/pages/launch'
 import { FutureVersionError, migrateDocument } from '../../src/features/pages/migrations'
+import { withTopicTitle } from '../../src/features/cms/seo-title'
 
 describe('page descriptors', () => {
   const cases = PAGE_KEYS.flatMap((key) =>
@@ -20,7 +21,8 @@ describe('page descriptors', () => {
     const { key, locale, ...dto } = staticContent.pages.contact
     void key
     void locale
-    expect(launchPage('contact', 'en')).toEqual(dto)
+    // The meta title is stored as the topic only; the site adds the brand (CPR-104).
+    expect(launchPage('contact', 'en')).toEqual({ ...dto, seo: withTopicTitle(dto.seo) })
   })
 
   it('has an admin route for every page', () => {

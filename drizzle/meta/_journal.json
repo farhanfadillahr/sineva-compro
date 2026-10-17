@@ -141,6 +141,13 @@
       "when": 1792210644392,
       "tag": "0019_cpr104_meta_title_template",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792262635802,
+      "tag": "0020_cpr112_lead_email_status",
+      "breakpoints": true
     }
   ]
 }

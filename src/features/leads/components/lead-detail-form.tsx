@@ -1,7 +1,7 @@
 'use client'
 import { CmsForm } from '@/components/admin/cms/cms-form'
 import { DescriptionList } from '@/components/admin/display'
-import { LEAD_STATUSES } from '../schema'
+import { LEAD_STATUSES, type LeadEmailResult, type LeadEmailStatus } from '../schema'
 import { deleteLeadAction, updateLeadAction } from '../admin-actions'
 import { ConfirmAction } from '@/components/admin/cms/confirm-action'
 import s from '@/components/admin/admin.module.css'
@@ -30,6 +30,30 @@ type Lead = {
   notes: string
   consentAt: string
   createdAt: string
+  emailStatus: LeadEmailStatus | null
+}
+
+const emailLabels: Record<LeadEmailResult['status'], string> = {
+  sent: 'Terkirim',
+  failed: 'Gagal',
+  mock: 'Mode uji, tidak benar-benar dikirim',
+  skipped: 'Tidak dikirim',
+}
+
+/** One line per email: outcome, time and the provider's answer (CPR-112). */
+function emailLine(result: LeadEmailResult | undefined) {
+  if (!result) return 'Belum ada data (lead masuk sebelum pencatatan ini).'
+  const when = new Date(result.at).toLocaleString('id-ID')
+  return (
+    <span data-email-status={result.status}>
+      <strong className={result.status === 'failed' ? s.error : undefined}>
+        {emailLabels[result.status]}
+      </strong>
+      , {when}
+      <br />
+      <span className={s.muted}>{result.detail}</span>
+    </span>
+  )
 }
 
 export function LeadDetail({ lead }: { lead: Lead }) {
@@ -61,6 +85,15 @@ export function LeadDetail({ lead }: { lead: Lead }) {
         <section className={s.panel} aria-label="Pesan">
           <h2>Pesan</h2>
           <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{lead.message}</p>
+        </section>
+        <section className={s.panel} aria-label="Email otomatis">
+          <h2>Email otomatis</h2>
+          <DescriptionList
+            items={[
+              { label: 'Notifikasi tim', value: emailLine(lead.emailStatus?.notification) },
+              { label: 'Balasan otomatis', value: emailLine(lead.emailStatus?.autoReply) },
+            ]}
+          />
         </section>
       </div>
       <aside className={s.stack} aria-label="Tindak lanjut">

@@ -120,3 +120,46 @@ it('keeps the lead and reports failures without personal data', async () => {
   expect(reports).toHaveLength(1)
   expect(reports.join(' ')).not.toMatch(/eve@example\.com|Eve/)
 })
+
+// CPR-112: the lead page shows whether each email went out.
+it('records the outcome of both emails on the lead', async () => {
+  const statusOf = async (id: string) =>
+    (await ctx.connection.db.select().from(lead).where(eq(lead.id, id)))[0].emailStatus
+
+  const mock = await storedLead()
+  await emails.sendLeadEmails(mock)
+  expect(await statusOf(mock)).toMatchObject({
+    notification: { status: 'mock' },
+    autoReply: { status: 'mock' },
+  })
+
+  transport.setEmailTransportForTests(async () => ({
+    ok: true,
+    provider: 'resend-api',
+    detail: 'Terkirim, id abc',
+  }))
+  const sent = await storedLead()
+  await emails.sendLeadEmails(sent)
+  const delivered = await statusOf(sent)
+  expect(delivered).toMatchObject({
+    notification: { status: 'sent', detail: 'Terkirim, id abc' },
+    autoReply: { status: 'sent' },
+  })
+  expect(Number.isNaN(Date.parse(delivered!.autoReply.at))).toBe(false)
+
+  report.setErrorReporter(() => {})
+  transport.setEmailTransportForTests(async (_config, email) =>
+    email.to === 'eve@example.com'
+      ? { ok: false, provider: 'resend-api', detail: 'HTTP 422: domain not verified' }
+      : { ok: true, provider: 'resend-api', detail: 'Terkirim, id def' },
+  )
+  const failed = await storedLead()
+  await emails.sendLeadEmails(failed)
+  expect(await statusOf(failed)).toMatchObject({
+    notification: { status: 'sent' },
+    autoReply: { status: 'failed', detail: 'HTTP 422: domain not verified' },
+  })
+  // Recording the outcome is not a staff edit: the retention clock (updated_at) stays put.
+  const [row] = await ctx.connection.db.select().from(lead).where(eq(lead.id, failed))
+  expect(row.updatedAt.getTime()).toBe(row.createdAt.getTime())
+})

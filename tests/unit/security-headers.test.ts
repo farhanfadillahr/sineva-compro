@@ -23,10 +23,27 @@ describe('content security policy', () => {
     expect(directive(policy, 'script-src')).toContain("'wasm-unsafe-eval'")
   })
 
-  it('allows the media host for images, video loops and the model fetch, without wildcards', () => {
+  it('allows the media host for images, video loops and the model fetch', () => {
     for (const name of ['img-src', 'media-src', 'connect-src'])
       expect(directive(policy, name)).toContain('https://media.sineva.id')
-    expect(policy).not.toMatch(/(^|\s)\*(\s|;|$)|https:\/\/\*\./)
+  })
+
+  // Google Tag Manager (GA4) talks to regional subdomains that Google does not list, so its CSP
+  // guide uses these wildcards. They are the only ones allowed, each only where GA4 needs it, and
+  // no directive accepts any host (`*`).
+  it('allows wildcards only for the Google Analytics hosts that GTM needs', () => {
+    const wildcards = policy
+      .split('; ')
+      .flatMap((part) => {
+        const [name, ...sources] = part.split(' ')
+        return sources.filter((source) => source.includes('*')).map((source) => `${name} ${source}`)
+      })
+      .sort()
+    expect(wildcards).toEqual([
+      'connect-src https://*.google-analytics.com',
+      'connect-src https://*.google.com',
+      'img-src https://*.google-analytics.com',
+    ])
   })
 
   it('allows Turnstile, Umami, Google Tag Manager, Sentry and the decoder workers', () => {

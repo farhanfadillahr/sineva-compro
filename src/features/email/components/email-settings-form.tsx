@@ -48,9 +48,10 @@ export function EmailSettingsForm({
   return (
     <div className={s.stack}>
       {managed ? (
-        <InlineBanner tone="warning">
-          Diatur oleh environment ({managed === 'smtp' ? 'SMTP_*' : 'RESEND_API_KEY'}). Nilai di
-          environment dipakai untuk pengiriman; isian koneksi di bawah diabaikan.
+        <InlineBanner tone="info">
+          {managed === 'smtp' ? 'Koneksi SMTP' : 'API key Resend'} diambil dari environment Vercel (
+          {managed === 'smtp' ? 'SMTP_*' : 'RESEND_API_KEY'}), jadi tidak perlu diisi di sini.
+          Pengirim, balasan dan template di bawah tetap dipakai.
         </InlineBanner>
       ) : null}
       <InlineBanner tone="info">
@@ -174,40 +175,43 @@ export function EmailSettingsForm({
                   </div>
                 </div>
               ) : null}
-              <div className={s.panel}>
-                <label className={s.field}>
-                  {current.mode === 'smtp' ? 'Password SMTP' : 'API key Resend'}
-                  <input
-                    type="password"
-                    autoComplete="new-password"
-                    value={current.secret}
-                    placeholder={
-                      value.hasSecret ? '•••••••• tersimpan (isi untuk mengganti)' : 'Belum ada'
-                    }
-                    aria-invalid={!!errors.secret}
-                    onChange={(event) =>
-                      setValue({ ...current, secret: event.target.value, clearSecret: false })
-                    }
-                  />
-                  {errors.secret ? <span className={s.error}>{errors.secret}</span> : null}
-                </label>
-                <p className={s.muted}>
-                  Disimpan terenkripsi dan tidak pernah ditampilkan kembali.
-                </p>
-                {value.hasSecret ? (
-                  <label className={s.switch}>
+              {/* With the secret in the environment, a stored one is never used (CPR-115). */}
+              {managed ? null : (
+                <div className={s.panel}>
+                  <label className={s.field}>
+                    {current.mode === 'smtp' ? 'Password SMTP' : 'API key Resend'}
                     <input
-                      type="checkbox"
-                      role="switch"
-                      checked={current.clearSecret}
+                      type="password"
+                      autoComplete="new-password"
+                      value={current.secret}
+                      placeholder={
+                        value.hasSecret ? '•••••••• tersimpan (isi untuk mengganti)' : 'Belum ada'
+                      }
+                      aria-invalid={!!errors.secret}
                       onChange={(event) =>
-                        setValue({ ...current, clearSecret: event.target.checked, secret: '' })
+                        setValue({ ...current, secret: event.target.value, clearSecret: false })
                       }
                     />
-                    Hapus rahasia tersimpan
+                    {errors.secret ? <span className={s.error}>{errors.secret}</span> : null}
                   </label>
-                ) : null}
-              </div>
+                  <p className={s.muted}>
+                    Disimpan terenkripsi dan tidak pernah ditampilkan kembali.
+                  </p>
+                  {value.hasSecret ? (
+                    <label className={s.switch}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        checked={current.clearSecret}
+                        onChange={(event) =>
+                          setValue({ ...current, clearSecret: event.target.checked, secret: '' })
+                        }
+                      />
+                      Hapus rahasia tersimpan
+                    </label>
+                  ) : null}
+                </div>
+              )}
               <div className={s.panel}>
                 <div className={s.row}>
                   {field('fromName', 'Nama pengirim')}

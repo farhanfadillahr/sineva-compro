@@ -50,7 +50,7 @@ export const pages: PageContentMap = {
       primaryCtaLabel: 'Book a free consultation',
       secondaryCtaLabel: 'Get notified about Sino',
       poster: asset(
-        '/mascot/poster/v008/sino-hero.webp',
+        '/mascot/poster/v009/sino-hero.webp',
         1600,
         1600,
         'Sino, a friendly AI companion, waving hello',

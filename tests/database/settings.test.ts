@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, it, vi } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { createCmsTestContext } from '../helpers/cms-context'
+import { countOverlappingQueries } from '../helpers/pg-overlap'
 import { runSeeds } from '../../scripts/seed/runner'
 import { siteSettings, siteSettingsTranslation } from '../../src/features/settings/schema'
 import { auditLog } from '../../src/features/audit/schema'
@@ -119,4 +120,18 @@ it('lets an Admin change feature toggles and rejects bad input atomically', asyn
       groups,
     ),
   ).rejects.toMatchObject({ code: 'INVALID' })
+})
+
+// A transaction is one connection: Promise.all over its queries made pg warn that
+// `client.query()` was called while the client was still busy (removed in pg 9).
+it('saves without running concurrent queries on the transaction client', async () => {
+  const before = await stored()
+  const overlapping = await countOverlappingQueries(() =>
+    service.saveSiteSettings(
+      ctx.adminHeaders,
+      { global: { features: { ...before.global.features } } },
+      groups,
+    ),
+  )
+  expect(overlapping).toBe(0)
 })

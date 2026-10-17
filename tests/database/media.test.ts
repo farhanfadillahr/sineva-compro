@@ -2,6 +2,7 @@ import sharp from 'sharp'
 import { afterAll, beforeAll, expect, it } from 'vitest'
 import { eq, inArray, sql } from 'drizzle-orm'
 import { createAuthTestContext } from '../helpers/auth-context'
+import { countOverlappingQueries } from '../helpers/pg-overlap'
 import { MemoryMediaStore } from '../../src/lib/media/memory-store'
 import { MediaService } from '../../src/features/media/service.server'
 import { getPublicMedia } from '../../src/features/media/query.server'
@@ -220,4 +221,11 @@ it('enforces non-null image dimensions at the database boundary', async () => {
       .insert(media)
       .values({ ...source, id, privateKey: 'test/' + id, width: null }),
   ).rejects.toThrow()
+})
+
+// The library list runs in a transaction; loading translations, usages and deliveries with
+// Promise.all overlapped three queries on its one connection, which made pg warn.
+it('lists the library without running concurrent queries on the transaction client', async () => {
+  await upload()
+  expect(await countOverlappingQueries(() => service.list(editor))).toBe(0)
 })

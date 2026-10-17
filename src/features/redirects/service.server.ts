@@ -69,7 +69,6 @@ async function insertRule(
     action: 'create',
     changedFields: ['fromPath', 'toPath', 'status'],
   })
-  invalidateRedirectCache()
 }
 
 export async function createRedirect(headers: Headers, input: unknown) {
@@ -99,7 +98,6 @@ export async function deleteRedirect(headers: Headers, id: string) {
         action: 'delete',
         changedFields: ['fromPath', 'toPath', 'status'],
       })
-      invalidateRedirectCache()
     },
   })
 }
@@ -123,24 +121,22 @@ export async function recordSlugChange(
 }
 
 // ---------------------------------------------------------------------------------------------
-// Request-time resolution: one small table, cached in memory for a short time.
+// Request-time resolution: one indexed lookup per request, no in-memory cache.
 // ---------------------------------------------------------------------------------------------
 
-const TTL_MS = 30_000
-let cache: { at: number; rules: Map<string, { toPath: string; status: number }> } | undefined
-
-export function invalidateRedirectCache() {
-  cache = undefined
-}
-
+/**
+ * The proxy runs apart from the admin actions (Next.js documents it must not rely on shared
+ * modules or globals), so a module cache could never be cleared by a save: redirects stayed stale
+ * for up to 30 seconds, including a live page sent to a 404 after a slug was changed back.
+ * `from_path` is unique and indexed, so the lookup is a single index read.
+ */
 export async function resolveRedirect(path: string) {
   const normalized = normalizePath(path)
   if (!normalized || isReservedPath(normalized)) return null
-  if (!cache || Date.now() - cache.at > TTL_MS) {
-    const rows = await db
-      .select({ fromPath: redirect.fromPath, toPath: redirect.toPath, status: redirect.status })
-      .from(redirect)
-    cache = { at: Date.now(), rules: new Map(rows.map((r) => [r.fromPath, r])) }
-  }
-  return cache.rules.get(normalized) ?? null
+  const [rule] = await db
+    .select({ toPath: redirect.toPath, status: redirect.status })
+    .from(redirect)
+    .where(eq(redirect.fromPath, normalized))
+    .limit(1)
+  return rule ?? null
 }

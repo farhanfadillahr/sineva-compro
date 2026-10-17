@@ -23,7 +23,7 @@ export default async function PagesPage() {
             <tr>
               <th scope="col">Halaman</th>
               <th scope="col">Status per bahasa</th>
-              <th scope="col">Terakhir diubah</th>
+              <th scope="col">Isi</th>
             </tr>
           </thead>
           <tbody>
@@ -47,10 +47,17 @@ export default async function PagesPage() {
                     ))}
                   </div>
                 </td>
-                <td className={s.mono}>
-                  {page.locales
-                    .map((l) => (l.updatedAt ? new Date(l.updatedAt).toLocaleString('id-ID') : '-'))
-                    .join(', ')}
+                <td>
+                  {page.locales.map((l) => (
+                    <div key={l.locale} className={s.muted}>
+                      {l.locale.toUpperCase()}:{' '}
+                      {!l.stored
+                        ? '-'
+                        : l.launchCopy
+                          ? 'Salinan awal, belum pernah diedit'
+                          : `Diedit oleh ${l.editedBy}, ${new Date(l.updatedAt!).toLocaleString('id-ID')}`}
+                    </div>
+                  ))}
                 </td>
               </tr>
             ))}

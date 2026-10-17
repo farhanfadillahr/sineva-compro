@@ -13,6 +13,7 @@ import { editorSections, PAGE_ROUTES, pageSchemas } from './fields'
 import { currentPageVersion, migrateDocument, pageMigrations } from './migrations'
 import { launchPage, type StoredPage } from './launch'
 import { pageContent } from './schema'
+import { user } from '../auth/schema'
 
 const isLocale = (value: unknown): value is ContentLocale =>
   typeof value === 'string' && (routing.locales as readonly string[]).includes(value)
@@ -42,7 +43,18 @@ function complete(key: PageKey, data: unknown) {
 
 export async function listPagesForAdmin(headers: Headers) {
   await cmsReader(headers)
-  const rows = await db.select().from(pageContent)
+  const rows = await db
+    .select({
+      pageKey: pageContent.pageKey,
+      locale: pageContent.locale,
+      data: pageContent.data,
+      version: pageContent.version,
+      updatedAt: pageContent.updatedAt,
+      updatedBy: pageContent.updatedBy,
+      editorName: user.name,
+    })
+    .from(pageContent)
+    .leftJoin(user, eq(user.id, pageContent.updatedBy))
   return PAGE_ROUTES.map((route) => ({
     ...route,
     locales: routing.locales.map((locale) => {
@@ -55,6 +67,12 @@ export async function listPagesForAdmin(headers: Headers) {
         stored: !!row,
         complete: data ? complete(route.key, data) : false,
         updatedAt: row?.updatedAt.toISOString() ?? null,
+        /**
+         * Nobody has saved it from the admin, so it still follows the launch copy and the pages
+         * seed may update it (CPR-117). Otherwise the name of the last person who saved it.
+         */
+        launchCopy: !!row && row.updatedBy === null,
+        editedBy: row?.updatedBy ? (row.editorName ?? 'Akun telah dihapus') : null,
       }
     }),
   }))

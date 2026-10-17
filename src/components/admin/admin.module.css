@@ -657,7 +657,9 @@ label.field > span:first-child {
 }
 .toast {
   position: fixed;
-  bottom: 24px;
+  /* Above the sticky editor action bar (about 64px), which it used to cover: the save button
+     could not be clicked again until the toast was dismissed. */
+  bottom: 88px;
   right: 24px;
   z-index: 80;
   max-width: min(400px, calc(100vw - 32px));

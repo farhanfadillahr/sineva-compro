@@ -43,10 +43,11 @@ Pelaksanaan Native, satu agen. Sumber: QA manual seluruh halaman admin di Chrome
 
 ## T5 (CPR-106). Perbaikan UX admin
 
-- **Pratinjau terlihat.** Saat Draft Mode aktif, situs publik menampilkan bar kecil "Mode pratinjau" dengan tombol keluar. Halaman pratinjau tetap noindex.
-- **Visibilitas tim.** Anggota tampil di Tentang hanya bila tiga hal menyala: fitur "Tampilkan bagian tim" di Pengaturan situs, bagian tim di Halaman > Tentang, dan "Tampilkan di halaman Tentang" pada anggota. Daftar Tim menampilkan status gabungan dengan checklist ketiganya beserta tautan ke tempat mengubahnya.
-- **Log audit terbaca.** Kolom pelaku dan target menampilkan nama/label, bukan ID mentah. ID tetap tersedia sebagai teks sekunder kecil untuk penelusuran.
-- **Status produk konsisten.** Tautan footer "Join the waitlist" mengikuti status (Tersedia: ajakan mencoba produk). Form Status produk menampilkan pengingat label konten yang masih menyebut waitlist (mis. CTA kedua Beranda) dengan tautan ke editornya.
+- **Pratinjau terlihat.** Saat Draft Mode aktif dan sesi admin sah (`isPreviewRequest`), situs publik menampilkan bar "Mode pratinjau" dengan tombol "Keluar dari pratinjau" (POST ke `/admin/preview/exit`). Pengunjung tidak pernah melihatnya.
+- **Visibilitas tim.** Daftar Tim menampilkan status gabungan dan checklist tiga syarat (fitur situs, bagian Halaman > Tentang, anggota yang ditampilkan) beserta tautan ke tempat mengubahnya.
+- **Log audit terbaca.** Nama pelaku menjadi tautan yang memfilter riwayatnya (tidak perlu menyalin ID); ID pelaku pindah ke tooltip, ID entitas panjang dipendekkan dengan ID lengkap di tooltip. Resolusi nama setiap entitas (judul artikel, nama file) membutuhkan join ke banyak tabel dan ditunda.
+- **Status produk konsisten.** Footer dan kartu promo di menu Product (desktop dan mobile) menyembunyikan "Join the waitlist" saat produk Tersedia. Form Status produk mengingatkan label konten yang masih menyebut waitlist dengan tautan ke editor Beranda dan Produk.
+- **Temuan demo:** toast sukses dinaikkan di atas bar aksi sticky agar tidak menutupi tombol simpan; breadcrumb `new` menjadi "Tambah baru" kecuali di Pengguna ("Tambah Editor"). Dugaan editor teks tanpa nama aksesibel keliru (probe berjalan sebelum editor dimuat) dan tidak diubah.
 
 ## Verifikasi per PR
 

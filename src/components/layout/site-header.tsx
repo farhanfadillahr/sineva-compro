@@ -47,17 +47,20 @@ export function SiteHeader({
   services,
   whatsapp,
   showWork = true,
+  showWaitlist = true,
 }: {
   services: readonly NavService[]
   whatsapp: WhatsAppSettings | null
   /** `false` hides the Work link (desktop and mobile) while there are no projects to list. */
   showWork?: boolean
+  /** `false` hides the waitlist promo card once the product is live (CPR-106). */
+  showWaitlist?: boolean
 }) {
   const t = useTranslations('Nav')
   const pathname = useInternalPathname()
   const reduced = usePrefersReducedMotion()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
-  const model = useNavModel(services, { showWork })
+  const model = useNavModel(services, { showWork, showWaitlist })
   const whatsappHref = useWhatsAppHref(whatsapp, services)
 
   const [dropdownOpen, setDropdownOpen] = useState(false)

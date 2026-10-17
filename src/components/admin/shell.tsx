@@ -11,10 +11,20 @@ import { Drawer, DropdownMenu } from './overlays'
 import { Avatar } from './display'
 import { Badge } from './primitives'
 import s from './admin.module.css'
+/**
+ * Breadcrumb label of one path segment. `new` depends on its parent: only the users list adds an
+ * Editor; every other "new" page (article, FAQ, team member, work) adds a new item.
+ */
+export function breadcrumbLabel(segments: readonly string[], index: number): string {
+  const part = segments[index] ?? ''
+  if (part === 'new' && segments[index - 1] === 'users') return 'Tambah Editor'
+  return routeLabels[part] ?? 'Detail'
+}
+
 const routeLabels: Record<string, string> = {
   admin: 'Ruang kerja',
   users: 'Pengguna',
-  new: 'Tambah Editor',
+  new: 'Tambah baru',
   pages: 'Halaman',
   services: 'Layanan',
   product: 'Produk',
@@ -115,10 +125,10 @@ export function AdminShell({
                 {segments.map((part, i) => (
                   <li key={`${part}-${i}`}>
                     {i === segments.length - 1 ? (
-                      <span aria-current="page">{routeLabels[part] ?? 'Detail'}</span>
+                      <span aria-current="page">{breadcrumbLabel(segments, i)}</span>
                     ) : (
                       <a href={`/${segments.slice(0, i + 1).join('/')}`}>
-                        {routeLabels[part] ?? 'Detail'}
+                        {breadcrumbLabel(segments, i)}
                       </a>
                     )}
                   </li>

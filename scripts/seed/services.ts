@@ -19,7 +19,7 @@ const demo = {
     process: [{ title: 'Demo step', body: 'Demo process step.' }],
     ctaLabel: 'Book a demo',
     seo: {
-      metaTitle: '[Demo] Service | Sineva',
+      metaTitle: '[Demo] Service',
       metaDescription: 'Demo service for development and tests.',
       ogImage: null,
       canonicalUrl: null,

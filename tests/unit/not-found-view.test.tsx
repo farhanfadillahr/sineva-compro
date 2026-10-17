@@ -10,6 +10,7 @@ import {
   buildNotFoundMetadata,
   loadNotFoundPage,
 } from '@/components/pages/not-found/not-found-model'
+import { renderTitle } from '@/lib/site-metadata'
 import type { NotFoundPageContent } from '@/features/content/types'
 import { createStaticContentSource } from '../../src/content/static'
 import en from '../../messages/en.json'
@@ -115,8 +116,9 @@ describe('loadNotFoundPage', () => {
 describe('buildNotFoundMetadata', () => {
   it('uses the content title and description and asks crawlers to skip the page', async () => {
     const page = await realPage()
-    const metadata = buildNotFoundMetadata(page)
-    expect(metadata.title).toEqual({ absolute: page.seo.metaTitle })
+    const metadata = buildNotFoundMetadata(page, null)
+    expect(metadata.title).toEqual({ absolute: renderTitle(page.seo.metaTitle, null) })
+    expect(String((metadata.title as { absolute: string }).absolute)).toMatch(/ \| Sineva$/)
     expect(metadata.description).toBe(page.seo.metaDescription)
     expect(metadata.robots).toEqual({ index: false, follow: false })
   })

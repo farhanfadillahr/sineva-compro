@@ -4,6 +4,7 @@ import { parseFields } from '../../src/features/cms/fields'
 import { postsConfig } from '../../src/features/documents/configs'
 import { launchPosts } from '../../src/features/posts/launch'
 import { projectPost } from '../../src/features/posts/project'
+import { withTopicTitle } from '../../src/features/cms/seo-title'
 
 describe('posts', () => {
   it('launch articles pass the post descriptor unchanged', () => {
@@ -25,7 +26,7 @@ describe('posts', () => {
           author: null,
           coverMedia: null,
         }),
-      ).toEqual(expected)
+      ).toEqual({ ...expected, seo: withTopicTitle(expected.seo) })
     }
   })
 

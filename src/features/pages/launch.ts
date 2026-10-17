@@ -1,6 +1,7 @@
 import { staticContentFor } from '../../content/static/source'
 import type { ContentLocale, PageKey } from '../content/types'
 import { storedFromDto } from '../cms/fields'
+import { withTopicTitle } from '../cms/seo-title'
 import { pageSchemas } from './fields'
 
 export type StoredPage = Record<string, unknown>
@@ -19,5 +20,6 @@ export function launchPage(key: PageKey, locale: ContentLocale): StoredPage | nu
   } = bundle.pages[key] as unknown as Record<string, unknown>
   void _key
   void _locale
-  return storedFromDto(pageSchemas[key], data) as StoredPage
+  const seo = withTopicTitle(data.seo as { metaTitle: string } | undefined)
+  return storedFromDto(pageSchemas[key], seo ? { ...data, seo } : data) as StoredPage
 }

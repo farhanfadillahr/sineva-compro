@@ -63,7 +63,7 @@ export const postsSeed: SeedModule = {
         publishDate: null,
         body: { type: 'doc', content: [] },
         seo: {
-          metaTitle: '[Demo] Draft article | Sineva',
+          metaTitle: '[Demo] Draft article',
           metaDescription: 'Demo draft.',
           ogImage: null,
           canonicalUrl: null,

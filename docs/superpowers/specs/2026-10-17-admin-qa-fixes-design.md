@@ -24,11 +24,11 @@ Pelaksanaan Native, satu agen. Sumber: QA manual seluruh halaman admin di Chrome
 
 **Masalah.** `Template judul` di Pengaturan SEO hanya dipakai validasi dan pratinjau admin. Situs memakai `title.absolute` dari judul meta yang sudah berisi "| Sineva", sehingga mengubah template tidak berdampak, dan pratinjau bisa berbeda dari situs bila editor lupa menulis brand.
 
-**Keputusan jangka panjang.** Brand diatur sekali di template, editor menulis judul pendek.
-- Layout publik memakai `title.template` dari template per locale (`{title}` menjadi `%s`) dan `default` nama situs. Halaman mengirim judul meta tanpa brand. `openGraph.title` dan `twitter.title` diisi judul yang sudah dirender agar kartu sosial sama dengan tab browser.
-- Migrasi satu kali: hapus akhiran ` | <nama situs>` dari judul meta di `page_content`, `service_translation`, `post_translation`, `portfolio_translation` dan sumber konten statis. Migrasi idempoten dan hanya menyentuh akhiran yang persis sama.
-- Batas 60 karakter dihitung pada judul hasil template. Penghitung di editor menampilkan sisa karakter setelah template. Pratinjau Google selalu menerapkan template, sama dengan situs.
-- Tes metadata untuk halaman beranda, layanan, artikel dan karya pada kedua locale.
+**Keputusan jangka panjang.** Brand diatur sekali di admin (Pengaturan > SEO > Template judul, per locale), editor menulis judul pendek. Tidak ada brand yang ditulis per halaman.
+- Semua builder metadata memakai `renderTitle` (template per locale) sebagai `title.absolute`, dan judul yang sama untuk `openGraph.title` serta `twitter.title`, karena Next.js tidak menerapkan template ke keduanya. Judul yang masih membawa teks template di sekelilingnya tidak diberi brand dua kali.
+- Migrasi idempoten `0019` membuang akhiran ` | Sineva` dari judul meta di `page_content`, `service_translation`, serta draf dan versi terbit `post_translation` dan `portfolio_translation`. Konten statis tidak diubah karena dipakai bersama deployment statis di `main`; seed membuang akhirannya saat menulis ke database.
+- Batas 60 karakter adalah batas potong Google, bukan aturan: kolom tetap maks. 60, dan pratinjau Google menghitung panjang judul hasil template yang sedang aktif dari admin lalu memberi peringatan bila lebih dari 60. Pratinjau memakai fungsi yang sama dengan situs (`applyTitleTemplate`).
+- Tes: `renderTitle`, `applyTitleTemplate` (termasuk judul yang menyebut brand di tengah), pratinjau admin, seed tanpa akhiran, dan kesetaraan DTO database dengan konten statis.
 
 ## T4 (CPR-105). Form kontak dan waitlist tersambung ke admin
 

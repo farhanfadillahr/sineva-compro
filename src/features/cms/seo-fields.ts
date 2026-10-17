@@ -7,7 +7,9 @@ import { f } from './fields'
  */
 export const seoSchema = f.object(
   {
-    metaTitle: f.required('Judul meta', FIELD_LIMITS.metaTitleChars),
+    metaTitle: f.required('Judul meta', FIELD_LIMITS.metaTitleChars, {
+      hint: 'Tulis topiknya saja. Nama situs ditambahkan dari Template judul di Pengaturan > SEO.',
+    }),
     metaDescription: f.required('Deskripsi meta', FIELD_LIMITS.metaDescriptionChars, {
       multiline: true,
     }),

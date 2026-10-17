@@ -2,6 +2,7 @@ import { staticContent, staticContentFor } from '../../content/static/source'
 import { routing } from '../../i18n/routing'
 import type { ContentLocale, ServiceDetail } from '../content/types'
 import { storedFromDto } from '../cms/fields'
+import { withTopicTitle } from '../cms/seo-title'
 import { serviceLocaleSchema } from './fields'
 
 const localData = (detail: ServiceDetail) => {
@@ -11,7 +12,10 @@ const localData = (detail: ServiceDetail) => {
   void icon
   void pose
   void tools
-  return storedFromDto(serviceLocaleSchema, content) as Record<string, unknown>
+  return storedFromDto(serviceLocaleSchema, {
+    ...content,
+    seo: withTopicTitle(content.seo),
+  }) as Record<string, unknown>
 }
 
 /**

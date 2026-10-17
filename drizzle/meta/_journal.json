@@ -134,6 +134,13 @@
       "when": 1792156253523,
       "tag": "0018_cpr48_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792210644392,
+      "tag": "0019_cpr104_meta_title_template",
+      "breakpoints": true
     }
   ]
 }

@@ -14,8 +14,31 @@ const FALLBACK_OG_IMAGE = { url: '/og/default-v008.png', width: 1200, height: 63
 // Content stores the pattern as `{title} | Sineva`; Next.js wants `%s`. A pattern without the
 // placeholder would print the same text for every page, so it is ignored for the default.
 function titleTemplate(settings: SiteSettingsDTO | null): string {
-  const pattern = settings?.seo.titleTemplate
+  return nextTemplate(settings?.seo.titleTemplate)
+}
+function nextTemplate(pattern: string | undefined): string {
   return pattern?.includes('{title}') ? pattern.replace('{title}', '%s') : DEFAULT_TITLE_TEMPLATE
+}
+
+/**
+ * Applies a stored title pattern (`{title} | Sineva`) to a meta title. Shared by the site and the
+ * admin snippet preview so both always show the same title. A title that already carries the
+ * template's text around it (content saved before the template applied) is returned as is
+ * instead of printing the brand twice.
+ */
+export function applyTitleTemplate(metaTitle: string, pattern: string | undefined): string {
+  const [before, after] = nextTemplate(pattern).split('%s') as [string, string]
+  if (metaTitle.startsWith(before) && metaTitle.endsWith(after)) return metaTitle
+  return `${before}${metaTitle}${after}`
+}
+
+/**
+ * The full page title: the editor's meta title inside the SEO title template (CPR-104). Pages pass
+ * the result as `title.absolute` and reuse it for Open Graph and Twitter, which Next.js never runs
+ * through the template, so the tab, search result and social card always match.
+ */
+export function renderTitle(metaTitle: string, settings: SiteSettingsDTO | null): string {
+  return applyTitleTemplate(metaTitle, settings?.seo.titleTemplate)
 }
 
 /**
@@ -27,8 +50,8 @@ function titleTemplate(settings: SiteSettingsDTO | null): string {
  * themselves; what is set here is what a page gets when it says nothing, such as the
  * work placeholder.
  *
- * The title template does not touch the per-page titles: content already holds the full
- * "Page topic | Sineva" text and the pages pass it as `title.absolute`, which skips the template.
+ * Pages build their title with `renderTitle` (the same template) and pass it as `title.absolute`,
+ * because Open Graph and Twitter titles never go through the template and must match the tab.
  */
 export function buildRootMetadata({
   settings,

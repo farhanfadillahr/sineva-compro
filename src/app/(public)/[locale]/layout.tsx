@@ -21,7 +21,10 @@ import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
 import { ThemeScript } from '@/components/theme/theme-script'
+import Script from 'next/script'
 import '../../globals.css'
+
+const googleTagManagerId = 'GTM-PXDTM2T7'
 
 // SITE_URL and SITE_INDEXABLE are read when this module's metadata is generated (at build for
 // prerendered pages), so changing either takes a new deployment to show up. An unsupported
@@ -92,9 +95,29 @@ export default async function PublicLayout({
           enabled={settings?.features.enableLogoIntro ?? false}
           force={process.env.LOGO_INTRO_FORCE === '1'}
         />
+        <Script
+          id="google-tag-manager"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${googleTagManagerId}');`,
+          }}
+        />
       </head>
       {/* Utilities sit in a higher cascade layer than the shared base body rule (admin colours). */}
       <body className="flex min-h-svh flex-col bg-canvas text-text">
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerId}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         {/* First in <body>: covers the page from the first paint when the gate marked the document. */}
         <LogoIntroShell />
         <script

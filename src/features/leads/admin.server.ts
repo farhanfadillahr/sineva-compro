@@ -1,5 +1,5 @@
 import 'server-only'
-import { and, count, desc, eq, gte, lt, type SQL } from 'drizzle-orm'
+import { and, count, desc, eq, gte, ilike, lt, or, type SQL } from 'drizzle-orm'
 import { db } from '../../lib/db/client.server'
 import { writeAudit } from '../audit/service.server'
 import { CmsError } from '../cms/errors'
@@ -21,6 +21,8 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/
 const one = (value: string | string[] | undefined) => (typeof value === 'string' ? value : '')
 
 export type LeadFilters = {
+  /** Matches name, email, company or WhatsApp number (CPR-116). */
+  search: string
   status: '' | LeadStatus
   interest: string
   segment: string
@@ -40,6 +42,7 @@ export function readLeadFilters(
   const page = Number(one(params.page) || 1)
   const pageSize = Number(one(params.pageSize) || 20)
   return {
+    search: one(params.search).trim().slice(0, 100),
     status: (LEAD_STATUSES as readonly string[]).includes(status) ? (status as LeadStatus) : '',
     interest: (CONTACT_INTERESTS as readonly string[]).includes(interest) ? interest : '',
     segment: (CONTACT_SEGMENTS as readonly string[]).includes(segment) ? segment : '',
@@ -50,9 +53,17 @@ export function readLeadFilters(
   }
 }
 
-/** Admin only (`leads:manage`): Editors and anonymous users are refused at the query. */
-export async function listLeads(headers: Headers, filters: LeadFilters) {
-  await cmsReader(headers, 'leads:manage')
+/** `%` and `_` in a search are literal characters, not patterns. */
+const likeTerm = (text: string) => `%${text.replace(/[\\%_]/g, (c) => `\\${c}`)}%`
+
+/** Numbers are stored as 62...: "0812 345" searches as "62812345". */
+function phoneDigits(search: string) {
+  const digits = search.replace(/\D/g, '')
+  if (!digits) return search
+  return digits.startsWith('0') ? `62${digits.slice(1)}` : digits
+}
+
+function leadWhere(filters: Omit<LeadFilters, 'page' | 'pageSize'>) {
   const where: SQL[] = []
   if (filters.status) where.push(eq(lead.status, filters.status))
   if (filters.interest) where.push(eq(lead.interest, filters.interest))
@@ -62,7 +73,24 @@ export async function listLeads(headers: Headers, filters: LeadFilters) {
     where.push(
       lt(lead.createdAt, new Date(new Date(`${filters.to}T00:00:00Z`).getTime() + 86_400_000)),
     )
-  const condition = where.length ? and(...where) : undefined
+  if (filters.search) {
+    const term = likeTerm(filters.search)
+    where.push(
+      or(
+        ilike(lead.name, term),
+        ilike(lead.email, term),
+        ilike(lead.company, term),
+        ilike(lead.phone, likeTerm(phoneDigits(filters.search))),
+      )!,
+    )
+  }
+  return where.length ? and(...where) : undefined
+}
+
+/** Admin only (`leads:manage`): Editors and anonymous users are refused at the query. */
+export async function listLeads(headers: Headers, filters: LeadFilters) {
+  await cmsReader(headers, 'leads:manage')
+  const condition = leadWhere(filters)
   const [{ total }] = await db.select({ total: count() }).from(lead).where(condition)
   const page = Math.min(filters.page, Math.max(1, Math.ceil(total / filters.pageSize)))
   const rows = await db
@@ -87,6 +115,22 @@ export async function listLeads(headers: Headers, filters: LeadFilters) {
     page,
     pageSize: filters.pageSize,
   }
+}
+
+/**
+ * Every lead matching the filters, for the CSV export (CPR-116). Admin only, like the list; the
+ * route sends it uncached.
+ */
+export async function exportLeads(
+  headers: Headers,
+  filters: Omit<LeadFilters, 'page' | 'pageSize'>,
+) {
+  await cmsReader(headers, 'leads:manage')
+  return db
+    .select()
+    .from(lead)
+    .where(leadWhere(filters))
+    .orderBy(desc(lead.createdAt), desc(lead.id))
 }
 
 export async function getLead(headers: Headers, id: string) {

@@ -28,6 +28,7 @@ afterAll(async () => {
 })
 
 const all = {
+  search: '',
   status: '',
   interest: '',
   segment: '',
@@ -61,6 +62,27 @@ it('filters by status, interest and segment, and pages', async () => {
     page: 1,
     pageSize: 20,
   })
+})
+
+it('searches by name, email and WhatsApp number, and exports only for Admins (CPR-116)', async () => {
+  const search = async (text: string) =>
+    (await admin.listLeads(ctx.adminHeaders, { ...all, search: text })).items.map((i) => i.name)
+  expect(await search('budi')).toEqual(['Budi (demo)'])
+  expect(await search('demo-lead-3@')).toHaveLength(1)
+  // Stored as 62...; a local 08... style number finds it too.
+  expect(await search('080000000002')).toHaveLength(1)
+  // `%` is a literal character, not a wildcard.
+  expect(await search('%')).toEqual([])
+  expect(admin.readLeadFilters({ search: `  ${'x'.repeat(150)}  ` }).search).toHaveLength(100)
+
+  const { search: _search, page: _page, pageSize: _size, ...rest } = all
+  void _search
+  void _page
+  void _size
+  await expect(admin.exportLeads(ctx.editorHeaders, { ...rest, search: '' })).rejects.toThrow()
+  await expect(admin.exportLeads(ctx.anonymous, { ...rest, search: '' })).rejects.toThrow()
+  const rows = await admin.exportLeads(ctx.adminHeaders, { ...rest, search: 'budi' })
+  expect(rows.map((r) => r.name)).toEqual(['Budi (demo)'])
 })
 
 it('lets an Admin change status and notes, audited by field name only', async () => {

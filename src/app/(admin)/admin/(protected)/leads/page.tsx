@@ -42,6 +42,16 @@ export default async function LeadsPage({
       <PageHeader
         title="Lead"
         description="Pesan dari formulir kontak. Hanya Admin yang dapat melihat data ini."
+        actions={
+          // Same filters as the list. The file holds personal data: delete it after use.
+          <a
+            className={s.button}
+            href={`/admin/leads/export?${query(1).split('?')[1] ?? ''}`}
+            download
+          >
+            Ekspor CSV
+          </a>
+        }
       />
       <form
         className={`${s.panel} ${s.filterGrid}`}
@@ -49,6 +59,16 @@ export default async function LeadsPage({
         autoComplete="off"
         aria-label="Filter lead"
       >
+        <label className={s.field}>
+          Cari
+          <input
+            type="search"
+            name="search"
+            defaultValue={filters.search}
+            maxLength={100}
+            placeholder="Nama, email, perusahaan atau WhatsApp"
+          />
+        </label>
         <label className={s.field}>
           Status
           <select name="status" defaultValue={filters.status}>

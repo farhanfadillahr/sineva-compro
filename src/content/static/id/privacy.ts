@@ -1,98 +1,92 @@
 import type { RichTextDocument } from '../../../features/content/types'
 import { bulletList, doc, heading, paragraph } from '../helpers'
 
-// Indonesian translation of ../privacy.ts, section for section. It carries the same open items
-// (responsible operator, final retention periods, response process, legal basis for technical
-// processing) and is under the same Founder and legal review: a translation does not settle them.
+// Indonesian translation of ../privacy.ts, section for section (CPR-17). Keep the two in step: a
+// change of provider or data flow updates both.
 
 export const privacyBody: RichTextDocument = doc(
   paragraph(
-    'Kebijakan ini menjelaskan cara Sineva menangani informasi yang dikumpulkan melalui situs kami, termasuk formulir kontak, pilihan untuk dikabari soal produk kami, dan area admin kami. Kebijakan ini mencakup alasan kami memakai informasi, layanan yang mendukung situs kami, berapa lama kami menyimpan informasi, dan cara mengajukan permintaan terkait data Anda.',
+    'Kebijakan ini menjelaskan cara Sineva menangani data pribadi yang dikumpulkan melalui situs ini: apa yang kami kumpulkan, untuk apa, layanan apa yang membantu kami, berapa lama kami menyimpannya, dan cara Anda mengajukan permintaan terkait data Anda. Kebijakan ini berlaku untuk formulir kontak, daftar tunggu produk kami, cookie analitik, dan area admin kami.',
   ),
   paragraph(
-    'Sineva adalah nama yang kami pakai untuk bisnis kami. Halaman Kontak menunjukkan cara menghubungi kami untuk permintaan terkait privasi. Kami akan menyebutkan pihak pengelola yang bertanggung jawab dan tanggal berlakunya sebelum kebijakan ini berlaku.',
+    'Sineva bertanggung jawab atas data pribadi yang dijelaskan di sini. Untuk pertanyaan atau permintaan terkait privasi, kirim email ke sinevatech@gmail.com.',
   ),
 
   heading('Informasi yang Anda berikan'),
   paragraph(
-    'Formulir kontak di situs ini tidak mengirim data Anda ke server kami. Formulir menyiapkan pesan dari isian Anda: nama, jenis bisnis, bidang yang diminati dan pesan, ditambah nama perusahaan dan kisaran anggaran bila Anda memilih mengisinya. Anda lalu mengirim pesan itu sendiri melalui WhatsApp atau aplikasi email Anda. Kami tidak menyimpan isian formulir di server kami.',
+    'Saat Anda mengirim formulir kontak, kami menyimpan nama, alamat email, nomor WhatsApp, jenis bisnis, bidang yang diminati, dan pesan Anda, ditambah nama perusahaan dan kisaran anggaran bila Anda mengisinya. Kami juga mencatat halaman tempat Anda mengirimnya, bahasa halaman, dan waktu Anda menyetujui kebijakan ini. Setelah tersimpan, situs membuka WhatsApp dengan pesan Anda yang sudah siap, sehingga Anda juga bisa menghubungi kami di sana.',
   ),
   paragraph(
-    'Saat Anda mengirim pesan, kami menerima apa yang Anda tulis, bersama nomor WhatsApp atau alamat email Anda, melalui layanan tersebut. WhatsApp dan penyedia email Anda menangani pesan itu berdasarkan ketentuan dan kebijakan privasi mereka sendiri.',
+    'Saat Anda bergabung dengan daftar tunggu produk kami, kami menyimpan alamat email, jenis bisnis bila Anda mengisinya, bahasa halaman, dan waktu Anda menyetujui. Bergabung dengan daftar tunggu tidak membuat akun dan tidak membuat produknya tersedia.',
   ),
   paragraph(
-    'Bila Anda minta dikabari soal Sineva Product Suite, Anda melakukannya dengan mengirim pesan dengan cara yang sama. Permintaan untuk dikabari hanya mencatat minat Anda. Permintaan itu tidak membuat akun produk dan tidak membuat produk tersedia.',
-  ),
-  paragraph(
-    'Mohon jangan mencantumkan password, data pembayaran, atau informasi sensitif lain di dalam pesan. Kami mungkin meminta informasi tambahan saat membahas kebutuhan Anda, tetapi formulir kontak bukan saluran untuk materi proyek yang bersifat rahasia.',
+    'Mohon jangan menuliskan kata sandi, data pembayaran, atau informasi sensitif lainnya di dalam pesan.',
   ),
 
-  heading('Informasi teknis'),
+  heading('Informasi yang terkumpul otomatis'),
   paragraph(
-    'Situs dan infrastruktur hosting kami dapat memproses informasi permintaan seperti alamat IP, waktu, detail browser, alamat halaman yang diminta, dan peristiwa keamanan. Kami memakai informasi ini untuk menjalankan situs, menyelidiki gangguan, dan melindunginya dari penyalahgunaan.',
+    'Untuk melindungi formulir kami dari spam, Cloudflare Turnstile memeriksa browser Anda saat Anda memakainya, dan Cloudflare menerima alamat IP serta detail browser Anda untuk pemeriksaan itu. Kami juga menyimpan bentuk acak dari alamat IP Anda selama 24 jam untuk membatasi seberapa sering formulir bisa dikirim. Bentuk acak ini tidak bisa dikembalikan menjadi alamat IP Anda.',
   ),
   paragraph(
-    'Kami dapat memakai analitik situs tanpa cookie iklan, serta pemantauan error untuk menemukan gangguan teknis. Data analitik dan error seharusnya tidak memuat pesan, password, atau token autentikasi Anda.',
-  ),
-  paragraph(
-    'Area admin hanya untuk tim kami. Area ini memakai cookie autentikasi untuk menjaga sesi masuk dan menerapkan kontrol keamanan. Kami tidak memakai piksel iklan di situs ini.',
+    'Penyedia hosting kami memproses detail permintaan seperti alamat IP, waktu, detail browser, dan halaman yang dibuka untuk menampilkan situs dan menjaga keamanannya.',
   ),
 
-  heading('Alasan kami memakai informasi'),
+  heading('Cookie dan penyimpanan serupa'),
   paragraph(
-    'Kami memakai pesan yang Anda kirim untuk meninjau permintaan Anda, membalasnya, dan mengelola tindak lanjut. Kami memakai permintaan untuk dikabari agar bisa memberi tahu Anda saat Sineva Product Suite sudah siap.',
+    'Kami memakai Google Analytics untuk memahami cara pengunjung memakai situs ini, tetapi hanya bila Anda menerima cookie analitik di banner. Sebelum itu, tidak ada apa pun dari Google Analytics yang dimuat. Bila Anda menerima, Google memasang cookie bernama _ga dan _ga_ diikuti sebuah ID, yang bisa bertahan hingga dua tahun. Anda bisa menarik persetujuan kapan saja lewat Pengaturan cookie di bagian bawah setiap halaman; kami lalu menghentikan Google Analytics dan menghapus cookie-nya dari situs ini.',
   ),
   paragraph(
-    'Mengirim pesan kepada kami adalah pilihan Anda, dan formulir meminta Anda menyatakan bahwa Anda memahami cara pesan itu dikirim. Anda dapat meminta kami berhenti memakai informasi Anda, atau menghapusnya, dengan menghubungi kami. Penarikan persetujuan tidak membatalkan pemrosesan yang sudah terjadi sebelum permintaan Anda.',
-  ),
-  paragraph(
-    'Pemrosesan teknis dan keamanan mendukung operasional dan perlindungan situs. Kami akan menetapkan dasar hukumnya sebagai bagian dari peninjauan kebijakan sebelum peluncuran. Pernyataan pada formulir tidak mencakup setiap jenis pemrosesan teknis.',
+    'Browser Anda juga menyimpan pilihan cookie, tema terang atau gelap, dan pengaturan tampilan serupa. Semua itu tetap di perangkat Anda dan tidak dikirim ke kami. Area admin kami memakai cookie login khusus untuk tim kami. Kami tidak memakai cookie iklan.',
   ),
 
-  heading('Siapa yang dapat mengakses informasi'),
-  paragraph(
-    'Anggota tim Sineva yang berwenang menangani pesan yang kami terima. Akses mengikuti tanggung jawab yang diperlukan untuk menjalankan situs dan menanggapi permintaan.',
-  ),
-  paragraph('Kami memakai penyedia layanan untuk operasional situs tertentu:'),
+  heading('Untuk apa kami memakai informasi Anda'),
   bulletList(
-    'Penyedia hosting kami menjalankan server yang menayangkan situs ini.',
-    'Layanan jaringan dan pengiriman konten membantu menayangkan situs dan melindunginya dari penyalahgunaan.',
-    'WhatsApp dan penyedia email Anda membawa pesan yang Anda pilih untuk dikirim kepada kami.',
-    'Layanan analitik dan pemantauan error, bila diaktifkan, membantu kami memahami dan memperbaiki situs.',
+    'Untuk membalas pesan Anda dan menindaklanjuti permintaan Anda. Dasarnya adalah persetujuan yang Anda berikan di formulir.',
+    'Untuk memberi tahu Anda saat produk kami siap, bila Anda bergabung dengan daftar tunggu. Dasarnya adalah persetujuan Anda.',
+    'Untuk mengukur cara situs ini dipakai, hanya dengan persetujuan Anda atas cookie analitik.',
+    'Untuk menjaga situs dan formulir kami tetap aman dan bebas spam. Dasarnya adalah kepentingan sah kami untuk melindungi situs dan orang yang memakainya.',
   ),
   paragraph(
-    'Kami akan menyebutkan nama penyedia tersebut dalam kebijakan ini setelah dipastikan untuk situs yang berjalan.',
-  ),
-
-  heading('Lokasi pemrosesan'),
-  paragraph(
-    'Penyedia hosting dan layanan kami dapat memproses informasi di luar Indonesia. Sebelum mengaktifkan sebuah layanan, kami meninjau lokasi pemrosesannya, ketentuannya, dan perlindungan yang diperlukan untuk transfer tersebut. Kebijakan final akan menjelaskan pengaturan yang sudah diverifikasi. Nama penyedia saja tidak akan dianggap sebagai bukti perlindungan yang memadai.',
+    'Anda bisa menarik persetujuan kapan saja. Penarikan tidak memengaruhi pemrosesan yang sudah terjadi sebelumnya.',
   ),
 
-  heading('Masa penyimpanan'),
+  heading('Siapa yang menerima informasi Anda'),
   paragraph(
-    'Usulan masa simpan untuk pesan adalah 24 bulan setelah interaksi terakhir kami dengan Anda. Usulan masa simpan untuk permintaan dikabari berlaku sampai 12 bulan setelah produk diluncurkan, atau sampai ada permintaan penghapusan lebih awal. Kami akan menetapkan masa simpan ini sebelum peluncuran.',
+    'Hanya anggota tim Sineva yang berwenang yang bisa melihat pesan dan data daftar tunggu di area admin kami. Kami memakai penyedia layanan berikut:',
   ),
+  bulletList(
+    'Vercel menjalankan hosting situs ini. Servernya berada di Amerika Serikat.',
+    'Neon menyimpan basis data kami, di Singapura.',
+    'Cloudflare menjalankan Turnstile, pemeriksaan spam pada formulir kami.',
+    'Google menjalankan Google Analytics, hanya bila Anda menerima cookie analitik.',
+    'WhatsApp menyampaikan pesan yang Anda pilih untuk dikirim kepada kami di sana.',
+    'Penyedia layanan email mengirim balasan dan pemberitahuan kami melalui email.',
+  ),
+  paragraph('Kami tidak menjual data pribadi Anda.'),
+
+  heading('Transfer ke luar Indonesia'),
   paragraph(
-    'Situs ini tidak menyimpan isian formulir, sehingga isian itu tidak ada di cadangan situs kami. Pesan yang Anda kirim lewat WhatsApp atau email tetap berada di akun tersebut dan mengikuti masa simpan yang sama. Menghapus pesan di satu tempat belum tentu menghapus salinan yang disimpan layanan yang membawanya.',
+    'Sebagian penyedia ini memproses data di luar Indonesia, termasuk di Singapura dan Amerika Serikat. Kami memilih penyedia yang melindungi data pribadi berdasarkan ketentuan dan pengamanan mereka sendiri, dan kami hanya membagikan apa yang dibutuhkan setiap layanan.',
   ),
 
-  heading('Permintaan terkait informasi Anda'),
-  paragraph(
-    'Anda dapat menghubungi kami untuk menanyakan cara kami memproses informasi Anda, atau meminta akses, perbaikan, penarikan persetujuan, atau penghapusan bila berlaku. Anda juga dapat menanyakan hak lain yang tersedia berdasarkan aturan pelindungan data pribadi yang berlaku.',
+  heading('Berapa lama kami menyimpannya'),
+  bulletList(
+    'Pesan formulir kontak: 24 bulan setelah kontak terakhir kami dengan Anda.',
+    'Data daftar tunggu: sampai 12 bulan setelah produk dirilis, atau lebih cepat bila Anda meminta kami menghapusnya.',
+    'Alamat IP acak untuk membatasi pengiriman formulir: 24 jam.',
+    'Cookie Google Analytics: hingga dua tahun, atau sampai Anda menarik persetujuan.',
   ),
   paragraph(
-    'Kirim pesan melalui pilihan kontak di halaman Kontak dan jelaskan permintaan Anda. Kami mungkin memerlukan informasi untuk memastikan identitas Anda dan menemukan pesan yang dimaksud. Berikan hanya yang diperlukan, dan jangan mengirim password atau dokumen identitas kecuali kita sudah menyepakati cara yang sesuai.',
-  ),
-  paragraph(
-    'Anggota tim akan meninjau permintaan dan menjelaskan langkah berikutnya, termasuk batasan yang berlaku karena masa simpan atau kewajiban hukum lain. Kami akan menetapkan proses tanggapan dan tenggat waktunya sebelum peluncuran.',
+    'Saat masa simpan berakhir, kami menghapus data itu atau membuatnya anonim. Salinan pesan yang Anda kirim lewat WhatsApp atau email tetap berada di layanan tersebut sesuai ketentuan mereka.',
   ),
 
-  heading('Pembaruan dan kontak'),
+  heading('Hak Anda'),
   paragraph(
-    'Kami dapat memperbarui kebijakan ini saat situs, penyedia, atau praktik kami berubah. Versi yang terbit menunjukkan tanggal berlakunya. Perubahan yang memerlukan pemberitahuan atau persetujuan lebih lanjut akan mengikuti proses yang sudah ditinjau.',
+    'Berdasarkan Undang-Undang Pelindungan Data Pribadi, Anda bisa meminta untuk melihat data pribadi Anda yang kami simpan, memperbaikinya, menghapusnya, menarik persetujuan, atau menolak cara kami memakainya. Kirim permintaan Anda ke sinevatech@gmail.com. Kami mungkin meminta informasi untuk memastikan bahwa itu memang Anda, dan kami akan membalas dalam jangka waktu yang diwajibkan hukum.',
   ),
+
+  heading('Perubahan kebijakan ini'),
   paragraph(
-    'Untuk pertanyaan atau permintaan terkait privasi, gunakan pilihan kontak di halaman Kontak.',
+    'Kami memperbarui kebijakan ini saat situs, penyedia layanan, atau cara kerja kami berubah. Tanggal di bagian atas menunjukkan kapan versi ini mulai berlaku.',
   ),
 )

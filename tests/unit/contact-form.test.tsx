@@ -25,7 +25,7 @@ vi.mock('@/i18n/navigation', async () => ({
 vi.mock('next/navigation', () => ({ useSearchParams: () => mocks.search.current }))
 
 const consentLabel = {
-  before: 'I understand this opens WhatsApp. Read the ',
+  before: 'I agree that Sineva stores these details to reply to me, as explained in the ',
   linkLabel: 'privacy policy',
   after: '.',
 }

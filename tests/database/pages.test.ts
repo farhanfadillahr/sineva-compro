@@ -83,3 +83,24 @@ it('returns an optional section switched off as hidden', async () => {
   })
   expect((await reads.pageReads.getPage('home', 'en'))?.fromBlog.visible).toBe(false)
 })
+
+it('brings pages nobody saved up to the launch copy, and leaves saved pages alone (CPR-17)', async () => {
+  const { and } = await import('drizzle-orm')
+  const { launchPage } = await import('../../src/features/pages/launch')
+  const row = (key: string, locale = 'en') =>
+    and(eq(pageContent.pageKey, key), eq(pageContent.locale, locale))
+  // A database seeded before the privacy revision: old text, never saved by a person.
+  const stale = { ...launchPage('privacy', 'id')!, effectiveDate: '2026-10-16' }
+  await ctx.connection.db.update(pageContent).set({ data: stale }).where(row('privacy', 'id'))
+  // notFound and home (en) were saved by an Editor and an Admin in the tests above.
+  const [edited] = await ctx.connection.db.select().from(pageContent).where(row('notFound'))
+  expect(edited.updatedBy).not.toBeNull()
+
+  await runSeeds(ctx.connection.db, ctx.env.databaseUrl, ['--module=pages'], 'test')
+
+  const [privacy] = await ctx.connection.db.select().from(pageContent).where(row('privacy', 'id'))
+  expect(privacy.data).toEqual(launchPage('privacy', 'id'))
+  const [notFound] = await ctx.connection.db.select().from(pageContent).where(row('notFound'))
+  expect(notFound.data).toEqual(edited.data)
+  expect((await reads.pageReads.getPage('home', 'en'))?.fromBlog.visible).toBe(false)
+})

@@ -11,6 +11,7 @@ const actions: Record<string, string> = {
   activate: 'Aktifkan',
   deactivate: 'Nonaktifkan',
   password_change: 'Ganti kata sandi',
+  expire: 'Dihapus otomatis (masa simpan)',
 }
 const entities: Record<string, string> = {
   users: 'Pengguna',
@@ -133,6 +134,8 @@ export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAu
                       >
                         {entry.actorName ?? 'Tanpa nama'}
                       </Link>
+                    ) : entry.action === 'expire' ? (
+                      <span className="user-name">Sistem</span>
                     ) : (
                       <span className="user-name">Akun telah dihapus</span>
                     )}

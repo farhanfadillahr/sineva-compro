@@ -41,7 +41,7 @@ export default async function LeadsPage({
     <main className={s.stack}>
       <PageHeader
         title="Lead"
-        description="Pesan dari formulir kontak. Hanya Admin yang dapat melihat data ini."
+        description="Pesan dari formulir kontak. Hanya Admin yang dapat melihat data ini. Lead dihapus otomatis 24 bulan setelah kontak terakhir, sesuai kebijakan privasi."
         actions={
           // Same filters as the list. The file holds personal data: delete it after use.
           <a

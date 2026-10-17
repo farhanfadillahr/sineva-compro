@@ -35,10 +35,11 @@ Pelaksanaan Native, satu agen. Sumber: QA manual seluruh halaman admin di Chrome
 **Masalah.** `contact-form.tsx` dan `waitlist-form.tsx` hanya membuka WhatsApp atau mailto. `submitContact` dan `joinWaitlist` sudah ada tetapi tidak pernah dipanggil, jadi Lead, Waitlist, grafik Dasbor, notifikasi email dan anti-spam tidak pernah menerima data (database 0 lead dan 0 waitlist).
 
 **Perbaikan (keputusan Farhan: simpan dulu, lalu WhatsApp).**
-- Form kontak menambah kolom yang diwajibkan skema server: email kerja dan nomor WhatsApp. Form waitlist menambah email; jenis bisnis dipetakan ke `segment`.
-- Saat submit: validasi klien memakai skema bersama. Tab WhatsApp dibuka sinkron di dalam handler (agar tidak diblokir sebagai popup), server action dipanggil paralel. Setelah action selesai, kunjungan ke halaman terima kasih. Bila action ditolak (rate limit, anti-spam, validasi server), tampilkan pesan dan pertahankan isian; WhatsApp yang sudah terbuka tetap menjadi jalur cadangan.
-- Copy EN dan ID baru mengikuti `docs/design/copywriting.md` (tanpa em dash/en dash). Tautan kebijakan privasi di dekat persetujuan.
-- Tes: unit untuk pemetaan field dan alur submit (action dipanggil, WhatsApp dibuka, error ditampilkan). Verifikasi manual di Chrome: lead dan waitlist muncul di admin. Pengiriman email tetap `mock` di lokal.
+- Form kontak menambah email kerja dan nomor WhatsApp (label, helper dan error dari microcopy copywriting.md, EN dan ID). Validasi klien memakai `validateContactSubmission`, aturan yang sama dengan server. Form waitlist menambah email; jenis bisnis di halaman Produk adalah industri, bukan segmen waitlist, jadi `segment` dikirim kosong (opsional) dan jenis bisnis tetap ikut di pesan WhatsApp. Pemetaan keduanya masih keputusan terbuka (lihat gotcha CPR-79).
+- Anti-spam CPR-49 mewajibkan token: komponen `TurnstileWidget` (render eksplisit, reset setelah gagal, test key di luar production, CSP sudah mengizinkan) dan `Honeypot` dipakai kedua form. Production butuh `NEXT_PUBLIC_TURNSTILE_SITE_KEY` dan `TURNSTILE_SECRET_KEY` (Cloudflare Turnstile, berjalan di Vercel tanpa DNS Cloudflare).
+- Server action baru `saveContact` (validasi, anti-spam, simpan dan email sama dengan `submitContact`, tanpa redirect): form membuka WhatsApp di dalam gesture submit, menyimpan lead, lalu ke halaman terima kasih. Bila tab diblokir, form tetap di halaman untuk panel cadangan dan lead tetap tersimpan, sekali saja.
+- Server action dioper sebagai prop dari halaman server (`saveLead`, `join`), sehingga modul klien tidak pernah mengimpor kode server.
+- Teks helper waitlist "Nothing is saved on this website" diganti karena tidak lagi benar. Teks persetujuan kontak adalah konten halaman (admin) dan perlu disesuaikan oleh pemilik konten.
 
 ## T5 (CPR-106). Perbaikan UX admin
 

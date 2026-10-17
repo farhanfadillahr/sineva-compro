@@ -27,7 +27,9 @@ function withSettings(
 }
 
 function renderProduct(m: ProductModel, props: Partial<ProductViewProps> = {}) {
-  return render(<ProductView model={m} labels={labels} {...props} />)
+  return render(
+    <ProductView joinWaitlist={async () => ({ ok: true })} model={m} labels={labels} {...props} />,
+  )
 }
 
 const sections = () => Array.from(document.querySelectorAll<HTMLElement>('[data-product-section]'))
@@ -189,8 +191,18 @@ describe('Product hero', () => {
     const user = userEvent.setup()
     const open = vi.fn()
     vi.stubGlobal('open', open)
+    // Turnstile passes at once, like Cloudflare's test key (the form needs a token, CPR-105).
+    window.turnstile = {
+      render: (_box: HTMLElement, options: { callback: (token: string) => void }) => {
+        options.callback('test-token')
+        return 'widget'
+      },
+      reset: () => {},
+      remove: () => {},
+    } as unknown as NonNullable<Window['turnstile']>
     renderProduct(base)
     const anchor = document.getElementById('waitlist')!
+    await user.type(within(anchor).getByRole('textbox', { name: /^Email/ }), 'rina@maju.co.id')
     await user.click(within(anchor).getByRole('checkbox'))
     await user.click(within(anchor).getByRole('button', { name: base.page.hero.primaryCtaLabel }))
     const url = open.mock.calls[0]![0] as string

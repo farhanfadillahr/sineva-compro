@@ -177,7 +177,13 @@ describe('scroll reveal on every public page', () => {
 
   it('Product (ai-agents)', async () => {
     const model = (await loadProductModel(FIXTURE, 'en'))!
-    render(<ProductView model={model} labels={productLabelsFromMessages(en)} />)
+    render(
+      <ProductView
+        joinWaitlist={async () => ({ ok: true })}
+        model={model}
+        labels={productLabelsFromMessages(en)}
+      />,
+    )
     // "How it works" is a sticky scroll story: only its heading reveals, the story itself must
     // stay un-transformed so `position: sticky` keeps working.
     expectSectionsRevealed('data-product-section', {

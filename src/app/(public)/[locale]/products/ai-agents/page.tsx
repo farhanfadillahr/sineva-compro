@@ -8,6 +8,7 @@ import { productLabelsFromMessages } from '@/components/pages/product/product-la
 import { buildProductMetadata } from '@/components/pages/product/product-metadata'
 import { PRODUCT_HREFS } from '@/components/pages/product/product-model'
 import { ProductView } from '@/components/pages/product/product-view'
+import { joinWaitlist } from '@/features/waitlist/actions'
 import { getPathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 
@@ -35,6 +36,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       linkComponent={AppLink}
       // The waitlist form is a client component, so it gets a ready, localised href.
       privacyHref={getPathname({ locale, href: PRODUCT_HREFS.privacy })}
+      joinWaitlist={joinWaitlist}
     />
   )
 }

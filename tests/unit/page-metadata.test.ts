@@ -3,6 +3,9 @@ import { describe, expect, it, vi } from 'vitest'
 import en from '../../messages/en.json'
 import { staticContent } from '../../src/content/static'
 
+// Pages pass these server actions to their forms (CPR-105); metadata never calls them.
+vi.mock('@/features/leads/actions', () => ({ saveContact: vi.fn(), submitContact: vi.fn() }))
+vi.mock('@/features/waitlist/actions', () => ({ joinWaitlist: vi.fn() }))
 vi.mock('next-intl/server', () => ({
   getMessages: async () => en,
   getLocale: async () => 'en',

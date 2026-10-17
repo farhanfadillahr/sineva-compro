@@ -123,6 +123,9 @@
     },
     "waitlist": {
       "formLabel": "Kabari saya tentang Sino",
+      "emailLabel": "Email",
+      "emailRequired": "Masukkan email Anda.",
+      "emailInvalid": "Masukkan email seperti nama@perusahaan.com.",
       "nameLabel": "Nama (opsional)",
       "businessTypeLabel": "Jenis bisnis (opsional)",
       "businessTypePlaceholder": "Pilih salah satu",
@@ -130,14 +133,17 @@
       "consentLink": "kebijakan privasi",
       "consentAfter": ".",
       "consentError": "Centang kotak ini supaya kami tahu Anda bersedia dihubungi.",
-      "helper": "Ini membuka WhatsApp dengan pesan yang siap dikirim. Tidak ada data yang disimpan di situs ini.",
+      "helper": "Kami menyimpan email Anda untuk mengabari saat Sino siap. Setelah itu WhatsApp terbuka dengan pesan yang siap dikirim.",
       "emailButton": "Kirim lewat email saja",
       "openedMessage": "WhatsApp seharusnya terbuka di tab baru. Kalau belum, pakai tautan ini.",
       "openedLink": "Buka WhatsApp",
       "messageNotify": "Tolong kabari saya saat Sino sudah siap.",
       "messageName": "Nama",
       "messageBusinessType": "Jenis bisnis",
-      "emailSubject": "Kabari saya saat Sino sudah siap"
+      "emailSubject": "Kabari saya saat Sino sudah siap",
+      "joined": "Anda sudah masuk daftar. Kami akan mengirim email saat Sino siap.",
+      "joinFailed": "Kami belum bisa menambahkan Anda sekarang. Email Anda masih di sini. Coba lagi, atau hubungi kami lewat WhatsApp.",
+      "checkPending": "Sebentar, pemeriksaan keamanan masih berjalan. Setelah itu coba lagi."
     }
   },
   "Whatsapp": {
@@ -199,6 +205,15 @@
       "name": {
         "label": "Nama"
       },
+      "email": {
+        "label": "Email kerja",
+        "helper": "Kami hanya memakainya untuk membalas Anda."
+      },
+      "whatsapp": {
+        "label": "Nomor WhatsApp",
+        "helper": "Sertakan kode negara, misalnya +62 812 3456 7890.",
+        "placeholder": "+62 812 3456 7890"
+      },
       "company": {
         "label": "Perusahaan (opsional)"
       },
@@ -246,6 +261,14 @@
         "tooShort": "Isi minimal 2 karakter.",
         "tooLong": "Gunakan paling banyak 80 karakter."
       },
+      "email": {
+        "required": "Masukkan email kerja Anda.",
+        "invalid": "Masukkan email seperti nama@perusahaan.com."
+      },
+      "whatsapp": {
+        "required": "Masukkan nomor WhatsApp Anda.",
+        "invalid": "Masukkan nomor seperti +62 812 3456 7890."
+      },
       "company": {
         "tooLong": "Gunakan paling banyak 120 karakter."
       },
@@ -271,6 +294,11 @@
     },
     "summary": {
       "title": "Tolong perbaiki isian berikut"
+    },
+    "serverError": {
+      "title": "Pesan Anda belum terkirim",
+      "body": "Jawaban Anda masih di sini. Coba lagi, atau hubungi kami lewat WhatsApp.",
+      "check": "Sebentar, pemeriksaan keamanan masih berjalan. Setelah itu kirim lagi."
     },
     "submit": {
       "label": "Kirim pesan",

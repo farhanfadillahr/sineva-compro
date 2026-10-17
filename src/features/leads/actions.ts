@@ -10,6 +10,22 @@ import { createContactLead, type ContactResult } from './intake.server'
  * thank-you page; on failure returns errors and the submitted values. The redirect is outside the
  * save so a failed save never redirects. There is no public `/api/leads` route.
  */
+export type ContactSaveResult = { ok: true } | Exclude<ContactResult, { ok: true }>
+
+/**
+ * Same intake as `submitContact` (validation, anti-spam, storage, emails) without the redirect
+ * (CPR-105). The contact form opens WhatsApp in the submit gesture and decides where to go
+ * itself: to the thank-you page once the lead is stored, or it stays on the page to offer the
+ * WhatsApp fallback when the browser blocked the new tab. The lead id never reaches the browser.
+ */
+export async function saveContact(
+  input: unknown,
+  meta: { locale?: string; sourcePage?: string } = {},
+): Promise<ContactSaveResult> {
+  const result = await createContactLead(input, { headers: await headers(), ...meta })
+  return result.ok ? { ok: true } : result
+}
+
 export async function submitContact(
   input: unknown,
   meta: { locale?: string; sourcePage?: string } = {},

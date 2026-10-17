@@ -11,7 +11,7 @@ type Entry = {
   id: string
   file: File
   translations: Record<string, { alt: string; caption: string }>
-  state: 'ready' | 'uploading' | 'done' | 'error'
+  state: 'ready' | 'uploading' | 'error'
   progress: number
   error: string
 }
@@ -119,7 +119,9 @@ export function MediaDropzone({
         return
       }
       if (xhr.status >= 200 && xhr.status < 300) {
-        patch(entry.id, { state: 'done', progress: 100 })
+        // A finished file leaves the queue: the library shows it (and a toast), so keeping the
+        // filled-in form here only looked like something was still pending (CPR-114).
+        setEntries((rows) => rows.filter((row) => row.id !== entry.id))
         onUploaded(data)
       } else patch(entry.id, { state: 'error', error: data.error ?? 'Upload gagal. Coba kembali.' })
     }
@@ -192,7 +194,7 @@ export function MediaDropzone({
                     maxLength={200}
                     required
                     value={entry.translations[locale].alt}
-                    disabled={entry.state === 'uploading' || entry.state === 'done'}
+                    disabled={entry.state === 'uploading'}
                     onChange={(event) =>
                       patch(entry.id, {
                         translations: {
@@ -222,8 +224,6 @@ export function MediaDropzone({
                 Batalkan {entry.file.name}
               </AdminButton>
             </>
-          ) : entry.state === 'done' ? (
-            <p role="status">{entry.file.name} berhasil diunggah.</p>
           ) : (
             <AdminButton
               tone="primary"

@@ -66,3 +66,12 @@ describe('security headers', () => {
     )
   })
 })
+
+// Signed draft previews may redirect only to the configured private Blob host.
+it('allows the configured Blob host for draft image/video previews, without allowing every Blob store', () => {
+  const host = 'https://store.private.blob.vercel-storage.com'
+  const policy = buildContentSecurityPolicy({ MEDIA_BLOB_ORIGIN: host })
+  for (const name of ['img-src', 'media-src']) expect(directive(policy, name)).toContain(host)
+  expect(policy).not.toContain('https://*.blob.vercel-storage.com')
+  expect(buildContentSecurityPolicy({ MEDIA_BLOB_ORIGIN: 'not a URL' })).not.toContain('not a URL')
+})

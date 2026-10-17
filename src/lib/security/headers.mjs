@@ -24,6 +24,7 @@ export function buildContentSecurityPolicy(env) {
   const media = origin(env.MEDIA_PUBLIC_ORIGIN)
   // Admin previews of private media are redirects to presigned storage URLs.
   const storage = origin(env.STORAGE_ENDPOINT)
+  const blob = origin(env.MEDIA_BLOB_ORIGIN)
   const umami = origin(env.UMAMI_HOST)
   const sentry = origin(env.SENTRY_INGEST_ORIGIN)
   const turnstile = 'https://challenges.cloudflare.com'
@@ -32,8 +33,8 @@ export function buildContentSecurityPolicy(env) {
     'default-src': "'self'",
     'script-src': list("'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", turnstile, umami),
     'style-src': "'self' 'unsafe-inline'",
-    'img-src': list("'self'", 'data:', 'blob:', media, storage),
-    'media-src': list("'self'", 'blob:', media),
+    'img-src': list("'self'", 'data:', 'blob:', media, storage, blob),
+    'media-src': list("'self'", 'blob:', media, storage, blob),
     'font-src': "'self'",
     'connect-src': list("'self'", media, umami, sentry, turnstile),
     'worker-src': "'self' blob:",

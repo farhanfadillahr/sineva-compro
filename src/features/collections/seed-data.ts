@@ -142,7 +142,15 @@ export const collectionSeedData: Record<
   },
   categories: {
     launch: () =>
-      staticContent.categories.map((c) => ({ key: c.slug, global: {}, local: { name: c.name } })),
+      staticContent.categories.map((c) => {
+        const id = staticContentId.categories.find((other) => other.slug === c.slug)
+        return {
+          key: c.slug,
+          global: {},
+          local: { name: c.name },
+          translations: id ? { id: { name: id.name } } : {},
+        }
+      }),
     demo: [{ key: 'demo-category', global: {}, local: { name: '[Demo] Category' } }],
   },
 }

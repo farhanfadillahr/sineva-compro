@@ -16,8 +16,22 @@ describe('launch SEO', () => {
     ])
   })
 
-  it('leaves an empty blog out of the sitemap (the Indonesian blog before its first article)', async () => {
-    expect(await blogSitemapSource({ content: staticContentSource, locale: 'id' })).toEqual([])
+  it('includes the Indonesian blog and its articles', async () => {
+    const entries = await blogSitemapSource({ content: staticContentSource, locale: 'id' })
+    expect(entries).toHaveLength(5)
+  })
+
+  it('leaves an empty blog out of the sitemap (a locale before its first article)', async () => {
+    const empty = {
+      ...staticContentSource,
+      listPosts: async ({ page, pageSize }: { page: number; pageSize: number }) => ({
+        posts: [],
+        total: 0,
+        page,
+        pageSize,
+      }),
+    }
+    expect(await blogSitemapSource({ content: empty, locale: 'id' })).toEqual([])
   })
 
   it('connects the site to the organization using only confirmed identity', () => {

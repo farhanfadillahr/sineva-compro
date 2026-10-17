@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import en from '../../messages/en.json'
-import { staticContent } from '../../src/content/static'
+import { staticContent, staticContentId } from '../../src/content/static'
 
 vi.mock('next-intl/server', () => ({
   getMessages: async () => en,
@@ -40,9 +40,12 @@ const NOT_FOUND = 'NEXT_HTTP_ERROR_FALLBACK;404'
 
 describe('/blog/[slug] static params', () => {
   it('prerenders one page per article of the content source', async () => {
-    const slugs = staticContent.postDetails.map((post) => post.slug)
-    expect(slugs).toHaveLength(4)
-    expect(await generateStaticParams()).toEqual(slugs.map((slug) => ({ locale: 'en', slug })))
+    const params = [
+      ...staticContent.postDetails.map(({ slug }) => ({ locale: 'en', slug })),
+      ...staticContentId.postDetails.map(({ slug }) => ({ locale: 'id', slug })),
+    ]
+    expect(params).toHaveLength(8)
+    expect(await generateStaticParams()).toEqual(params)
   })
 })
 

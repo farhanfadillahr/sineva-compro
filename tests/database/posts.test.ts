@@ -57,6 +57,58 @@ it('serves the launch articles exactly like the static source', async () => {
   await expect(reads.postReads.listPosts({ ...input, page: 0 })).rejects.toThrow(RangeError)
 })
 
+it('serves the Indonesian launch articles as translations of the English ones (CPR-107)', async () => {
+  const { createStaticContentSource } = await import('../../src/content/static')
+  const { EN_SLUG_BY_ID_SLUG } = await import('../../src/content/static/id/posts')
+  const source = createStaticContentSource()
+  const input = { locale: 'id' as const, page: 1, pageSize: 10 }
+  const listed = await reads.postReads.listPosts(input)
+  expect(listed.total).toBe(4)
+  expect(listed).toEqual(await source.listPosts(input))
+  expect(await reads.postReads.listCategories('id')).toEqual(await source.listCategories('id'))
+  for (const { slug } of listed.posts)
+    expect(await reads.postReads.getPost(slug, 'id')).toEqual(
+      topicSeo((await source.getPost(slug, 'id'))!),
+    )
+
+  // Each Indonesian row hangs off the item of the English article it translates.
+  const rows = await ctx.connection.db
+    .select({
+      itemId: postTranslation.itemId,
+      locale: postTranslation.locale,
+      slug: postTranslation.draftSlug,
+    })
+    .from(postTranslation)
+  for (const [idSlug, enSlug] of Object.entries(EN_SLUG_BY_ID_SLUG)) {
+    const id = rows.find((r) => r.locale === 'id' && r.slug === idSlug)
+    const en = rows.find((r) => r.locale === 'en' && r.slug === enSlug)
+    expect(id?.itemId, idSlug).toBe(en?.itemId)
+  }
+})
+
+it('never overwrites an Indonesian translation an editor changed', async () => {
+  const slug = 'mulai-dari-mana-dengan-ai-di-usaha-kecil'
+  const [row] = await ctx.connection.db
+    .select()
+    .from(postTranslation)
+    .where(eq(postTranslation.draftSlug, slug))
+  const edited = { ...(row.draft as Record<string, unknown>), title: 'Judul dari editor' }
+  await ctx.connection.db
+    .update(postTranslation)
+    .set({ draft: edited })
+    .where(eq(postTranslation.draftSlug, slug))
+  await runSeeds(ctx.connection.db, ctx.env.databaseUrl, ['--module=posts'], 'test')
+  const [after] = await ctx.connection.db
+    .select({ draft: postTranslation.draft })
+    .from(postTranslation)
+    .where(eq(postTranslation.draftSlug, slug))
+  expect((after.draft as { title: string }).title).toBe('Judul dari editor')
+  await ctx.connection.db
+    .update(postTranslation)
+    .set({ draft: row.draft })
+    .where(eq(postTranslation.draftSlug, slug))
+})
+
 it('keeps drafts out of the site until published, and unpublishes', async () => {
   const before = await reads.postReads.listPosts({ locale: 'en', page: 1, pageSize: 10 })
   const draft = {
@@ -121,6 +173,8 @@ it('keeps drafts out of the site until published, and unpublishes', async () => 
 })
 
 it('does not show an article in a locale where it is not published', async () => {
+  // Start from English only: the seed added published Indonesian translations (CPR-107).
+  await ctx.connection.db.delete(postTranslation).where(eq(postTranslation.locale, 'id'))
   const [row] = await ctx.connection.db.select().from(postTranslation).limit(1)
   await ctx.connection.db.insert(postTranslation).values({
     itemId: row.itemId,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { staticContent, staticContentId } from '../../src/content/static'
+import { EN_SLUG_BY_ID_SLUG } from '../../src/content/static/id/posts'
 import { collectionSeedData } from '../../src/features/collections/seed-data'
 import { FIELD_LIMITS } from '../../src/features/content/limits'
 import { PAGE_KEYS } from '../../src/features/content/types'
@@ -12,7 +13,7 @@ import { walkObjectsWithKey } from '../fixtures/public/walk'
 // hold in any language, plus that the Indonesian bundle never drifts from the English structure.
 const leaves = collectStringLeaves(staticContentId)
 const NON_COPY =
-  /\.(url|type|from|tint|pose|icon|key|slug|locale|target|kind|gradient|effectiveDate)$/
+  /\.(url|type|from|tint|pose|icon|key|slug|locale|target|kind|gradient|effectiveDate|publishedAt)$/
 const copyLeaves = leaves.filter(({ path }) => !NON_COPY.test(path))
 
 /** Paths of every leaf, with array indexes kept: same paths means same shape and list lengths. */
@@ -68,8 +69,8 @@ describe('Indonesian static content: metadata', () => {
     metaDescription: string
   }[]
 
-  it('covers every page and service (no Indonesian posts yet)', () => {
-    expect(seoBlocks.length).toBe(PAGE_KEYS.length + 3)
+  it('covers every page, service and article', () => {
+    expect(seoBlocks.length).toBe(PAGE_KEYS.length + 3 + 4)
   })
 
   it('keeps titles within 60 and descriptions within 160 characters, as "... | Sineva"', () => {
@@ -135,8 +136,28 @@ describe('Indonesian static content: same structure as English', () => {
     expect(id.whatsapp.templates.general).not.toBe(en.whatsapp.templates.general)
   })
 
+  it('translates every article with the same cover, category, date and section count', () => {
+    expect(staticContentId.postDetails.map((p) => p.locale)).toEqual(['id', 'id', 'id', 'id'])
+    expect(staticContentId.categories.map((c) => c.slug)).toEqual(
+      staticContent.categories.map((c) => c.slug),
+    )
+    staticContentId.postDetails.forEach((id, i) => {
+      const en = staticContent.postDetails[i]
+      expect(EN_SLUG_BY_ID_SLUG[id.slug]).toBe(en.slug)
+      expect(id.slug).not.toBe(en.slug)
+      expect([id.cover, id.category?.slug, id.publishedAt]).toEqual([
+        en.cover,
+        en.category?.slug,
+        en.publishedAt,
+      ])
+      // Same headings, paragraphs and list items in the same order: nothing dropped or added.
+      expect(shape(id.body)).toEqual(shape(en.body))
+    })
+    expect(Object.keys(EN_SLUG_BY_ID_SLUG)).toHaveLength(staticContent.postDetails.length)
+  })
+
   it('seeds the Indonesian copy of every launch collection row', () => {
-    for (const name of ['capabilities', 'businessTypes', 'faq'] as const)
+    for (const name of ['capabilities', 'businessTypes', 'faq', 'categories'] as const)
       for (const row of collectionSeedData[name].launch())
         expect(row.translations?.id, `${name} ${row.key}`).toBeDefined()
   })

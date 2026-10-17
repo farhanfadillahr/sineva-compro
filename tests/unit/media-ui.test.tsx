@@ -104,3 +104,37 @@ it('announces a successful metadata save inside the active drawer', async () => 
   )
   vi.unstubAllGlobals()
 })
+
+// CPR-114: a finished upload used to stay in the queue with its filled-in form.
+it('removes a file from the queue once it is uploaded and reports the new item', async () => {
+  const user = userEvent.setup()
+  const sent: FormData[] = []
+  class FakeXhr {
+    status = 201
+    responseText = JSON.stringify(item)
+    upload = { onprogress: null as unknown }
+    onload: (() => void) | null = null
+    onerror: (() => void) | null = null
+    onabort: (() => void) | null = null
+    open() {}
+    abort() {}
+    send(body: FormData) {
+      sent.push(body)
+      queueMicrotask(() => this.onload?.())
+    }
+  }
+  vi.stubGlobal('XMLHttpRequest', FakeXhr)
+  const onUploaded = vi.fn()
+  render(<MediaDropzone onUploaded={onUploaded} />)
+  await user.upload(
+    screen.getByLabelText('Pilih file media'),
+    new File(['x'], 'queue.png', { type: 'image/png' }),
+  )
+  await user.type(screen.getByLabelText('Alt (en) untuk queue.png'), 'Queue test')
+  await user.type(screen.getByLabelText('Alt (id) untuk queue.png'), 'Uji antrean')
+  await user.click(screen.getByRole('button', { name: 'Unggah queue.png' }))
+  await waitFor(() => expect(onUploaded).toHaveBeenCalledWith(item))
+  expect(sent).toHaveLength(1)
+  expect(screen.queryByText('queue.png')).toBeNull()
+  vi.unstubAllGlobals()
+})

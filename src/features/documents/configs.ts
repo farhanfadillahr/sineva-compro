@@ -22,7 +22,25 @@ export type DocumentConfig = Readonly<{
   audit: Extract<AuditEntity, 'posts' | 'portfolio'>
   mediaEntity: Extract<MediaOwner['entity'], 'posts' | 'portfolio'>
   schema: ObjectField
+  /**
+   * Drops values the chosen options make irrelevant, before the data is stored or its media
+   * references are counted. Runs on parsed data only.
+   */
+  normalize?: (data: Record<string, unknown>) => Record<string, unknown>
 }>
+
+/**
+ * A post cover keeps every field so switching back restores it in the form, but the image only
+ * counts while "Gambar dari pustaka media" is chosen. Otherwise a cover switched to the kit (or
+ * none) kept its image in `media_usage`, and that image could never be deleted (CPR-113).
+ */
+export function dropUnusedCoverMedia(data: Record<string, unknown>): Record<string, unknown> {
+  const cover = data.cover
+  if (typeof cover !== 'object' || cover === null) return data
+  const { kind, media } = cover as { kind?: unknown; media?: unknown }
+  if (kind === 'media' || media === null || media === undefined) return data
+  return { ...data, cover: { ...cover, media: null } }
+}
 
 export type DocumentItem = {
   id: string
@@ -62,6 +80,7 @@ export const postsConfig: DocumentConfig = {
   description: 'Draf tersimpan terpisah dari versi terbit. Situs hanya menampilkan versi terbit.',
   audit: 'posts',
   mediaEntity: 'posts',
+  normalize: dropUnusedCoverMedia,
   schema: f.object({
     title: f.required('Judul', 120),
     excerpt: f.required('Ringkasan', 300, { multiline: true }),

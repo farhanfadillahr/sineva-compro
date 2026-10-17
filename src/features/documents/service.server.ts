@@ -102,10 +102,11 @@ function parseDraft(name: DocumentName, input: unknown, isAdmin: boolean, previo
   if (!content.ok) Object.assign(errors, prefixed(content.errors, 'data.'))
   if (Object.keys(errors).length)
     throw new CmsError('INVALID', 'Periksa kembali isian yang ditandai.', errors)
+  const normalize = documentConfigs[name].normalize ?? ((value) => value)
   return {
     locale: data.locale,
     slug: slug.ok ? slug.value : '',
-    data: content.ok ? content.value : {},
+    data: content.ok ? normalize(content.value) : {},
   }
 }
 
@@ -248,6 +249,8 @@ export async function publishDocument(
       'Draf belum lengkap untuk diterbitkan.',
       prefixed(full.errors, 'data.'),
     )
+  // Drafts saved before CPR-113 can still carry an unused cover image: normalize here too.
+  const normalize = config.normalize ?? ((value) => value)
   const oldSlug = preview.publishedSlug
   await guarded(() =>
     cmsMutation({
@@ -258,7 +261,10 @@ export async function publishDocument(
           id: `${name}:${id}:${locale}`,
           label: config.itemLabel,
         },
-        refs: collectMedia(config.schema, full.value).map((ref) => ({ ...ref, published: true })),
+        refs: collectMedia(config.schema, normalize(full.value)).map((ref) => ({
+          ...ref,
+          published: true,
+        })),
       },
       run: async (tx, actor) => {
         await tx.execute(
@@ -274,17 +280,18 @@ export async function publishDocument(
             'Draf belum lengkap untuk diterbitkan.',
             prefixed(parsed.errors, 'data.'),
           )
-        await documentRegistry[name].validateRefs?.(tx, parsed.value, locale, false)
+        const snapshot = normalize(parsed.value)
+        await documentRegistry[name].validateRefs?.(tx, snapshot, locale, false)
         await assertSlugFree(tx, name, id, locale, local.draftSlug)
         const changed =
           local.published && local.publishedSlug === local.draftSlug
-            ? changedKeys(local.published, parsed.value)
-            : ['slug', ...Object.keys(parsed.value)]
+            ? changedKeys(local.published, snapshot)
+            : ['slug', ...Object.keys(snapshot)]
         const now = new Date()
         await tx
           .update(translations)
           .set({
-            published: parsed.value,
+            published: snapshot,
             publishedSlug: local.draftSlug,
             firstPublishedAt: local.firstPublishedAt ? new Date(local.firstPublishedAt) : now,
             // Republishing an identical snapshot is not an edit.

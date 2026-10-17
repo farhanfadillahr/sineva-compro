@@ -19,6 +19,10 @@ export type ProductLabels = Readonly<{
   phone: Readonly<{ name: string; status: string; day: string }>
   waitlist: Readonly<{
     formLabel: string
+    /** The email that joins the waitlist (CPR-105), and its two errors. */
+    emailLabel: string
+    emailRequired: string
+    emailInvalid: string
     nameLabel: string
     businessTypeLabel: string
     businessTypePlaceholder: string
@@ -37,12 +41,19 @@ export type ProductLabels = Readonly<{
     messageName: string
     messageBusinessType: string
     emailSubject: string
+    /** Status after the server answered: joined, refused, or the security check still running. */
+    joined: string
+    joinFailed: string
+    checkPending: string
   }>
 }>
 
 const TOP_KEYS = ['comingSoon', 'stickyBarLabel', 'tabsLabel'] as const
 const WAITLIST_KEYS = [
   'formLabel',
+  'emailLabel',
+  'emailRequired',
+  'emailInvalid',
   'nameLabel',
   'businessTypeLabel',
   'businessTypePlaceholder',
@@ -58,6 +69,9 @@ const WAITLIST_KEYS = [
   'messageName',
   'messageBusinessType',
   'emailSubject',
+  'joined',
+  'joinFailed',
+  'checkPending',
 ] as const
 
 function record(value: unknown, path: string): Record<string, unknown> {

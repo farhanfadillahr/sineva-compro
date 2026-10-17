@@ -123,6 +123,9 @@
     },
     "waitlist": {
       "formLabel": "Get notified about Sino",
+      "emailLabel": "Email",
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Enter an email like name@company.com.",
       "nameLabel": "Name (optional)",
       "businessTypeLabel": "Business type (optional)",
       "businessTypePlaceholder": "Choose one",
@@ -130,14 +133,17 @@
       "consentLink": "privacy policy",
       "consentAfter": ".",
       "consentError": "Tick the box so we know you are happy to be contacted.",
-      "helper": "This opens WhatsApp with your message ready to send. Nothing is saved on this website.",
+      "helper": "We save your email to tell you when Sino is ready. WhatsApp then opens with your message ready to send.",
       "emailButton": "Send by email instead",
       "openedMessage": "WhatsApp should open in a new tab. If it did not, use this link.",
       "openedLink": "Open WhatsApp",
       "messageNotify": "Please let me know when Sino is ready.",
       "messageName": "Name",
       "messageBusinessType": "Business type",
-      "emailSubject": "Notify me when Sino is ready"
+      "emailSubject": "Notify me when Sino is ready",
+      "joined": "You're on the list. We'll email you when Sino is ready.",
+      "joinFailed": "We couldn't add you right now. Your email is still here. Try again, or chat with us on WhatsApp.",
+      "checkPending": "One moment, the security check is still running. Then try again."
     }
   },
   "Whatsapp": {
@@ -199,6 +205,15 @@
       "name": {
         "label": "Name"
       },
+      "email": {
+        "label": "Work email",
+        "helper": "We only use this to reply to you."
+      },
+      "whatsapp": {
+        "label": "WhatsApp number",
+        "helper": "Include the country code, like +62 812 3456 7890.",
+        "placeholder": "+62 812 3456 7890"
+      },
       "company": {
         "label": "Company (optional)"
       },
@@ -246,6 +261,14 @@
         "tooShort": "Enter at least 2 characters.",
         "tooLong": "Use 80 characters or fewer."
       },
+      "email": {
+        "required": "Enter your work email.",
+        "invalid": "Enter an email like name@company.com."
+      },
+      "whatsapp": {
+        "required": "Enter your WhatsApp number.",
+        "invalid": "Enter a number like +62 812 3456 7890."
+      },
       "company": {
         "tooLong": "Use 120 characters or fewer."
       },
@@ -271,6 +294,11 @@
     },
     "summary": {
       "title": "Please fix these fields"
+    },
+    "serverError": {
+      "title": "We couldn't send your message",
+      "body": "Your answers are still here. Try again, or chat with us on WhatsApp.",
+      "check": "One moment, the security check is still running. Then send again."
     },
     "submit": {
       "label": "Send message",

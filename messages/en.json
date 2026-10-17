@@ -97,7 +97,8 @@
       "work": "Work",
       "blog": "Blog",
       "contact": "Contact",
-      "privacyPolicy": "Privacy policy"
+      "privacyPolicy": "Privacy policy",
+      "cookieSettings": "Cookie settings"
     },
     "registration": "Registration number {number}",
     "copyright": "© 2026 Sineva",
@@ -331,5 +332,12 @@
     "thankYou": {
       "moreLabel": "While you wait"
     }
+  },
+  "Consent": {
+    "title": "Cookies for analytics",
+    "body": "We would like to use Google Analytics cookies to see how visitors use this website. They stay off unless you accept, and you can change your choice at any time from the footer.",
+    "accept": "Accept analytics",
+    "decline": "Decline",
+    "privacyLink": "Read the privacy policy."
   }
 }

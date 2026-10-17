@@ -97,7 +97,8 @@
       "work": "Karya",
       "blog": "Blog",
       "contact": "Kontak",
-      "privacyPolicy": "Kebijakan privasi"
+      "privacyPolicy": "Kebijakan privasi",
+      "cookieSettings": "Pengaturan cookie"
     },
     "registration": "Nomor registrasi {number}",
     "copyright": "© 2026 Sineva",
@@ -331,5 +332,12 @@
     "thankYou": {
       "moreLabel": "Sambil menunggu"
     }
+  },
+  "Consent": {
+    "title": "Cookie untuk analitik",
+    "body": "Kami ingin memakai cookie Google Analytics untuk melihat cara pengunjung memakai situs ini. Cookie ini tetap mati kecuali Anda setuju, dan pilihan bisa diubah kapan saja dari footer.",
+    "accept": "Terima analitik",
+    "decline": "Tolak",
+    "privacyLink": "Baca kebijakan privasi."
   }
 }

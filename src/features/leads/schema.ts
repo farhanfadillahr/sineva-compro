@@ -1,8 +1,16 @@
 import { sql } from 'drizzle-orm'
-import { boolean, check, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, check, index, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { user } from '../auth/schema'
 
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'won', 'lost'] as const
+
+/** Outcome of one lead email (CPR-112). `detail` is the provider's answer, never a secret. */
+export type LeadEmailResult = {
+  status: 'sent' | 'failed' | 'mock' | 'skipped'
+  at: string
+  detail: string
+}
+export type LeadEmailStatus = { notification: LeadEmailResult; autoReply: LeadEmailResult }
 
 /**
  * Leads from the contact form (CPR-78; managed in the admin by CPR-46). `status` and `notes` are
@@ -27,6 +35,8 @@ export const lead = pgTable(
     status: text('status').default('new').notNull(),
     notes: text('notes').default('').notNull(),
     isDemo: boolean('is_demo').default(false).notNull(),
+    /** Null until the email step has run (and for leads stored before CPR-112). */
+    emailStatus: jsonb('email_status').$type<LeadEmailStatus>(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
     updatedBy: text('updated_by').references(() => user.id, { onDelete: 'set null' }),

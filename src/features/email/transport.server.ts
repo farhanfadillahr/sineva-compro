@@ -118,6 +118,11 @@ export function setEmailTransportForTests(transport: EmailTransport | null) {
   override = transport
 }
 
+/** Whether `sendEmail` would really deliver: false while messages only go to the mock outbox. */
+export function emailIsDelivered(): boolean {
+  return override !== null || emailDeliveryIsLive()
+}
+
 export function sendEmail(config: EmailConfig, email: OutgoingEmail): Promise<SendResult> {
   if (override) return override(config, email)
   if (!emailDeliveryIsLive()) return mock(config, email)

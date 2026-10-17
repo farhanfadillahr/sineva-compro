@@ -6,10 +6,10 @@ import { reportError } from '../../lib/observability/report'
 import { resolveEmailConfig } from '../email/config.server'
 import { renderTemplate } from '../email/service.server'
 import { renderHtml } from '../email/render'
-import { sendEmail } from '../email/transport.server'
+import { emailIsDelivered, sendEmail, type SendResult } from '../email/transport.server'
 import { readStoredSettings, defaultSettings } from '../settings/service.server'
 import { waitlist } from '../waitlist/schema'
-import { lead } from './schema'
+import { lead, type LeadEmailResult, type LeadEmailStatus } from './schema'
 
 async function siteContext() {
   const stored = await readStoredSettings(db, [routing.defaultLocale])
@@ -44,8 +44,10 @@ export async function sendLeadEmails(id: string): Promise<void> {
     }
     const brand = { siteName: site.siteName }
     const notification = await renderTemplate('lead-notification', row.locale, values, brand)
+    const notices: SendResult[] = []
     for (const to of site.routing.inboxEmails) {
       const result = await sendEmail(config, { to, ...notification, replyTo: row.email })
+      notices.push(result)
       if (!result.ok) reportError('Lead notification failed', { area: 'email', reference: id })
     }
     const reply = await renderTemplate('lead-auto-reply', row.locale, values, brand)
@@ -55,9 +57,41 @@ export async function sendLeadEmails(id: string): Promise<void> {
       replyTo: config.from.replyTo,
     })
     if (!result.ok) reportError('Lead auto-reply failed', { area: 'email', reference: id })
+    await recordEmailStatus(id, {
+      notification: notices.length
+        ? combined(notices)
+        : outcome('skipped', 'Inbox lead belum diatur di Pengaturan situs.'),
+      autoReply: fromResult(result),
+    })
   } catch (error) {
     reportError('Lead emails failed', { area: 'email', reference: id }, error)
+    const failed = outcome('failed', 'Pengiriman berhenti karena galat; lihat log server.')
+    await recordEmailStatus(id, { notification: failed, autoReply: failed }).catch(() => {})
   }
+}
+
+// Delivery outcome per lead (CPR-112), shown on the lead page. Details come from the transport,
+// which already strips the secret; they are capped so a long provider error cannot bloat the row.
+const outcome = (status: LeadEmailResult['status'], detail: string): LeadEmailResult => ({
+  status,
+  at: new Date().toISOString(),
+  detail: detail.slice(0, 300),
+})
+const fromResult = (result: SendResult): LeadEmailResult =>
+  !result.ok
+    ? outcome('failed', result.detail)
+    : outcome(emailIsDelivered() ? 'sent' : 'mock', result.detail)
+/** One notification goes to every inbox: it counts as failed when any of them failed. */
+function combined(results: SendResult[]): LeadEmailResult {
+  const failed = results.filter((r) => !r.ok)
+  if (!failed.length) return fromResult(results[0])
+  return outcome(
+    'failed',
+    `${failed.length} dari ${results.length} inbox gagal: ${failed[0].detail}`,
+  )
+}
+async function recordEmailStatus(id: string, status: LeadEmailStatus) {
+  await db.update(lead).set({ emailStatus: status }).where(eq(lead.id, id))
 }
 
 /** Internal notice of a new waitlist signup, when enabled in Site settings (CPR-48). */

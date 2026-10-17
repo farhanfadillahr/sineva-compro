@@ -249,3 +249,14 @@ describe('SiteFooter on mobile', () => {
     expect(screen.getByRole('link', { name: 'AI Build' })).toBeTruthy()
   })
 })
+
+// CPR-106: once the product is live there is no waitlist, so the footer stops inviting people to it.
+describe('SiteFooter product status', () => {
+  it('drops the waitlist link when the product is live, keeping the product link', () => {
+    renderWithIntl(
+      <SiteFooter settings={fixtureSiteSettings} services={navServices} showWaitlist={false} />,
+    )
+    expect(screen.queryByRole('link', { name: 'Join the waitlist' })).toBeNull()
+    expect(screen.getAllByRole('link', { name: 'Sino AI' }).length).toBeGreaterThan(0)
+  })
+})

@@ -52,13 +52,36 @@ export function decideRoute(pathname: string, adminEnabled: boolean): Route {
   return 'localize'
 }
 
-export function proxy(request: NextRequest) {
+/**
+ * Redirects edited in the admin (CPR-85). Only with the database content source, only for
+ * public paths, and loaded lazily so the static deployment never touches a database.
+ */
+async function adminRedirect(request: NextRequest): Promise<NextResponse | null> {
+  if (process.env.CONTENT_SOURCE !== 'database') return null
+  try {
+    const { resolveRedirect } = await import('./features/redirects/service.server')
+    const target = await resolveRedirect(request.nextUrl.pathname)
+    if (!target) return null
+    return NextResponse.redirect(new URL(target.toPath, request.url), target.status)
+  } catch {
+    // A redirect lookup failure must never take the page down.
+    return null
+  }
+}
+
+export async function proxy(request: NextRequest) {
   const route = decideRoute(request.nextUrl.pathname, isAdminEnabled(process.env))
   // A bare 404 on purpose: rendering the app's not-found page would still reveal that the
   // admin shell exists, and the localized not-found page needs the whole public layout.
   if (route === 'not-found') return new NextResponse(null, { status: 404 })
   if (route === 'pass') return NextResponse.next()
-  return localize(request)
+  const redirected = await adminRedirect(request)
+  if (redirected) return redirected
+  const response = localize(request)
+  // Draft Mode (authorised preview) pages must never be indexed, even if a link leaks.
+  if (request.cookies.has('__prerender_bypass'))
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  return response
 }
 
 // Only files that live outside the localized tree and are served straight from public/ (or

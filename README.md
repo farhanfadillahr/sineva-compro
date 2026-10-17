@@ -40,7 +40,19 @@ The public site does not need PostgreSQL to run `dev` or `build`. Public content
 
 ### Optional: admin and database
 
-The admin (`/admin`) needs PostgreSQL, migrations and a bootstrap Admin account. Follow the [admin and database runbook](docs/runbooks/admin-and-database.md). Media storage is covered in the [SeaweedFS runbook](docs/runbooks/seaweedfs.md).
+With Docker running, `make` wraps the steps below (run `make` alone for the full list):
+
+```bash
+make setup   # npm ci, .env, Postgres + SeaweedFS, migrations, seed (English and Indonesian)
+make admin   # first Admin account, asks for name, email and a 12+ character password
+make dev     # http://127.0.0.1:3000 and /admin
+make up      # later sessions: start Postgres and SeaweedFS again; `make down` stops them
+make check   # format, lint, typecheck, unit tests; `make test-db` runs the database tests
+```
+
+If port 5432 is already taken on your machine, set `POSTGRES_PORT` and the port in `DATABASE_URL` in `.env` to a free one (for example 5434) before `make up`.
+
+The admin (`/admin`) needs PostgreSQL, migrations and a bootstrap Admin account. Follow the [admin and database runbook](docs/runbooks/admin-and-database.md). Media storage is covered in the [SeaweedFS runbook](docs/runbooks/seaweedfs.md). Library setup, upload limits and publication integration are in the [media admin guide](docs/runbooks/media.md). Audit events and guarded demo seeds are documented in the [audit runbook](docs/architecture/audit-log-runbook.md); reusable admin components in the [admin UI kit guide](docs/runbooks/admin-ui-kit.md). Farhan ticket branches follow the [development staging workflow](docs/architecture/decisions/2026-10-16-development-staging.md).
 
 ### Quality gate
 

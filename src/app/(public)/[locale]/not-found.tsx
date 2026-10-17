@@ -17,18 +17,19 @@ import { getContentSource } from '@/lib/content-source'
 const load = cache(async () => {
   const [requested, t] = await Promise.all([getLocale(), getTranslations('NotFound')])
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
-  const page = await loadNotFoundPage(getContentSource(), locale, {
-    title: t('title'),
-    body: t('body'),
-    home: t('home'),
-  })
-  return page
+  const source = getContentSource()
+  const [page, settings] = await Promise.all([
+    loadNotFoundPage(source, locale, { title: t('title'), body: t('body'), home: t('home') }),
+    source.getSiteSettings(locale),
+  ])
+  return { page, settings }
 })
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildNotFoundMetadata(await load())
+  const { page, settings } = await load()
+  return buildNotFoundMetadata(page, settings)
 }
 
 export default async function PublicNotFound() {
-  return <NotFoundView page={await load()} linkComponent={AppLink} />
+  return <NotFoundView page={(await load()).page} linkComponent={AppLink} />
 }

@@ -141,7 +141,13 @@ describe('parallax on the hero visuals', () => {
 
   it('phone mockups do not move: a drifting phone slid under the card captions', async () => {
     const model = (await loadProductModel(FIXTURE, 'en'))!
-    render(<ProductView model={model} labels={productLabelsFromMessages(en)} />)
+    render(
+      <ProductView
+        joinWaitlist={async () => ({ ok: true })}
+        model={model}
+        labels={productLabelsFromMessages(en)}
+      />,
+    )
     for (const phone of document.querySelectorAll('[data-slot="phone-frame"]')) {
       expect(phone.closest('[data-parallax]')).toBeNull()
     }

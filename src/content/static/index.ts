@@ -1,1 +1,6 @@
-export { createStaticContentSource, staticContent } from './source'
+export {
+  createStaticContentSource,
+  staticContent,
+  staticContentFor,
+  staticContentId,
+} from './source'

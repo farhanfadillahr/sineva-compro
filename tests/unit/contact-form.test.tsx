@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -14,6 +14,8 @@ import { criticalAxeViolations } from './sections-test-utils'
 const mocks = vi.hoisted(() => ({
   push: vi.fn(),
   search: { current: new URLSearchParams() },
+  save: vi.fn(),
+  turnstileReset: vi.fn(),
 }))
 
 vi.mock('@/i18n/navigation', async () => ({
@@ -32,6 +34,8 @@ const baseProps: ContactFormProps = {
   intro: 'Tell us a little about your business.',
   consentLabel,
   settings: { contact: siteSettings.contact, whatsapp: siteSettings.whatsapp },
+  // The `saveContact` server action, injected by the page (CPR-105).
+  saveLead: (...args) => mocks.save(...args),
 }
 
 function renderForm(props: Partial<ContactFormProps> = {}, Component = ContactForm) {
@@ -49,6 +53,8 @@ type User = ReturnType<typeof userEvent.setup>
 
 async function fillValid(user: User) {
   await user.type(field(/^Name/), 'Rina Wijaya')
+  await user.type(field(/^Work email/), 'rina@maju.co.id')
+  await user.type(field(/^WhatsApp number/), '0812 3456 7890')
   await user.type(field(/^Company/), 'PT Maju')
   await user.selectOptions(field(/^Business type/), 'Startup')
   await user.selectOptions(field(/^What do you need help with/), 'AI Build')
@@ -61,6 +67,18 @@ let open: ReturnType<typeof vi.spyOn>
 
 beforeEach(() => {
   mocks.search.current = new URLSearchParams()
+  mocks.push.mockReset()
+  mocks.save.mockReset().mockResolvedValue({ ok: true })
+  mocks.turnstileReset.mockReset()
+  // Turnstile passes at once, like Cloudflare's test key.
+  window.turnstile = {
+    render: (_box: HTMLElement, options: { callback: (token: string) => void }) => {
+      options.callback('test-token')
+      return 'widget'
+    },
+    reset: mocks.turnstileReset,
+    remove: () => {},
+  } as unknown as NonNullable<Window['turnstile']>
   // A real new window returns a handle; `opener` is what the form must clear.
   open = vi
     .spyOn(window, 'open')
@@ -68,10 +86,12 @@ beforeEach(() => {
 })
 
 describe('form fields', () => {
-  it('has the fields of page-patterns 2.8 for phase 1: no email or phone, the visitor sends it', () => {
+  it('has the fields of page-patterns 2.8, with the work email and WhatsApp number to reply on', () => {
     renderForm()
     for (const label of [
       /^Name/,
+      /^Work email/,
+      /^WhatsApp number/,
       /^Company/,
       /^Business type/,
       /^What do you need help with/,
@@ -81,13 +101,21 @@ describe('form fields', () => {
       expect(field(label)).toBeTruthy()
     }
     expect(screen.getByRole('checkbox')).toBeTruthy()
-    expect(screen.queryByLabelText(/email/i)).toBeNull()
-    expect(screen.queryByLabelText(/whatsapp number|phone/i)).toBeNull()
+    expect(field(/^Work email/).getAttribute('autocomplete')).toBe('email')
+    expect(field(/^WhatsApp number/).getAttribute('autocomplete')).toBe('tel')
+    expect(field(/^WhatsApp number/).getAttribute('inputmode')).toBe('tel')
   })
 
   it('marks the required fields, with aria-required, and the optional ones in the label', () => {
     renderForm()
-    for (const label of [/^Name/, /^Business type/, /^What do you need help with/, /^Message/]) {
+    for (const label of [
+      /^Name/,
+      /^Work email/,
+      /^WhatsApp number/,
+      /^Business type/,
+      /^What do you need help with/,
+      /^Message/,
+    ]) {
       expect(field(label).getAttribute('aria-required')).toBe('true')
     }
     expect(screen.getByText('Company (optional)')).toBeTruthy()
@@ -194,6 +222,8 @@ describe('validation on submit', () => {
     const links = within(summary).getAllByRole('link')
     expect(links.map((l) => l.textContent)).toEqual([
       'Enter your name.',
+      'Enter your work email.',
+      'Enter your WhatsApp number.',
       'Choose your business type.',
       'Choose what you need help with.',
       'Write a few words about what you need.',
@@ -259,7 +289,7 @@ describe('validation on submit', () => {
     expect(field(/^Name/).getAttribute('aria-invalid')).toBeNull()
     const summary = screen.getByRole('region', { name: 'Please fix these fields' })
     expect(within(summary).queryByRole('link', { name: 'Enter your name.' })).toBeNull()
-    expect(within(summary).getAllByRole('link')).toHaveLength(4)
+    expect(within(summary).getAllByRole('link')).toHaveLength(6)
   })
 
   it('removes the summary once every error is fixed', async () => {
@@ -312,7 +342,7 @@ describe('valid submit', () => {
     expect(text).toContain('Interested in: AI Build')
     expect(text).toContain('Budget: IDR 10M to 50M')
     expect(text).toContain('Message: We want an assistant that answers customer chats.')
-    expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you')
+    await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you'))
   })
 
   it('cuts the link to the opener, so the new tab cannot reach this page', async () => {
@@ -341,24 +371,76 @@ describe('valid submit', () => {
     expect((busy as HTMLButtonElement).disabled).toBe(true)
   })
 
-  it('sends nothing to a server: no fetch, no form action, no stored answers', async () => {
-    const fetchSpy = vi.fn()
-    vi.stubGlobal('fetch', fetchSpy)
-    const setItem = vi.spyOn(Storage.prototype, 'setItem')
+  it('stores the lead with the token and honeypot, then goes to the thank-you page', async () => {
     const user = userEvent.setup()
     const { container } = renderForm()
     await fillValid(user)
     await user.click(submit())
-    expect(fetchSpy).not.toHaveBeenCalled()
-    expect(setItem).toHaveBeenCalledExactlyOnceWith(
-      'sineva:contact-handoff',
-      expect.stringMatching(/^\d+$/),
-    )
+    await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you'))
+    expect(mocks.save).toHaveBeenCalledTimes(1)
+    const [input, meta] = mocks.save.mock.calls[0]
+    expect(input).toMatchObject({
+      name: 'Rina Wijaya',
+      email: 'rina@maju.co.id',
+      whatsapp: '0812 3456 7890',
+      company: 'PT Maju',
+      segment: 'Startup',
+      interest: 'AI Build',
+      consent: true,
+      website: '',
+      turnstileToken: 'test-token',
+    })
+    expect(meta).toEqual({ locale: 'en', sourcePage: '/contact' })
+    // Still never a native post: no action or method on the form.
     const form = container.querySelector('form')!
     expect(form.hasAttribute('action')).toBe(false)
     expect(form.hasAttribute('method')).toBe(false)
-    expect(document.cookie).toBe('')
-    vi.unstubAllGlobals()
+  })
+
+  it('keeps the answers, explains calmly and asks for a new token when the server refuses', async () => {
+    mocks.save.mockResolvedValue({ ok: false, errors: {}, formError: 'x', values: {} })
+    const user = userEvent.setup()
+    renderForm()
+    await fillValid(user)
+    await user.click(submit())
+    const alert = await screen.findByRole('alert')
+    expect(alert.textContent).toContain("We couldn't send your message")
+    expect(alert.textContent).toContain('Your answers are still here')
+    expect(mocks.push).not.toHaveBeenCalled()
+    expect(mocks.turnstileReset).toHaveBeenCalled()
+    expect((field(/^Work email/) as HTMLInputElement).value).toBe('rina@maju.co.id')
+    // The button works again for a retry.
+    expect((submit() as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  it('waits for the security check before opening anything', async () => {
+    window.turnstile = {
+      render: () => 'widget',
+      reset: () => {},
+      remove: () => {},
+    } as unknown as NonNullable<Window['turnstile']>
+    const user = userEvent.setup()
+    renderForm()
+    await fillValid(user)
+    await user.click(submit())
+    expect(open).not.toHaveBeenCalled()
+    expect(mocks.save).not.toHaveBeenCalled()
+    expect((await screen.findByRole('alert')).textContent).toContain('security check')
+  })
+
+  it('checks the work email and the WhatsApp number like the server does', async () => {
+    const user = userEvent.setup()
+    renderForm()
+    await fillValid(user)
+    await user.clear(field(/^Work email/))
+    await user.type(field(/^Work email/), 'rina@')
+    await user.clear(field(/^WhatsApp number/))
+    await user.type(field(/^WhatsApp number/), '12345')
+    await user.click(submit())
+    const summary = screen.getByRole('region', { name: 'Please fix these fields' })
+    expect(summary.textContent).toContain('Enter an email like name@company.com.')
+    expect(summary.textContent).toContain('Enter a number like +62 812 3456 7890.')
+    expect(mocks.save).not.toHaveBeenCalled()
   })
 
   it('gives no control a name, so a native submit could never put answers in the URL', () => {
@@ -411,6 +493,8 @@ describe('when the new tab is blocked', () => {
     await user.click(submit())
     await user.click(screen.getByRole('link', { name: 'Open WhatsApp' }))
     expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you')
+    // The lead was stored once, while the panel was shown.
+    expect(mocks.save).toHaveBeenCalledTimes(1)
   })
 
   it('lets the visitor fix the answers and try again after a block', async () => {
@@ -420,9 +504,12 @@ describe('when the new tab is blocked', () => {
     await fillValid(user)
     await user.click(submit())
     open.mockImplementation(() => ({ opener: window }) as unknown as Window)
+    await waitFor(() => expect(mocks.save).toHaveBeenCalledTimes(1))
     await user.click(submit())
     expect(open).toHaveBeenCalledTimes(2)
-    expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you')
+    await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you'))
+    // Trying again never stores the same lead twice.
+    expect(mocks.save).toHaveBeenCalledTimes(1)
   })
 
   it('offers only the copy button when the WhatsApp number is unusable', async () => {
@@ -467,6 +554,6 @@ describe('email route', () => {
     expect(url.startsWith('mailto:hello@sineva.id?subject=')).toBe(true)
     expect(decodeURIComponent(url)).toContain('Name: Rina Wijaya')
     expect(target).toBe('_self')
-    expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you')
+    await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/contact/thank-you'))
   })
 })

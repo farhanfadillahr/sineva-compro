@@ -4,13 +4,14 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { cx, focusRing } from '@/components/ui/cx'
-import { usePathname } from '@/i18n/navigation'
+import { useInternalPathname } from '@/i18n/use-internal-pathname'
 import { usePrefersReducedMotion } from '@/lib/motion/reduced-motion'
 import type { WhatsAppSettings } from '@/lib/whatsapp'
 import { AppLink } from './app-link'
 import { DesktopNav } from './desktop-nav'
 import { MenuIcon, WhatsAppIcon } from './icons'
 import { LanguageSwitcher } from './language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import styles from './layout.module.css'
 import { Logo } from './logo'
 import { DESKTOP_QUERY } from './media-queries'
@@ -46,17 +47,20 @@ export function SiteHeader({
   services,
   whatsapp,
   showWork = true,
+  showWaitlist = true,
 }: {
   services: readonly NavService[]
   whatsapp: WhatsAppSettings | null
   /** `false` hides the Work link (desktop and mobile) while there are no projects to list. */
   showWork?: boolean
+  /** `false` hides the waitlist promo card once the product is live (CPR-106). */
+  showWaitlist?: boolean
 }) {
   const t = useTranslations('Nav')
-  const pathname = usePathname()
+  const pathname = useInternalPathname()
   const reduced = usePrefersReducedMotion()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
-  const model = useNavModel(services, { showWork })
+  const model = useNavModel(services, { showWork, showWaitlist })
   const whatsappHref = useWhatsAppHref(whatsapp, services)
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -138,7 +142,19 @@ export function SiteHeader({
           />
 
           <div className={cx(styles.edgeEnd, 'ml-auto hidden items-center gap-2 lg:flex')}>
-            <LanguageSwitcher />
+            <ThemeToggle
+              labels={{ toDark: t('themeToDark'), toLight: t('themeToLight') }}
+              className={cx(
+                'flex size-11 items-center justify-center rounded-sm text-text hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+                focusRing,
+              )}
+            />
+            <LanguageSwitcher
+              className={cx(
+                'flex h-11 min-w-11 items-center justify-center rounded-sm px-2 text-label text-text no-underline hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+                focusRing,
+              )}
+            />
             {whatsappHref ? (
               <Button
                 href={whatsappHref}

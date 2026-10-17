@@ -33,11 +33,14 @@ export function SiteFooter({
   settings,
   services,
   showWork = true,
+  showWaitlist = true,
 }: {
   settings: FooterSettings | null
   services: readonly NavService[]
   /** `false` hides the Work link while there are no projects to list. */
   showWork?: boolean
+  /** `false` once the product is live (CPR-106): there is no waitlist to join any more. */
+  showWaitlist?: boolean
 }) {
   const t = useTranslations('Footer')
   const nav = useTranslations('Nav')
@@ -74,11 +77,13 @@ export function SiteFooter({
                   {t('links.aiAgents')}
                 </AppLink>
               </li>
-              <li>
-                <AppLink href="/products/ai-agents" className={linkClass}>
-                  {t('links.joinWaitlist')}
-                </AppLink>
-              </li>
+              {showWaitlist ? (
+                <li>
+                  <AppLink href="/products/ai-agents" className={linkClass}>
+                    {t('links.joinWaitlist')}
+                  </AppLink>
+                </li>
+              ) : null}
             </ul>
           </FooterColumn>
 

@@ -12,6 +12,7 @@ export const siteSettings: SiteSettingsDTO = {
   locale: 'en',
   brand: {
     siteName: 'Sineva',
+    productName: 'Sineva AI Agents',
     defaultOgImage: asset(
       '/og/default-v008.png',
       1200,

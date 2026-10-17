@@ -8,6 +8,8 @@ const values = {
   DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5432/sineva_compro_app`,
   TEST_DATABASE_URL: `postgresql://sineva:${password}@127.0.0.1:5433/sineva_compro_app_test`,
   BETTER_AUTH_SECRET: secret,
+  // .env.example keeps the admin off for phase 1 deployments; a local checkout needs it on.
+  ADMIN_ENABLED: 'true',
 }
 let content = readFileSync('.env.example', 'utf8')
 for (const [key, value] of Object.entries(values)) {

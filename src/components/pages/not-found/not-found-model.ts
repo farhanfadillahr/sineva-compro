@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { PublicContentSource } from '@/features/content/public'
-import type { ContentLocale, NotFoundPageContent } from '@/features/content/types'
+import type { ContentLocale, NotFoundPageContent, SiteSettingsDTO } from '@/features/content/types'
+import { renderTitle } from '@/lib/site-metadata'
 
 /** The strings of the `NotFound` message namespace the fallback page is built from. */
 export type NotFoundFallbackMessages = Readonly<{ title: string; body: string; home: string }>
@@ -39,18 +40,22 @@ export async function loadNotFoundPage(
  * Title and description from the content. `robots` is explicit even though Next.js adds a noindex
  * tag to a response with status 404: that tag is injected only when the status is known before
  * streaming starts, and a 404 page must never be indexed whichever way the response was built.
- * The title is `absolute` because the content already holds the full "... | Sineva" title.
+ * The title goes through the SEO title template (`renderTitle`).
  */
-export function buildNotFoundMetadata(page: NotFoundPageContent): Metadata {
+export function buildNotFoundMetadata(
+  page: NotFoundPageContent,
+  settings: SiteSettingsDTO | null,
+): Metadata {
+  const title = renderTitle(page.seo.metaTitle, settings)
   return {
-    title: { absolute: page.seo.metaTitle },
+    title: { absolute: title },
     description: page.seo.metaDescription,
     robots: { index: false, follow: false },
     // No canonical on purpose: it would name one URL for every missing path. The layout's image
     // and site name are lost when a page sets `openGraph`, but a noindex page is rarely shared.
     openGraph: {
       type: 'website',
-      title: page.seo.metaTitle,
+      title,
       description: page.seo.metaDescription,
     },
   }

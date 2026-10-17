@@ -19,7 +19,8 @@ export type NavModel = Readonly<{
   plainLinks: readonly PlainLink[]
   product: Readonly<{
     items: readonly MenuLink[]
-    promo: Readonly<{ href: string; eyebrow: string; title: string; description: string }>
+    /** The waitlist card; `null` once the product is live (CPR-106). */
+    promo: Readonly<{ href: string; eyebrow: string; title: string; description: string }> | null
   }>
   services: Readonly<{
     items: readonly MenuLink[]
@@ -56,7 +57,8 @@ export function useNavModel(
   services: readonly NavService[],
   // Work is a link to a page that lists real projects. While there are none, the link and the page
   // would only show an empty state, so the layout turns it off. Defaults to shown.
-  { showWork = true }: { showWork?: boolean } = {},
+  // The waitlist promo card only makes sense while the product is coming soon.
+  { showWork = true, showWaitlist = true }: { showWork?: boolean; showWaitlist?: boolean } = {},
 ): NavModel {
   const t = useTranslations('Nav')
   return {
@@ -69,12 +71,14 @@ export function useNavModel(
         title: t(`productMenu.items.${key}.title`),
         description: t(`productMenu.items.${key}.description`),
       })),
-      promo: {
-        href: PRODUCT_HREF,
-        eyebrow: t('productMenu.promo.eyebrow'),
-        title: t('productMenu.promo.title'),
-        description: t('productMenu.promo.description'),
-      },
+      promo: showWaitlist
+        ? {
+            href: PRODUCT_HREF,
+            eyebrow: t('productMenu.promo.eyebrow'),
+            title: t('productMenu.promo.title'),
+            description: t('productMenu.promo.description'),
+          }
+        : null,
     },
     services: {
       items: services.map((service) => ({

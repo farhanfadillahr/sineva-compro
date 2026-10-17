@@ -26,9 +26,9 @@ export type TaskCardGridProps = {
   phoneChrome?: PhoneChrome
 }
 
-// The mint surface has no semantic token (tokens.md lists teal-50, sun-100, ink-50), so it is a
-// light mix of the mint primitive into white. The tone map keeps the other three on tokens.
-const MINT_SURFACE = 'bg-[color-mix(in_srgb,var(--mint-200)_30%,var(--white))]'
+// The mint surface has no semantic token (tokens.md lists teal-50, sun-100, ink-50); --surface-mint
+// mixes the mint primitive into the page surface of each theme. The other three use tokens.
+const MINT_SURFACE = 'bg-(--surface-mint)'
 const TINT: Record<CapabilityTint, { tone: CardTone; extra?: string }> = {
   teal: { tone: 'tint' },
   sun: { tone: 'warm' },

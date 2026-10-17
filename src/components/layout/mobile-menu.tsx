@@ -16,6 +16,7 @@ import { AppLink } from './app-link'
 import { Collapse } from './collapse'
 import { ChevronDownIcon, CloseIcon, WhatsAppIcon } from './icons'
 import { LanguageSwitcher } from './language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import styles from './layout.module.css'
 import { Logo } from './logo'
 import { MenuLinkItem } from './menu-link'
@@ -124,19 +125,28 @@ export function MobileMenu({
         >
           <Logo />
         </AppLink>
-        <button
-          ref={closeRef}
-          type="button"
-          aria-label={t('closeMenu')}
-          onClick={onClose}
-          className={cx(
-            'flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light',
-            'transition-transform duration-(--dur-fast) ease-out active:scale-[0.96] motion-reduce:transition-none',
-            focusRing,
-          )}
-        >
-          <CloseIcon />
-        </button>
+        <span className="flex items-center gap-2">
+          <ThemeToggle
+            labels={{ toDark: t('themeToDark'), toLight: t('themeToLight') }}
+            className={cx(
+              'flex size-11 items-center justify-center rounded-sm text-text hover:bg-surface-tint transition-colors duration-(--dur-fast) motion-reduce:transition-none',
+              focusRing,
+            )}
+          />
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label={t('closeMenu')}
+            onClick={onClose}
+            className={cx(
+              'flex size-11 items-center justify-center rounded-sm bg-surface text-text shadow-button-bevel-light',
+              'transition-transform duration-(--dur-fast) ease-out active:scale-[0.96] motion-reduce:transition-none',
+              focusRing,
+            )}
+          >
+            <CloseIcon />
+          </button>
+        </span>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-(--gutter) pb-6">
@@ -160,26 +170,28 @@ export function MobileMenu({
                       />
                     </li>
                   ))}
-                  <li>
-                    <AppLink
-                      href={model.product.promo.href}
-                      onClick={onClose}
-                      className={cx(
-                        'mt-1 grid gap-1 rounded-md bg-surface-tint p-4 text-text no-underline focus-visible:-outline-offset-2',
-                        focusRing,
-                      )}
-                    >
-                      <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
-                        {model.product.promo.eyebrow}
-                      </span>
-                      <span className="text-[0.9375rem] font-semibold">
-                        {model.product.promo.title}
-                      </span>
-                      <span className="text-micro text-text-secondary">
-                        {model.product.promo.description}
-                      </span>
-                    </AppLink>
-                  </li>
+                  {model.product.promo ? (
+                    <li>
+                      <AppLink
+                        href={model.product.promo.href}
+                        onClick={onClose}
+                        className={cx(
+                          'mt-1 grid gap-1 rounded-md bg-surface-tint p-4 text-text no-underline focus-visible:-outline-offset-2',
+                          focusRing,
+                        )}
+                      >
+                        <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
+                          {model.product.promo.eyebrow}
+                        </span>
+                        <span className="text-[0.9375rem] font-semibold">
+                          {model.product.promo.title}
+                        </span>
+                        <span className="text-micro text-text-secondary">
+                          {model.product.promo.description}
+                        </span>
+                      </AppLink>
+                    </li>
+                  ) : null}
                 </ul>
               </Accordion>
             </Row>
@@ -234,7 +246,13 @@ export function MobileMenu({
             ))}
           </ul>
         </nav>
-        <LanguageSwitcher />
+        <LanguageSwitcher
+          full
+          className={cx(
+            'mt-6 inline-flex min-h-11 items-center rounded-sm text-label text-text underline underline-offset-4',
+            focusRing,
+          )}
+        />
       </div>
 
       {/* Fixed bottom action bar: the two conversion paths stay one thumb away at any scroll. */}

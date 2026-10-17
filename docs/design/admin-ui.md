@@ -8,7 +8,7 @@ The admin at `/admin` uses the **same design tokens** as the public site ([token
 2. **Clarity over delight.** No mascot canvas, no scroll animations, no Lottie except `check-pop` on successful save. Motion is limited to state feedback (≤ 240 ms).
 3. **The editor sees the result.** Every content form shows character counters tied to the layout limits, a live SEO snippet preview, and a preview link.
 4. **Safe by default.** Destructive actions confirm, secrets are write-only, unsaved changes are guarded.
-5. **Light only**, like the public site (PRD Rev. 3). Admin UI language: Indonesian (PRD FR-ADM-05). Content locale tabs are separate from UI language.
+5. **Light and dark**, following the public site's semantic theme tokens (PRD Rev. 4). The same theme switch is available before login and inside the workspace. Admin UI language: Indonesian (PRD FR-ADM-05). Content locale tabs are separate from UI language.
 
 ## 2. Token usage in the admin
 
@@ -19,8 +19,9 @@ The admin at `/admin` uses the **same design tokens** as the public site ([token
 | Headings | Display scale | Page title 24 px 600, section title 18 px 600, card title 15 px 600 |
 | Canvas | White | `--color-canvas-alt` (`--ink-50`) app background, white panels |
 | Primary action | `--color-action-primary` pill | Same color, **rounded-square 10 px** buttons (no pills except status chips) |
-| Radius | Cards 20-28 px | Panels 14 px, inputs 10 px, tables 12 px |
-| Shadow | Soft, layered | `--shadow-xs` on panels, `--shadow-md` on popovers and dialogs only |
+| Radius | Cards 20-28 px | Panels 20 px, inputs 10 px, tables 12 px. Founder alignment request, 2026-10-17 |
+| Shadow | Soft, layered | `--shadow-sm` on panels, shared bevel on buttons, `--shadow-md` on popovers and dialogs |
+| Controls | Marketing action sizes | Admin controls 40 px high, icon actions 40 × 40 px, 16 px control icons. Login fields/submit 44 px |
 | Focus | 2 px `--color-focus` | Same |
 | Status colors | `--color-success`, `--color-danger` | Plus `warning` (`--amber-700` on amber tint) for drafts and missing translations |
 
@@ -56,6 +57,10 @@ The admin at `/admin` uses the **same design tokens** as the public site ([token
 - Sidebar: white, hairline right border, items 36 px tall, radius 10, active item `--color-surface-tint` + `--color-text-brand`, group labels in Geist Mono 11 px uppercase. Items the role cannot access are **not rendered** (and the server still checks).
 - Collapses to an icon rail at < 1280 px, to a drawer at < 768 px. The admin is desktop-first; it must still work at 768 px.
 - Page header: title, status badge (Draft / Published / Unsaved changes), primary action on the right (Simpan / Terbitkan).
+
+### Brand alignment, 2026-10-17
+
+Login uses the landing page's Plus Jakarta Sans/Geist Mono fonts, wordmark colour, semantic teal actions and soft aurora surface, inside a rounded introductory panel. Forms retain explicit labels and a minimum 44 px login control height. The workspace keeps the compact navigation and editing density above, with the shared surface, border, focus, radius and shadow tokens. Legacy user forms resolve their colour aliases to the same semantic tokens, so their buttons keep white labels on teal in both themes. Dashboard charts resolve their axes/grid/status colours from the theme too. No marketing scroll effects or mascot canvas are loaded into the admin.
 
 ## 4. Component catalog
 

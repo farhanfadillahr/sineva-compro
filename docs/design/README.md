@@ -1,6 +1,6 @@
 # Sineva design system
 
-Single source of truth for how the Sineva public website looks, moves, and speaks. Approved direction: PRD Rev. 3 (2026-10-15). Light theme only, English copy, Sintra-inspired.
+Single source of truth for how the Sineva public website looks, moves, and speaks. Approved direction: PRD Rev. 3 (2026-10-15). Light and dark theme since PRD Rev. 4 (tokens.md 1.5), Sintra-inspired.
 
 ## Read this first (agents and humans)
 

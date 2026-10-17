@@ -16,6 +16,10 @@ describe('launch SEO', () => {
     ])
   })
 
+  it('leaves an empty blog out of the sitemap (the Indonesian blog before its first article)', async () => {
+    expect(await blogSitemapSource({ content: staticContentSource, locale: 'id' })).toEqual([])
+  })
+
   it('connects the site to the organization using only confirmed identity', () => {
     const data = buildSiteJsonLd(new URL('https://sineva.example'), null)
     expect(data['@graph'][1].publisher?.['@id']).toBe('https://sineva.example/#organization')

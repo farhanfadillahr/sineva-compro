@@ -1,12 +1,16 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState, type FormEvent, type MouseEvent } from 'react'
 import { markContactHandoff } from '@/components/mascot/sino-launch/launch-bus'
 import { WhatsAppIcon } from '@/components/layout/icons'
+import { Honeypot } from '@/components/forms/honeypot'
+import { TurnstileWidget, type TurnstileHandle } from '@/components/forms/turnstile'
 import { Button, Checkbox, Field, Input, Select, Textarea } from '@/components/ui'
 import type { ConsentLabel, SiteSettingsDTO } from '@/features/content/types'
+import type { saveContact } from '@/features/leads/actions'
+import { validateContactSubmission, type LeadErrors } from '@/lib/leads/contact-schema'
 import { Link, useRouter } from '@/i18n/navigation'
 import {
   buildContactMailto,
@@ -18,28 +22,41 @@ import {
 } from '@/lib/contact-message'
 import {
   BUDGET_KEYS,
-  CONTACT_FIELD_ORDER,
   CONTACT_RULES,
   INTEREST_MESSAGE_KEYS,
   SEGMENT_MESSAGE_KEYS,
   interestFromServiceParam,
   toContactFields,
-  validateContactField,
-  validateContactForm,
   type BudgetKey,
   type ContactErrorCode,
-  type ContactErrors,
   type ContactFieldKey,
   type ContactFormValues,
 } from './contact-form-model'
 
-// The form of /contact for the static launch. There is no backend: a valid submit composes a
-// message from the answers and opens it in WhatsApp (or the visitor's mail app), in a new tab,
-// then moves this tab to the thank-you page. No answers are posted, stored or logged here, so the form
-// has no `action`, no fetch, and gives no control a `name`: if the script ever failed to load, a
-// native submit would otherwise put the visitor's answers into the address bar.
+// The form of /contact. A valid submit opens the composed message in WhatsApp (or the visitor's
+// mail app) inside the submit gesture, stores the lead through the `saveContact` server action
+// (CPR-105, with the Turnstile token and the honeypot for the anti-spam check), and then moves
+// this tab to the thank-you page. The answers go to the server as an explicit object, never as a
+// native form post: the form has no `action` and gives no control a `name`, so if the script ever
+// failed to load, a native submit could not put the visitor's answers into the address bar.
 
 const THANK_YOU_PATH = '/contact/thank-you'
+const SOURCE_PAGE = '/contact'
+
+/** The visible fields plus the two contact channels the server needs, in reading order. */
+type FormField = ContactFieldKey | 'email' | 'whatsapp'
+const FORM_FIELD_ORDER = [
+  'name',
+  'email',
+  'whatsapp',
+  'company',
+  'segment',
+  'interest',
+  'budget',
+  'message',
+  'consent',
+] as const satisfies readonly FormField[]
+type FormValues = ContactFormValues & { email: string; whatsapp: string }
 const PRIVACY_PATH = '/privacy-policy'
 
 export type ContactFormProps = Readonly<{
@@ -50,6 +67,11 @@ export type ContactFormProps = Readonly<{
   settings: Pick<SiteSettingsDTO, 'contact' | 'whatsapp'>
   /** Preselected need, from `?service=`. */
   initialInterest?: '' | ContactInterest
+  /**
+   * The `saveContact` server action, passed by the server page so this client module never
+   * imports server code (CPR-105).
+   */
+  saveLead: typeof saveContact
 }>
 
 type MessageKey = Parameters<ReturnType<typeof useTranslations<'Contact'>>>[0]
@@ -72,11 +94,13 @@ const ERROR_KEYS = {
     tooLong: 'errors.message.tooLong',
   },
   consent: { required: 'errors.consent.required' },
-} as const satisfies Record<ContactFieldKey, Partial<Record<ContactErrorCode, MessageKey>>>
+  email: { required: 'errors.email.required', invalid: 'errors.email.invalid' },
+  whatsapp: { required: 'errors.whatsapp.required', invalid: 'errors.whatsapp.invalid' },
+} as const satisfies Record<FormField, Partial<Record<ContactErrorCode, MessageKey>>>
 
-const fieldId = (field: ContactFieldKey) => `contact-${field}`
+const fieldId = (field: FormField) => `contact-${field}`
 
-const EMPTY_VALUES: ContactFormValues = {
+const EMPTY_VALUES: FormValues = {
   name: '',
   company: '',
   segment: '',
@@ -84,7 +108,12 @@ const EMPTY_VALUES: ContactFormValues = {
   budget: '',
   message: '',
   consent: false,
+  email: '',
+  whatsapp: '',
 }
+
+/** Client and server share one rule set (`contact-schema`), so they can never disagree. */
+const validate = (values: FormValues): LeadErrors => validateContactSubmission(values)
 
 type Fallback = Readonly<{ href: string | null; message: string }>
 type CopyState = 'idle' | 'copied' | 'failed'
@@ -94,14 +123,25 @@ export function ContactForm({
   consentLabel,
   settings,
   initialInterest = '',
+  saveLead,
 }: ContactFormProps) {
   const t = useTranslations('Contact')
+  const locale = useLocale()
   const router = useRouter()
-  const [values, setValues] = useState<ContactFormValues>({
+  const [values, setValues] = useState<FormValues>({
     ...EMPTY_VALUES,
     interest: initialInterest,
   })
-  const [errors, setErrors] = useState<ContactErrors>({})
+  const [errors, setErrors] = useState<LeadErrors>({})
+  // Honeypot (CPR-49): hidden from people, filled only by bots. Kept in state, never named.
+  const [website, setWebsite] = useState('')
+  const [token, setToken] = useState<string | null>(null)
+  const [serverError, setServerError] = useState<'failed' | 'check' | null>(null)
+  const turnstile = useRef<TurnstileHandle>(null)
+  // Set once the lead is stored (for example while the fallback panel is shown after a blocked
+  // tab), so trying again only reopens the chat and never stores the same lead twice.
+  const saved = useRef(false)
+  const serverErrorRef = useRef<HTMLDivElement>(null)
   const [attempt, setAttempt] = useState(0)
   const [sending, setSending] = useState(false)
   const [fallback, setFallback] = useState<Fallback | null>(null)
@@ -120,24 +160,27 @@ export function ContactForm({
   useEffect(() => {
     if (fallback) fallbackRef.current?.focus()
   }, [fallback])
+  useEffect(() => {
+    if (serverError) serverErrorRef.current?.focus()
+  }, [serverError])
 
-  const errorText = (field: ContactFieldKey, code: ContactErrorCode) => {
+  const errorText = (field: FormField, code: ContactErrorCode) => {
     const keys: Partial<Record<ContactErrorCode, MessageKey>> = ERROR_KEYS[field]
     const key = keys[code]
     return key ? t(key) : t('summary.title')
   }
-  const errorFor = (field: ContactFieldKey) => {
+  const errorFor = (field: FormField) => {
     const code = errors[field]
     return code ? errorText(field, code) : undefined
   }
 
-  function update<K extends ContactFieldKey>(field: K, value: ContactFormValues[K]) {
+  function update<K extends FormField>(field: K, value: FormValues[K]) {
     const next = { ...values, [field]: value }
     setValues(next)
     // Only a field that already shows an error is re-checked while typing, so a visitor is never
     // told off for a field they have not finished. The error disappears the moment it is fixed.
     if (!errors[field]) return
-    const code = validateContactField(next, field)
+    const code = validate(next)[field]
     setErrors((previous) => {
       const rest = { ...previous }
       delete rest[field]
@@ -149,9 +192,39 @@ export function ContactForm({
     BUDGET_KEYS.map((key) => [key, t(`budgets.${key}`)]),
   ) as Record<BudgetKey, string>
 
+  /**
+   * Stores the lead (CPR-105). On success the tab moves to the thank-you page; on a refusal the
+   * answers stay, a calm message offers WhatsApp, and a new Turnstile token is requested because
+   * a token is single use.
+   */
+  async function store(navigate: boolean): Promise<void> {
+    const result = await saveLead(
+      { ...values, website, turnstileToken: token ?? '' },
+      { locale, sourcePage: SOURCE_PAGE },
+    ).catch(() => null)
+    if (result?.ok) {
+      saved.current = true
+      if (navigate) {
+        markContactHandoff()
+        router.push(THANK_YOU_PATH)
+      }
+      return
+    }
+    locked.current = false
+    setSending(false)
+    turnstile.current?.reset()
+    const fieldErrors = validate(values)
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors)
+      setAttempt((count) => count + 1)
+      return
+    }
+    setServerError('failed')
+  }
+
   function submit(channel: 'whatsapp' | 'email') {
     if (locked.current) return
-    const found = validateContactForm(values)
+    const found = validate(values)
     if (Object.keys(found).length > 0) {
       setErrors(found)
       setAttempt((count) => count + 1)
@@ -161,6 +234,12 @@ export function ContactForm({
     if (!fields) return
     setErrors({})
     setCopy('idle')
+    // The security check usually finishes on its own while the visitor types.
+    if (!token && !saved.current) {
+      setServerError('check')
+      return
+    }
+    setServerError(null)
 
     const message = buildContactMessage(fields, settings.whatsapp.templates) ?? ''
     const href =
@@ -168,7 +247,9 @@ export function ContactForm({
         ? buildContactMailto(fields, settings)
         : buildContactWhatsAppUrl(fields, settings)
     if (!href) {
+      // No way to open a chat: the lead is still stored and the message offered to copy.
       setFallback({ href: null, message })
+      if (!saved.current) void store(false)
       return
     }
 
@@ -185,7 +266,9 @@ export function ContactForm({
     } else {
       const opened = window.open(href, '_blank')
       if (!opened) {
+        // Blocked tab: stay to offer the fallback, but the lead is stored either way.
         setFallback({ href, message })
+        if (!saved.current) void store(false)
         return
       }
       opened.opener = null
@@ -193,8 +276,12 @@ export function ContactForm({
     locked.current = true
     setFallback(null)
     setSending(true)
-    markContactHandoff()
-    router.push(THANK_YOU_PATH)
+    if (saved.current) {
+      markContactHandoff()
+      router.push(THANK_YOU_PATH)
+      return
+    }
+    void store(true)
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -204,7 +291,7 @@ export function ContactForm({
 
   // A summary link jumps to its field with focus, not just scroll: the in-page anchor alone would
   // scroll and leave keyboard focus on the link.
-  function focusField(event: MouseEvent<HTMLAnchorElement>, field: ContactFieldKey) {
+  function focusField(event: MouseEvent<HTMLAnchorElement>, field: FormField) {
     event.preventDefault()
     document.getElementById(fieldId(field))?.focus()
   }
@@ -228,7 +315,7 @@ export function ContactForm({
     router.push(THANK_YOU_PATH)
   }
 
-  const failed = CONTACT_FIELD_ORDER.filter((field) => errors[field])
+  const failed = FORM_FIELD_ORDER.filter((field) => errors[field])
   const hasEmail = Boolean(settings.contact.email)
 
   return (
@@ -286,6 +373,49 @@ export function ContactForm({
             maxLength={CONTACT_RULES.nameMax}
             value={values.name}
             onChange={(event) => update('name', event.target.value)}
+          />
+        )}
+      </Field>
+
+      <Field
+        id={fieldId('email')}
+        label={t('fields.email.label')}
+        helper={t('fields.email.helper')}
+        required
+        requiredLabel={t('requiredMarker')}
+        error={errorFor('email')}
+      >
+        {(control) => (
+          <Input
+            {...control}
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            maxLength={254}
+            value={values.email}
+            onChange={(event) => update('email', event.target.value)}
+          />
+        )}
+      </Field>
+
+      <Field
+        id={fieldId('whatsapp')}
+        label={t('fields.whatsapp.label')}
+        helper={t('fields.whatsapp.helper')}
+        required
+        requiredLabel={t('requiredMarker')}
+        error={errorFor('whatsapp')}
+      >
+        {(control) => (
+          <Input
+            {...control}
+            type="tel"
+            autoComplete="tel"
+            inputMode="tel"
+            placeholder={t('fields.whatsapp.placeholder')}
+            maxLength={40}
+            value={values.whatsapp}
+            onChange={(event) => update('whatsapp', event.target.value)}
           />
         )}
       </Field>
@@ -417,6 +547,27 @@ export function ContactForm({
           </>
         }
       />
+      <Honeypot value={website} onChange={setWebsite} />
+
+      <TurnstileWidget ref={turnstile} onToken={setToken} language={locale} />
+
+      {serverError ? (
+        <div
+          ref={serverErrorRef}
+          role="alert"
+          tabIndex={-1}
+          className="flex flex-col gap-1 rounded-sm border border-danger bg-danger-surface p-4 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        >
+          {serverError === 'check' ? (
+            <p className="text-body-sm text-danger">{t('serverError.check')}</p>
+          ) : (
+            <>
+              <p className="text-label text-danger">{t('serverError.title')}</p>
+              <p className="text-body-sm text-text-secondary">{t('serverError.body')}</p>
+            </>
+          )}
+        </div>
+      ) : null}
 
       {fallback ? (
         <div

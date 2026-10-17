@@ -62,10 +62,22 @@ describe('SiteHeader structure', () => {
     ).toBe('/contact')
   })
 
-  it('has no theme toggle and no language switcher while there is one locale', () => {
+  it('offers a theme toggle and a switch to the same page in Indonesian', () => {
+    navigationState.pathname = '/about'
     renderHeader()
-    expect(screen.queryByRole('button', { name: /theme|dark mode|light mode/i })).toBeNull()
-    expect(document.querySelector('[data-slot="language-switcher"]')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy()
+    const switcher = screen.getByRole('link', { name: 'ID, Switch to Bahasa Indonesia' })
+    // The mock Link only prefixes the locale; the real one also translates the path (/id/tentang).
+    expect(switcher.getAttribute('href')).toBe('/id/about')
+    expect(switcher.getAttribute('hreflang')).toBe('id')
+  })
+
+  it('switches an article to the Indonesian blog list, where the same slug rarely exists', () => {
+    navigationState.pathname = '/blog/[slug]'
+    renderHeader()
+    expect(
+      screen.getByRole('link', { name: 'ID, Switch to Bahasa Indonesia' }).getAttribute('href'),
+    ).toBe('/id/blog')
   })
 
   it('offers a 44 px burger for the mobile menu', () => {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { usePathname } from '@/i18n/navigation'
+import { useInternalPathname } from '@/i18n/use-internal-pathname'
 import { whatsappContextFromPathname, whatsappHrefFor, type WhatsAppSettings } from '@/lib/whatsapp'
 import type { NavService } from './nav-model'
 
@@ -12,7 +12,7 @@ export function useWhatsAppHref(
   whatsapp: WhatsAppSettings | null,
   services: readonly NavService[],
 ): string | null {
-  const pathname = usePathname()
+  const pathname = useInternalPathname()
   return useMemo(() => {
     const context = whatsappContextFromPathname(pathname)
     if (context.kind === 'service') {

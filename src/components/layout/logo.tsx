@@ -26,9 +26,8 @@ export function Logo({
     <span className={cx('inline-flex items-center gap-2.5', className)}>
       <LogoSymbol src="/brand/sineva-symbol-original.svg" replayOnHover={wordmark} />
       {wordmark ? (
-        // No semantic token exists for the deep brand teal (tokens.md 1.2 lists --teal-900 as the
-        // wordmark colour), so the primitive is read directly.
-        <span className="font-sans text-[1.25rem] leading-none font-semibold tracking-[-0.02em] text-(--teal-900)">
+        // --color-wordmark is --teal-900 (tokens.md 1.2) and a light tint in the dark theme.
+        <span className="font-sans text-[1.25rem] leading-none font-semibold tracking-[-0.02em] text-(--color-wordmark)">
           {t('name')}
         </span>
       ) : null}

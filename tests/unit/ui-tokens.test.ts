@@ -157,7 +157,7 @@ describe('token parity with docs/design/tokens.md', () => {
     })
   })
 
-  it('has no dark theme', () => {
+  it('keeps dark values out of globals.css (they live in theme-dark.css)', () => {
     const source = stripComments(css)
     expect(source).not.toMatch(/prefers-color-scheme/)
     expect(source).not.toMatch(/\.dark\b/)
@@ -295,5 +295,54 @@ describe('WCAG contrast of the pairs listed in tokens.md section 1.3', () => {
     expect(contrast('--color-action-primary', '--white')).toBeGreaterThanOrEqual(4.5)
     expect(resolve('--color-text-brand')).not.toBe(resolve('--teal-500'))
     expect(resolve('--color-link')).not.toBe(resolve('--teal-500'))
+  })
+})
+
+// Dark theme (CPR-65): src/styles/theme-dark.css mirrors tokens.md section 1.5.
+const darkCss = read('src/styles/theme-dark.css')
+const darkDecl = declarations(darkCss)
+const darkRows = tokensMd
+  .split('\n')
+  .map((line) => line.match(/^\| `(--[a-z0-9-]+)` \(dark\) \| `(#[0-9A-Fa-f]{6})` \|/))
+  .filter((match): match is RegExpMatchArray => !!match)
+  .map((match) => ({ token: match[1], value: match[2] }))
+
+function darkHex(token: string) {
+  const value = darkDecl.get(token)
+  if (!value) throw new Error(`${token} is not in theme-dark.css`)
+  return value
+}
+function darkContrast(fg: string, bg: string) {
+  const a = luminance(fg.startsWith('#') ? fg : darkHex(fg))
+  const b = luminance(bg.startsWith('#') ? bg : darkHex(bg))
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+}
+
+describe('dark theme tokens (tokens.md 1.5)', () => {
+  it('keys every value on html[data-theme=dark]', () => {
+    expect(stripComments(darkCss).trim().startsWith(":root[data-theme='dark']")).toBe(true)
+  })
+
+  it('matches the documented values', () => {
+    expect(darkRows.length).toBeGreaterThan(20)
+    for (const { token, value } of darkRows) expect(norm(darkHex(token)), token).toBe(norm(value))
+  })
+
+  it.each([
+    ['--color-text', '--color-canvas', 4.5],
+    ['--color-text-secondary', '--color-canvas', 4.5],
+    ['--color-text-tertiary', '--color-canvas', 4.5],
+    ['--color-text-tertiary', '--color-surface-tint', 4.5],
+    ['--color-text-brand', '--color-surface', 4.5],
+    ['--color-text-inverse', '--color-action-primary', 4.5],
+    ['--color-text-inverse', '--color-action-primary-hover', 4.5],
+    ['--color-text-inverse', '--color-action-dark', 4.5],
+    ['--color-text-inverse', '--color-surface-inverse', 4.5],
+    ['--color-danger', '--color-danger-surface', 4.5],
+    ['--color-success', '--color-success-surface', 4.5],
+    ['--color-border-input', '--color-canvas', 3],
+    ['--color-focus', '--color-canvas', 3],
+  ])('%s on %s meets %s:1 in the dark theme', (fg, bg, minimum) => {
+    expect(darkContrast(fg, bg)).toBeGreaterThanOrEqual(minimum)
   })
 })

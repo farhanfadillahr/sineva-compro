@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { staticContent } from '../../src/content/static'
-import { buildRootMetadata } from '../../src/lib/site-metadata'
+import { applyTitleTemplate, buildRootMetadata, renderTitle } from '../../src/lib/site-metadata'
 
 const settings = staticContent.siteSettings
 const siteUrl = new URL('https://sinevaai.vercel.app')
@@ -65,5 +65,41 @@ describe('buildRootMetadata', () => {
     expect(buildRootMetadata({ settings: custom, siteUrl, robots: noindex }).title).toMatchObject({
       template: '%s | Sineva Studio',
     })
+  })
+})
+
+// CPR-104: editors write the topic only; the brand comes from the SEO title template once.
+describe('renderTitle', () => {
+  it('applies the locale title template to a short meta title', () => {
+    expect(renderTitle('Find your next step with AI', settings)).toBe(
+      'Find your next step with AI | Sineva',
+    )
+  })
+
+  it('follows a changed template', () => {
+    const custom = { ...settings, seo: { ...settings.seo, titleTemplate: 'Sineva: {title}' } }
+    expect(renderTitle('About', custom)).toBe('Sineva: About')
+  })
+
+  it('never prints the brand twice for a title that still carries it', () => {
+    expect(renderTitle('Find your next step with AI | Sineva', settings)).toBe(
+      'Find your next step with AI | Sineva',
+    )
+  })
+
+  it('falls back to the default template without settings or with a broken template', () => {
+    expect(renderTitle('About', null)).toBe('About | Sineva')
+    const broken = { ...settings, seo: { ...settings.seo, titleTemplate: 'Sineva' } }
+    expect(renderTitle('About', broken)).toBe('About | Sineva')
+  })
+})
+
+// The admin snippet used to skip the template whenever the title contained the brand word, so
+// "See how Sineva makes AI simple" previewed without the suffix the site adds.
+describe('applyTitleTemplate', () => {
+  it('wraps a topic that mentions the brand in the middle', () => {
+    expect(applyTitleTemplate('See how Sineva makes AI simple', '{title} | Sineva')).toBe(
+      'See how Sineva makes AI simple | Sineva',
+    )
   })
 })

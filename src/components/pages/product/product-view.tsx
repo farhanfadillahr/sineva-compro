@@ -25,10 +25,12 @@ import {
   type ProductModel,
   type ProductSectionId,
 } from './product-model'
-import { WaitlistForm } from './waitlist-form'
+import { WaitlistForm, type WaitlistFormProps } from './waitlist-form'
 
 export type ProductViewProps = {
   model: ProductModel
+  /** The `joinWaitlist` server action for the waitlist form, passed by the server page. */
+  joinWaitlist: WaitlistFormProps['join']
   labels: ProductLabels
   /** Localised link component for internal links (next-intl's Link through the layout's AppLink). */
   linkComponent?: ActionLinkComponent
@@ -78,6 +80,7 @@ export function ProductView({
   linkComponent,
   privacyHref = PRODUCT_HREFS.privacy,
   stickyPrimaryHref,
+  joinWaitlist,
 }: ProductViewProps) {
   const { page, settings, productStatus, industries } = model
   const comingSoon = productStatus !== 'live'
@@ -114,6 +117,8 @@ export function ProductView({
           businessTypes={industries}
           channels={channels}
           privacyHref={privacyHref}
+          join={joinWaitlist}
+          locale={model.locale}
         />
       ) : null}
     </Card>

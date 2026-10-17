@@ -25,6 +25,9 @@ export default defineConfig({
         test: {
           name: 'ui',
           environment: 'jsdom',
+          // Metadata builders and AppLink localize hrefs through next-intl's navigation, which
+          // imports `next/navigation` without an extension: inlined, Vite resolves it.
+          server: { deps: { inline: ['next-intl'] } },
           include: ['tests/unit/**/*.test.tsx'],
           // Vitest runs without globals, so Testing Library cannot register its own auto-cleanup.
           setupFiles: ['tests/helpers/ui-setup.ts'],

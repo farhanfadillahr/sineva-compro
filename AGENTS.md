@@ -1,6 +1,6 @@
 ## Design system (Rev. 3)
 
-Before any public UI, copy, animation or mascot work, read [`docs/design/README.md`](docs/design/README.md) and follow its reading order. Brand name is "Sineva". Public site: English, light theme only, no em dash or en dash in copy.
+Before any public UI, copy, animation or mascot work, read [`docs/design/README.md`](docs/design/README.md) and follow its reading order. Brand name is "Sineva". Public site: light and dark theme (PRD Rev. 4), no em dash or en dash in copy.
 
 ## Arah produk aktif
 
@@ -19,3 +19,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Integrasi pekerjaan Farhan
+
+Per instruksi Founder pada 16 Oktober 2026, perubahan Farhan setelah CPR-68 masuk ke branch `development` sebagai staging. Sebelum setiap tiket, ambil `main` terbaru dari origin, perbarui checkout main dengan fast-forward bila bersih, lalu sinkronkan `origin/main` ke `development` dan verifikasi integrasinya. Jangan memulai tiket dari development yang belum memuat main tersebut. Sinkronisasi harus mempertahankan ancestry main melalui merge commit, bukan squash. Setelah sinkronisasi, mulai branch tiket dari `origin/development`, buat satu PR per tiket dengan base `development`, verifikasi lalu merge sesuai otorisasi sesi. Pertahankan perubahan publik statis Faishal di `main`; jangan promosikan `development` ke `main` tanpa instruksi Founder berikutnya. Gunakan satu agen saja. Lihat [keputusan staging](docs/architecture/decisions/2026-10-16-development-staging.md).

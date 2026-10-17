@@ -14,10 +14,13 @@ import { routing } from '@/i18n/routing'
 import { getContentSource } from '@/lib/content-source'
 import { getRobots } from '@/lib/robots-policy'
 import { buildRootMetadata } from '@/lib/site-metadata'
+import { PreviewBar } from '@/components/admin/preview-bar'
+import { isPreviewRequest } from '@/features/cms/preview.server'
 import { buildSiteJsonLd } from '@/lib/site-json-ld'
 import { serializeJsonLd } from '@/components/sections/_internal/faq'
 import { getSiteUrl } from '@/lib/site-url'
 import { geistMono, plusJakartaSans } from '@/styles/fonts'
+import { ThemeScript } from '@/components/theme/theme-script'
 import '../../globals.css'
 
 // SITE_URL and SITE_INDEXABLE are read when this module's metadata is generated (at build for
@@ -54,11 +57,15 @@ export default async function PublicLayout({
   const messages = await getMessages()
 
   const content = getContentSource()
-  const [settings, services, work] = await Promise.all([
+  const [settings, services, work, productPage, preview] = await Promise.all([
     content.getSiteSettings(locale),
     content.listServices(locale),
     content.listWork({ locale }),
+    content.getPage('product', locale),
+    isPreviewRequest(),
   ])
+  // Once the product is live there is no waitlist: the footer drops its "Join the waitlist" link.
+  const showWaitlist = productPage?.productStatus !== 'live'
   // An empty list is the honest state before there are real projects: no link to an empty page.
   const showWork = work.length > 0
   // Only what the navigation needs crosses into the client components.
@@ -80,6 +87,7 @@ export default async function PublicLayout({
       suppressHydrationWarning
     >
       <head>
+        <ThemeScript />
         <LogoIntroGateScript
           enabled={settings?.features.enableLogoIntro ?? false}
           force={process.env.LOGO_INTRO_FORCE === '1'}
@@ -101,14 +109,22 @@ export default async function PublicLayout({
             services={navServices}
             whatsapp={settings?.whatsapp ?? null}
             showWork={showWork}
+            showWaitlist={showWaitlist}
           />
           {/* Every page renders its own main landmark, which is the skip link's target. */}
           <div className="flex-1">{children}</div>
-          <SiteFooter settings={settings} services={navServices} showWork={showWork} />
+          <SiteFooter
+            settings={settings}
+            services={navServices}
+            showWork={showWork}
+            showWaitlist={showWaitlist}
+          />
           <FloatingWhatsApp whatsapp={settings?.whatsapp ?? null} services={navServices} />
           {/* Last in the tree so it never changes tab order; it renders nothing until it plays. */}
           <LogoIntro />
           <SinoLaunchOverlay />
+          {/* Editors only: Draft Mode plus a valid admin session (CPR-106). */}
+          {preview ? <PreviewBar /> : null}
         </NextIntlClientProvider>
       </body>
     </html>

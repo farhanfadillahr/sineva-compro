@@ -104,3 +104,13 @@ it('brings pages nobody saved up to the launch copy, and leaves saved pages alon
   expect(notFound.data).toEqual(edited.data)
   expect((await reads.pageReads.getPage('home', 'en'))?.fromBlog.visible).toBe(false)
 })
+
+it('shows which pages still follow the launch copy and who edited the others (CPR-117)', async () => {
+  const pages = await service.listPagesForAdmin(ctx.editorHeaders)
+  const locale = (id: string, code: string) =>
+    pages.find((page) => page.id === id)!.locales.find((l) => l.locale === code)!
+  // notFound (en) was saved by an Editor above; privacy (id) was never saved from the admin.
+  expect(locale('404', 'en')).toMatchObject({ launchCopy: false })
+  expect(locale('404', 'en').editedBy).toEqual(expect.any(String))
+  expect(locale('privacy', 'id')).toMatchObject({ launchCopy: true, editedBy: null })
+})

@@ -426,8 +426,11 @@ describe('static content source: other locales', () => {
     expect((await source.listFaq('home', 'id')).length).toBe(
       (await source.listFaq('home', 'en')).length,
     )
-    // No Indonesian articles yet: the blog is empty in id rather than showing English posts.
-    expect((await source.listPosts({ locale: 'id', page: 1, pageSize: 5 })).total).toBe(0)
+    // Indonesian articles are translations with their own slugs, never the English posts.
+    const posts = await source.listPosts({ locale: 'id', page: 1, pageSize: 5 })
+    expect(posts.total).toBe(4)
+    expect(posts.posts.every((post) => post.locale === 'id')).toBe(true)
+    expect(await source.getPost(posts.posts[0].slug, 'en')).toBeNull()
   })
 
   it('returns the empty contract for a locale without content', async () => {

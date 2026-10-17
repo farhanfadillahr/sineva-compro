@@ -1,11 +1,15 @@
-import { staticContent } from '../../content/static/source'
+import { staticContentFor } from '../../content/static/source'
+import type { ContentLocale } from '../content/types'
 import { storedFromDto } from '../cms/fields'
 import { withTopicTitle } from '../cms/seo-title'
 import { postsConfig } from '../documents/configs'
 
-/** Stored snapshots of the launch articles, for the base seed and tests. */
-export function launchPosts() {
-  return staticContent.postDetails.map((post) => {
+/**
+ * Stored snapshots of the launch articles of a locale (English by default), for the base seed and
+ * tests. A locale without launch content has none.
+ */
+export function launchPosts(locale: ContentLocale = 'en') {
+  return (staticContentFor(locale)?.postDetails ?? []).map((post) => {
     const data = {
       title: post.title,
       excerpt: post.excerpt,

@@ -7,8 +7,8 @@ import { projectPost } from '../../src/features/posts/project'
 import { withTopicTitle } from '../../src/features/cms/seo-title'
 
 describe('posts', () => {
-  it('launch articles pass the post descriptor unchanged', () => {
-    for (const post of launchPosts())
+  it('launch articles pass the post descriptor unchanged, in every locale', () => {
+    for (const post of [...launchPosts(), ...launchPosts('id')])
       expect(parseFields(postsConfig.schema, post.data)).toEqual({ ok: true, value: post.data })
   })
 

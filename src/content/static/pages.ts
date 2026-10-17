@@ -40,13 +40,13 @@ export const pages: PageContentMap = {
     key: 'home',
     locale: 'en',
     seo: seo(
-      'Make your business run smarter with AI | Sineva',
-      'Save time on everyday tasks with AI that fits your business. Meet Sino and book a free consultation.',
+      'Make room for what matters with AI | Sineva',
+      'Find practical ways AI can help with the tasks that fill your day. Meet Sino and book a free consultation.',
     ),
     hero: {
       eyebrow: null,
-      headline: 'AI for your business, without the hassle',
-      lead: 'We make AI accessible for everyone. Let us find where it can make your day easier.',
+      headline: 'Make more room for the work that matters',
+      lead: "Tell us which tasks take up your team's time. We’ll help you find a practical way AI can make them easier.",
       primaryCtaLabel: 'Book a free consultation',
       secondaryCtaLabel: 'Get notified about Sino',
       poster: asset(
@@ -60,25 +60,25 @@ export const pages: PageContentMap = {
       product: {
         eyebrow: 'Product',
         title: 'Use it yourself',
-        body: 'Sineva AI Agents puts Sino to work on your everyday tasks. It is coming soon, and you can ask to be notified.',
-        ctaLabel: 'Explore AI Agents',
+        body: 'The Sineva Product Suite brings AI support to everyday business work. It is coming soon, and you can ask to be notified.',
+        ctaLabel: 'Meet Sino',
         pose: 'holding-phone',
       },
       services: {
         eyebrow: 'Services',
         title: 'Let us build it with you',
-        body: 'Not sure where to start, or ready to try an idea? We will work through the next step with you.',
+        body: 'Whether you have an early question or a clear idea, we will help you choose the next step.',
         ctaLabel: 'Explore services',
         pose: 'building-blocks',
       },
     },
     meetSino: {
       title: 'Meet Sino',
-      body: 'Sino is a friendly companion for everyday work. Ask in plain words, and Sino can help with replies, ideas, and the next small task.',
+      body: 'Sino is Sineva’s friendly AI companion. Ask in plain words, and Sino can help with replies, ideas, and the next small task.',
     },
     capabilities: {
-      title: 'What Sino can help with',
-      intro: 'Hand over a task by asking, the way you would ask a teammate.',
+      title: 'Meet the Sineva Product Suite',
+      intro: 'Explore focused AI tools for people operations, finance, sales, social content, support, and business insight.',
     },
     howWeWork: { title: 'How we work', steps: processSteps },
     whoWeHelp: { title: 'Who we help', cards: audienceCards },
@@ -99,8 +99,8 @@ export const pages: PageContentMap = {
     key: 'product',
     locale: 'en',
     seo: seo(
-      'Hand off your busywork to Sino AI | Sineva',
-      'Meet Sino AI, a helper for everyday business tasks. Coming soon: get notified the moment it is ready.',
+      'Meet the Sineva Product Suite | Sineva',
+      'Explore AI products for HR, finance, sales, social content, support, and business insights. Get notified when they are ready.',
     ),
     productStatus: 'coming_soon',
     hero: {
@@ -111,8 +111,8 @@ export const pages: PageContentMap = {
       waitlistIntro: 'Send us a quick message and we will let you know when Sino is ready.',
       mockup: {
         bubbles: [
-          { from: 'user', text: "Sino, reply to today's customer chats" },
-          { from: 'sino', text: 'Done. I wrote drafts for you to check.' },
+          { from: 'user', text: "SinoHelp, organize today's support requests" },
+          { from: 'sino', text: 'I grouped them and suggested next steps.' },
           { from: 'user', text: 'Show me the first one' },
           { from: 'sino', text: 'Here it is. Change anything you like.' },
         ],
@@ -120,8 +120,8 @@ export const pages: PageContentMap = {
       },
     },
     capabilities: {
-      title: 'What Sino can help with',
-      intro: 'Each task is a request you can hand to Sino.',
+      title: 'Meet the Sineva Product Suite',
+      intro: 'Focused AI tools support work across your business.',
     },
     howItWorks: { title: 'How it works', steps: productSteps },
     madeForYou: {
@@ -169,7 +169,7 @@ export const pages: PageContentMap = {
     hero: {
       eyebrow: null,
       headline: 'AI help that fits your business',
-      lead: 'AI should be accessible to every business. Tell us where the work gets tangled and we will help you find a first step.',
+      lead: 'Tell us where your team spends time on repeat tasks. We will help you choose a practical first step with AI.',
       primaryCtaLabel: 'Book a free consultation',
     },
     servicesIntro: {
@@ -193,11 +193,11 @@ export const pages: PageContentMap = {
     locale: 'en',
     seo: seo(
       'See how Sineva makes AI simple | Sineva',
-      'Sineva makes AI accessible for everyone, with practical, safe support for your business and your team. See how we work.',
+      'Learn how Sineva helps businesses find useful AI applications and build practical solutions for everyday work. See how we work.',
     ),
     hero: {
       title: 'More room for what matters',
-      lead: 'Our mission is to make AI accessible for everyone, so the everyday work of running a business feels lighter.',
+      lead: 'We help people find practical ways to use AI in everyday work, giving teams more room for what matters.',
       scene: asset('/mascot/poses/v008/sino-relaxed.webp', 1200, 1200, 'Sino relaxing with a mug'),
     },
     // Story and mission are proposals from docs/design/brand-positioning.md. The Founder has not
@@ -216,7 +216,7 @@ export const pages: PageContentMap = {
     ),
     mission: {
       title: 'Why we are here',
-      body: 'Make AI accessible for everyone. We help people make room for the work, people, and plans that matter to them.',
+      body: 'Help people make room for the work, people, and plans that matter by finding useful ways to bring AI into everyday work.',
     },
     values: {
       title: 'What we value',
@@ -228,7 +228,7 @@ export const pages: PageContentMap = {
     },
     meetSino: {
       title: 'Meet Sino',
-      body: 'Sino is a friendly companion for everyday work. Ask in plain words, and Sino can help you shape ideas, draft replies, and plan a next step.',
+      body: 'Sino is Sineva’s friendly AI companion. Ask in plain words, and Sino can help you shape ideas, draft replies, and plan a next step.',
     },
     // Hidden until team members agree to be listed.
     team: { visible: false, title: 'The people behind Sineva' },
@@ -281,7 +281,7 @@ export const pages: PageContentMap = {
     whatsappCtaLabel: 'Chat on WhatsApp',
     nextLinks: [
       { label: 'Read the blog', target: 'blog' },
-      { label: 'Explore AI Agents', target: 'product' },
+      { label: 'Meet Sino', target: 'product' },
     ],
   },
 

@@ -132,7 +132,7 @@ describe('interestFromServiceParam', () => {
     ['ai-discovery', 'AI Discovery'],
     ['ai-build', 'AI Build'],
     ['ai-enablement', 'AI Enablement'],
-    ['ai-agents', 'AI Agents product'],
+    ['ai-agents', 'Sineva Product Suite'],
     ['not-sure', 'Not sure yet'],
   ])('maps ?service=%s to %s', (slug, interest) => {
     expect(interestFromServiceParam(slug)).toBe(interest)

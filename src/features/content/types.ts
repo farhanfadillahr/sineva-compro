@@ -20,14 +20,14 @@ export type ContentLocale = (typeof routing.locales)[number]
 
 export const POSE_KEYS = [
   'wave', // S1  wave, footer CTA and waitlist
-  'holding-phone', // S2  holding phone, customer chat
+  'holding-phone', // S2  holding phone, SinoHelp
   'typing-laptop', // S3  typing on laptop, operations and AI Build
   'megaphone', // S4  megaphone or phone with heart bubble, social media
   'coins-clipboard', // S5  coin stack and clipboard, finance and admin
-  'handover', // S6  handing over a paper, sales follow-up
-  'magnifier', // S7  magnifying glass, AI Discovery
+  'handover', // S6  handing over a paper, SinoSales
+  'magnifier', // S7  magnifying glass, SinoInsights and AI Discovery
   'building-blocks', // S8  stacking building blocks, AI Build
-  'whiteboard', // S9  pointing at a whiteboard, AI Enablement
+  'whiteboard', // S9  pointing at a whiteboard, SinoPeople and AI Enablement
   'thumbs-up', // S10 thumbs up, thank-you page
   'confused', // S11 scratching helmet, 404 and empty states
   'peeking', // S12 peeking from the right edge
@@ -365,7 +365,7 @@ export type ServiceDetail = ServiceSummary &
 export type ProductCapability = Readonly<{
   /** Stable key, not a database id. */
   key: string
-  /** Phrased as a request to Sino, for example "Sino, reply to today's customer chats". */
+  /** Product name, tagline, and description shown in Sineva Product Suite cards. */
   title: string
   body: string
   tint: CapabilityTint

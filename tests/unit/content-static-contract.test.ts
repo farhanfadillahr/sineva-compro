@@ -79,7 +79,7 @@ describe('static content source: site settings', () => {
       "Hi Sineva, I'd like to talk about using AI in my business.",
     )
     expect(whatsapp.templates.product).toBe(
-      "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+      "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
     )
     expect(whatsapp.templates.thankYou).toBe(
       'Hi Sineva, I just sent the contact form and would like a faster reply.',
@@ -230,17 +230,18 @@ describe('static content source: services', () => {
 })
 
 describe('static content source: product collections', () => {
-  it('has the five capability categories as requests to Sino, one featured', async () => {
+  it('has the six named products in the Sineva Product Suite, one featured', async () => {
     const capabilities = await source.listCapabilities('en')
     expect(capabilities.map((item) => item.key)).toEqual([
-      'customer-chat',
-      'social-media',
-      'sales-follow-up',
-      'finance-admin',
-      'operations',
+      'people-experience',
+      'financial-intelligence',
+      'sales-acceleration',
+      'social-content',
+      'support-automation',
+      'enterprise-intelligence',
     ])
     for (const item of capabilities) {
-      expect(item.title.startsWith('Sino, ')).toBe(true)
+      expect(item.title.startsWith('Sino')).toBe(true)
       expect(item.mockupLines.length).toBeGreaterThan(0)
       expect(item.mockupLines.length).toBeLessThanOrEqual(FIELD_LIMITS.mockupLines)
     }

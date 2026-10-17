@@ -9,7 +9,7 @@ Locale strategy: `en` is the default and only enabled locale at launch. next-int
 | Page | URL (en) | Future `id` URL | Notes |
 |---|---|---|---|
 | Home | `/` | `/id` | |
-| Product | `/products/ai-agents` | `/id/produk/ai-agents` | Product name is a working name |
+| Product | `/products/ai-agents` | `/id/produk/ai-agents` | Presented as the Sineva Product Suite |
 | Services (list) | `/services` | `/id/layanan` | |
 | Service detail | `/services/[slug]` | `/id/layanan/[slug]` | Seed: `ai-discovery`, `ai-build`, `ai-enablement` (proposal) |
 | Work (list) | `/work` | `/id/karya` | Replaces "Portfolio" naming in the UI; data entity stays `Portfolio` |
@@ -40,7 +40,7 @@ Legend: **[A]** aurora gradient bg, **[T]** tint, **[W]** warm, **[I]** inverse 
 | 1 | Hero [A] | `Split` 6/6: text left, Sino stage right | No eyebrow (product owner decision 2026-10-16: hero sections carry no eyebrow label), H1 (≤ 10 words), lead, CTAs: **Book a free consultation** + **Join the waitlist** | Hero entrance, Sino greet + cursor look-at |
 | 2 | Two paths [C] | Two `card-path` side by side | "Use it yourself" (Product) / "Let us build it with you" (Services), each with Sino pose and CTA | Reveal, pose hover |
 | 3 | Meet Sino [T] | Centered header + scroll scene | Short intro of the AI agent and what it can do | Scroll scrub (one per page) |
-| 4 | What Sino can do [C] | `BentoGrid` of `card-task` | 4-5 capabilities phrased as requests: "Sino, reply to today's customer chats" | Staggered reveal, typing-dots Lottie in mockups |
+| 4 | Sineva Product Suite [C] | `BentoGrid` of `card-task` | Six focused products, each shown with its Sino-prefixed name, tagline, and user-facing description | Staggered reveal, typing-dots Lottie in mockups |
 | 5 | How we work (services) [ALT] | Sticky step story | Talk, Plan, Build, Support (4 steps; replaces the old Konsultasi/Proposal/Pengerjaan/Pendampingan) | Sticky steps |
 | 6 | Who we help [C] | 3 cards | Small businesses, growing companies, startups | Reveal |
 | 7 | Selected work [C] | 3 `card-work` | Featured items, **hidden if none** | Reveal |
@@ -53,7 +53,7 @@ Legend: **[A]** aurora gradient bg, **[T]** tint, **[W]** warm, **[I]** inverse 
 | # | Section | Pattern |
 |---|---|---|
 | 1 | Hero [A]: H1 + lead + waitlist inline form (email + consent) left; phone mockup with chat UI + Sino right, `ui-chip`s floating | `Split` |
-| 2 | Capabilities [C]: one `card-task` per capability, each with pose S2-S6 | `BentoGrid` |
+| 2 | Products [C]: one `card-task` per product, each with a Sino-prefixed name and description | `BentoGrid` |
 | 3 | How it works [ALT]: Connect your channels, Teach Sino your business, Let Sino handle the busywork, Review and approve (copy subject to `CBT` confirmation) | Sticky steps |
 | 4 | Made for your business [C]: segmented control by business type (online shop, cafe and restaurant, local services) with an example day | Tabs |
 | 5 | You stay in control [T]: privacy, approvals, human hand-off (only confirmed facts) | 3 `card-feature` |
@@ -95,7 +95,7 @@ Hero with scene C3, story, mission and values (cards), meet Sino (the friendly c
 
 - Page bg [ALT]. Centered meta chips ("Free consultation · No obligation"), H1, lead.
 - Two columns: left = 3 `card-step` items (Tell us your goal, We reply with next steps, We plan it together) + WhatsApp alternative + email; right = form card.
-- Form fields (EN): Name, Work email, WhatsApp number, Company (optional), Business type, What do you need help with (AI Discovery / AI Build / AI Enablement / AI Agents product / Not sure yet), Budget range (optional), Message (min 20 chars), Privacy consent. Prefilled by `?service=`.
+- Form fields (EN): Name, Work email, WhatsApp number, Company (optional), Business type, What do you need help with (AI Discovery / AI Build / AI Enablement / Sineva Product Suite / Not sure yet), Budget range (optional), Message (min 20 chars), Privacy consent. Prefilled by `?service=`.
 
 ### 2.9 Thank you, Privacy, 404
 

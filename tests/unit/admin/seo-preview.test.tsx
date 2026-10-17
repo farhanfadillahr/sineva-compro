@@ -32,6 +32,6 @@ it('recomputes the budget when the Admin changes the template', () => {
   preview('{title}', topic)
   expect(screen.queryByRole('status')).toBeNull()
   cleanup()
-  preview('{title} | Sineva AI Agents', topic)
+  preview('{title} | Sineva Product Suite', topic)
   expect(screen.getByRole('status')).toBeTruthy()
 })

@@ -15,13 +15,13 @@ export const serviceDetails: readonly ServiceDetail[] = [
     locale: 'en',
     title: 'AI Discovery',
     summary:
-      'For businesses that do not know where to start. Find where AI can help and decide what to try first.',
+      'For teams exploring how AI could support their work. Find useful opportunities and choose a practical first step.',
     icon: 'lightbulb',
     pose: 'magnifier',
     problems: [
       {
         title: 'Too many ideas',
-        body: 'You hear about AI everywhere and do not know where to start.',
+        body: 'You hear about AI everywhere and want a clear way to choose what to try first.',
       },
       { title: 'Unclear value', body: 'You want to know which tasks are worth handing to AI.' },
       { title: 'No plan', body: 'You need a short, honest plan your team can follow.' },
@@ -42,7 +42,7 @@ export const serviceDetails: readonly ServiceDetail[] = [
     ctaLabel: 'Plan my AI project',
     seo: seo(
       'AI Discovery: find where AI can help | Sineva',
-      'Not sure where to start with AI? Map your work, rank the ideas, and pick a first step. Book a free consultation with Sineva.',
+      'Explore where AI can help your team. Map your work, rank practical ideas, and pick a first step with Sineva.',
     ),
   },
   {

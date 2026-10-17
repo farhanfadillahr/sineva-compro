@@ -134,7 +134,7 @@ describe('form fields', () => {
       'AI Discovery',
       'AI Build',
       'AI Enablement',
-      'AI Agents product',
+      'Sineva Product Suite',
       'Not sure yet',
     ])
   })
@@ -193,7 +193,7 @@ describe('prefill from ?service=', () => {
   it.each([
     ['ai-discovery', 'AI Discovery'],
     ['ai-enablement', 'AI Enablement'],
-    ['ai-agents', 'AI Agents product'],
+    ['ai-agents', 'Sineva Product Suite'],
     ['not-sure', 'Not sure yet'],
   ])('maps ?service=%s to %s', (slug, interest) => {
     mocks.search.current = new URLSearchParams(`service=${slug}`)

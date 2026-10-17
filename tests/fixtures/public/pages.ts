@@ -3,8 +3,8 @@ import { doc, heading, media, paragraph, seo } from './helpers'
 import { processSteps } from './services'
 
 // Mirrors the future `demo` seed for `page_content` (admin CMS plan section 4.1). This is dummy
-// copy that follows copywriting.md. Product wording is a placeholder until team CBT confirms the
-// real capabilities, so none of it may be read as a product claim.
+// copy that follows copywriting.md. The product cards mirror the six names in the Sineva Product
+// Suite so fixture-driven page previews stay aligned with launch copy.
 
 const audienceCards: readonly IconCardItem[] = [
   {
@@ -60,8 +60,8 @@ export const pages: PageContentMap = {
       product: {
         eyebrow: 'Product',
         title: 'Use it yourself',
-        body: 'Start with Sineva AI Agents and let Sino take on everyday tasks.',
-        ctaLabel: 'See what Sino can do',
+        body: 'Explore the Sineva Product Suite and find tools for everyday business work.',
+        ctaLabel: 'Meet Sino',
         pose: 'holding-phone',
       },
       services: {
@@ -74,11 +74,11 @@ export const pages: PageContentMap = {
     },
     meetSino: {
       title: 'Meet Sino',
-      body: 'Sino is the AI agent that works across your daily tasks. One agent, many abilities.',
+      body: 'Sino is a friendly companion across the Sineva Product Suite.',
     },
     capabilities: {
-      title: 'What Sino can do',
-      intro: 'Hand over a task by asking, the way you would ask a teammate.',
+      title: 'Meet the Sineva Product Suite',
+      intro: 'Six focused AI tools for work across your business.',
     },
     howWeWork: { title: 'How we work', steps: processSteps },
     whoWeHelp: { title: 'Who we help', cards: audienceCards },
@@ -102,8 +102,8 @@ export const pages: PageContentMap = {
     key: 'product',
     locale: 'en',
     seo: seo(
-      'Sineva AI Agents: meet Sino | Sineva',
-      'Meet Sino, an AI agent for everyday business tasks. Join the waitlist to get early access.',
+      'Meet the Sineva Product Suite | Sineva',
+      'Explore six AI products for HR, finance, sales, social content, support, and business insights.',
     ),
     productStatus: 'coming_soon',
     hero: {
@@ -114,7 +114,7 @@ export const pages: PageContentMap = {
       waitlistIntro: 'Leave your email and we will tell you when Sino is ready.',
       mockup: {
         bubbles: [
-          { from: 'user', text: "Sino, reply to today's customer chats" },
+          { from: 'user', text: 'SinoHelp, handle customer support requests' },
           { from: 'sino', text: 'Done. I drafted replies for you to review.' },
           { from: 'user', text: 'Show me the first one' },
           { from: 'sino', text: 'Here it is. Approve it or edit it.' },

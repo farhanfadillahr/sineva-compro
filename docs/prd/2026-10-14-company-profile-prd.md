@@ -7,7 +7,7 @@
 | **Revision** | Rev. 3 (15 October 2026): AI consulting positioning with two pillars, English-first i18n-ready launch, light theme only, design system, SeaweedFS storage. See [Revision history](#revision-history) |
 | **Owner** | Founder of Sineva |
 | **Linear** | Team `CPR` (Compro) |
-| **Related project** | Sineva AI Agents product (working name), chatbot team `CBT`, developed separately |
+| **Related project** | Sineva Product Suite, developed separately with chatbot team `CBT` |
 | **Design system** | [docs/design/README.md](../design/README.md) |
 | **Implementation plans** | [Website redesign](../superpowers/plans/2026-10-15-website-redesign.md), [Linear alignment](../superpowers/plans/2026-10-15-linear-alignment.md) |
 
@@ -23,7 +23,7 @@
 
 ### Rev. 3 changelog
 
-1. **Positioning.** Sineva is an AI consulting company with two pillars: **Product** (AI agents for UMKM, many capabilities, working name "Sineva AI Agents", not sold on the website in v1, waitlist only) and **Services** (AI Consulting: proposed AI Discovery, AI Build, AI Enablement). Web Development is no longer a standalone service; it can be delivered as part of AI Build. Updates §1, §2, §3, §4, §7, §9. Source: [brand-positioning.md](../design/brand-positioning.md).
+1. **Positioning.** Sineva is an AI consulting company with two pillars: **Product** (Sineva Product Suite: six focused AI products, not sold on the website in v1, waitlist only) and **Services** (AI Consulting: proposed AI Discovery, AI Build, AI Enablement). Web Development is no longer a standalone service; it can be delivered as part of AI Build. Updates §1, §2, §3, §4, §7, §9. Source: [brand-positioning.md](../design/brand-positioning.md).
 2. **Brand name** is "Sineva" everywhere. The earlier name "Sineva Tech" is retired.
 3. **Language.** English is the default and the only enabled locale at launch. The site is i18n-ready (next-intl messages, per-locale DB content, per-locale slugs); Indonesian is added later. next-intl uses `localePrefix: 'as-needed'` (English without prefix, future `/id/...`). §6 sitemap and §10 rewritten; the Definition of Done in §4.3 now asks for final English content.
 4. **Theme.** Light theme only in v1; dark mode is deferred (post-launch backlog). FR-GLB-05 replaced, D10 updated, contrast text in §13.2 updated, dark-mode risks removed, new risks added in §17 (3D mascot performance, logo intro vs LCP, GSAP license, copy claims without data).
@@ -53,7 +53,7 @@ Sineva is an **AI consulting company** with two pillars of equal weight on the w
 
 | Pillar | What | Model | On the website in v1 |
 |---|---|---|---|
-| **Product** | Ready-to-use AI agents (chatbot) for UMKM (Indonesian micro, small and medium enterprises). One agent has many capabilities: customer chat, social media, sales follow-up, finance and admin, operations. Working name: **Sineva AI Agents** | SaaS | Product page and waitlist. The product is not sold on the website in v1 |
+| **Product** | Sineva Product Suite: SinoPeople, SinoMoney, SinoSales, SinoSocial, SinoHelp, and SinoInsights. | SaaS | Product page and waitlist. The products are not sold on the website in v1 |
 | **Services** | AI Consulting, proposed as **AI Discovery**, **AI Build**, **AI Enablement**. Web development can be delivered as part of AI Build, not as a standalone service | Per-project service | Services pages, consultation form, WhatsApp |
 
 The company website ("Compro") v1 has one main job: **turn visitors into prospects who contact Sineva for a consultation** (decision D3), through WhatsApp or the contact form. Its second job is to collect a waitlist for the AI agents product, which is not launched yet. Every page must also help a visitor answer one question: "do I use the product myself, or do I need help building it?"
@@ -206,7 +206,7 @@ Composition (top to bottom): Hero, Two paths, Meet Sino, What Sino can do, How w
 - **FR-HOME-08: Final CTA.** Inverse panel with a headline, the consultation button, the waitlist button, and the WhatsApp button, with Sino waving (pose S1).
 - **FR-HOME-09: FAQ.** Two-column accordion with 5-7 questions covering both product and services. Content is managed in the admin.
 - **FR-HOME-10: Two paths.** Two side-by-side cards: **"Use it yourself"** (Product, with "Coming soon" badge and waitlist CTA) and **"Let us build it with you"** (Services, naming AI Discovery, AI Build, and AI Enablement with a CTA to `/services`). Each card has a Sino pose. Selecting a card fires `path_select` (§12).
-- **FR-HOME-11: Meet Sino and capabilities.** A short introduction of the AI agent (one scroll-driven scene per page), followed by a bento grid of 4-5 capability cards phrased as requests (for example "Sino, reply to today's customer chats"). **Only capabilities confirmed by team `CBT` may appear** (Q11).
+- **FR-HOME-11: Meet Sino and products.** A short introduction to Sino, followed by a bento grid of six focused products, each with a Sino-prefixed name, tagline, and user-facing description supplied by the product owner.
 
 ### 7.3 Services
 Three services (proposal, final names are Q10): **AI Discovery**, **AI Build**, **AI Enablement**.
@@ -224,13 +224,13 @@ Three services (proposal, final names are Q10): **AI Discovery**, **AI Build**, 
 - **FR-PF-02: Detail page** contains: summary and meta (service, project type, stack), challenge, solution, result, technologies, gallery, demo link (opens in a new tab), related service, and CTA. Results must not contain invented metrics (FR-COPY-02).
 - **FR-PF-03: Project type label.** Each item has a *project type* field (Internal showcase / Client project). Internal showcase projects **must show the label "Internal demo project"** so visitors do not mistake them for client work.
 
-### 7.5 Product (Sineva AI Agents, working name)
+### 7.5 Product (Sineva Product Suite)
 The page is **waitlist-based "coming soon"** until the product is launched. Composition per [page-patterns.md](../design/page-patterns.md) §2.2.
 
-- **FR-PRD-01: Page content.** Hero with H1, lead, and an inline waitlist form (email and consent) beside a phone mockup with Sino; capabilities (one card per capability); how it works (steps subject to `CBT` confirmation); made for your business (tabs by business type); you stay in control (only confirmed facts); optional ways-of-working comparison; FAQ; and a final CTA with the waitlist plus "Need it customised? Book a consultation". All content is managed from the custom admin.
-- **FR-PRD-02: Confirmed capabilities only.** Capability categories (customer chat, social media, sales follow-up, finance and admin, operations) are page structure; their text only states what `CBT` has confirmed (Q11). Finance copy must not read as financial advice, and no messaging channel is claimed before it is confirmed.
-- **FR-PRD-03: Product name** is a working name stored in one place (messages and content DB) so the final name (Q9) is a single change.
-- Replacing this page with a full product page after launch (and changing the CTA to "Try Sineva AI Agents") is out of scope for v1.
+- **FR-PRD-01: Page content.** Hero with H1, lead, and an inline waitlist form (email and consent) beside a phone mockup with Sino; one product card for each of the six products; how it works (steps subject to `CBT` confirmation); made for your business (tabs by business type); you stay in control (only confirmed facts); optional ways-of-working comparison; FAQ; and a final CTA with the waitlist plus "Need it customised? Book a consultation". All content is managed from the custom admin.
+- **FR-PRD-02: Product names and descriptions.** Show SinoPeople, SinoMoney, SinoSales, SinoSocial, SinoHelp, and SinoInsights with the approved descriptions in [brand-positioning.md](../design/brand-positioning.md). Finance copy must not read as financial advice.
+- **FR-PRD-03: Product names.** Sineva Product Suite is the collective name; each of its six products uses the approved Sino-prefixed name in public copy.
+- Replacing this page with a full product page after launch is out of scope for v1.
 
 ### 7.6 Blog
 - **FR-BLOG-01: List page.** A featured latest post, category filter chips through the query parameter (`?category=`), 9 articles per page, and pagination. The canonical of a filtered page points to the main list page.
@@ -263,7 +263,7 @@ The page is **waitlist-based "coming soon"** until the product is launched. Comp
 |---|---|
 | General | `Hi Sineva, I'd like to talk about using AI in my business.` |
 | Services | `Hi Sineva, I'm interested in {service name}. Can we talk?` |
-| Product | `Hi Sineva, I'd like to know more about Sineva AI Agents.` |
+| Product | `Hi Sineva, I'd like to know more about the Sineva Product Suite.` |
 | Thank-you page | `Hi Sineva, I just sent the contact form and would like a faster reply.` |
 
 - **FR-LEAD-03:** the WhatsApp number and message templates are managed in Site Settings in the admin.
@@ -277,7 +277,7 @@ The page is **waitlist-based "coming soon"** until the product is launched. Comp
 | WhatsApp number | phone | Yes | normalised to the `62…` format |
 | Company | text | No | |
 | Business type | select | Yes | Small or local business (UMKM) / Company / Startup / Other |
-| What do you need help with | select | Yes | AI Discovery / AI Build / AI Enablement / AI Agents product / Not sure yet. Can be prefilled from the URL (`?service=`) |
+| What do you need help with | select | Yes | AI Discovery / AI Build / AI Enablement / Sineva Product Suite / Not sure yet. Can be prefilled from the URL (`?service=`) |
 | Budget range | select | No | < Rp10 million / Rp10-50 million / Rp50-150 million / > Rp150 million / Not sure yet |
 | Message | long text | Yes | minimum 20 characters |
 | Privacy policy consent | checkbox | Yes | with a link to the Privacy Policy |
@@ -563,7 +563,7 @@ Ticket title format: **`CPR-{number} | [MODULE] Action`**. `CPR-{number}` is ass
 | Q4 | Topics for 2-3 showcases. Proposal: (a) FAQ and booking chatbot for a fictional clinic, needs `CBT`; (b) WhatsApp order dashboard for an F&B UMKM; (c) this Sineva website itself as a case study | Founder | start of M1 |
 | Q6 | Who reviews the Privacy Policy text from a legal standpoint | Founder | before M4 |
 | Q8 | Off-host backup target for database backups (and media): separate provider or a second SeaweedFS instance in another location, and how copies are encrypted before leaving the VPS | Founder + developer | before M4 |
-| Q9 | Final name of the AI agents product (working name "Sineva AI Agents") | Founder | before M4 |
+| Q9 | Product suite name and six product names | Founder | Selected: Sineva Product Suite, SinoPeople, SinoMoney, SinoSales, SinoSocial, SinoHelp, and SinoInsights |
 | Q10 | Final service names and offers (proposal: AI Discovery, AI Build, AI Enablement) | Founder | start of M1 |
 | Q11 | Product capabilities confirmed by the `CBT` team (which capabilities and channels may be mentioned) | Founder + `CBT` | before product copy is final (M1) |
 

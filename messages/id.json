@@ -4,7 +4,7 @@
   },
   "Pages": {
     "home": "Beranda",
-    "aiAgents": "AI Agents",
+    "aiAgents": "Kenali Sino",
     "services": "Layanan",
     "work": "Karya",
     "blog": "Blog",
@@ -47,25 +47,29 @@
     "themeToLight": "Ganti ke mode terang",
     "productMenu": {
       "items": {
-        "customerChat": {
-          "title": "Chat pelanggan",
-          "description": "Siapkan jawaban untuk pertanyaan yang sering muncul."
+        "peopleExperience": {
+          "title": "SinoPeople",
+          "description": "HR dan pengalaman karyawan yang cerdas."
         },
-        "socialMedia": {
-          "title": "Media sosial",
-          "description": "Dapatkan ide unggahan dan draf caption."
+        "financialIntelligence": {
+          "title": "SinoMoney",
+          "description": "Kecerdasan keuangan otonom."
         },
-        "salesFollowUp": {
-          "title": "Tindak lanjut penjualan",
-          "description": "Catat siapa yang bertanya dan siapkan balasannya."
+        "salesAcceleration": {
+          "title": "SinoSales",
+          "description": "Akselerasi penjualan dan kesepakatan prediktif."
         },
-        "financeAdmin": {
-          "title": "Keuangan dan administrasi",
-          "description": "Catat transaksi sederhana dan lihat ringkasannya."
+        "socialContent": {
+          "title": "SinoSocial",
+          "description": "Mesin konten dan media sosial adaptif."
         },
-        "operations": {
-          "title": "Operasional harian",
-          "description": "Dapatkan ringkasan harian singkat dan pengingat."
+        "supportAutomation": {
+          "title": "SinoHelp",
+          "description": "Otomasi proses dan dukungan cerdas."
+        },
+        "enterpriseIntelligence": {
+          "title": "SinoInsights",
+          "description": "Pusat insight dan keputusan perusahaan."
         }
       },
       "promo": {
@@ -86,7 +90,7 @@
       "legal": "Legal"
     },
     "links": {
-      "aiAgents": "Sino AI",
+      "aiAgents": "Kenali Sino",
       "joinWaitlist": "Gabung daftar tunggu",
       "allServices": "Semua layanan",
       "about": "Tentang",
@@ -245,7 +249,7 @@
       "aiDiscovery": "AI Discovery",
       "aiBuild": "AI Build",
       "aiEnablement": "AI Enablement",
-      "aiAgents": "Produk AI Agents",
+      "aiAgents": "Sineva Product Suite",
       "notSure": "Belum yakin"
     },
     "budgets": {

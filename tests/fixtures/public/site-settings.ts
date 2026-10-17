@@ -7,7 +7,7 @@ export const siteSettings: SiteSettingsDTO = {
   locale: 'en',
   brand: {
     siteName: 'Sineva',
-    productName: 'Sineva AI Agents',
+    productName: 'Sineva Product Suite',
     defaultOgImage: media('og-default', 1200, 630, 'Sino waving next to the Sineva name', true),
     logo: media('logo', 512, 512, 'Sineva logo'),
   },
@@ -21,7 +21,7 @@ export const siteSettings: SiteSettingsDTO = {
     number: '+6280000000000',
     templates: {
       general: "Hi Sineva, I'd like to talk about using AI in my business.",
-      product: "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+      product: "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
       thankYou: 'Hi Sineva, I just sent the contact form and would like a faster reply.',
       services: [
         {

@@ -18,7 +18,7 @@ const copy: WaitlistMessageCopy = {
 const channels: WaitlistChannels = {
   whatsappNumber: '+6285199368510',
   email: null,
-  greeting: "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+  greeting: "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
 }
 
 describe('buildWaitlistMessage', () => {
@@ -27,7 +27,7 @@ describe('buildWaitlistMessage', () => {
       buildWaitlistMessage({ name: 'Rina', businessType: 'Online shop' }, copy, channels.greeting),
     ).toBe(
       [
-        "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+        "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
         'Please let me know when Sino is ready.',
         '',
         'Name: Rina',
@@ -39,7 +39,7 @@ describe('buildWaitlistMessage', () => {
   it('leaves out the name and business type lines when they are empty (both are optional)', () => {
     expect(buildWaitlistMessage({ name: '', businessType: '' }, copy, channels.greeting)).toBe(
       [
-        "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+        "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
         'Please let me know when Sino is ready.',
       ].join('\n'),
     )

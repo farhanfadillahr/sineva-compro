@@ -38,8 +38,8 @@ describe('FAQPage JSON-LD', () => {
 
   it('maps DTO items to entries with plain-text answers', () => {
     expect(entries).toHaveLength(3)
-    expect(entries[0]?.question).toBe('What is Sino?')
-    expect(entries[0]?.answerText).toMatch(/AI agent from Sineva/)
+    expect(entries[0]?.question).toBe('What is the Sineva Product Suite?')
+    expect(entries[0]?.answerText).toMatch(/focused AI products.*business insights/)
   })
 
   it('has the schema.org FAQPage shape', () => {
@@ -49,7 +49,7 @@ describe('FAQPage JSON-LD', () => {
     expect(data.mainEntity).toHaveLength(3)
     expect(data.mainEntity[0]).toEqual({
       '@type': 'Question',
-      name: 'What is Sino?',
+      name: 'What is the Sineva Product Suite?',
       acceptedAnswer: { '@type': 'Answer', text: entries[0]?.answerText },
     })
   })

@@ -40,11 +40,12 @@ const plainLinks = [
 ] as const satisfies readonly PlainLink[]
 
 const productItems = [
-  { key: 'customerChat', icon: 'chat-bubble' },
-  { key: 'socialMedia', icon: 'megaphone' },
-  { key: 'salesFollowUp', icon: 'chart-rising' },
-  { key: 'financeAdmin', icon: 'coin-wallet' },
-  { key: 'operations', icon: 'calendar' },
+  { key: 'peopleExperience', icon: 'calendar' },
+  { key: 'financialIntelligence', icon: 'coin-wallet' },
+  { key: 'salesAcceleration', icon: 'chart-rising' },
+  { key: 'socialContent', icon: 'megaphone' },
+  { key: 'supportAutomation', icon: 'chat-bubble' },
+  { key: 'enterpriseIntelligence', icon: 'lightbulb' },
 ] as const satisfies readonly { key: string; icon: IconKey }[]
 
 /**

@@ -71,7 +71,7 @@ describe('Product composition', () => {
         comparison: {
           visible: true,
           title: 'Ways of working',
-          columns: ['Doing it manually', 'Sineva AI Agents'],
+          columns: ['Doing it manually', 'Sineva Product Suite'],
           rows: [{ label: 'Speed', cells: ['x', 'y'] }],
         },
       },

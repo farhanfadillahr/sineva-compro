@@ -54,7 +54,7 @@ Single source of truth for how the Sineva public website looks, moves, and speak
 
 | Item | Owner |
 |---|---|
-| Product final name (working name "Sineva AI Agents") | Founder (PRD Q9) |
+| Sineva Product Suite name and six Sino product names | Founder (selected for public copy) |
 | Final service names and offers | Founder (Q10) |
 | Product capabilities confirmed | Team `CBT` (Q11) |
 | Horizontal logo lockup (symbol + wordmark) for the navbar | Design (export from Figma) |

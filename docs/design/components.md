@@ -116,7 +116,7 @@ Form card (contact page): white `card-base` with radius `--radius-xl`, padding 3
 
 ## 9. Comparison table (optional, Product page)
 
-Sintra highlights its own column. Sineva variant compares **ways of working** (Doing it manually · Generic AI chat · Sineva AI Agents), not named competitors, to avoid unverifiable claims.
+Sintra highlights its own column. Sineva variant compares **ways of working** (Doing it manually · Generic AI chat · Sineva Product Suite), not named competitors, to avoid unverifiable claims.
 - Highlighted column: `--color-action-primary` background, white text, radius 22 px top and bottom, extends 16 px above and below the table, contains the CTA at the bottom, Sino S12 peeking over the top edge.
 - Rows: radius 16, alternating `--ink-50`.
 - Icons: check (teal) and minus (ink-400). Never a red cross for "others" (tone).

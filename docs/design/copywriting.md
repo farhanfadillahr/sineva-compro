@@ -50,7 +50,7 @@ CTAs use a **verb + object**, 2-4 words, no period.
 | Consultation (main conversion) | **Book a free consultation** | Talk to us · Get a free consultation | Submit · Click here · Learn more |
 | WhatsApp | **Chat on WhatsApp** | Message us on WhatsApp | WhatsApp |
 | Waitlist | **Join the waitlist** | Get early access | Sign up now!!! |
-| Product | **See what Sino can do** | Explore AI Agents | |
+| Product | **See what Sino can do** | Explore the Sineva Product Suite | |
 | Services | **Explore services** | See how we help | |
 | Service detail | **Plan my AI project** | Talk about this service | |
 | Portfolio | **See our work** | View project | |
@@ -82,7 +82,7 @@ Per context, managed in Site Settings (FR-LEAD-02). Draft:
 |---|---|
 | General | `Hi Sineva, I'd like to talk about using AI in my business.` |
 | Services | `Hi Sineva, I'm interested in {service name}. Can we talk?` |
-| Product | `Hi Sineva, I'd like to know more about Sineva AI Agents.` |
+| Product | `Hi Sineva, I'd like to know more about the Sineva Product Suite.` |
 | Thank-you page | `Hi Sineva, I just sent the contact form and would like a faster reply.` |
 
 ## 7. Metadata

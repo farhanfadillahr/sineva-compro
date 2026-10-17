@@ -473,7 +473,7 @@ Sineva rules these patterns feed into: one mascot only (Sino), pre-baked stills 
 | Morphing dropdown | Dark rounded panel, single shared rail | Light panel, `--radius-md`, `--shadow-md`, 36 px icon tile plus title plus one line, optional promo card in `--color-surface-tint` |
 | Sticky steps | Phone mockup plus 4 steps, GSAP progress map | Keep, but CSS `position: sticky`, mobile stacks, steps are clickable and keyboard accessible ([motion.md](../motion.md) §4.2) |
 | Glow cards | Saturated gradient plus 70 px colored glow on black | Light form: white or tint card, hairline border, `--shadow-glow` (teal, 22% at 40 px) only on the "featured" card, one `--gradient-brand` per viewport max ([tokens.md](../tokens.md) §1.4) |
-| Hand-off phrase ("Sino, reply to today's customer chats") | `<Name>, <task>` inside colored cards | Keep the phrase pattern with the single character Sino ([brand-positioning.md](../brand-positioning.md) §3.1) |
+| Product card example ("SinoHelp, handle customer support requests") | Product name and task inside colored cards | Use the product names in [brand-positioning.md](../brand-positioning.md) §3.1 |
 | Video hero | Full-bleed autoplay video on black | Home hero uses poster plus realtime GLB with fallback loop; elsewhere pre-baked stills ([mascot-sino.md](../mascot-sino.md) §3) |
 | Mascot peeking | Above comparison column | Sino peeks from a card edge (asset S12) |
 | Comparison table | Highlighted column in `#3B82F6`, check/cross, CTA in column | Highlight column in `--teal-700` or `--teal-50` with a teal outline, check and cross icons with text labels (not color alone) |

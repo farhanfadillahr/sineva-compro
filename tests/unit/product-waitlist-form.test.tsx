@@ -52,7 +52,7 @@ const props: WaitlistFormProps = {
   channels: {
     whatsappNumber: '+6285199368510',
     email: null,
-    greeting: "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+    greeting: "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
   },
   privacyHref: '/privacy-policy',
   // The `joinWaitlist` server action, injected by the page (CPR-105).
@@ -223,7 +223,7 @@ describe('WaitlistForm opens WhatsApp', () => {
     expect(open).toHaveBeenCalledWith(expected, '_blank', 'noopener,noreferrer')
     expect(expected.startsWith('https://wa.me/6285199368510?text=')).toBe(true)
     const text = decodeURIComponent(expected.split('?text=')[1]!)
-    expect(text).toContain("Hi Sineva, I'd like to know more about Sineva AI Agents.")
+    expect(text).toContain("Hi Sineva, I'd like to know more about the Sineva Product Suite.")
     expect(text).toContain('Name: Rina')
     expect(text).toContain('Business type: Online shop')
   })

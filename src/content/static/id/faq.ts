@@ -5,8 +5,8 @@ import { paragraphs } from '../helpers'
 // English entry, so the two lists cannot drift). The seed pairs them by position.
 const answers: readonly (readonly [question: string, ...answer: string[]])[] = [
   [
-    'Apa itu Sino?',
-    'Sino adalah teman yang ramah untuk pekerjaan sehari-hari. Minta tugas dengan bahasa biasa, dan Sino membantu Anda menyelesaikannya.',
+    'Apa itu Sineva Product Suite?',
+    'Sineva Product Suite mencakup produk AI untuk pekerjaan tim, keuangan, penjualan, konten sosial, dukungan pelanggan dan internal, serta insight bisnis. Setiap produk membantu kebutuhan yang berbeda dalam pekerjaan bisnis sehari-hari.',
   ],
   [
     'Untuk siapa Sineva?',
@@ -33,8 +33,8 @@ const answers: readonly (readonly [question: string, ...answer: string[]])[] = [
     'Mulailah dengan AI Discovery. Kami pelajari cara bisnis Anda berjalan dan membantu memilih langkah awal.',
   ],
   [
-    'Tugas apa saja yang bisa dibantu Sino?',
-    'Kami membangun Sino untuk membantu chat pelanggan, media sosial, tindak lanjut penjualan, keuangan dan administrasi, serta operasional harian.',
+    'Apa saja produk dalam Sineva Product Suite?',
+    'SinoPeople membantu HR dan pengalaman karyawan, SinoMoney mendukung pekerjaan keuangan, SinoSales membantu penjualan, SinoSocial membantu konten sosial, SinoHelp mendukung pelanggan dan tim, serta SinoInsights merangkum data perusahaan untuk membantu pengambilan keputusan.',
   ],
   [
     'Apakah Sino akan menggantikan tim saya?',

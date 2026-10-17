@@ -16,7 +16,7 @@ const settings = {
     number: '+6285199368510',
     templates: {
       general: "Hi Sineva, I'd like to talk about using AI in my business.",
-      product: "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+      product: "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
       thankYou: 'Hi Sineva, I just sent the contact form and would like a faster reply.',
       services: [
         {
@@ -62,7 +62,7 @@ describe('contact option lists', () => {
       'AI Discovery',
       'AI Build',
       'AI Enablement',
-      'AI Agents product',
+      'Sineva Product Suite',
       'Not sure yet',
     ])
   })
@@ -82,10 +82,10 @@ describe('buildContactMessage', () => {
 
   it('uses the product and general templates for the other interests', () => {
     const product = buildContactMessage(
-      { ...fields, interest: 'AI Agents product' },
+      { ...fields, interest: 'Sineva Product Suite' },
       settings.whatsapp.templates,
     )!
-    expect(product.split('\n')[0]).toBe("Hi Sineva, I'd like to know more about Sineva AI Agents.")
+    expect(product.split('\n')[0]).toBe("Hi Sineva, I'd like to know more about the Sineva Product Suite.")
     const unsure = buildContactMessage(
       { ...fields, interest: 'Not sure yet' },
       settings.whatsapp.templates,

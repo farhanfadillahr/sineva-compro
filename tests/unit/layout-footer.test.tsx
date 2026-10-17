@@ -46,7 +46,7 @@ describe('SiteFooter columns', () => {
       within(footer).getByRole('heading', { name }).closest('section') as HTMLElement
 
     const product = within(column('Product'))
-    expect(product.getByRole('link', { name: 'Sino AI' }).getAttribute('href')).toBe(
+    expect(product.getByRole('link', { name: 'Meet Sino' }).getAttribute('href')).toBe(
       '/products/ai-agents',
     )
     expect(product.getByRole('link', { name: 'Join the waitlist' })).toBeTruthy()
@@ -257,6 +257,6 @@ describe('SiteFooter product status', () => {
       <SiteFooter settings={fixtureSiteSettings} services={navServices} showWaitlist={false} />,
     )
     expect(screen.queryByRole('link', { name: 'Join the waitlist' })).toBeNull()
-    expect(screen.getAllByRole('link', { name: 'Sino AI' }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: 'Meet Sino' }).length).toBeGreaterThan(0)
   })
 })

@@ -28,17 +28,45 @@ export function buildContentSecurityPolicy(env) {
   const umami = origin(env.UMAMI_HOST)
   const sentry = origin(env.SENTRY_INGEST_ORIGIN)
   const turnstile = 'https://challenges.cloudflare.com'
+  const googleTagManager = 'https://www.googletagmanager.com'
+  const googleAnalytics = 'https://*.google-analytics.com'
+  const google = 'https://*.google.com'
   const list = (/** @type {(string | null)[]} */ ...items) => items.filter(Boolean).join(' ')
   const directives = {
     'default-src': "'self'",
-    'script-src': list("'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", turnstile, umami),
+    'script-src': list(
+      "'self'",
+      "'unsafe-inline'",
+      "'wasm-unsafe-eval'",
+      turnstile,
+      umami,
+      googleTagManager,
+    ),
     'style-src': "'self' 'unsafe-inline'",
-    'img-src': list("'self'", 'data:', 'blob:', media, storage, blob),
+    'img-src': list(
+      "'self'",
+      'data:',
+      'blob:',
+      media,
+      storage,
+      blob,
+      googleTagManager,
+      googleAnalytics,
+    ),
     'media-src': list("'self'", 'blob:', media, storage, blob),
     'font-src': "'self'",
-    'connect-src': list("'self'", media, umami, sentry, turnstile),
+    'connect-src': list(
+      "'self'",
+      media,
+      umami,
+      sentry,
+      turnstile,
+      googleTagManager,
+      googleAnalytics,
+      google,
+    ),
     'worker-src': "'self' blob:",
-    'frame-src': turnstile,
+    'frame-src': list(turnstile, googleTagManager),
     'frame-ancestors': "'none'",
     'object-src': "'none'",
     'base-uri': "'self'",

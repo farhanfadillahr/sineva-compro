@@ -29,11 +29,16 @@ describe('content security policy', () => {
     expect(policy).not.toMatch(/(^|\s)\*(\s|;|$)|https:\/\/\*\./)
   })
 
-  it('allows Turnstile, Umami, Sentry and the decoder workers', () => {
+  it('allows Turnstile, Umami, Google Tag Manager, Sentry and the decoder workers', () => {
     expect(directive(policy, 'script-src')).toEqual(
       expect.arrayContaining(['https://challenges.cloudflare.com', 'https://analytics.sineva.id']),
     )
-    expect(directive(policy, 'frame-src')).toEqual(['https://challenges.cloudflare.com'])
+    expect(directive(policy, 'frame-src')).toEqual(
+      expect.arrayContaining([
+        'https://challenges.cloudflare.com',
+        'https://www.googletagmanager.com',
+      ]),
+    )
     expect(directive(policy, 'connect-src')).toContain('https://o1.ingest.sentry.io')
     expect(directive(policy, 'worker-src')).toEqual(["'self'", 'blob:'])
     expect(directive(policy, 'frame-ancestors')).toEqual(["'none'"])

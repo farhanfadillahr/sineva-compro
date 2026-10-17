@@ -92,6 +92,7 @@ describe('formatLegalDate', () => {
   it('is timezone independent (a date, not an instant)', () => {
     expect(formatLegalDate('2026-01-01')).toBe('1 January 2026')
     expect(formatLegalDate('2026-12-31')).toBe('31 December 2026')
+    expect(formatLegalDate('2026-10-17', 'id')).toBe('17 Oktober 2026')
   })
 
   it('returns the input for a value that is not a date, instead of "Invalid Date"', () => {

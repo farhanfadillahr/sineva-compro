@@ -80,7 +80,8 @@ export const pages: PageContentMap = {
     },
     capabilities: {
       title: 'Kenali Sineva Product Suite',
-      intro: 'Jelajahi alat AI untuk tim, keuangan, penjualan, konten sosial, layanan, dan insight bisnis.',
+      intro:
+        'Jelajahi alat AI untuk tim, keuangan, penjualan, konten sosial, layanan, dan insight bisnis.',
     },
     howWeWork: { title: 'Cara kami bekerja', steps: processSteps },
     whoWeHelp: { title: 'Siapa yang kami bantu', cards: audienceCards },
@@ -279,9 +280,10 @@ export const pages: PageContentMap = {
     responseTimeText: null,
     form: {
       intro:
-        'Ceritakan sedikit soal bisnis dan kebutuhan Anda. Tidak ada yang terkirim sampai Anda menekan kirim di WhatsApp.',
+        'Ceritakan sedikit soal bisnis dan kebutuhan Anda. Saat Anda menekan kirim, kami menyimpan data Anda agar bisa membalas, lalu WhatsApp terbuka dengan pesan yang siap dikirim.',
       consentLabel: {
-        before: 'Saya paham ini membuka WhatsApp dengan pesan yang siap dikirim. Baca ',
+        before:
+          'Saya setuju Sineva menyimpan data ini untuk membalas saya, seperti dijelaskan dalam ',
         linkLabel: 'kebijakan privasi',
         after: '.',
       },

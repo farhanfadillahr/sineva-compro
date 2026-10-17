@@ -78,7 +78,8 @@ export const pages: PageContentMap = {
     },
     capabilities: {
       title: 'Meet the Sineva Product Suite',
-      intro: 'Explore focused AI tools for people operations, finance, sales, social content, support, and business insight.',
+      intro:
+        'Explore focused AI tools for people operations, finance, sales, social content, support, and business insight.',
     },
     howWeWork: { title: 'How we work', steps: processSteps },
     whoWeHelp: { title: 'Who we help', cards: audienceCards },
@@ -259,9 +260,9 @@ export const pages: PageContentMap = {
     responseTimeText: null,
     form: {
       intro:
-        'Tell us a little about your business and what you need. Nothing is sent until you press send in WhatsApp.',
+        'Tell us a little about your business and what you need. When you press send, we save your details so we can reply, then WhatsApp opens with your message ready.',
       consentLabel: {
-        before: 'I understand this opens WhatsApp with my message ready to send. Read the ',
+        before: 'I agree that Sineva stores these details to reply to me, as explained in the ',
         linkLabel: 'privacy policy',
         after: '.',
       },
@@ -310,9 +311,8 @@ export const pages: PageContentMap = {
       'How Sineva handles the details you share with us: what we collect, why, how long we keep it, and how to make a request.',
     ),
     body: privacyBody,
-    // The date of the reviewed draft. The text itself says the effective date and the responsible
-    // operator are confirmed before the policy takes effect.
-    effectiveDate: '2026-10-16',
+    // The day the revised policy (CPR-17) went live, together with the cookie banner (CPR-109).
+    effectiveDate: '2026-10-17',
   },
 
   blogIndex: {

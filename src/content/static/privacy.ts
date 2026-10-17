@@ -1,102 +1,96 @@
 import type { RichTextDocument } from '../../features/content/types'
 import { bulletList, doc, heading, paragraph } from './helpers'
 
-// Adapted from the English privacy policy draft in docs/content/privacy-policy-en.md, keeping its
-// sections in order. The draft was written for a launch with stored leads, a waitlist database and
-// named vendors. The static launch has none of those: the contact form only prepares a message,
-// and no form data reaches a server. So the sections that described stored records now describe
-// what actually happens, and vendor names are left out until the live deployment confirms them.
-//
-// Still open, and stated in the text instead of hidden: the responsible operator, the final
-// retention periods, the response process and the legal basis for technical processing. The
-// draft remains a Founder and legal review item; publishing this page does not complete it.
+// The privacy policy as published on 17 October 2026 (CPR-17), describing the live website: the
+// contact form and the waitlist store what visitors send in our database, Turnstile screens the
+// forms, and Google Analytics runs only after cookie consent (CPR-109). Founder decisions of that
+// day: the controller is named as "Sineva" (no legal entity yet), privacy requests go to the team
+// inbox, and the retention periods are the ones proposed in the PRD. Update this text, and its
+// Indonesian translation, whenever a provider or a data flow changes.
 
 export const privacyBody: RichTextDocument = doc(
   paragraph(
-    'This policy explains how Sineva handles information collected through our website, including the contact form, the option to be notified about our product, and our admin area. It covers why we use information, the services that support our website, how long we keep information, and how to make a request about your data.',
+    'This policy explains how Sineva handles personal data collected through this website: what we collect, why, which services help us, how long we keep it, and how you can make a request about your data. It applies to the contact form, the waitlist for our product, analytics cookies and our admin area.',
   ),
   paragraph(
-    'Sineva is the name we use for our business. Our Contact page shows how to reach us about privacy requests. We will identify the responsible operator and the effective date before this policy takes effect.',
+    'Sineva is responsible for the personal data described here. For privacy questions or requests, email sinevatech@gmail.com.',
   ),
 
-  heading('Information you provide'),
+  heading('Information you give us'),
   paragraph(
-    'The contact form on this website does not send your details to our servers. It prepares a message from what you enter: your name, business type, area of interest and message, plus your company name and budget range if you choose to add them. You then send that message yourself through WhatsApp or your email app. We do not store form entries on our servers.',
+    'When you send the contact form, we store your name, email address, WhatsApp number, business type, area of interest and message, plus your company name and budget range if you add them. We also record the page you sent it from, the language of the page and the time you agreed to this policy. After saving it, the website opens WhatsApp with your message ready, so you can also reach us there.',
   ),
   paragraph(
-    'When you send the message, we receive what you wrote, together with your WhatsApp number or email address, through that service. WhatsApp and your email provider handle the message under their own terms and privacy policies.',
+    'When you join the waitlist for our product, we store your email address, your business type if you add it, the language of the page and the time you agreed. Joining the waitlist does not create an account or make the product available.',
   ),
   paragraph(
-    'If you ask to be notified about the Sineva Product Suite, you do it by sending us a message in the same way. Asking to be notified records your interest only. It does not create a product account or make the products available.',
-  ),
-  paragraph(
-    'Please do not include passwords, payment details or other sensitive information in a message. We may ask for more information when we discuss your needs, but the contact form is not a channel for confidential project material.',
+    'Please do not include passwords, payment details or other sensitive information in a message.',
   ),
 
-  heading('Technical information'),
+  heading('Information collected automatically'),
   paragraph(
-    'Our website and hosting infrastructure may process request information such as IP addresses, timestamps, browser details, requested paths and security events. We use this information to operate the website, investigate failures and protect it against abuse.',
+    'To protect our forms from spam, Cloudflare Turnstile checks your browser when you use them, and Cloudflare receives your IP address and browser details for that check. We also keep a scrambled form of your IP address for 24 hours to limit how often a form can be sent. It cannot be turned back into your IP address.',
   ),
   paragraph(
-    'We may use website analytics without advertising cookies, and error monitoring to find technical faults. Analytics and error events should not contain your messages, passwords or authentication tokens.',
-  ),
-  paragraph(
-    'The admin area is for our team. It uses authentication cookies to keep signed-in sessions and apply security controls. We do not use advertising pixels on this website.',
+    'Our hosting provider processes request details such as IP addresses, times, browser details and requested pages to deliver the website and keep it secure.',
   ),
 
-  heading('Why we use information'),
+  heading('Cookies and similar storage'),
   paragraph(
-    'We use the messages you send us to review your request, reply to you and manage follow-up. We use notification requests to tell you when the Sineva Product Suite is ready.',
+    'We use Google Analytics to understand how visitors use the website, but only if you accept analytics cookies in the banner. Until then, nothing from Google Analytics loads. If you accept, Google sets cookies named _ga and _ga_ followed by an ID, which can last up to two years. You can withdraw at any time with Cookie settings at the bottom of every page; we then stop Google Analytics and remove its cookies from this website.',
   ),
   paragraph(
-    'Sending us a message is your choice, and the form asks you to confirm that you understand how the message is sent. You can ask us to stop using your information, or to delete it, by contacting us. Withdrawing does not undo processing that took place before your request.',
-  ),
-  paragraph(
-    'Technical and security processing supports the operation and protection of the website. We will confirm its legal basis as part of our policy review before launch. The confirmation on the form does not cover every kind of technical processing.',
+    'Your browser also stores your cookie choice, your light or dark theme and similar display settings. These stay on your device and are not sent to us. Our admin area uses login cookies for our team only. We do not use advertising cookies.',
   ),
 
-  heading('Who can access information'),
-  paragraph(
-    'Authorized Sineva team members handle the messages we receive. Access follows the responsibilities needed to operate the website and respond to requests.',
-  ),
-  paragraph('We use service providers for specific website operations:'),
+  heading('Why we use your information'),
   bulletList(
-    'Our hosting provider runs the servers that deliver this website.',
-    'Network and delivery services help serve the website and protect it against abuse.',
-    'WhatsApp and your email provider carry the messages you choose to send us.',
-    'Analytics and error monitoring services, if enabled, help us understand and fix the website.',
+    'To reply to your message and follow up on your request. The basis is the consent you give on the form.',
+    'To tell you when our product is ready, if you joined the waitlist. The basis is your consent.',
+    'To measure how the website is used, only with your consent to analytics cookies.',
+    'To keep the website and our forms secure and free of spam. The basis is our legitimate interest in protecting the website and the people who use it.',
   ),
   paragraph(
-    'We will name these providers in this policy once they are confirmed for the live website.',
+    'You can withdraw your consent at any time. Withdrawing does not affect processing that took place before.',
   ),
 
-  heading('Processing locations'),
+  heading('Who receives your information'),
   paragraph(
-    'Our hosting and service providers may process information outside Indonesia. Before we enable a service, we review its intended locations, its terms and the safeguards needed for those transfers. The final policy will describe the verified arrangement. It will not treat a provider name alone as proof of an adequate safeguard.',
+    'Only authorized Sineva team members can see the messages and waitlist entries in our admin area. We use these service providers:',
+  ),
+  bulletList(
+    'Vercel hosts the website. Its servers are in the United States.',
+    'Neon hosts our database, in Singapore.',
+    'Cloudflare runs Turnstile, the spam check on our forms.',
+    'Google runs Google Analytics, only if you accept analytics cookies.',
+    'WhatsApp carries the messages you choose to send us there.',
+    'An email delivery provider sends our replies and notifications by email.',
+  ),
+  paragraph('We do not sell your personal data.'),
+
+  heading('Transfers outside Indonesia'),
+  paragraph(
+    'Some of these providers process data outside Indonesia, including in Singapore and the United States. We choose providers that protect personal data under their own terms and safeguards, and we share only what each service needs.',
   ),
 
-  heading('Retention'),
-  paragraph(
-    'Our proposed retention period for messages is 24 months after our last interaction with you. Our proposed period for notification requests runs until 12 months after the product launches, or until an earlier deletion request applies. We will confirm these periods before launch.',
+  heading('How long we keep it'),
+  bulletList(
+    'Contact form messages: 24 months after our last contact with you.',
+    'Waitlist entries: until 12 months after the product launches, or earlier if you ask us to delete them.',
+    'The scrambled IP address used to limit form sending: 24 hours.',
+    'Google Analytics cookies: up to two years, or until you withdraw your consent.',
   ),
   paragraph(
-    'This website does not store form entries, so they do not sit in our website backups. Messages you send through WhatsApp or email stay in those accounts and follow the same periods. Deleting a message in one place may not delete copies kept by the services that carried it.',
-  ),
-
-  heading('Requests about your information'),
-  paragraph(
-    'You may contact us to ask how we process your information, or to request access, correction, withdrawal of consent or deletion where applicable. You may also ask about other rights available under the applicable personal data protection rules.',
-  ),
-  paragraph(
-    'Message us using the contact options on our Contact page and explain your request. We may need information to confirm your identity and find the relevant message. Please provide only what is necessary, and do not send a password or an identity document unless we have agreed a suitable method.',
-  ),
-  paragraph(
-    'A team member will review the request and explain the next steps, including any limits that apply because of retention or another legal obligation. We will confirm our response process and its deadlines before launch.',
+    'When a period ends, we delete the data or make it anonymous. Copies of messages you sent through WhatsApp or email stay with those services under their own terms.',
   ),
 
-  heading('Updates and contact'),
+  heading('Your rights'),
   paragraph(
-    'We may update this policy when the website, our providers or our practices change. The published version shows its effective date. Changes that need a further notice or consent will follow the reviewed process.',
+    'Under the Indonesian personal data protection law, you can ask to see the personal data we hold about you, correct it, delete it, withdraw your consent, or object to how we use it. Email sinevatech@gmail.com with your request. We may ask for information to confirm it is you, and we will reply within the time the law requires.',
   ),
-  paragraph('For privacy questions or requests, use the contact options on the Contact page.'),
+
+  heading('Changes to this policy'),
+  paragraph(
+    'We update this policy when the website, our providers or our practices change. The date at the top shows when the current version took effect.',
+  ),
 )

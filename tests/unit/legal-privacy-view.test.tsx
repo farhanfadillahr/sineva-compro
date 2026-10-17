@@ -90,7 +90,7 @@ describe('PrivacyView page structure', () => {
     const { container } = intl(<PrivacyView page={page} />)
     const time = container.querySelector('time')!
     expect(time.getAttribute('datetime')).toBe(page.effectiveDate)
-    expect(time.textContent).toBe('16 October 2026')
+    expect(time.textContent).toBe('17 October 2026')
     expect(container.textContent).toContain(en.Privacy.lastUpdated)
   })
 

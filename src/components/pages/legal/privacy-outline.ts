@@ -84,32 +84,48 @@ export function buildPrivacyOutline(document: RichTextDocument): PrivacyOutline 
   return { blocks, headings }
 }
 
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
+const MONTHS: Record<'en' | 'id', readonly string[]> = {
+  en: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+  id: [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ],
+}
 
 /**
- * "2026-10-16" to "16 October 2026". Built by hand from the date parts on purpose: `new Date`
+ * "2026-10-16" to "16 October 2026" (or "16 Oktober 2026" in Indonesian). Built by hand from the date parts on purpose: `new Date`
  * parses the ISO date as UTC midnight and `toLocaleDateString` then formats in the server's zone,
  * which prints the previous day west of UTC. A calendar date has no zone. Anything that is not an
  * ISO date comes back unchanged rather than as "Invalid Date".
  */
-export function formatLegalDate(iso: string): string {
+export function formatLegalDate(iso: string, locale: string = 'en'): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
   if (!match) return iso
   const [, year, month, day] = match
-  const name = MONTHS[Number(month) - 1]
+  const name = (locale === 'id' ? MONTHS.id : MONTHS.en)[Number(month) - 1]
   if (!name) return iso
   return `${Number(day)} ${name} ${year}`
 }

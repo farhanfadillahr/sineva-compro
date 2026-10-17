@@ -35,7 +35,7 @@ export function PrivacyView({ page }: PrivacyViewProps) {
             </h1>
             <p className="mt-4 text-label text-text-secondary">
               {t('lastUpdated')}:{' '}
-              <time dateTime={page.effectiveDate}>{formatLegalDate(page.effectiveDate)}</time>
+              <time dateTime={page.effectiveDate}>{formatLegalDate(page.effectiveDate, page.locale)}</time>
             </p>
           </header>
 

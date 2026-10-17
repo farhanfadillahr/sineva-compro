@@ -1,5 +1,7 @@
 'use client'
+import Link from 'next/link'
 import { CmsForm } from '@/components/admin/cms/cms-form'
+import { InlineBanner } from '@/components/admin/feedback'
 import { SectionHeader } from '@/components/admin/shell'
 import type { ProductLaunchStatus } from '../../content/types'
 import { saveProductStatusAction } from '../actions'
@@ -45,6 +47,15 @@ export function ProductStatusForm({ status }: { status: ProductLaunchStatus }) {
                 </span>
               </label>
             ))}
+            {value.status === 'live' ? (
+              // The status switches the buttons and hides the waitlist, but labels typed in the
+              // page content stay as written (CPR-106).
+              <InlineBanner tone="warning">
+                Periksa juga label yang masih mengajak bergabung ke waitlist, misalnya tombol kedua
+                di hero Beranda. Ubah di <Link href="/admin/pages/home">Halaman &gt; Beranda</Link>{' '}
+                dan <Link href="/admin/pages/product">Halaman &gt; Produk</Link>.
+              </InlineBanner>
+            ) : null}
           </fieldset>
         )}
       </CmsForm>

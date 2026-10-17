@@ -6,15 +6,29 @@ import { CollectionList } from '@/features/collections/components/collection-lis
 import { reorderCollectionAction } from '@/features/collections/actions'
 import { teamConfig } from '@/features/collections/configs'
 import { routing } from '@/i18n/routing'
+import { TeamVisibility } from '@/features/collections/components/team-visibility'
+import { readPage } from '@/features/pages/service.server'
+import { readStoredSettings } from '@/features/settings/service.server'
+import { db } from '@/lib/db/client.server'
 
 export const metadata = { title: 'Tim' }
 
 export default async function TeamAdminPage() {
   await requireCapability('content:write')
-  const { items } = await listCollectionForAdmin(await headers(), 'team')
+  const [{ items }, settings, about] = await Promise.all([
+    listCollectionForAdmin(await headers(), 'team'),
+    readStoredSettings(db, [routing.defaultLocale]),
+    readPage(db, 'about', routing.defaultLocale),
+  ])
+  const team = (about?.data as { team?: { visible?: boolean } } | undefined)?.team
   return (
     <main>
       <PageHeader title={teamConfig.title} description={teamConfig.description} />
+      <TeamVisibility
+        featureOn={settings.global?.features?.showTeam === true}
+        sectionOn={team?.visible === true}
+        shownMembers={items.filter((item) => item.global.showOnAbout === true).length}
+      />
       <CollectionList
         reorder={{ action: reorderCollectionAction, fields: { collection: 'team' } }}
         title="Anggota"

@@ -35,6 +35,13 @@ const date = new Intl.DateTimeFormat('id-ID', {
   timeStyle: 'short',
   timeZone: 'Asia/Jakarta',
 })
+/** Long generated ids (UUIDs, auth ids) are cut to their first 8 characters; keys stay whole. */
+export function shortId(id: string): string {
+  return /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id) || /^[A-Za-z0-9]{24,}$/.test(id)
+    ? `${id.slice(0, 8)}…`
+    : id
+}
+
 export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAuditLog>> }) {
   const pages = Math.max(1, Math.ceil(result.total / result.pageSize))
   const href = (page: number) => auditPageHref({ ...result, page })
@@ -92,7 +99,7 @@ export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAu
           </Link>
         </form>
         <p className="muted" id="audit-actor-help">
-          Salin ID pelaku dari tabel untuk memfilter riwayatnya.
+          Klik nama pelaku di tabel untuk melihat riwayatnya saja.
         </p>
         <div className="users-table-wrap">
           <table className="users-table">
@@ -116,12 +123,23 @@ export function AuditView({ result }: { result: Awaited<ReturnType<typeof listAu
                     </time>
                   </td>
                   <td>
-                    <span className="user-name">{entry.actorName ?? 'Akun telah dihapus'}</span>
-                    {entry.actorId ? <code>{entry.actorId}</code> : null}
+                    {/* The name filters the history to this person; the raw id stays available as
+                        a tooltip instead of filling the column (CPR-106). */}
+                    {entry.actorId ? (
+                      <Link
+                        className="user-name"
+                        href={auditPageHref({ ...result, actor: entry.actorId, page: 1 })}
+                        title={`ID pelaku: ${entry.actorId}`}
+                      >
+                        {entry.actorName ?? 'Tanpa nama'}
+                      </Link>
+                    ) : (
+                      <span className="user-name">Akun telah dihapus</span>
+                    )}
                   </td>
                   <td>{entities[entry.entity] ?? entry.entity}</td>
                   <td>
-                    <code>{entry.entityId}</code>
+                    <code title={entry.entityId}>{shortId(entry.entityId)}</code>
                   </td>
                   <td>{actions[entry.action] ?? entry.action}</td>
                   <td>{entry.changedFields.join(', ')}</td>

@@ -2,7 +2,7 @@
 import { createElement } from 'react'
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, expect, it } from 'vitest'
-import { AuditView } from '../../src/features/audit/components/audit-view'
+import { AuditView, shortId } from '../../src/features/audit/components/audit-view'
 
 afterEach(cleanup)
 const result = {
@@ -55,4 +55,17 @@ it('keeps history readable after the actor account is deleted', () => {
     }),
   )
   expect(screen.getByText('Akun telah dihapus')).toBeTruthy()
+})
+
+// CPR-106: the actor column showed the raw id next to the name, and filtering meant copying it.
+it('links the actor name to their history and keeps ids out of the way', () => {
+  render(createElement(AuditView, { result }))
+  const actor = screen.getByRole('link', { name: 'Nama staf' })
+  expect(actor.getAttribute('href')).toBe(
+    '/admin/audit?actor=staff-id&entity=users&page=1&pageSize=20',
+  )
+  expect(actor.getAttribute('title')).toBe('ID pelaku: staff-id')
+  expect(shortId('eb857da4-3cb3-43f8-8360-833da7ba9b96')).toBe('eb857da4…')
+  expect(shortId('3X9gllubYeSkjg1trds5CGn0XTTdKBtu')).toBe('3X9gllub…')
+  expect(shortId('thankYou:en')).toBe('thankYou:en')
 })

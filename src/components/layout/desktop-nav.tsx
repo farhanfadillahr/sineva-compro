@@ -428,24 +428,26 @@ function ProductContent({
           </li>
         ))}
       </ul>
-      <AppLink
-        href={promo.href}
-        aria-current={ariaCurrentFor(pathname, promo.href)}
-        onClick={onNavigate}
-        className={cx(
-          'group/promo mt-2 flex items-center justify-between gap-4 rounded-md bg-surface-tint p-4 text-text no-underline',
-          focusRing,
-        )}
-      >
-        <span className="grid gap-1">
-          <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
-            {promo.eyebrow}
+      {promo ? (
+        <AppLink
+          href={promo.href}
+          aria-current={ariaCurrentFor(pathname, promo.href)}
+          onClick={onNavigate}
+          className={cx(
+            'group/promo mt-2 flex items-center justify-between gap-4 rounded-md bg-surface-tint p-4 text-text no-underline',
+            focusRing,
+          )}
+        >
+          <span className="grid gap-1">
+            <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
+              {promo.eyebrow}
+            </span>
+            <span className="text-[0.9375rem] font-semibold">{promo.title}</span>
+            <span className="text-micro text-text-secondary">{promo.description}</span>
           </span>
-          <span className="text-[0.9375rem] font-semibold">{promo.title}</span>
-          <span className="text-micro text-text-secondary">{promo.description}</span>
-        </span>
-        <ArrowRightIcon className="size-5 text-text-brand transition-transform duration-(--dur-fast) ease-out group-hover/promo:translate-x-[3px] motion-reduce:transition-none" />
-      </AppLink>
+          <ArrowRightIcon className="size-5 text-text-brand transition-transform duration-(--dur-fast) ease-out group-hover/promo:translate-x-[3px] motion-reduce:transition-none" />
+        </AppLink>
+      ) : null}
     </>
   )
 }

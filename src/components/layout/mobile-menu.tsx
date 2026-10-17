@@ -170,26 +170,28 @@ export function MobileMenu({
                       />
                     </li>
                   ))}
-                  <li>
-                    <AppLink
-                      href={model.product.promo.href}
-                      onClick={onClose}
-                      className={cx(
-                        'mt-1 grid gap-1 rounded-md bg-surface-tint p-4 text-text no-underline focus-visible:-outline-offset-2',
-                        focusRing,
-                      )}
-                    >
-                      <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
-                        {model.product.promo.eyebrow}
-                      </span>
-                      <span className="text-[0.9375rem] font-semibold">
-                        {model.product.promo.title}
-                      </span>
-                      <span className="text-micro text-text-secondary">
-                        {model.product.promo.description}
-                      </span>
-                    </AppLink>
-                  </li>
+                  {model.product.promo ? (
+                    <li>
+                      <AppLink
+                        href={model.product.promo.href}
+                        onClick={onClose}
+                        className={cx(
+                          'mt-1 grid gap-1 rounded-md bg-surface-tint p-4 text-text no-underline focus-visible:-outline-offset-2',
+                          focusRing,
+                        )}
+                      >
+                        <span className="font-mono text-eyebrow tracking-[0.08em] text-text-brand uppercase">
+                          {model.product.promo.eyebrow}
+                        </span>
+                        <span className="text-[0.9375rem] font-semibold">
+                          {model.product.promo.title}
+                        </span>
+                        <span className="text-micro text-text-secondary">
+                          {model.product.promo.description}
+                        </span>
+                      </AppLink>
+                    </li>
+                  ) : null}
                 </ul>
               </Accordion>
             </Row>

@@ -1,5 +1,8 @@
 # Vercel deployment runbook (phase 1)
 
+For the database-backed CMS on the `development` Preview branch, see
+[CMS Preview setup](vercel-cms-preview.md). The instructions below apply to the static Production site.
+
 | | |
 |---|---|
 | Scope | Phase 1 static public site on Vercel (CPR-94) |

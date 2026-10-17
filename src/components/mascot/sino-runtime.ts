@@ -69,7 +69,7 @@ export type SinoRuntimeOptions = {
 
 export type SinoRuntime = { dispose: () => void }
 
-const DEFAULT_GLB = '/mascot/sino-v008.glb'
+const DEFAULT_GLB = '/mascot/sino-v009.glb'
 const DEFAULT_DRACO = '/draco/'
 // Both hero CTAs: components.md renders them inside the element HeroSplit gives the id `hero-cta`.
 const DEFAULT_CTA = '#hero-cta a, #hero-cta button'

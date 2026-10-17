@@ -162,7 +162,7 @@ describe('static content source: pages', () => {
   it('serves the home hero poster from the assets lane path', async () => {
     const home = await source.getPage('home', 'en')
     expect(home?.hero.poster).toMatchObject({
-      url: '/mascot/poster/v008/sino-hero.webp',
+      url: '/mascot/poster/v009/sino-hero.webp',
       width: 1600,
       height: 1600,
     })
@@ -390,7 +390,7 @@ describe('static content source: references', () => {
       'sino-relaxed',
     ]
     const allowed = new Map<string, [number, number]>([
-      ['/mascot/poster/v008/sino-hero.webp', [1600, 1600]],
+      ['/mascot/poster/v009/sino-hero.webp', [1600, 1600]],
       ['/og/default-v008.png', [1200, 630]],
     ])
     for (const name of poseFiles) allowed.set(`/mascot/poses/v008/${name}.webp`, [1200, 1200])

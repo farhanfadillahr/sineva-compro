@@ -45,9 +45,10 @@ export async function readStoredSettings(
     .select()
     .from(siteSettingsTranslation)
     .where(inArray(siteSettingsTranslation.locale, [...locales]))
-  const [[row], rows] = lock
-    ? await Promise.all([globalQuery.for('update'), localeQuery.for('update')])
-    : await Promise.all([globalQuery, localeQuery])
+  // Sequential, not Promise.all: `database` may be a transaction, which is one connection, and
+  // overlapping queries on it are deprecated in pg (removed in pg 9).
+  const [row] = lock ? await globalQuery.for('update') : await globalQuery
+  const rows = lock ? await localeQuery.for('update') : await localeQuery
   return {
     global: (row?.data as SettingsGlobal | undefined) ?? null,
     locales: Object.fromEntries(rows.map((r) => [r.locale, r.data as SettingsLocale])),

@@ -78,7 +78,6 @@ it('creates the redirect with a published slug change, atomically', async () => 
   await documents.publishDocument(ctx.editorHeaders, 'posts', id, 'en')
   await documents.saveDraft(ctx.editorHeaders, 'posts', { ...article('second-name'), id })
   await documents.publishDocument(ctx.editorHeaders, 'posts', id, 'en')
-  redirects.invalidateRedirectCache()
   expect(await redirects.resolveRedirect('/blog/first-name')).toMatchObject({
     toPath: '/blog/second-name',
   })
@@ -97,4 +96,19 @@ it('creates the redirect with a published slug change, atomically', async () => 
   }
   await documents.unpublishDocument(ctx.editorHeaders, 'posts', id, 'en')
   await ctx.connection.db.delete(post).where(eq(post.id, id))
+})
+
+// The proxy runs apart from the admin actions, so nothing an action does in its own module can
+// reach a cache held by the proxy. Changes written by another process must be visible at once.
+it('resolves redirects written or removed elsewhere without waiting for a cache', async () => {
+  expect(await redirects.resolveRedirect('/fresh-old')).toBeNull()
+  await ctx.connection.db
+    .insert(redirect)
+    .values({ fromPath: '/fresh-old', toPath: '/about', status: 308, source: 'manual' })
+  expect(await redirects.resolveRedirect('/fresh-old')).toMatchObject({
+    toPath: '/about',
+    status: 308,
+  })
+  await ctx.connection.db.delete(redirect).where(eq(redirect.fromPath, '/fresh-old'))
+  expect(await redirects.resolveRedirect('/fresh-old')).toBeNull()
 })

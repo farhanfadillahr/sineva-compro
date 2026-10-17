@@ -83,13 +83,16 @@ export class MediaService {
     if (!rows.length) return []
     const ids = rows.map((row) => row.id),
       publicIds = rows.flatMap((row) => (row.publicAssetId ? [row.publicAssetId] : []))
-    const [translations, usages, deliveries] = await Promise.all([
-      tx.select().from(mediaTranslation).where(inArray(mediaTranslation.mediaId, ids)),
-      tx.select().from(mediaUsage).where(inArray(mediaUsage.mediaId, ids)),
-      publicIds.length
-        ? tx.select().from(mediaDelivery).where(inArray(mediaDelivery.id, publicIds))
-        : Promise.resolve([]),
-    ])
+    // Sequential, not Promise.all: `list` passes its transaction, which is one connection, and
+    // overlapping queries on it are deprecated in pg (removed in pg 9).
+    const translations = await tx
+      .select()
+      .from(mediaTranslation)
+      .where(inArray(mediaTranslation.mediaId, ids))
+    const usages = await tx.select().from(mediaUsage).where(inArray(mediaUsage.mediaId, ids))
+    const deliveries = publicIds.length
+      ? await tx.select().from(mediaDelivery).where(inArray(mediaDelivery.id, publicIds))
+      : []
     return rows.map((row) => ({
       isDemo: row.isDemo,
       id: row.id,

@@ -608,6 +608,8 @@ label.field > span:first-child {
   box-shadow: var(--shadow-button-bevel);
 }
 .dialog {
+  /* Tailwind's preflight zeroes the UA `margin: auto` that centers a modal <dialog>. */
+  margin: auto;
   color: var(--admin-text);
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);

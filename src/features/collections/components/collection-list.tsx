@@ -108,7 +108,9 @@ export function CollectionList({
                     </td>
                   ) : null}
                   <td>
-                    <Link href={`${basePath}/${row.id}`}>{row.title}</Link>{' '}
+                    <Link className={s.rowLink} href={`${basePath}/${row.id}`}>
+                      {row.title}
+                    </Link>{' '}
                     {row.isDemo ? <Badge tone="warning">Demo</Badge> : null}
                     {row.meta ? <span className={s.muted}> · {row.meta}</span> : null}
                   </td>

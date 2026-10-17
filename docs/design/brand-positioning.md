@@ -10,7 +10,7 @@ Brand name: **Sineva** (not "Sineva Tech"). Decision 2026-10-15.
 
 | Pillar | What | Model | Status on website v1 |
 |---|---|---|---|
-| **Product** | Ready-to-use conversational AI agents (chatbots) for UMKM (Indonesian micro, small and medium enterprises). One agent can help with many kinds of work: replying to customer chats, managing social media content, recording and summarizing finances, following up with prospects, and more. | SaaS | Product page + waitlist (the product is not sold through website v1). |
+| **Product** | A suite of focused AI products for HR, finance, sales, social content, customer and team support, and business insights. | SaaS | Product page + waitlist (the products are not sold through website v1). |
 | **Services** | AI consulting: helping businesses find, build, and run AI solutions that fit their processes. | Per-project service | Services page + consultation form + WhatsApp. |
 
 How we differ from Sintra (the design reference): Sintra sells only SaaS. Sineva sells **a product and services**, so every page must clearly answer "do I use the product myself, or do I need help?"
@@ -21,21 +21,20 @@ How we differ from Sintra (the design reference): Sintra sells only SaaS. Sineva
 
 ## 3. Offering architecture
 
-### 3.1 Product: Sineva AI Agents (working name)
+### 3.1 Product: Sineva Product Suite
 
-> **The product name has not been decided by the Founder.** "Sineva AI Agents" is a working name in the documents. Change it in one place (messages + content DB) once it is decided.
+The website presents six focused products with names that begin with Sino. Their names and positioning are:
 
-The capabilities that may be mentioned on the website are **only those confirmed by the product team (team `CBT`)**. Capability categories used as the page structure (contents pending confirmation):
+| Product | Positioning |
+|---|---|
+| SinoPeople | Smart HR & Employee Experience Engine |
+| SinoMoney | Autonomous Financial Intelligence |
+| SinoSales | Predictive Sales & Deal Acceleration |
+| SinoSocial | Adaptive Social & Content Engine |
+| SinoHelp | Intelligent Process & Support Automation |
+| SinoInsights | Enterprise Intelligence & Decision Hub |
 
-| Category (structure) | Example UMKM tasks | Copy notes |
-|---|---|---|
-| Customer chat | Answering customer questions, opening hours, order status | Do not claim channels (WhatsApp/IG) before they are confirmed |
-| Social media | Content ideas, caption drafts, posting schedule | |
-| Sales follow-up | Following up with prospects, recording leads | |
-| Finance & admin | Recording transactions, summarizing expenses | Must not sound like financial advice |
-| Operations | Daily summaries, reminders, SOPs | |
-
-Sintra's visual model that we borrow: each capability is shown as **"one task handed off to the agent"** (example pattern: *"Sino, reply to today's customer chats"*). We do **not** copy Sintra's "many characters = many employees" concept. Sineva has **one mascot, Sino**, who plays an agent with many abilities. This matches our product (one agent, many capabilities) and makes 3D assets cheaper to produce.
+The user-approved descriptions for these products are the source for the public product cards and menu. Each product name begins with **Sino**. Keep one friendly brand character, **Sino**, across the suite as a companion in illustrations and conversations.
 
 ### 3.2 Services: AI Consulting
 
@@ -57,14 +56,14 @@ The mental diagram that must be readable on the Home page:
               Sineva  (AI consulting company)
               ┌─────────────────┴─────────────────┐
          Use it yourself                     Let us build it with you
-      Product: Sineva AI Agents            Services: AI Consulting
+         Product: Sineva Product Suite        Services: AI Consulting
       (UMKM, self-serve, waitlist)         (UMKM, companies, startups)
               └──────── same AI know-how ─────────┘
 ```
 
 Rule: **two main CTAs always sit side by side** in the hero and the closing CTA:
 - Primary: **Book a free consultation** (Services, the main conversion goal, per D3 of the PRD).
-- Secondary: **Join the waitlist** (Product), until the product launches; it becomes **Try Sineva AI Agents** after launch.
+- Secondary: **Join the waitlist** (Product), until the product launches; it becomes **Explore the Sineva Product Suite** after launch.
 
 ## 4. Target users
 

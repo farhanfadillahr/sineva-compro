@@ -97,7 +97,7 @@ describe('WhatsApp placeholders', () => {
       services,
       media: { defaultOgImage: null, logo: null },
     })
-    expect(dto.whatsapp.templates.product).toBe('About Sineva AI Agents at Sineva')
+    expect(dto.whatsapp.templates.product).toBe('About the Sineva Product Suite at Sineva')
     expect(dto.whatsapp.templates.services).toEqual([
       { serviceSlug: 'ai-build', message: 'Interested in AI Build' },
     ])

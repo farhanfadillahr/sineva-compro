@@ -57,7 +57,7 @@ describe('Indonesian static content: copy rules', () => {
     const channels =
       /whatsapp|instagram|tiktok|telegram|facebook|shopee|tokopedia|gmail|slack|zapier|integrasi|\bapi\b|plugin/i
     expect(productCopy.filter(({ value }) => channels.test(value))).toEqual([])
-    const finance = staticContentId.capabilities.find((item) => item.key === 'finance-admin')
+    const finance = staticContentId.capabilities.find((item) => item.key === 'financial-intelligence')
     expect(finance?.body).toContain('bukan nasihat keuangan')
   })
 })

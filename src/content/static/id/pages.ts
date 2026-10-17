@@ -63,8 +63,8 @@ export const pages: PageContentMap = {
         ...pagesEn.home.twoPaths.product,
         eyebrow: 'Produk',
         title: 'Pakai sendiri',
-        body: 'Sineva AI Agents membuat Sino membantu tugas harian Anda. Segera hadir, dan Anda bisa minta dikabari.',
-        ctaLabel: 'Kenali AI Agents',
+        body: 'Sineva Product Suite membawa bantuan AI ke pekerjaan bisnis sehari-hari. Segera hadir, dan Anda bisa minta dikabari.',
+        ctaLabel: 'Kenali Sino',
       },
       services: {
         ...pagesEn.home.twoPaths.services,
@@ -76,11 +76,11 @@ export const pages: PageContentMap = {
     },
     meetSino: {
       title: 'Kenalan dengan Sino',
-      body: 'Sino adalah teman yang ramah untuk pekerjaan sehari-hari. Minta dengan bahasa biasa, dan Sino bisa membantu membalas pesan, mencari ide, dan tugas kecil berikutnya.',
+      body: 'Sino adalah teman AI dari Sineva. Sampaikan kebutuhan dengan bahasa sehari-hari, dan Sino bisa membantu membalas pesan, mencari ide, atau merencanakan langkah berikutnya.',
     },
     capabilities: {
-      title: 'Yang bisa dibantu Sino',
-      intro: 'Serahkan tugas cukup dengan meminta, seperti meminta tolong ke rekan kerja.',
+      title: 'Kenali Sineva Product Suite',
+      intro: 'Jelajahi alat AI untuk tim, keuangan, penjualan, konten sosial, layanan, dan insight bisnis.',
     },
     howWeWork: { title: 'Cara kami bekerja', steps: processSteps },
     whoWeHelp: { title: 'Siapa yang kami bantu', cards: audienceCards },
@@ -103,8 +103,8 @@ export const pages: PageContentMap = {
     key: 'product',
     locale: 'id',
     seo: seo(
-      'Serahkan pekerjaan rutin ke Sino AI | Sineva',
-      'Kenalan dengan Sino AI, asisten untuk tugas bisnis sehari-hari. Segera hadir: dapatkan kabar begitu Sino siap.',
+      'Kenali Sineva Product Suite | Sineva',
+      'Jelajahi produk AI untuk HR, keuangan, penjualan, konten sosial, layanan, dan insight bisnis. Minta dikabari saat produk siap.',
     ),
     productStatus: pagesEn.product.productStatus,
     hero: {
@@ -115,8 +115,8 @@ export const pages: PageContentMap = {
       waitlistIntro: 'Kirim pesan singkat, dan kami kabari Anda saat Sino sudah siap.',
       mockup: {
         bubbles: [
-          { from: 'user', text: 'Sino, balas chat pelanggan hari ini' },
-          { from: 'sino', text: 'Sudah. Drafnya siap untuk Anda cek.' },
+          { from: 'user', text: 'SinoHelp, kelompokkan permintaan dukungan hari ini' },
+          { from: 'sino', text: 'Sudah saya kelompokkan dengan saran langkah berikutnya.' },
           { from: 'user', text: 'Tunjukkan yang pertama' },
           { from: 'sino', text: 'Ini dia. Ubah apa pun yang Anda mau.' },
         ],
@@ -124,8 +124,8 @@ export const pages: PageContentMap = {
       },
     },
     capabilities: {
-      title: 'Yang bisa dibantu Sino',
-      intro: 'Setiap tugas adalah permintaan yang bisa Anda serahkan ke Sino.',
+      title: 'Kenali Sineva Product Suite',
+      intro: 'Alat AI untuk membantu berbagai pekerjaan bisnis Anda.',
     },
     howItWorks: { title: 'Cara kerjanya', steps: productSteps },
     madeForYou: {
@@ -302,7 +302,7 @@ export const pages: PageContentMap = {
     // The Indonesian blog has no articles yet, so the second link points at services instead.
     nextLinks: [
       { label: 'Lihat layanan kami', target: 'services' },
-      { label: 'Kenali AI Agents', target: 'product' },
+      { label: 'Kenali Sino', target: 'product' },
     ],
   },
 

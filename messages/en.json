@@ -4,7 +4,7 @@
   },
   "Pages": {
     "home": "Home",
-    "aiAgents": "AI Agents",
+    "aiAgents": "Meet Sino",
     "services": "Services",
     "work": "Work",
     "blog": "Blog",
@@ -47,25 +47,29 @@
     "themeToLight": "Switch to light mode",
     "productMenu": {
       "items": {
-        "customerChat": {
-          "title": "Customer chat",
-          "description": "Draft answers to common questions."
+        "peopleExperience": {
+          "title": "SinoPeople",
+          "description": "Smart HR & Employee Experience Engine."
         },
-        "socialMedia": {
-          "title": "Social media",
-          "description": "Get post ideas and caption drafts."
+        "financialIntelligence": {
+          "title": "SinoMoney",
+          "description": "Autonomous Financial Intelligence."
         },
-        "salesFollowUp": {
-          "title": "Sales follow-up",
-          "description": "Keep track of who asked and draft a reply."
+        "salesAcceleration": {
+          "title": "SinoSales",
+          "description": "Predictive Sales & Deal Acceleration."
         },
-        "financeAdmin": {
-          "title": "Finance and admin",
-          "description": "Record simple transactions and see a summary."
+        "socialContent": {
+          "title": "SinoSocial",
+          "description": "Adaptive Social & Content Engine."
         },
-        "operations": {
-          "title": "Daily operations",
-          "description": "Get a short daily summary and reminders."
+        "supportAutomation": {
+          "title": "SinoHelp",
+          "description": "Intelligent Process & Support Automation."
+        },
+        "enterpriseIntelligence": {
+          "title": "SinoInsights",
+          "description": "Enterprise Intelligence & Decision Hub."
         }
       },
       "promo": {
@@ -86,7 +90,7 @@
       "legal": "Legal"
     },
     "links": {
-      "aiAgents": "Sino AI",
+      "aiAgents": "Meet Sino",
       "joinWaitlist": "Join the waitlist",
       "allServices": "All services",
       "about": "About",
@@ -245,7 +249,7 @@
       "aiDiscovery": "AI Discovery",
       "aiBuild": "AI Build",
       "aiEnablement": "AI Enablement",
-      "aiAgents": "AI Agents product",
+      "aiAgents": "Sineva Product Suite",
       "notSure": "Not sure yet"
     },
     "budgets": {

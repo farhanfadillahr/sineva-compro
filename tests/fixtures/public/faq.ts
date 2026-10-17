@@ -13,8 +13,8 @@ const entry = (tags: readonly FaqTag[], question: string, ...answer: string[]): 
 export const faq: readonly FaqFixture[] = [
   entry(
     ['home', 'product'],
-    'What is Sino?',
-    'Sino is the AI agent from Sineva. You ask for a task and Sino prepares it for you to review.',
+    'What is the Sineva Product Suite?',
+    'It brings together focused AI products for people operations, finance, sales, social content, support, and business insights.',
   ),
   entry(
     ['home', 'services'],

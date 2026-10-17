@@ -27,7 +27,7 @@ export const privacyBody: RichTextDocument = doc(
     'When you send the message, we receive what you wrote, together with your WhatsApp number or email address, through that service. WhatsApp and your email provider handle the message under their own terms and privacy policies.',
   ),
   paragraph(
-    'If you ask to be notified about our AI agents product, you do it by sending us a message in the same way. Asking to be notified records your interest only. It does not create a product account or make the product available.',
+    'If you ask to be notified about the Sineva Product Suite, you do it by sending us a message in the same way. Asking to be notified records your interest only. It does not create a product account or make the products available.',
   ),
   paragraph(
     'Please do not include passwords, payment details or other sensitive information in a message. We may ask for more information when we discuss your needs, but the contact form is not a channel for confidential project material.',
@@ -46,7 +46,7 @@ export const privacyBody: RichTextDocument = doc(
 
   heading('Why we use information'),
   paragraph(
-    'We use the messages you send us to review your request, reply to you and manage follow-up. We use notification requests to tell you when the AI agents product is ready.',
+    'We use the messages you send us to review your request, reply to you and manage follow-up. We use notification requests to tell you when the Sineva Product Suite is ready.',
   ),
   paragraph(
     'Sending us a message is your choice, and the form asks you to confirm that you understand how the message is sent. You can ask us to stop using your information, or to delete it, by contacting us. Withdrawing does not undo processing that took place before your request.',

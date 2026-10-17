@@ -220,8 +220,8 @@ describe('mobile menu focus trap', () => {
     const user = userEvent.setup()
     renderHeader()
     await user.click(burger())
-    expect(screen.queryByRole('link', { name: /Customer chat/ })).toBeNull()
-    expect(focusables().some((el) => /Customer chat/.test(el.textContent ?? ''))).toBe(false)
+    expect(screen.queryByRole('link', { name: /SinoPeople/ })).toBeNull()
+    expect(focusables().some((el) => /SinoPeople/.test(el.textContent ?? ''))).toBe(false)
   })
 })
 
@@ -236,13 +236,13 @@ describe('mobile menu content', () => {
     expect(product.getAttribute('aria-expanded')).toBe('true')
     expect(
       within(dialog())
-        .getByRole('link', { name: /Customer chat/ })
+        .getByRole('link', { name: /SinoPeople/ })
         .getAttribute('href'),
     ).toBe('/products/ai-agents')
     expect(within(dialog()).getByRole('link', { name: /Join the waitlist/ })).toBeTruthy()
     await user.click(product)
     expect(product.getAttribute('aria-expanded')).toBe('false')
-    expect(within(dialog()).queryByRole('link', { name: /Customer chat/ })).toBeNull()
+    expect(within(dialog()).queryByRole('link', { name: /SinoPeople/ })).toBeNull()
   })
 
   it('lists the services from content and a link to all services', async () => {

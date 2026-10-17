@@ -54,14 +54,14 @@ A set of poses for sections, cards, and UI states. All 3/4 view unless stated ot
 | ID | Pose | Used in | Priority |
 |---|---|---|---|
 | S1 | Wave (already exists as a clip, needs a still) | Footer CTA, waitlist | P0 |
-| S2 | Holding phone, looking at screen | Product: customer chat | P0 |
+| S2 | Holding phone, looking at screen | Product: SinoHelp | P0 |
 | S3 | Typing on laptop | Product: operations, AI Build | P0 |
 | S4 | Holding megaphone / phone with heart bubble | Product: social media | P0 |
 | S5 | Holding coin stack + clipboard | Product: finance & admin | P0 |
-| S6 | Handing over a paper / handshake gesture | Product: sales follow-up | P0 |
-| S7 | Magnifying glass, curious | Services: AI Discovery | P0 |
+| S6 | Handing over a paper / handshake gesture | Product: SinoSales | P0 |
+| S7 | Magnifying glass, curious | Product: SinoInsights; Services: AI Discovery | P0 |
 | S8 | Stacking building blocks | Services: AI Build | P0 |
-| S9 | Pointing at a small whiteboard | Services: AI Enablement | P0 |
+| S9 | Pointing at a small whiteboard | Product: SinoPeople; Services: AI Enablement | P0 |
 | S10 | Thumbs up | Thank-you page | P0 |
 | S11 | Scratching helmet, confused | 404, empty state | P0 |
 | S12 | Peeking from the right edge (body cut off by the frame) | Attached to the edge of a card/table, like the Sintra mascot above the comparison table | P1 |

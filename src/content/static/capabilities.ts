@@ -1,58 +1,77 @@
 import type { Industry, ProductCapability } from '../../features/content/types'
 
-// Capability categories follow brand-positioning.md section 3.1. Each one is phrased as something
-// Sino helps with, never as a feature spec: no messaging channel, no integration, no price, no
-// date. Only the product team (CBT) can widen these claims.
+// Product names and positioning follow the product descriptions supplied for the launch copy.
 export const capabilities: readonly ProductCapability[] = [
   {
-    key: 'customer-chat',
-    title: "Sino, reply to today's customer chats",
-    body: 'Sino helps you draft replies to common customer questions, so you can read, adjust, and send them.',
+    key: 'people-experience',
+    title: 'SinoPeople',
+    body: 'Smart HR & Employee Experience Engine. An AI HR companion for every stage of the employee journey. It screens resumes, personalizes onboarding, and tracks employee sentiment and performance insights in real time.',
     tint: 'teal',
-    pose: 'holding-phone',
+    pose: 'whiteboard',
     mockupLines: [
-      "Sino, reply to today's customer chats",
-      'Done. I wrote drafts for you to check.',
+      'SinoPeople, prepare an onboarding plan for our new hire',
+      'Here is a personalized plan for their first weeks.',
     ],
     featured: true,
   },
   {
-    key: 'social-media',
-    title: "Sino, draft this week's social posts",
-    body: 'Sino helps you come up with post ideas and caption drafts that you can edit before you share them.',
-    tint: 'sun',
-    pose: 'megaphone',
-    mockupLines: ["Sino, draft this week's social posts", 'Here are three ideas with captions.'],
-    featured: false,
-  },
-  {
-    key: 'sales-follow-up',
-    title: "Sino, follow up with last week's prospects",
-    body: 'Sino helps you remember who asked about your products and drafts a friendly follow-up note for each person.',
-    tint: 'mint',
-    pose: 'handover',
+    key: 'financial-intelligence',
+    title: 'SinoMoney',
+    body: 'Autonomous Financial Intelligence. An AI financial assistant that automates invoice processing, flags unusual expenses, forecasts cash flow, and generates precise compliance and audit reports on demand. It provides information, not financial advice.',
+    tint: 'neutral',
+    pose: 'coins-clipboard',
     mockupLines: [
-      "Sino, follow up with last week's prospects",
-      'I wrote a short note for each one.',
+      'SinoMoney, review this month’s invoices and expenses',
+      'I found items to review and prepared a monthly summary.',
     ],
     featured: false,
   },
   {
-    key: 'finance-admin',
-    title: "Sino, summarize this month's expenses",
-    body: 'Sino helps you keep simple records and read them as a short summary. It is a helper, not financial advice.',
-    tint: 'neutral',
-    pose: 'coins-clipboard',
-    mockupLines: ["Sino, summarize this month's expenses", 'Here is a summary by category.'],
+    key: 'sales-acceleration',
+    title: 'SinoSales',
+    body: 'Predictive Sales & Deal Acceleration. A sales co-pilot that scores incoming leads, predicts deal likelihood, drafts tailored proposals, and gives real-time coaching during customer conversations.',
+    tint: 'mint',
+    pose: 'handover',
+    mockupLines: [
+      'SinoSales, review these new leads',
+      'Here are their priorities and suggested next steps.',
+    ],
     featured: false,
   },
   {
-    key: 'operations',
-    title: 'Sino, list what needs doing today',
-    body: 'Sino helps you start the day with a short list of tasks and reminders, so less slips through the cracks.',
+    key: 'social-content',
+    title: 'SinoSocial',
+    body: 'Adaptive Social & Content Engine. An AI brand strategist that monitors social trends, drafts multi-channel campaign copy, schedules content dynamically, and analyzes customer engagement sentiment across platforms.',
+    tint: 'sun',
+    pose: 'megaphone',
+    mockupLines: [
+      'SinoSocial, draft this week’s campaign posts',
+      'Here are campaign ideas and copy for your review.',
+    ],
+    featured: false,
+  },
+  {
+    key: 'support-automation',
+    title: 'SinoHelp',
+    body: 'Intelligent Process & Support Automation. A 24/7 support platform that handles routine customer and team tickets, coordinates cross-department workflows, and resolves complex queries through conversational AI.',
     tint: 'teal',
-    pose: 'typing-laptop',
-    mockupLines: ['Sino, list what needs doing today', 'You have four tasks. Want to start?'],
+    pose: 'holding-phone',
+    mockupLines: [
+      'SinoHelp, organize these incoming support requests',
+      'Requests are grouped with suggested next steps.',
+    ],
+    featured: false,
+  },
+  {
+    key: 'enterprise-intelligence',
+    title: 'SinoInsights',
+    body: 'Enterprise Intelligence & Decision Hub. A central AI dashboard that synthesizes complex data across departments into conversational insights, executive summaries, and predictive forecasts.',
+    tint: 'neutral',
+    pose: 'magnifier',
+    mockupLines: [
+      'SinoInsights, summarize this quarter’s performance',
+      'Here is an executive summary with key trends.',
+    ],
     featured: false,
   },
 ]

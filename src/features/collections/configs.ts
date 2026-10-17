@@ -43,11 +43,10 @@ export type CollectionConfig = Readonly<{
 export const capabilitiesConfig: CollectionConfig = {
   name: 'capabilities',
   adminPath: '/admin/product',
-  title: 'Kemampuan produk',
-  itemLabel: 'Kemampuan',
-  description: 'Kartu permintaan untuk Sino di Beranda dan halaman Produk.',
-  formHint:
-    'Hanya terbitkan kemampuan yang sudah dikonfirmasi tim CBT. Jangan menjanjikan kanal atau integrasi yang belum pasti.',
+  title: 'Produk Sino',
+  itemLabel: 'Produk',
+  description: 'Produk yang ditampilkan di Beranda dan halaman Produk.',
+  formHint: 'Gunakan nama dan deskripsi produk yang telah disetujui. Informasi keuangan bukan nasihat keuangan.',
   keyLabel: 'Kunci',
   audit: 'product',
   mediaEntity: 'product',
@@ -55,11 +54,11 @@ export const capabilitiesConfig: CollectionConfig = {
   globalSchema: f.object({
     tint: f.select('Warna kartu', tintOptions),
     pose: poseField(),
-    featured: f.boolean('Unggulan', 'Kemampuan unggulan tampil lebih dulu di Beranda.'),
+    featured: f.boolean('Unggulan', 'Produk unggulan tampil lebih dulu di Beranda.'),
   }),
   localeSchema: f.object({
-    title: f.required('Judul (permintaan kepada Sino)', 90, {
-      hint: 'Tulis sebagai permintaan, misalnya "Sino, reply to today\'s customer chats".',
+    title: f.required('Nama produk', 90, {
+      hint: 'Nama produk, misalnya "SinoPeople" atau "SinoHelp".',
     }),
     body: f.required('Isi', 300, { multiline: true }),
     mockupLines: f.list('Baris mockup', f.required('Baris', 80), FIELD_LIMITS.mockupLines, {

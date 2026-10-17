@@ -1,39 +1,54 @@
 import type { Industry, ProductCapability } from '../../../features/content/types'
 import { capabilities as capabilitiesEn, industries as industriesEn } from '../capabilities'
 
-// Indonesian copy for ../capabilities.ts. Keys, tints, poses and the featured flag come from the
-// English list, so only the words can differ. Same claim limits: no channel, integration, price
-// or date, and finance stays "not advice".
+// Indonesian copy for ../capabilities.ts. Product names stay consistent across locales.
 const capabilityCopy: Record<string, Pick<ProductCapability, 'title' | 'body' | 'mockupLines'>> = {
-  'customer-chat': {
-    title: 'Sino, balas chat pelanggan hari ini',
-    body: 'Sino membantu menyiapkan draf balasan untuk pertanyaan pelanggan yang umum, sehingga Anda tinggal membaca, menyesuaikan, dan mengirimnya.',
-    mockupLines: ['Sino, balas chat pelanggan hari ini', 'Sudah. Drafnya siap untuk Anda cek.'],
-  },
-  'social-media': {
-    title: 'Sino, siapkan draf unggahan minggu ini',
-    body: 'Sino membantu mencari ide unggahan dan draf caption yang bisa Anda ubah sebelum dibagikan.',
-    mockupLines: ['Sino, siapkan draf unggahan minggu ini', 'Ini tiga ide lengkap dengan caption.'],
-  },
-  'sales-follow-up': {
-    title: 'Sino, hubungi lagi calon pembeli minggu lalu',
-    body: 'Sino membantu mengingat siapa saja yang bertanya soal produk Anda dan menyiapkan pesan tindak lanjut yang ramah untuk masing-masing.',
+  'people-experience': {
+    title: 'SinoPeople',
+    body: 'Mesin HR dan Pengalaman Karyawan yang Cerdas. Asisten AI untuk setiap tahap perjalanan karyawan. SinoPeople menyaring CV, menyiapkan onboarding personal, serta memantau sentimen dan insight kinerja secara real time.',
     mockupLines: [
-      'Sino, hubungi lagi calon pembeli minggu lalu',
-      'Saya sudah tulis pesan singkat untuk tiap orang.',
+      'SinoPeople, siapkan rencana onboarding untuk karyawan baru',
+      'Ini rencana personal untuk beberapa minggu pertama.',
     ],
   },
-  'finance-admin': {
-    title: 'Sino, ringkas pengeluaran bulan ini',
-    body: 'Sino membantu mencatat transaksi sederhana dan membacanya sebagai ringkasan singkat. Ini alat bantu, bukan nasihat keuangan.',
-    mockupLines: ['Sino, ringkas pengeluaran bulan ini', 'Ini ringkasannya per kategori.'],
-  },
-  operations: {
-    title: 'Sino, apa saja yang perlu dikerjakan hari ini',
-    body: 'Sino membantu Anda memulai hari dengan daftar tugas dan pengingat yang singkat, sehingga lebih sedikit yang terlewat.',
+  'financial-intelligence': {
+    title: 'SinoMoney',
+    body: 'Kecerdasan Keuangan Otonom. Asisten keuangan AI yang mengotomatisasi pemrosesan faktur, menandai pengeluaran tidak biasa, memproyeksikan arus kas, serta membuat laporan kepatuhan dan audit dengan presisi saat dibutuhkan. Informasi ini bukan nasihat keuangan.',
     mockupLines: [
-      'Sino, apa saja yang perlu dikerjakan hari ini',
-      'Ada empat tugas. Mau mulai sekarang?',
+      'SinoMoney, periksa faktur dan pengeluaran bulan ini',
+      'Saya menemukan beberapa hal untuk ditinjau dan menyiapkan ringkasan bulanan.',
+    ],
+  },
+  'sales-acceleration': {
+    title: 'SinoSales',
+    body: 'Akselerasi Penjualan dan Kesepakatan Prediktif. Asisten penjualan yang menilai prospek masuk, memperkirakan peluang deal, menyiapkan proposal personal, dan memberi saran real time saat berinteraksi dengan pelanggan.',
+    mockupLines: [
+      'SinoSales, tinjau prospek baru ini',
+      'Ini prioritas dan saran tindak lanjut untuk tiap prospek.',
+    ],
+  },
+  'social-content': {
+    title: 'SinoSocial',
+    body: 'Mesin Konten dan Media Sosial Adaptif. Strategi brand berbasis AI yang memantau tren, menyiapkan draf kampanye multi-kanal, menjadwalkan konten secara dinamis, dan menganalisis sentimen interaksi pelanggan di berbagai platform.',
+    mockupLines: [
+      'SinoSocial, siapkan draf unggahan kampanye minggu ini',
+      'Ini ide kampanye dan draf konten untuk Anda tinjau.',
+    ],
+  },
+  'support-automation': {
+    title: 'SinoHelp',
+    body: 'Otomasi Proses dan Dukungan Cerdas. Platform dukungan 24/7 yang menangani tiket rutin pelanggan dan tim, mengatur alur lintas divisi, serta menjawab pertanyaan kompleks lewat percakapan AI.',
+    mockupLines: [
+      'SinoHelp, kelompokkan permintaan dukungan yang masuk ini',
+      'Permintaan sudah dikelompokkan dengan saran langkah berikutnya.',
+    ],
+  },
+  'enterprise-intelligence': {
+    title: 'SinoInsights',
+    body: 'Pusat Insight dan Keputusan Perusahaan. Dasbor AI terpusat yang merangkum data kompleks lintas divisi menjadi insight percakapan, ringkasan eksekutif, dan proyeksi tren.',
+    mockupLines: [
+      'SinoInsights, rangkum kinerja kuartal ini',
+      'Ini ringkasan eksekutif beserta tren utamanya.',
     ],
   },
 }

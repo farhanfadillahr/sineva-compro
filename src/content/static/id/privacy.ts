@@ -21,7 +21,7 @@ export const privacyBody: RichTextDocument = doc(
     'Saat Anda mengirim pesan, kami menerima apa yang Anda tulis, bersama nomor WhatsApp atau alamat email Anda, melalui layanan tersebut. WhatsApp dan penyedia email Anda menangani pesan itu berdasarkan ketentuan dan kebijakan privasi mereka sendiri.',
   ),
   paragraph(
-    'Bila Anda minta dikabari soal produk AI agents kami, Anda melakukannya dengan mengirim pesan dengan cara yang sama. Permintaan untuk dikabari hanya mencatat minat Anda. Permintaan itu tidak membuat akun produk dan tidak membuat produk tersedia.',
+    'Bila Anda minta dikabari soal Sineva Product Suite, Anda melakukannya dengan mengirim pesan dengan cara yang sama. Permintaan untuk dikabari hanya mencatat minat Anda. Permintaan itu tidak membuat akun produk dan tidak membuat produk tersedia.',
   ),
   paragraph(
     'Mohon jangan mencantumkan password, data pembayaran, atau informasi sensitif lain di dalam pesan. Kami mungkin meminta informasi tambahan saat membahas kebutuhan Anda, tetapi formulir kontak bukan saluran untuk materi proyek yang bersifat rahasia.',
@@ -40,7 +40,7 @@ export const privacyBody: RichTextDocument = doc(
 
   heading('Alasan kami memakai informasi'),
   paragraph(
-    'Kami memakai pesan yang Anda kirim untuk meninjau permintaan Anda, membalasnya, dan mengelola tindak lanjut. Kami memakai permintaan untuk dikabari agar bisa memberi tahu Anda saat produk AI agents sudah siap.',
+    'Kami memakai pesan yang Anda kirim untuk meninjau permintaan Anda, membalasnya, dan mengelola tindak lanjut. Kami memakai permintaan untuk dikabari agar bisa memberi tahu Anda saat Sineva Product Suite sudah siap.',
   ),
   paragraph(
     'Mengirim pesan kepada kami adalah pilihan Anda, dan formulir meminta Anda menyatakan bahwa Anda memahami cara pesan itu dikirim. Anda dapat meminta kami berhenti memakai informasi Anda, atau menghapusnya, dengan menghubungi kami. Penarikan persetujuan tidak membatalkan pemrosesan yang sudah terjadi sebelum permintaan Anda.',

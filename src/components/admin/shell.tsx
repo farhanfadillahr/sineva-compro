@@ -28,7 +28,7 @@ const routeLabels: Record<string, string> = {
   pages: 'Halaman',
   services: 'Layanan',
   product: 'Produk',
-  capabilities: 'Kemampuan',
+  capabilities: 'Produk Sino',
   'business-types': 'Jenis bisnis',
   preview: 'Pratinjau',
   work: 'Karya',

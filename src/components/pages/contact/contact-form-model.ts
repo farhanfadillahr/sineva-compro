@@ -111,7 +111,7 @@ const SERVICE_PARAM = new Map<string, ContactInterest>([
   ['ai-discovery', 'AI Discovery'],
   ['ai-build', 'AI Build'],
   ['ai-enablement', 'AI Enablement'],
-  ['ai-agents', 'AI Agents product'],
+  ['ai-agents', 'Sineva Product Suite'],
   ['not-sure', 'Not sure yet'],
 ])
 
@@ -153,6 +153,6 @@ export const INTEREST_MESSAGE_KEYS = {
   'AI Discovery': 'aiDiscovery',
   'AI Build': 'aiBuild',
   'AI Enablement': 'aiEnablement',
-  'AI Agents product': 'aiAgents',
+  'Sineva Product Suite': 'aiAgents',
   'Not sure yet': 'notSure',
 } as const satisfies Record<ContactInterest, string>

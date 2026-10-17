@@ -382,7 +382,7 @@ describe('SiteHeader dropdowns', () => {
     expect(trigger('Services').getAttribute('aria-expanded')).toBe('false')
     expect(document.querySelectorAll('[data-slot="nav-panel"]')).toHaveLength(1)
     expect(panel().getAttribute('data-state')).toBe('closed')
-    expect(screen.queryByRole('link', { name: /Customer chat/ })).toBeNull()
+    expect(screen.queryByRole('link', { name: /SinoPeople/ })).toBeNull()
   })
 
   it('opens the Product panel on click with capability items and the waitlist card', async () => {
@@ -392,11 +392,12 @@ describe('SiteHeader dropdowns', () => {
     expect(trigger('Product').getAttribute('aria-expanded')).toBe('true')
     expect(panel().getAttribute('data-state')).toBe('open')
     for (const title of [
-      'Customer chat',
-      'Social media',
-      'Sales follow-up',
-      'Finance and admin',
-      'Daily operations',
+      'SinoPeople',
+      'SinoMoney',
+      'SinoSales',
+      'SinoSocial',
+      'SinoHelp',
+      'SinoInsights',
     ]) {
       expect(screen.getByRole('link', { name: new RegExp(title) }).getAttribute('href')).toBe(
         '/products/ai-agents',
@@ -432,7 +433,7 @@ describe('SiteHeader dropdowns', () => {
     expect(trigger('Product').getAttribute('aria-expanded')).toBe('false')
     expect(trigger('Services').getAttribute('aria-expanded')).toBe('true')
     expect(panel().getAttribute('data-menu')).toBe('services')
-    expect(screen.queryByRole('link', { name: /Customer chat/ })).toBeNull()
+    expect(screen.queryByRole('link', { name: /SinoPeople/ })).toBeNull()
   })
 
   it('toggles closed when the open trigger is clicked again', async () => {

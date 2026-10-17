@@ -13,7 +13,7 @@ export const settingsGlobalSchema = f.object({
     {
       siteName: f.required('Nama situs', 60),
       productName: f.required('Nama produk', 60, {
-        hint: 'Nama kerja produk AI Agents (Q9). Mengganti di sini mengubah semua tempat.',
+        hint: 'Nama Sineva Product Suite. Mengganti di sini mengubah semua tempat.',
       }),
       defaultOgImage: f.media('Gambar OG bawaan', 'Ukuran 1200 × 630 px.'),
       logo: f.media('Logo organisasi', 'Untuk data terstruktur (JSON-LD).'),

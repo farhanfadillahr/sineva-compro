@@ -8,7 +8,7 @@ describe('PhoneFrame', () => {
       <PhoneFrame chrome={{ name: 'Sino', status: 'Online', day: 'Today' }}>
         <ChatBubbles
           bubbles={[
-            { from: 'user', text: 'Sino, reply to today chats' },
+            { from: 'user', text: 'SinoHelp, handle customer support requests' },
             { from: 'sino', text: 'Done. Drafts are ready.' },
           ]}
         />

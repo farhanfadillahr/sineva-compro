@@ -14,7 +14,7 @@ export const CONTACT_INTERESTS = [
   'AI Discovery',
   'AI Build',
   'AI Enablement',
-  'AI Agents product',
+  'Sineva Product Suite',
   'Not sure yet',
 ] as const
 export type ContactInterest = (typeof CONTACT_INTERESTS)[number]
@@ -36,7 +36,7 @@ export type ContactFields = Readonly<{
  */
 export const CONTACT_LIMITS = { name: 80, company: 120, budget: 60, message: 1000 } as const
 
-/** Which template opens each interest. `AI Agents product` and the services follow settings. */
+/** Which template opens each interest. `Sineva Product Suite` and services follow settings. */
 const SERVICE_SLUG: Partial<Record<ContactInterest, string>> = {
   'AI Discovery': 'ai-discovery',
   'AI Build': 'ai-build',
@@ -125,7 +125,7 @@ function clean(fields: ContactFields): Cleaned | null {
 function greetingFor(interest: ContactInterest, templates: WhatsAppTemplates): string {
   const slug = SERVICE_SLUG[interest]
   if (slug) return resolveWhatsAppMessage(templates, { kind: 'service', slug, name: interest })
-  if (interest === 'AI Agents product')
+  if (interest === 'Sineva Product Suite')
     return resolveWhatsAppMessage(templates, { kind: 'product' })
   return resolveWhatsAppMessage(templates, { kind: 'general' })
 }

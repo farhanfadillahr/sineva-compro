@@ -12,7 +12,7 @@ export const siteSettings: SiteSettingsDTO = {
     ...siteSettingsEn.whatsapp,
     templates: {
       general: 'Halo Sineva, saya ingin ngobrol soal pemakaian AI di bisnis saya.',
-      product: 'Halo Sineva, saya ingin tahu lebih banyak soal Sineva AI Agents.',
+      product: 'Halo Sineva, saya ingin tahu lebih banyak soal Sineva Product Suite.',
       thankYou: 'Halo Sineva, saya baru mengirim formulir kontak dan ingin balasan lebih cepat.',
       services: [
         {
@@ -33,6 +33,6 @@ export const siteSettings: SiteSettingsDTO = {
   seo: {
     ...siteSettingsEn.seo,
     defaultDescription:
-      'Jalankan bisnis lebih cerdas dengan AI. Kenalan dengan Sino, lihat apa yang bisa dilakukan AI untuk Anda, dan jadwalkan konsultasi gratis.',
+      'Temukan cara praktis memakai AI untuk tugas yang menyita waktu. Kenalan dengan Sino dan jadwalkan konsultasi gratis.',
   },
 }

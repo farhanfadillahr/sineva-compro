@@ -273,7 +273,7 @@ describe('Thank-you page', () => {
     await models()
     intl(<ThankYouView model={thankYouModel} />)
     expect(screen.getByRole('link', { name: 'Read the blog' }).getAttribute('href')).toBe('/blog')
-    expect(screen.getByRole('link', { name: 'Explore AI Agents' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'Meet Sino' }).getAttribute('href')).toBe(
       '/products/ai-agents',
     )
   })

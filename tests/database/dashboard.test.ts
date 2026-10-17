@@ -21,7 +21,7 @@ beforeAll(async () => {
     INSERT INTO lead (name, email, phone, segment, interest, message, consent_at, locale, source_page, status, is_demo, created_at)
     SELECT 'Load test', 'load' || g || '@example.com', '6281234567890',
       (ARRAY['Small business','Company','Startup','Other'])[1 + g % 4],
-      (ARRAY['AI Discovery','AI Build','AI Enablement','AI Agents product','Not sure yet'])[1 + g % 5],
+      (ARRAY['AI Discovery','AI Build','AI Enablement','Sineva Product Suite','Not sure yet'])[1 + g % 5],
       'Load test lead for the dashboard budget.', now(), 'en', '/contact',
       (ARRAY['new','contacted','qualified','won','lost'])[1 + g % 5], true,
       now() - (g % 90) * interval '1 day'

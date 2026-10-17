@@ -15,8 +15,8 @@ const entry = (tags: readonly FaqTag[], question: string, ...answer: string[]): 
 export const faq: readonly FaqEntry[] = [
   entry(
     ['home', 'product'],
-    'What is Sino?',
-    'Sino is a friendly companion for everyday work. Ask for a task in plain words, and Sino helps you work through it.',
+    'What is the Sineva Product Suite?',
+    'It brings together focused AI products for people operations, finance, sales, social content, customer and team support, and business insights. Each product helps with a different area of everyday business work.',
   ),
   entry(
     ['home', 'services'],
@@ -51,8 +51,8 @@ export const faq: readonly FaqEntry[] = [
 
   entry(
     ['product'],
-    'Which tasks can Sino help with?',
-    'We are building Sino to help with customer chats, social media, sales follow-up, finance and admin, and daily operations.',
+    'What can the Sineva Product Suite help with?',
+    'SinoPeople supports HR and employee experience, SinoMoney helps with financial work, SinoSales supports sales, SinoSocial helps with social content, SinoHelp supports customers and teams, and SinoInsights brings enterprise data into decision-making.',
   ),
   entry(
     ['product'],

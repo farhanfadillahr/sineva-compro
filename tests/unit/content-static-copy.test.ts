@@ -101,7 +101,7 @@ describe('static content: product claims stay inside what is confirmed', () => {
   it('does not read like financial advice', () => {
     const advice = /\b(invest|investment|tax advice|should (?:buy|sell)|profit forecast)\b/i
     expect(productCopy.filter(({ value }) => advice.test(value))).toEqual([])
-    const finance = staticContent.capabilities.find((item) => item.key === 'finance-admin')
+    const finance = staticContent.capabilities.find((item) => item.key === 'financial-intelligence')
     expect(finance?.body.toLowerCase()).toContain('not financial advice')
   })
 })

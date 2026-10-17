@@ -12,7 +12,7 @@ export const siteSettings: SiteSettingsDTO = {
   locale: 'en',
   brand: {
     siteName: 'Sineva',
-    productName: 'Sineva AI Agents',
+    productName: 'Sineva Product Suite',
     defaultOgImage: asset(
       '/og/default-v008.png',
       1200,
@@ -31,7 +31,7 @@ export const siteSettings: SiteSettingsDTO = {
     number: '+6285199368510',
     templates: {
       general: "Hi Sineva, I'd like to talk about using AI in my business.",
-      product: "Hi Sineva, I'd like to know more about Sineva AI Agents.",
+      product: "Hi Sineva, I'd like to know more about the Sineva Product Suite.",
       thankYou: 'Hi Sineva, I just sent the contact form and would like a faster reply.',
       // One resolved message per service, not a `{service name}` template: it works for any
       // caller, including ones that cannot supply the service title.
@@ -70,7 +70,7 @@ export const siteSettings: SiteSettingsDTO = {
   seo: {
     titleTemplate: '{title} | Sineva',
     defaultDescription:
-      'Make your business run smarter with AI. Meet Sino, see what AI can do for you, and book a free consultation.',
+      'Find practical ways AI can help with the tasks that fill your day. Meet Sino and book a free consultation.',
     indexable: true,
   },
   verification: { googleSearchConsoleToken: null },
